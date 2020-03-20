@@ -67,7 +67,7 @@ public class AgentInfoController extends GenericController {
             consumes = {"application/json"},
             produces = {"application/json"})
     public ResponseValue getAgents(@Validated
-                                   @RequestParam(value = "subject", required = false) String agentName,
+                                   @RequestParam(value = "agentName", required = false) String agentName,
                                    @RequestParam(value = "status", required = false) String status,
                                    @RequestParam(value = "isDelete", required = false) String isDelete,
                                    @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
