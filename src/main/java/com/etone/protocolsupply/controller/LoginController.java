@@ -60,7 +60,7 @@ public class LoginController {
         String password = authenticationRequest.getPassword();
         Objects.requireNonNull(username);
         Objects.requireNonNull(password);
-        String a=null;
+
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
         // Reload password post-security so we can generate the token
