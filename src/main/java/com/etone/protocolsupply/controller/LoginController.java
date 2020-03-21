@@ -60,11 +60,12 @@ public class LoginController {
         String password = authenticationRequest.getPassword();
         Objects.requireNonNull(username);
         Objects.requireNonNull(password);
-        String a=null;
 
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+
         // Reload password post-security so we can generate the token
         final String token = jwtTokenUtil.generateToken((UserDetails) authentication.getPrincipal());
+
         // Return the token
         return ResponseEntity.ok(ResponseValue.createBuilder().data(token).build());
     }
