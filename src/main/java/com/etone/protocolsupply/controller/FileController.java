@@ -2,7 +2,6 @@ package com.etone.protocolsupply.controller;
 
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.entity.Attachment;
-import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.service.AttachmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,9 +18,7 @@ import java.io.UnsupportedEncodingException;
 public class FileController extends GenericController {
 
     @Autowired
-    private AttachmentService    attachmentService;
-    @Autowired
-    private AttachmentRepository attachmentRepository;
+    private AttachmentService attachmentService;
 
     @ResponseBody
     @RequestMapping(

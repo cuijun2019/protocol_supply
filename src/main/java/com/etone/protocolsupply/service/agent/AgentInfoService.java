@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -128,7 +129,7 @@ public class AgentInfoService {
         agentInfoRepository.updateIsDelete(agentId);
     }
 
-    public void export(HttpServletResponse response) {
+    public void export(HttpServletResponse response, Specification<AgentInfo> specification) {
         try {
             String[] header = {"代理商名称", "代理费用扣点（百分比）", "状态", "厂家授权函", "审核状态", "创建人", "创建时间"};
             HSSFWorkbook workbook = new HSSFWorkbook();
@@ -148,19 +149,19 @@ public class AgentInfoService {
                 cell.setCellStyle(headerStyle);
             }
 
-            List<AgentInfo> list = agentInfoRepository.findAll();
+            List<AgentInfo> list = agentInfoRepository.findAll(specification);
             AgentInfo agentInfo;
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             for (int i = 0; i < list.size(); i++) {
                 agentInfo = list.get(i);
                 HSSFRow row = sheet.createRow(i + 1);
-                row.createCell(1).setCellValue(new HSSFRichTextString(agentInfo.getAgentName()));
-                row.createCell(2).setCellValue(new HSSFRichTextString(agentInfo.getAgentPoint()));
-                row.createCell(3).setCellValue(new HSSFRichTextString(Constant.STATUS_MAP.get(agentInfo.getStatus())));
-                row.createCell(4).setCellValue(new HSSFRichTextString(agentInfo.getAttachment().getAttachName()));
-                row.createCell(5).setCellValue(new HSSFRichTextString(Constant.REVIEW_STATUS_MAP.get(agentInfo.getReviewStatus())));
-                row.createCell(6).setCellValue(new HSSFRichTextString(agentInfo.getCreator()));
-                row.createCell(7).setCellValue(new HSSFRichTextString(format.format(agentInfo.getCreateDate())));
+                row.createCell(0).setCellValue(new HSSFRichTextString(agentInfo.getAgentName()));
+                row.createCell(1).setCellValue(new HSSFRichTextString(agentInfo.getAgentPoint()));
+                row.createCell(2).setCellValue(new HSSFRichTextString(Constant.STATUS_MAP.get(agentInfo.getStatus())));
+                row.createCell(3).setCellValue(new HSSFRichTextString(agentInfo.getAttachment().getAttachName()));
+                row.createCell(4).setCellValue(new HSSFRichTextString(Constant.REVIEW_STATUS_MAP.get(agentInfo.getReviewStatus())));
+                row.createCell(5).setCellValue(new HSSFRichTextString(agentInfo.getCreator()));
+                row.createCell(6).setCellValue(new HSSFRichTextString(format.format(agentInfo.getCreateDate())));
             }
 
             response.setContentType("application/octet-stream");
