@@ -10,19 +10,16 @@ import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.ContractTemplate;
 import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.ContractTemplateRepository;
-import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import com.etone.protocolsupply.utils.SpringUtil;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
@@ -38,12 +35,9 @@ public class ContractTemplateService {
     @Autowired
     private ContractTemplateRepository contractTemplateRepository;
     @Autowired
-    private AttachmentRepository     attachmentRepository;
+    private AttachmentRepository       attachmentRepository;
     @Autowired
-    private PagingMapper             pagingMapper;
-
-    @Value("${file.upload.path.filePath}")
-    protected String uploadFilePath;
+    private PagingMapper               pagingMapper;
 
     public ContractTemplate save(ContractTemplateDto contractTemplateDto, JwtUser jwtUser) throws GlobalServiceException {
         Date date = new Date();
@@ -132,15 +126,5 @@ public class ContractTemplateService {
 
     public void delete(Long contractTemplateId) {
         contractTemplateRepository.updateIsDelete(contractTemplateId);
-    }
-
-    public Attachment upload(MultipartFile uploadFile, JwtUser jwtUser) {
-        try {
-//            保存文件到本地
-            return Common.saveUploadedFiles(uploadFile, uploadFilePath + Common.getYYYYMMDate(new Date()), jwtUser.getUsername());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

@@ -26,6 +26,7 @@ public class PagingMapper {
                 statistics.setPageSize(sourceModel.getPageable().getPageSize());
                 statistics.setCurrentPage(currentPage < 1 ? 1 : currentPage);
                 statistics.setTotalPages(sourceModel.getTotalPages());
+                statistics.setTotalSize(sourceModel.getTotalElements());
                 invoke(targetDto, request);
             }
         }

@@ -4,9 +4,7 @@ import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.template.ResultTemplateCollectionDto;
 import com.etone.protocolsupply.model.dto.template.ResultTemplateDto;
-import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.ResultTemplate;
-import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.service.template.ResultTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,7 +15,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,8 +27,6 @@ public class ResultTemplateController extends GenericController {
 
     @Autowired
     private ResultTemplateService resultTemplateService;
-    @Autowired
-    private AttachmentRepository attachmentRepository;
 
     @ResponseBody
     @RequestMapping(
@@ -44,23 +39,6 @@ public class ResultTemplateController extends GenericController {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         ResultTemplate resultTemplate = resultTemplateService.save(resultTemplateDto, this.getUser());
         responseBuilder.data(resultTemplate);
-        return responseBuilder.build();
-    }
-
-    @ResponseBody
-    @RequestMapping(
-            value = "/upload",
-            method = RequestMethod.POST,
-            produces = {"application/json"},
-            consumes = {"multipart/form-data"})
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseValue upload(@Validated @RequestParam("file") MultipartFile uploadFile) {
-        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-
-        Attachment attachment = resultTemplateService.upload(uploadFile, this.getUser());
-        Attachment saved = attachmentRepository.save(attachment);
-        responseBuilder.data(saved);
-
         return responseBuilder.build();
     }
 
