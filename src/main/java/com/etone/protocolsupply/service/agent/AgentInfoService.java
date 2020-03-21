@@ -10,7 +10,6 @@ import com.etone.protocolsupply.model.entity.AgentInfo;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.repository.AgentInfoRepository;
 import com.etone.protocolsupply.repository.AttachmentRepository;
-import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import com.etone.protocolsupply.utils.SpringUtil;
 import org.apache.logging.log4j.util.Strings;
@@ -25,7 +24,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
@@ -46,9 +44,6 @@ public class AgentInfoService {
     private AttachmentRepository attachmentRepository;
     @Autowired
     private PagingMapper         pagingMapper;
-
-    @Value("${file.upload.path.filePath}")
-    protected String uploadFilePath;
 
     public AgentInfo save(AgentInfoDto agentInfoDto, JwtUser jwtUser) throws GlobalServiceException {
         Date date = new Date();
@@ -175,15 +170,5 @@ public class AgentInfoService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public Attachment upload(MultipartFile uploadFile, JwtUser jwtUser) {
-        try {
-//            保存文件到本地
-            return Common.saveUploadedFiles(uploadFile, uploadFilePath + Common.getYYYYMMDate(new Date()), jwtUser.getUsername());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

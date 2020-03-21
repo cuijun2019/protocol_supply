@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class PageStatisticsDto {
 
     private Integer totalPages;
-    private int pageSize;
-    private int currentPage;
+    private Integer pageSize;
+    private Integer currentPage;
+    private Long totalSize;
 }

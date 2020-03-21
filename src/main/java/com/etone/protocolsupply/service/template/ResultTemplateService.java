@@ -42,9 +42,6 @@ public class ResultTemplateService {
     @Autowired
     private PagingMapper             pagingMapper;
 
-    @Value("${file.upload.path.filePath}")
-    protected String uploadFilePath;
-
     public ResultTemplate save(ResultTemplateDto resultTemplateDto, JwtUser jwtUser) throws GlobalServiceException {
         Date date = new Date();
         String userName = jwtUser.getUsername();
@@ -131,15 +128,5 @@ public class ResultTemplateService {
 
     public void delete(Long resultTemplateId) {
         resultTemplateRepository.updateIsDelete(resultTemplateId);
-    }
-
-    public Attachment upload(MultipartFile uploadFile, JwtUser jwtUser) {
-        try {
-//            保存文件到本地
-            return Common.saveUploadedFiles(uploadFile, uploadFilePath + Common.getYYYYMMDate(new Date()), jwtUser.getUsername());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

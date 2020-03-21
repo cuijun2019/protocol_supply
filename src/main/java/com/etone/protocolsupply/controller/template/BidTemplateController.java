@@ -4,9 +4,7 @@ import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.template.BidTemplateCollectionDto;
 import com.etone.protocolsupply.model.dto.template.BidTemplateDto;
-import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.BidTemplate;
-import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.service.template.BidTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,7 +15,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,9 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 public class BidTemplateController extends GenericController {
 
     @Autowired
-    private BidTemplateService   bidTemplateService;
-    @Autowired
-    private AttachmentRepository attachmentRepository;
+    private BidTemplateService bidTemplateService;
 
     @ResponseBody
     @RequestMapping(
@@ -40,27 +35,10 @@ public class BidTemplateController extends GenericController {
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseValue postBidTemplate(@Validated
-                                            @RequestBody BidTemplateDto bidTemplateDto) {
+                                         @RequestBody BidTemplateDto bidTemplateDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         BidTemplate bidTemplate = bidTemplateService.save(bidTemplateDto, this.getUser());
         responseBuilder.data(bidTemplate);
-        return responseBuilder.build();
-    }
-
-    @ResponseBody
-    @RequestMapping(
-            value = "/upload",
-            method = RequestMethod.POST,
-            produces = {"application/json"},
-            consumes = {"multipart/form-data"})
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseValue upload(@Validated @RequestParam("file") MultipartFile uploadFile) {
-        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-
-        Attachment attachment = bidTemplateService.upload(uploadFile, this.getUser());
-        Attachment saved = attachmentRepository.save(attachment);
-        responseBuilder.data(saved);
-
         return responseBuilder.build();
     }
 
@@ -69,12 +47,12 @@ public class BidTemplateController extends GenericController {
             consumes = {"application/json"},
             produces = {"application/json"})
     public ResponseValue getBidTemplates(@Validated
-                                            @RequestParam(value = "subject", required = false) String subject,
-                                            @RequestParam(value = "status", required = false) String status,
-                                            @RequestParam(value = "isDelete", required = false) String isDelete,
-                                            @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
-                                            @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
-                                            HttpServletRequest request) {
+                                         @RequestParam(value = "subject", required = false) String subject,
+                                         @RequestParam(value = "status", required = false) String status,
+                                         @RequestParam(value = "isDelete", required = false) String isDelete,
+                                         @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
+                                         @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+                                         HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
 
         Sort sort = new Sort(Sort.Direction.DESC, "createDate");
@@ -110,7 +88,7 @@ public class BidTemplateController extends GenericController {
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
     public ResponseValue updateBidTemplate(@PathVariable("bidTemplateId") String bidTemplateId,
-                                              @RequestBody BidTemplateDto bidTemplateDto) {
+                                           @RequestBody BidTemplateDto bidTemplateDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
 
         bidTemplateDto.setBidTemplateId(Long.parseLong(bidTemplateId));

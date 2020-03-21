@@ -5,8 +5,6 @@ import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.agent.AgentCollectionDto;
 import com.etone.protocolsupply.model.dto.agent.AgentInfoDto;
 import com.etone.protocolsupply.model.entity.AgentInfo;
-import com.etone.protocolsupply.model.entity.Attachment;
-import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.service.agent.AgentInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,7 +15,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,9 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 public class AgentInfoController extends GenericController {
 
     @Autowired
-    private AgentInfoService     agentInfoService;
-    @Autowired
-    private AttachmentRepository attachmentRepository;
+    private AgentInfoService agentInfoService;
 
     @ResponseBody
     @RequestMapping(
@@ -42,23 +37,6 @@ public class AgentInfoController extends GenericController {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         AgentInfo agentInfo = agentInfoService.save(agentInfoDto, this.getUser());
         responseBuilder.data(agentInfo);
-        return responseBuilder.build();
-    }
-
-    @ResponseBody
-    @RequestMapping(
-            value = "/upload",
-            method = RequestMethod.POST,
-            produces = {"application/json"},
-            consumes = {"multipart/form-data"})
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseValue upload(@Validated @RequestParam("file") MultipartFile uploadFile) {
-        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-
-        Attachment attachment = agentInfoService.upload(uploadFile, this.getUser());
-        Attachment saved = attachmentRepository.save(attachment);
-        responseBuilder.data(saved);
-
         return responseBuilder.build();
     }
 
