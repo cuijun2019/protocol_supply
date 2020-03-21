@@ -2,6 +2,7 @@ package com.etone.protocolsupply.controller;
 
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.entity.Attachment;
+import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.service.AttachmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,13 +11,17 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Context;
+import java.io.UnsupportedEncodingException;
 
 @RestController
 @RequestMapping(value = "${jwt.route.path}")
 public class FileController extends GenericController {
 
     @Autowired
-    private AttachmentService attachmentService;
+    private AttachmentService    attachmentService;
+    @Autowired
+    private AttachmentRepository attachmentRepository;
 
     @ResponseBody
     @RequestMapping(
@@ -38,11 +43,9 @@ public class FileController extends GenericController {
     @ResponseBody
     @RequestMapping(
             value = "/download/{attachId}",
-            method = RequestMethod.GET,
-            produces = {"application/json"},
-            consumes = {"application/json"})
+            method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseValue download(HttpServletResponse response, @PathVariable("attachId") String attachId) {
+    public ResponseValue download(@PathVariable("attachId") String attachId, @Context HttpServletResponse response) throws UnsupportedEncodingException {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
 
         attachmentService.download(response, Long.parseLong(attachId));
