@@ -56,6 +56,8 @@ public class ContractTemplateService {
             Optional<Attachment> optional = attachmentRepository.findById(attachment.getAttachId());
             if (optional.isPresent()) {
                 contractTemplate.setAttachment(optional.get());
+            } else {
+                throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("通过附件ID"));
             }
         }
         return contractTemplateRepository.save(contractTemplate);
@@ -110,8 +112,8 @@ public class ContractTemplateService {
         Attachment attachment = contractTemplateDto.getAttachment();
         contractTemplate.setMaintenanceMan(userName);
         contractTemplate.setMaintenanceDate(date);
+        SpringUtil.copyPropertiesIgnoreNull(contractTemplateDto, contractTemplate);
         if (contractTemplate != null && attachment == null) {
-            SpringUtil.copyPropertiesIgnoreNull(contractTemplateDto, contractTemplate);
             contractTemplateRepository.save(contractTemplate);
         }
         if (attachment != null) {

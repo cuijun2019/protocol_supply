@@ -108,11 +108,11 @@ public class AgentInfoService {
         }
     }
 
-    public AgentInfo update(AgentInfoDto agentInfoDto, JwtUser jwtUser) throws GlobalServiceException {
+    public AgentInfo update(AgentInfoDto agentInfoDto) throws GlobalServiceException {
         AgentInfo agentInfo = this.findOne(agentInfoDto.getAgentId());
         Attachment attachment = agentInfoDto.getAttachment();
+        SpringUtil.copyPropertiesIgnoreNull(agentInfoDto, agentInfo);
         if (agentInfo != null && attachment == null) {
-            SpringUtil.copyPropertiesIgnoreNull(agentInfoDto, agentInfo);
             agentInfoRepository.save(agentInfo);
         }
         if (attachment != null) {
