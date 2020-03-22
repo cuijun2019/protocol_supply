@@ -59,4 +59,16 @@ public class PartInfoController extends GenericController {
 
         return responseBuilder.build();
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/{partId}",
+            method = RequestMethod.DELETE,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseValue deleteAgent(@PathVariable("partId") String partId) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        partInfoService.delete(Long.parseLong(partId));
+        return responseBuilder.build();
+    }
 }
