@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Context;
 
 @RestController
 @RequestMapping(value = "${jwt.route.path}/agentInfo")
@@ -90,7 +91,7 @@ public class AgentInfoController extends GenericController {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
 
         agentInfoDto.setAgentId(Long.parseLong(agentId));
-        AgentInfo agentInfo = agentInfoService.update(agentInfoDto, this.getUser());
+        AgentInfo agentInfo = agentInfoService.update(agentInfoDto);
         responseBuilder.data(agentInfo);
 
         return responseBuilder.build();
@@ -114,10 +115,14 @@ public class AgentInfoController extends GenericController {
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseValue exportAgent(HttpServletResponse response) {
+    public ResponseValue exportAgent(@RequestParam(value = "agentName", required = false) String agentName,
+                                     @RequestParam(value = "status", required = false) String status,
+                                     @RequestParam(value = "isDelete", required = false) String isDelete,
+                                     @Context HttpServletResponse response) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
 
-        agentInfoService.export(response);
+        Specification<AgentInfo> specification = agentInfoService.getWhereClause(agentName, status, isDelete);
+        agentInfoService.export(response, specification);
 
         return responseBuilder.build();
     }

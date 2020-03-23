@@ -58,6 +58,8 @@ public class ResultTemplateService {
             Optional<Attachment> optional = attachmentRepository.findById(attachment.getAttachId());
             if (optional.isPresent()) {
                 resultTemplate.setAttachment(optional.get());
+            } else {
+                throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("通过附件ID"));
             }
         }
         return resultTemplateRepository.save(resultTemplate);
@@ -112,8 +114,8 @@ public class ResultTemplateService {
         Attachment attachment = resultTemplateDto.getAttachment();
         resultTemplate.setMaintenanceMan(userName);
         resultTemplate.setMaintenanceDate(date);
+        SpringUtil.copyPropertiesIgnoreNull(resultTemplateDto, resultTemplate);
         if (resultTemplate != null && attachment == null) {
-            SpringUtil.copyPropertiesIgnoreNull(resultTemplateDto, resultTemplate);
             resultTemplateRepository.save(resultTemplate);
         }
         if (attachment != null) {

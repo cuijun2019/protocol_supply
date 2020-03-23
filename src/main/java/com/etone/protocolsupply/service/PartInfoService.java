@@ -61,4 +61,8 @@ public class PartInfoService {
         }
         return partCollectionDto;
     }
+
+    public void delete(Long partId) {
+        partInfoRepository.updateIsDelete(partId);
+    }
 }

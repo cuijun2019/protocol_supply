@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Optional;
 
@@ -39,7 +41,7 @@ public class AttachmentService {
         return attachmentRepository.save(attachment);
     }
 
-    public void download(HttpServletResponse response, Long attachId) {
+    public void download(HttpServletResponse response, Long attachId) throws UnsupportedEncodingException {
         Optional<Attachment> optional = attachmentRepository.findById(attachId);
         if (optional.isPresent()) {
             Attachment attachment = optional.get();
@@ -47,8 +49,11 @@ public class AttachmentService {
             String fileName = attachment.getAttachName();
             File file = new File(path);
             if (file.exists()) {
-                response.setContentType("application/force-download");// 设置强制下载不打开
-                response.addHeader("Content-Disposition", "attachment;fileName=" + fileName);// 设置文件名
+                String type = new MimetypesFileTypeMap().getContentType(fileName);
+                // 设置contenttype，即告诉客户端所发送的数据属于什么类型
+                response.setHeader("Content-type", type);
+                response.setHeader("Content-Disposition", "attachment;filename=" + fileName + ";filename*=utf-8''"
+                        + URLEncoder.encode(fileName, "utf-8"));
                 byte[] buffer = new byte[1024];
                 FileInputStream fis = null;
                 BufferedInputStream bis = null;

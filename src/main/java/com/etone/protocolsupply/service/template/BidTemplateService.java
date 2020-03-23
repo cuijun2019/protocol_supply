@@ -56,6 +56,8 @@ public class BidTemplateService {
             Optional<Attachment> optional = attachmentRepository.findById(attachment.getAttachId());
             if (optional.isPresent()) {
                 bidTemplate.setAttachment(optional.get());
+            } else {
+                throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("通过附件ID"));
             }
         }
         return bidTemplateRepository.save(bidTemplate);
@@ -110,8 +112,8 @@ public class BidTemplateService {
         Attachment attachment = bidTemplateDto.getAttachment();
         bidTemplate.setMaintenanceMan(userName);
         bidTemplate.setMaintenanceDate(date);
+        SpringUtil.copyPropertiesIgnoreNull(bidTemplateDto, bidTemplate);
         if (bidTemplate != null && attachment == null) {
-            SpringUtil.copyPropertiesIgnoreNull(bidTemplateDto, bidTemplate);
             bidTemplateRepository.save(bidTemplate);
         }
         if (attachment != null) {

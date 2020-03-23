@@ -23,14 +23,26 @@ public class CargoInfo implements Serializable {
     /**
      * 货物序号
      */
-    @Column(name = "CARGO_CODE", length = 100)
-    private String  cargoCode;
+    @Column(name = "CARGO_SERIAL", length = 100)
+    private String  cargoSerial;
+
+    /**
+     * 货物分类
+     */
+    @Column(name = "CARGO_CATEGORY", length = 100)
+    private String  cargoCategory;
 
     /**
      * 货物名称
      */
     @Column(name = "CARGO_NAME", length = 200)
     private String  cargoName;
+
+    /**
+     * 货物编号
+     */
+    @Column(name = "CARGO_CODE", length = 100)
+    private String  cargoCode;
 
     /**
      * 品牌
@@ -43,6 +55,12 @@ public class CargoInfo implements Serializable {
      */
     @Column(name = "MODEL", length = 100)
     private String  model;
+
+    /**
+     * 主要参数
+     */
+    @Column(name = "MAIN_PARAMS", length = 2000)
+    private String  mainParams;
 
     /**
      * 产地
