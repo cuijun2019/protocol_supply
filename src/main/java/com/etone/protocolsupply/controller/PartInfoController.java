@@ -3,7 +3,9 @@ package com.etone.protocolsupply.controller;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.part.PartCollectionDto;
 import com.etone.protocolsupply.model.dto.part.PartInfoDto;
+import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.PartInfo;
+import com.etone.protocolsupply.service.AttachmentService;
 import com.etone.protocolsupply.service.PartInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,8 +16,13 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Context;
+import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "${jwt.route.path}/partInfo")
@@ -23,6 +30,9 @@ public class PartInfoController extends GenericController {
 
     @Autowired
     private PartInfoService partInfoService;
+
+    @Autowired
+    private AttachmentService attachmentService;
 
     @ResponseBody
     @RequestMapping(
@@ -71,4 +81,48 @@ public class PartInfoController extends GenericController {
         partInfoService.delete(Long.parseLong(partId));
         return responseBuilder.build();
     }
+
+    /**
+     * 配件导入
+     * @param cargoId
+     * @param uploadFile
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/upLoad",
+            method = RequestMethod.POST,
+            produces = {"application/json"},
+            consumes = {"multipart/form-data"})
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseValue upLoadPart(@Validated @RequestParam("file") MultipartFile uploadFile,@RequestParam(value = "cargoId", required = false) String cargoId) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        Attachment attachment = attachmentService.upload(uploadFile, this.getUser());
+        partInfoService.upLoad(attachment, cargoId);
+
+        return responseBuilder.build();
+    }
+
+    /**
+     * 配件导出
+     * @param cargoId
+     * @param response
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/export",
+            method = RequestMethod.GET,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseValue exportPart(@RequestParam(value = "cargoId", required = false) String cargoId,
+                                     @Context HttpServletResponse response) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+
+        partInfoService.export(response, Long.parseLong(cargoId));
+
+        return responseBuilder.build();
+    }
+
+
+
 }
