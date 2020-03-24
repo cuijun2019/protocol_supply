@@ -317,16 +317,17 @@ public class PartInfoService {
         Long lcargoId=Long.parseLong(cargoId);
         Specification<PartInfo> specification = getWhereClause("2");
         List<PartInfo> list=partInfoRepository.findAll(specification);
+        List<String> listDel = new ArrayList<>();
+        List<PartInfo> listSave = new ArrayList<>();
         for (int i=0;i<maps.size();i++) {
             String jsonStr=maps.get(i).toString();
             JSONObject jsonObject = new JSONObject(jsonStr);
             PartInfo partInfo=new PartInfo();
             for(PartInfo item:list){
                 if(item.getPartCode().equals(jsonObject.get("配件编号").toString())){
-                    partInfoRepository.deleteByPartId(item.getPartId());
+                    listDel.add(item.getPartId().toString());
                 }
             }
-
             partInfo.setPartCode(jsonObject.get("配件编号").toString());
             partInfo.setPartName(jsonObject.get("设备或配件名称").toString());
             partInfo.setStandards(jsonObject.get("型号/规格").toString());
@@ -340,8 +341,9 @@ public class PartInfoService {
             partInfo.setIsDelete(2);
             CargoInfo cargoInfo=cargoInfoRepository.findAllByCargoId(lcargoId);
             partInfo.setCargoInfo(cargoInfo);
-            partInfoRepository.save(partInfo);
+            listSave.add(partInfo);
         }
-
+        partInfoRepository.deleteAll(listDel);
+        partInfoRepository.saveAll(listSave);
     }
 }
