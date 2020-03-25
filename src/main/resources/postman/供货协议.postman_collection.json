@@ -1,0 +1,1104 @@
+{
+	"info": {
+		"_postman_id": "1ee318ec-5c85-421a-883c-69461566153b",
+		"name": "供货协议",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "代理商管理",
+			"item": [
+				{
+					"name": "创建代理商",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTAxMzQyMSwiaWF0IjoxNTg0NDA4NjIxfQ.gpyG4zPs0oad_aXdYh4-t46_RUQ26LWoq6RhBe2P48AIKQtWqlGgd6DtAMu6imyDiE_C1qcNATzZ5EfCDU5Flw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"agentName\": \"代理商名称\",\r\n    \"agentPoint\": \"30%\",\r\n    \"status\": 1,\r\n    \"attachment\": {\r\n        \"attachId\": 33\r\n    }\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8780/api/agentInfo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8780",
+							"path": [
+								"api",
+								"agentInfo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "代理商列表",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTMyMDU3NiwiaWF0IjoxNTg0NzE1Nzc2fQ.PqJjC0mbpe867SnnNl_F_71GJzllfKDlJ9xLb7dyJikQsHmxqGZaVHGfoIC17KlTdRTreY2kDkBhpjmrrnjbPA",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8780/api/agentInfo?pageSize=15&currentPage=1&isDelete=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8780",
+							"path": [
+								"api",
+								"agentInfo"
+							],
+							"query": [
+								{
+									"key": "pageSize",
+									"value": "15"
+								},
+								{
+									"key": "currentPage",
+									"value": "1"
+								},
+								{
+									"key": "isDelete",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "查看代理商详情",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTMyMDU3NiwiaWF0IjoxNTg0NzE1Nzc2fQ.PqJjC0mbpe867SnnNl_F_71GJzllfKDlJ9xLb7dyJikQsHmxqGZaVHGfoIC17KlTdRTreY2kDkBhpjmrrnjbPA",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8780/api/agentInfo/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8780",
+							"path": [
+								"api",
+								"agentInfo",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "删除代理商",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTMyMDU3NiwiaWF0IjoxNTg0NzE1Nzc2fQ.PqJjC0mbpe867SnnNl_F_71GJzllfKDlJ9xLb7dyJikQsHmxqGZaVHGfoIC17KlTdRTreY2kDkBhpjmrrnjbPA",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8780/api/agentInfo/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8780",
+							"path": [
+								"api",
+								"agentInfo",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "导出代理商",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTM2NzQ1MCwiaWF0IjoxNTg0NzYyNjUwfQ.kLxHnw6fve0EJMH2wD2nFcDqHIb0XbnAQ4oEyyuOzewQLsTc8OzPN6wPFzcT93m6abFaPVqgcsS_i0_6FLOlUg",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8780/api/agentInfo/export",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8780",
+							"path": [
+								"api",
+								"agentInfo",
+								"export"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "导出配件",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTM2NzQ1MCwiaWF0IjoxNTg0NzYyNjUwfQ.kLxHnw6fve0EJMH2wD2nFcDqHIb0XbnAQ4oEyyuOzewQLsTc8OzPN6wPFzcT93m6abFaPVqgcsS_i0_6FLOlUg",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8780/api/partInfo/export",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8780",
+							"path": [
+								"api",
+								"partInfo",
+								"export"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "配件导入",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTQ5Mjg3MywiaWF0IjoxNTg0ODg4MDczfQ.LruYddhJBQtDh8eU0KNA0pqwNRLBO11AOV7Gfsp9mZF3X1lY82FvHFXo_AIRvkyCpDuU9grC_LlFjZHfkga-lA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/cuijun/Desktop/新建 Microsoft Excel 工作表.xlsx"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8780/api/partInfo/upLoad",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8780",
+							"path": [
+								"api",
+								"partInfo",
+								"upLoad"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		
+		{
+			"name": "模板",
+			"item": [
+				{
+					"name": "采购结果通知书模板",
+					"item": [
+						{
+							"name": "创建采购结果通知书模板",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTAxMzQyMSwiaWF0IjoxNTg0NDA4NjIxfQ.gpyG4zPs0oad_aXdYh4-t46_RUQ26LWoq6RhBe2P48AIKQtWqlGgd6DtAMu6imyDiE_C1qcNATzZ5EfCDU5Flw",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"resultTemplateSubject\": \"采购结果通知书模板主题\",\r\n    \"status\": 1,\r\n    \"attachment\": {\r\n        \"attachId\": 1\r\n    }\r\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8780/api/resultTemplate",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"resultTemplate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "采购结果通知书模板列表",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTQwNDM1MywiaWF0IjoxNTg0Nzk5NTUzfQ.bTNa0NujoHH6LVwiC1USOJdAYauosGhTXsSwdvYPaXA1MNxKVDBVI-n8gosHtBtrBZ67w8td9W0LCfsnQs-YeA"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8780/api/resultTemplate?pageSize=15&currentPage=1&isDelete=2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"resultTemplate"
+									],
+									"query": [
+										{
+											"key": "pageSize",
+											"value": "15"
+										},
+										{
+											"key": "currentPage",
+											"value": "1"
+										},
+										{
+											"key": "isDelete",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "查看采购结果通知书模板详情",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NDc4MDU3NywiaWF0IjoxNTg0MTc1Nzc3fQ.efo8G-AsAov-qGF7jm-9Bt1_bvLevIHr6hE9iR9c18Or91mukaQ8KDQ2OiI_lfan1JktWtGnVap34sxLA8Ivkw",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8780/api/resultTemplate/4",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"resultTemplate",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "删除采购结果通知书模板",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NDc4MDU3NywiaWF0IjoxNTg0MTc1Nzc3fQ.efo8G-AsAov-qGF7jm-9Bt1_bvLevIHr6hE9iR9c18Or91mukaQ8KDQ2OiI_lfan1JktWtGnVap34sxLA8Ivkw",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8780/api/resultTemplate/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"resultTemplate",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "修改采购结果通知书模板",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NDc4MDU3NywiaWF0IjoxNTg0MTc1Nzc3fQ.efo8G-AsAov-qGF7jm-9Bt1_bvLevIHr6hE9iR9c18Or91mukaQ8KDQ2OiI_lfan1JktWtGnVap34sxLA8Ivkw",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"resultTemplateSubject\": \"采购结果通知书模板主题2\",\n\t\"status\": \"2\",\n\t\"attachment\": {\n        \"attachId\": 1\n    }\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8780/api/resultTemplate/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"resultTemplate",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "中标通知书模板",
+					"item": [
+						{
+							"name": "中标通知书模板",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTQ5Mjg3MywiaWF0IjoxNTg0ODg4MDczfQ.LruYddhJBQtDh8eU0KNA0pqwNRLBO11AOV7Gfsp9mZF3X1lY82FvHFXo_AIRvkyCpDuU9grC_LlFjZHfkga-lA",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"bidTemplateSubject\": \"中标通知书模板主题\",\r\n    \"status\": 1,\r\n    \"attachment\": {\r\n        \"attachId\": 1\r\n    }\r\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8780/api/bidTemplate",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"bidTemplate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "中标通知书模板列表",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTQ5Mjg3MywiaWF0IjoxNTg0ODg4MDczfQ.LruYddhJBQtDh8eU0KNA0pqwNRLBO11AOV7Gfsp9mZF3X1lY82FvHFXo_AIRvkyCpDuU9grC_LlFjZHfkga-lA"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8780/api/bidTemplate?pageSize=15&currentPage=1&isDelete=2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"bidTemplate"
+									],
+									"query": [
+										{
+											"key": "pageSize",
+											"value": "15"
+										},
+										{
+											"key": "currentPage",
+											"value": "1"
+										},
+										{
+											"key": "isDelete",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "中标结果通知书模板详情",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTQ5Mjg3MywiaWF0IjoxNTg0ODg4MDczfQ.LruYddhJBQtDh8eU0KNA0pqwNRLBO11AOV7Gfsp9mZF3X1lY82FvHFXo_AIRvkyCpDuU9grC_LlFjZHfkga-lA",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8780/api/bidTemplate/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"bidTemplate",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "删除中标通知书模板",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTQ5Mjg3MywiaWF0IjoxNTg0ODg4MDczfQ.LruYddhJBQtDh8eU0KNA0pqwNRLBO11AOV7Gfsp9mZF3X1lY82FvHFXo_AIRvkyCpDuU9grC_LlFjZHfkga-lA",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8780/api/bidTemplate/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"bidTemplate",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "修改中标通知书模板",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTQ5Mjg3MywiaWF0IjoxNTg0ODg4MDczfQ.LruYddhJBQtDh8eU0KNA0pqwNRLBO11AOV7Gfsp9mZF3X1lY82FvHFXo_AIRvkyCpDuU9grC_LlFjZHfkga-lA",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"bidTemplateSubject\": \"中标通知书模板主题2\",\n\t\"status\": \"2\",\n\t\"attachment\": {\n        \"attachId\": 1\n    }\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8780/api/bidTemplate/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"bidTemplate",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "合同模板",
+					"item": [
+						{
+							"name": "创建合同模板",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTQ5Mjg3MywiaWF0IjoxNTg0ODg4MDczfQ.LruYddhJBQtDh8eU0KNA0pqwNRLBO11AOV7Gfsp9mZF3X1lY82FvHFXo_AIRvkyCpDuU9grC_LlFjZHfkga-lA",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"contractTemplateSubject\": \"合同模板主题\",\r\n    \"status\": 1,\r\n    \"attachment\": {\r\n        \"attachId\": 1\r\n    }\r\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8780/api/contractTemplate",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"contractTemplate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "合同模板列表",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTQ5Mjg3MywiaWF0IjoxNTg0ODg4MDczfQ.LruYddhJBQtDh8eU0KNA0pqwNRLBO11AOV7Gfsp9mZF3X1lY82FvHFXo_AIRvkyCpDuU9grC_LlFjZHfkga-lA"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8780/api/contractTemplate?pageSize=15&currentPage=1&isDelete=2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"contractTemplate"
+									],
+									"query": [
+										{
+											"key": "pageSize",
+											"value": "15"
+										},
+										{
+											"key": "currentPage",
+											"value": "1"
+										},
+										{
+											"key": "isDelete",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "查看合同模板详情",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTQ5Mjg3MywiaWF0IjoxNTg0ODg4MDczfQ.LruYddhJBQtDh8eU0KNA0pqwNRLBO11AOV7Gfsp9mZF3X1lY82FvHFXo_AIRvkyCpDuU9grC_LlFjZHfkga-lA",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8780/api/contractTemplate/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"contractTemplate",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "删除合同模板",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTQ5Mjg3MywiaWF0IjoxNTg0ODg4MDczfQ.LruYddhJBQtDh8eU0KNA0pqwNRLBO11AOV7Gfsp9mZF3X1lY82FvHFXo_AIRvkyCpDuU9grC_LlFjZHfkga-lA",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8780/api/contractTemplate/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"contractTemplate",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "修改合同模板",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTQ5Mjg3MywiaWF0IjoxNTg0ODg4MDczfQ.LruYddhJBQtDh8eU0KNA0pqwNRLBO11AOV7Gfsp9mZF3X1lY82FvHFXo_AIRvkyCpDuU9grC_LlFjZHfkga-lA",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"contractTemplateSubject\": \"合同模板主题2\",\n\t\"status\": \"2\",\n\t\"attachment\": {\n\t\t\"attachId\": 1\n    }\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8780/api/contractTemplate/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"contractTemplate",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "上传下载",
+			"item": [
+				{
+					"name": "上传文件",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTQ5Mjg3MywiaWF0IjoxNTg0ODg4MDczfQ.LruYddhJBQtDh8eU0KNA0pqwNRLBO11AOV7Gfsp9mZF3X1lY82FvHFXo_AIRvkyCpDuU9grC_LlFjZHfkga-lA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/cuijun/Desktop/新建 Microsoft Excel 工作表.xlsx"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8780/api/upload",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8780",
+							"path": [
+								"api",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "上传厂家授权函",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTAxNDczNCwiaWF0IjoxNTg0NDA5OTM0fQ.1CzTWOmdLnCoVFkeLelbb8N0ODucd0FDf9sFMr3E1xbnue06rE5y-mPzKWBgNL405cwSSMBINvdJZNsI9q8yuw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/cuijun/Desktop/新建 Microsoft Excel 工作表.xlsx"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8780/api/upload",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8780",
+							"path": [
+								"api",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "下载文件",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTM2NzQ1MCwiaWF0IjoxNTg0NzYyNjUwfQ.kLxHnw6fve0EJMH2wD2nFcDqHIb0XbnAQ4oEyyuOzewQLsTc8OzPN6wPFzcT93m6abFaPVqgcsS_i0_6FLOlUg",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8780/api/download/33",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8780",
+							"path": [
+								"api",
+								"download",
+								"33"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "用户登录",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"username\":\"admin\",\r\n\"password\":\"123456\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8780/api/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8780",
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
