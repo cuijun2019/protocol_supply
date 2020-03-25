@@ -20,4 +20,7 @@ public interface CargoInfoRepository extends JpaRepository<CargoInfo, Long>, Jpa
     //@Modifying
     @Query(value = "select * from cargo_info where is_delete=2 and cargo_id=?1", nativeQuery = true)
     CargoInfo findAllByCargoId(Long cargoId);
+
+    @Query(value = "select * from cargo_info where is_delete=2 and cargo_name like '%?1%'  ", nativeQuery = true)
+    List<CargoInfo> findByCargoName(String cargoName);
 }

@@ -32,6 +32,7 @@ public class FileController extends GenericController {
 
         Attachment attachment = attachmentService.upload(uploadFile, this.getUser());
         Attachment saved = attachmentService.save(attachment);
+
         responseBuilder.data(saved);
 
         return responseBuilder.build();
