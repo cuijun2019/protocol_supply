@@ -30,4 +30,9 @@ public interface PartInfoRepository extends JpaRepository<PartInfo, Long>, JpaSp
     @Modifying
     @Query(value = "delete from part_info  where part_id in ?1", nativeQuery = true)
     void deleteAll(List<String> list);
+
+
+    @Query(value = "select  MIN(cargo_id)AS cargo_id from part_info where is_delete=2 and part_name like '%?2%' and  manufactor like '%?3%' GROUP BY cargo_id", nativeQuery = true)
+    List<PartInfo> findAllBycon(String isDelete,String partName,String manufactor);
+
 }

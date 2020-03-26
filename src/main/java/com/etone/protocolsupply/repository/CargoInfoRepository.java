@@ -1,6 +1,8 @@
 package com.etone.protocolsupply.repository;
 
 import com.etone.protocolsupply.model.entity.CargoInfo;
+import com.etone.protocolsupply.model.entity.PartInfo;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -23,4 +25,9 @@ public interface CargoInfoRepository extends JpaRepository<CargoInfo, Long>, Jpa
 
     @Query(value = "select * from cargo_info where is_delete=2 and cargo_name like '%?1%'  ", nativeQuery = true)
     List<CargoInfo> findByCargoName(String cargoName);
+
+
+    @Query(value = "SELECT * FROM cargo_info where 1=1 and is_delete= ?1 and cargo_name like '%?2%' and cargo_id in ?3", nativeQuery = true)
+    Specification<CargoInfo> findAllBycon(String isDelete, String cargoName, List<PartInfo> list);
+
 }

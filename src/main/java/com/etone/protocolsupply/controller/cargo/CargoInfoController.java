@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "${jwt.route.path}/cargoInfo")
@@ -33,6 +34,9 @@ public class CargoInfoController extends GenericController {
 
     @Autowired
     private CargoInfoService cargoInfoService;
+
+    @Autowired
+    private PartInfoService partInfoService;
 
     @Autowired
     private AttachmentService attachmentService;
@@ -73,13 +77,18 @@ public class CargoInfoController extends GenericController {
                                       @RequestParam(value = "isDelete", required = false) String isDelete,
                                       @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
                                       @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+                                       @RequestParam(value = "cargoName", required = false) String cargoName,
+                                       @RequestParam(value = "partName", required = false) String partName,
+                                       @RequestParam(value = "manufactor", required = false) String manufactor,
                                       HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
 
         Sort sort = new Sort(Sort.Direction.DESC, "cargoId");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Specification<CargoInfo> specification = cargoInfoService.getWhereClause(isDelete);
-        Page<CargoInfo> page = cargoInfoService.findPartInfos(specification, pageable);
+
+        Specification<CargoInfo> specification = cargoInfoService.getWhereClause(isDelete,cargoName);
+
+        Page<CargoInfo> page = cargoInfoService.findCargoInfos(specification, pageable);
 
         CargoCollectionDto cargoCollectionDto = cargoInfoService.to(page, request);
         responseBuilder.data(cargoCollectionDto);
@@ -127,7 +136,7 @@ public class CargoInfoController extends GenericController {
     /**
      * 修改货物
      * @param cargoId
-     * @param cargoInfoDto
+     * @param cargoInfo
      * @return
      */
     @ResponseBody
@@ -137,12 +146,17 @@ public class CargoInfoController extends GenericController {
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
     public ResponseValue updateCargo(@PathVariable("cargoId") String cargoId,
-                                     @RequestBody CargoInfoDto cargoInfoDto) {
+                                     @RequestBody CargoInfo cargoInfo) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        cargoInfoDto.setCargoId(Long.parseLong(cargoId));
-        CargoInfo cargoInfo = cargoInfoService.update(cargoInfoDto,this.getUser());
-        responseBuilder.data(cargoInfo);
 
+        CargoInfo model= cargoInfoService.findOne(Long.parseLong(cargoId));
+        cargoInfo.setCargoId(Long.parseLong(cargoId));
+        cargoInfo.setCreator(model.getCreator());
+        cargoInfo.setCreateDate(model.getCreateDate());
+        cargoInfo.setCargoSerial(model.getCargoSerial());
+        cargoInfo.setCargoCode(model.getCargoCode());
+        responseBuilder.data(cargoInfo);
+        cargoInfo = cargoInfoService.update(cargoInfo,this.getUser());
         return responseBuilder.build();
     }
 
@@ -161,7 +175,6 @@ public class CargoInfoController extends GenericController {
     public ResponseValue exportPart(@RequestParam(value = "cargoName", required = false) String cargoName,
                                     @Context HttpServletResponse response) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-         cargoName="名称";
         cargoInfoService.export(response, cargoName);
 
         return responseBuilder.build();

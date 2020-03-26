@@ -64,6 +64,14 @@ public class PartInfoService {
             return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
         };
     }
+    public List<PartInfo> getWhereClause1(String isDelete,String partName,String manufactor ) {
+
+        return partInfoRepository.findAllBycon(isDelete,partName,manufactor);
+
+
+    }
+
+
 
     //配件导出
     public Specification<PartInfo> getWhereClauseEx(String cargoId, String isDelete) {

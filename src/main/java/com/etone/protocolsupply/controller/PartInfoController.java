@@ -109,12 +109,12 @@ public class PartInfoController extends GenericController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/export",
+    @RequestMapping(value = "/export/{cargoId}",
             method = RequestMethod.GET,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseValue exportPart(@RequestParam(value = "cargoId", required = false) String cargoId,
+    public ResponseValue exportPart(@PathVariable("cargoId") String cargoId,
                                      @Context HttpServletResponse response) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
 

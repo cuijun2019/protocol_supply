@@ -69,18 +69,23 @@ public class CargoInfoService {
         cargoInfoRepository.save(cargoInfo);
     }
 
-    public Specification<CargoInfo> getWhereClause(String isDelete) {
+    public Specification<CargoInfo> getWhereClause(String isDelete,String cargoName) {
         return (Specification<CargoInfo>) (root, criteriaQuery, criteriaBuilder) -> {
 
             List<Predicate> predicates = new ArrayList<>();
+            if (Strings.isNotBlank(cargoName)) {
+                predicates.add(criteriaBuilder.like(root.get("cargoName").as(String.class), "%"+cargoName+"%"));
+            }
             predicates.add(criteriaBuilder.equal(root.get("isDelete").as(Long.class), isDelete));
             Predicate[] pre = new Predicate[predicates.size()];
             return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
         };
+
+
     }
 
 
-    public Page<CargoInfo> findPartInfos(Specification<CargoInfo> specification, Pageable pageable) {
+    public Page<CargoInfo> findCargoInfos(Specification<CargoInfo> specification, Pageable pageable) {
         return cargoInfoRepository.findAll(specification, pageable);
     }
 
@@ -104,15 +109,15 @@ public class CargoInfoService {
         CargoInfo cargoInfo= cargoInfoRepository.findAllByCargoId(cargoId);
         return cargoInfo;
     }
-    public CargoInfo update(CargoInfoDto cargoInfoDto,JwtUser jwtUser) throws GlobalServiceException {
+    public CargoInfo update(CargoInfo cargoInfo,JwtUser jwtUser) throws GlobalServiceException {
        // CargoInfo cargoInfo = this.findOne(cargoInfoDto.getCargoId());
         Date date = new Date();
         String userName = jwtUser.getUsername();
-        CargoInfo cargoInfo = cargoInfoDto;
+
         cargoInfo.setMaintenanceMan(userName);
         cargoInfo.setMaintenanceDate(date);
         Optional<Attachment> attachment = attachmentRepository.findById(cargoInfo.getAttachment().getAttachId());
-        SpringUtil.copyPropertiesIgnoreNull(cargoInfoDto, cargoInfo);
+
         if (cargoInfo != null && attachment == null) {
             cargoInfoRepository.save(cargoInfo);
         }
