@@ -48,11 +48,11 @@ public class PartInfoService {
     @Autowired
     private PagingMapper       pagingMapper;
 
-    public void save(PartInfoDto partInfoDto) throws GlobalServiceException {
+    public PartInfo save(PartInfoDto partInfoDto) throws GlobalServiceException {
         PartInfo partInfo = new PartInfo();
         BeanUtils.copyProperties(partInfoDto, partInfo);
         partInfo.setIsDelete(Constant.DELETE_NO);
-        partInfoRepository.save(partInfo);
+       return partInfoRepository.save(partInfo);
     }
 
     public Specification<PartInfo> getWhereClause(String isDelete) {

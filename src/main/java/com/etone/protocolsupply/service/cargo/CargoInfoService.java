@@ -54,19 +54,25 @@ public class CargoInfoService {
     @Autowired
     private PagingMapper       pagingMapper;
 
-    public void save(CargoInfoDto cargoInfoDto, JwtUser jwtUser) throws GlobalServiceException {
+    public CargoInfo save(CargoInfo cargoInfo, JwtUser jwtUser) throws GlobalServiceException {
         Date date = new Date();
         String userName = jwtUser.getUsername();
-        CargoInfo cargoInfo = new CargoInfo();
-        BeanUtils.copyProperties(cargoInfoDto, cargoInfo);
         cargoInfo.setIsDelete(Constant.DELETE_NO);
         cargoInfo.setCreator(userName);
         cargoInfo.setCreateDate(date);
         cargoInfo.setMaintenanceDate(date);
         cargoInfo.setMaintenanceMan(userName);
+        Attachment attachment = cargoInfo.getAttachment();
+        if (attachment != null) {
+            Optional<Attachment> optional = attachmentRepository.findById(attachment.getAttachId());
+            if (optional.isPresent()) {
+                cargoInfo.setAttachment(optional.get());
+            }
+        }
+//        cargoInfo.getAttachment().setAttachId(cargoInfoDto.getAttachment().getAttachId());
         //cargoInfo.setCargoSerial();//序号
         //cargoInfo.setCargoCode();//编号
-        cargoInfoRepository.save(cargoInfo);
+        return cargoInfoRepository.save(cargoInfo);
     }
 
     public Specification<CargoInfo> getWhereClause(String isDelete,String cargoName) {

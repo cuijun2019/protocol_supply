@@ -43,7 +43,7 @@ public class CargoInfoController extends GenericController {
 
     /**
      * 新增货物
-     * @param cargoInfoDto
+     * @param cargoInfo
      * @return
      */
     @ResponseBody
@@ -53,11 +53,10 @@ public class CargoInfoController extends GenericController {
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseValue postCargoInfo(@Validated
-                                      @RequestBody CargoInfoDto cargoInfoDto) {
+                                      @RequestBody CargoInfo cargoInfo) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-
-        cargoInfoService.save(cargoInfoDto, this.getUser());
-        responseBuilder.data(cargoInfoDto);
+        CargoInfo cargoInfo1= cargoInfoService.save(cargoInfo, this.getUser());
+        responseBuilder.data(cargoInfo1);
         return responseBuilder.build();
     }
 

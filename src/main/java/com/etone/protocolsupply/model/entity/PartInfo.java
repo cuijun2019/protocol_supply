@@ -1,6 +1,8 @@
 package com.etone.protocolsupply.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -79,8 +81,15 @@ public class PartInfo implements Serializable {
     @Column(name = "IS_DELETE", length = 4)
     private Integer isDelete;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+//    @JsonIgnore
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "CARGO_ID")
+//    private CargoInfo cargoInfo;
+@OneToOne(fetch = FetchType.LAZY)
+@JsonIgnoreProperties(value={"hibernateLazyInitializer"})
+@JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "CARGO_ID")
     private CargoInfo cargoInfo;
+
+
 }

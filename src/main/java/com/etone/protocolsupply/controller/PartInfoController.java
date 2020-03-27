@@ -43,8 +43,8 @@ public class PartInfoController extends GenericController {
     public ResponseValue postPartInfo(@Validated
                                       @RequestBody PartInfoDto partInfoDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        partInfoService.save(partInfoDto);
-        responseBuilder.data(partInfoDto);
+        PartInfo partInfo= partInfoService.save(partInfoDto);
+        responseBuilder.data(partInfo);
         return responseBuilder.build();
     }
 
