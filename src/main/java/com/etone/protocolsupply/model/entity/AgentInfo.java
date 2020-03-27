@@ -42,6 +42,12 @@ public class AgentInfo implements Serializable {
     @Column(name = "REVIEW_STATUS", length = 4)
     private Integer reviewStatus;
 
+    /**
+     * 项目id
+     */
+    @Column(name = "PROJECT_ID")
+    private Long    projectId;
+
     @Column(name = "CREATOR", length = 32)
     private String  creator;
 

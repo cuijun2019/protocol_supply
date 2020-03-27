@@ -122,5 +122,5 @@ public class CargoInfo implements Serializable {
     @OneToMany(mappedBy = "cargoInfo",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
-    private List<PartInfo> partInfos;
+    private List<PartInfo> partInfo;
 }
