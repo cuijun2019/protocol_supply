@@ -13,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -55,13 +54,13 @@ public class PartInfoController extends GenericController {
                                       @RequestParam(value = "isDelete", required = false) String isDelete,
                                       @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
                                       @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+                                      @RequestParam(value = "cargoId", required = false) String cargoId,
                                       HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
 
-        Sort sort = new Sort(Sort.Direction.DESC, "partId");
+        Sort sort = new Sort(Sort.Direction.DESC, "part_id");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Specification<PartInfo> specification = partInfoService.getWhereClause(isDelete);
-        Page<PartInfo> page = partInfoService.findPartInfos(specification, pageable);
+        Page<PartInfo> page = partInfoService.findPartInfos(cargoId, isDelete, pageable);
 
         PartCollectionDto partCollectionDto = partInfoService.to(page, request);
         responseBuilder.data(partCollectionDto);

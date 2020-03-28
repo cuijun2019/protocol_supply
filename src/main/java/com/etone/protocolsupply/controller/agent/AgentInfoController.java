@@ -5,6 +5,7 @@ import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.agent.AgentCollectionDto;
 import com.etone.protocolsupply.model.dto.agent.AgentInfoDto;
 import com.etone.protocolsupply.model.entity.AgentInfo;
+import com.etone.protocolsupply.repository.AgentInfoRepository;
 import com.etone.protocolsupply.service.agent.AgentInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,8 @@ public class AgentInfoController extends GenericController {
 
     @Autowired
     private AgentInfoService agentInfoService;
+    @Autowired
+    private AgentInfoRepository agentInfoRepository;
 
     @ResponseBody
     @RequestMapping(
@@ -114,16 +117,10 @@ public class AgentInfoController extends GenericController {
             method = RequestMethod.GET,
             consumes = {"application/json"},
             produces = {"application/json"})
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseValue exportAgent(@RequestParam(value = "agentName", required = false) String agentName,
+    public void exportAgent(@RequestParam(value = "agentName", required = false) String agentName,
                                      @RequestParam(value = "status", required = false) String status,
                                      @RequestParam(value = "isDelete", required = false) String isDelete,
                                      @Context HttpServletResponse response) {
-        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-
-        Specification<AgentInfo> specification = agentInfoService.getWhereClause(agentName, status, isDelete);
-        agentInfoService.export(response, specification);
-
-        return responseBuilder.build();
+        agentInfoService.export(response, agentName, status, isDelete);
     }
 }

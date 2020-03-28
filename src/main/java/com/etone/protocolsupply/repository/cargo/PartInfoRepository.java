@@ -1,6 +1,8 @@
 package com.etone.protocolsupply.repository.cargo;
 
 import com.etone.protocolsupply.model.entity.cargo.PartInfo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -39,4 +41,7 @@ public interface PartInfoRepository extends JpaRepository<PartInfo, Long>, JpaSp
     @Query(value = "update part_info set cargo_id=:cargoId where part_id in (:partIds)", nativeQuery = true)
     @Modifying
     void setCargoId(@Param("cargoId") Long cargoId, @Param("partIds") List<Long> partIds);
+
+    @Query(value = "select * from part_info where cargo_id=?1 and is_delete=?2", nativeQuery = true)
+    Page<PartInfo> findAll(String cargoId, String isDelete, Pageable pageable);
 }

@@ -73,7 +73,7 @@ public class CargoInfoController extends GenericController {
         Sort sort = new Sort(Sort.Direction.DESC, "cargoId");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
 
-        Specification<CargoInfo> specification = cargoInfoService.getWhereClause(isDelete, cargoName);
+        Specification<CargoInfo> specification = cargoInfoService.getWhereClause(isDelete, cargoName, partName);
 
         Page<CargoInfo> page = cargoInfoService.findCargoInfos(specification, pageable);
 

@@ -129,7 +129,7 @@ public class AgentInfoService {
         agentInfoRepository.updateIsDelete(agentId);
     }
 
-    public void export(HttpServletResponse response, Specification<AgentInfo> specification) {
+    public void export(HttpServletResponse response, String agentName,String status, String isDelete) {
         try {
             String[] header = {"代理商名称", "代理费用扣点（百分比）", "状态", "厂家授权函", "审核状态", "创建人", "创建时间"};
             HSSFWorkbook workbook = new HSSFWorkbook();
@@ -149,6 +149,7 @@ public class AgentInfoService {
                 cell.setCellStyle(headerStyle);
             }
 
+            Specification<AgentInfo> specification = getWhereClause(agentName, status, isDelete);
             List<AgentInfo> list = agentInfoRepository.findAll(specification);
             AgentInfo agentInfo;
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

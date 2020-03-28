@@ -50,10 +50,13 @@ public class PartInfoService {
        return partInfoRepository.save(partInfo);
     }
 
-    public Specification<PartInfo> getWhereClause(String isDelete) {
+    public Specification<PartInfo> getWhereClause(String isDelete, String cargoId) {
         return (Specification<PartInfo>) (root, criteriaQuery, criteriaBuilder) -> {
 
             List<Predicate> predicates = new ArrayList<>();
+            if (Strings.isNotBlank(cargoId)) {
+                predicates.add(criteriaBuilder.equal(root.get("cargoInfo").as(CargoInfo.class), cargoId));
+            }
             predicates.add(criteriaBuilder.equal(root.get("isDelete").as(Long.class), isDelete));
             Predicate[] pre = new Predicate[predicates.size()];
             return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
@@ -69,21 +72,18 @@ public class PartInfoService {
 
 
     //配件导出
-    public Specification<PartInfo> getWhereClauseEx(String cargoId, String isDelete) {
+    public Specification<PartInfo> getWhereClauseEx(String isDelete) {
         return (Specification<PartInfo>) (root, criteriaQuery, criteriaBuilder) -> {
 
             List<Predicate> predicates = new ArrayList<>();
-            if (Strings.isNotBlank(cargoId)) {
-                predicates.add(criteriaBuilder.equal(root.get("cargoId").as(String.class), cargoId));
-            }
             predicates.add(criteriaBuilder.equal(root.get("isDelete").as(Long.class), isDelete));
             Predicate[] pre = new Predicate[predicates.size()];
             return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
         };
     }
 
-    public Page<PartInfo> findPartInfos(Specification<PartInfo> specification, Pageable pageable) {
-        return partInfoRepository.findAll(specification, pageable);
+    public Page<PartInfo> findPartInfos(String cargoId, String isDelete, Pageable pageable) {
+        return partInfoRepository.findAll(cargoId, isDelete, pageable);
     }
 
     public PartCollectionDto to(Page<PartInfo> source, HttpServletRequest request) {
@@ -318,7 +318,7 @@ public class PartInfoService {
 
     public void batchInsertPartInfo(List<Object> maps,String cargoId) {
         Long lcargoId=Long.parseLong(cargoId);
-        Specification<PartInfo> specification = getWhereClause("2");
+        Specification<PartInfo> specification = getWhereClause("2", null);
         List<PartInfo> list=partInfoRepository.findAll(specification);
         List<String> listDel = new ArrayList<>();
         List<PartInfo> listSave = new ArrayList<>();
