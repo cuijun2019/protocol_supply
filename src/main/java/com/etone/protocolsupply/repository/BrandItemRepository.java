@@ -25,7 +25,7 @@ public interface BrandItemRepository extends JpaRepository<BrandItem, String>, J
     @Transactional(rollbackFor = Exception.class)
     @Modifying
     @Query(value = "call brandItemtemp(?1)   ", nativeQuery = true)
-    List<BrandItem> findAllByParentItemName(String ItemName);
+    List<BrandItem> findAllByParentItemName(String itemName);
 
 
     @Transactional(rollbackFor = Exception.class)
