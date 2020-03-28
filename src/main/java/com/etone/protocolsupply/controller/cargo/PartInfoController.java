@@ -39,9 +39,10 @@ public class PartInfoController extends GenericController {
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseValue postPartInfo(@Validated
-                                      @RequestBody PartInfoDto partInfoDto) {
+                                      @RequestBody PartInfoDto partInfoDto,
+                                      @RequestParam(value = "cargoId", required = false) String cargoId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        PartInfo partInfo = partInfoService.save(partInfoDto);
+        PartInfo partInfo = partInfoService.save(partInfoDto, cargoId);
         responseBuilder.data(partInfo);
         return responseBuilder.build();
     }
