@@ -32,7 +32,7 @@ public interface PartInfoRepository extends JpaRepository<PartInfo, Long>, JpaSp
     @Query(value = "delete from part_info  where part_id in ?1", nativeQuery = true)
     void deleteAll(List<String> list);
 
-    @Query(value = "select MIN(cargo_id)AS cargo_id from part_info where is_delete=2 and part_name like '%?2%' and  manufactor like '%?3%' GROUP BY cargo_id", nativeQuery = true)
+    @Query(value = "select MIN(cargo_id)AS cargo_id from part_info where is_delete=2 and part_name like %?2% and  manufactor like %?3% GROUP BY cargo_id", nativeQuery = true)
     List<PartInfo> findAllBycon(String isDelete,String partName,String manufactor);
 
     @Query(value = "select max(p.part_serial) from part_info p left join cargo_info c on p.cargo_id = c.cargo_id where p.is_delete=2 and c.cargo_serial=?1 limit 1", nativeQuery = true)
@@ -42,6 +42,6 @@ public interface PartInfoRepository extends JpaRepository<PartInfo, Long>, JpaSp
     @Modifying
     void setCargoId(@Param("cargoId") Long cargoId, @Param("partIds") List<Long> partIds);
 
-    @Query(value = "select * from part_info where cargo_id=?1 and is_delete=?2", nativeQuery = true)
+    @Query(value = "select * from part_info where 1=1 and if((?1 is not null), (cargo_id=?1), (1=1)) and is_delete=?2", nativeQuery = true)
     Page<PartInfo> findAll(String cargoId, String isDelete, Pageable pageable);
 }

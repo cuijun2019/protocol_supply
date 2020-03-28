@@ -110,8 +110,8 @@ public class CargoInfoService {
         };
     }
 
-    public Page<CargoInfo> findCargoInfos(Specification<CargoInfo> specification, Pageable pageable) {
-        return cargoInfoRepository.findAll(specification, pageable);
+    public Page<CargoInfo> findCargoInfos(String isDelete, String cargoName, String partName, Pageable pageable) {
+        return cargoInfoRepository.findAll(isDelete, cargoName, partName, pageable);
     }
 
     public CargoCollectionDto to(Page<CargoInfo> source, HttpServletRequest request) {
