@@ -1,7 +1,8 @@
-package com.etone.protocolsupply.service;
+package com.etone.protocolsupply.service.cargo;
 
-import com.etone.protocolsupply.model.entity.BrandItem;
-import com.etone.protocolsupply.repository.BrandItemRepository;
+import com.etone.protocolsupply.model.entity.cargo.BrandItem;
+import com.etone.protocolsupply.repository.cargo.BrandItemRepository;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +20,9 @@ public class BrandItemService {
     public List<BrandItem> getWhereClause(String parentItemCode) {
         return brandItemRepository.findAllByParentItemCode(parentItemCode);
     }
+
     public List<BrandItem> getWhereClauseTemp(String itemName) {
-        if(itemName!=null &&!itemName.equals("")){
-            return brandItemRepository.findAllByParentItemName(itemName);
-        }else {
-            return brandItemRepository.findAll();
-        }
+        return Strings.isNotBlank(itemName) ? brandItemRepository.findAllByParentItemName(itemName) : brandItemRepository.findAll();
     }
 
 }

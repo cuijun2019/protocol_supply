@@ -1,4 +1,4 @@
-package com.etone.protocolsupply.model.entity;
+package com.etone.protocolsupply.model.entity.cargo;
 
 
 import lombok.Data;

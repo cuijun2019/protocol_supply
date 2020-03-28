@@ -6,10 +6,12 @@ import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.cargo.CargoCollectionDto;
 import com.etone.protocolsupply.model.dto.cargo.CargoInfoDto;
 import com.etone.protocolsupply.model.entity.Attachment;
-import com.etone.protocolsupply.model.entity.CargoInfo;
+import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
+import com.etone.protocolsupply.model.entity.cargo.PartInfo;
 import com.etone.protocolsupply.repository.AttachmentRepository;
-import com.etone.protocolsupply.repository.CargoInfoRepository;
-import com.etone.protocolsupply.repository.PartInfoRepository;
+import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
+import com.etone.protocolsupply.repository.cargo.PartInfoRepository;
+import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
@@ -28,24 +30,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Transactional(rollbackFor = Exception.class)
 @Service
 public class CargoInfoService {
 
     @Autowired
-    private PartInfoRepository partInfoRepository;
+    private CargoInfoRepository  cargoInfoRepository;
     @Autowired
-    private CargoInfoRepository cargoInfoRepository;
-
+    private PartInfoService      partInfoService;
+    @Autowired
+    private PartInfoRepository   partInfoRepository;
     @Autowired
     private AttachmentRepository attachmentRepository;
     @Autowired
-    private PagingMapper       pagingMapper;
+    private PagingMapper         pagingMapper;
 
     public CargoInfo save(CargoInfoDto cargoInfoDto, JwtUser jwtUser) throws GlobalServiceException {
         Date date = new Date();
@@ -61,30 +61,48 @@ public class CargoInfoService {
         if (attachment != null) {
             Optional<Attachment> optional = attachmentRepository.findById(attachment.getAttachId());
             if (optional.isPresent()) {
-                cargoInfoDto.setAttachment(optional.get());
+                cargoInfo.setAttachment(optional.get());
             }
         }
-//        cargoInfo.getAttachment().setAttachId(cargoInfoDto.getAttachment().getAttachId());
-        //cargoInfo.setCargoSerial();//序号
-        //cargoInfo.setCargoCode();//编号
-       return cargoInfoRepository.save(cargoInfo);
+        cargoInfo.setCargoSerial(this.findLastCargoSerial());
+        cargoInfo.setCargoCode(cargoInfo.getItemCode() + cargoInfo.getCargoSerial());
+
+        Set<PartInfo> partInfos = cargoInfoDto.getPartInfos();
+        if (partInfos != null && !partInfos.isEmpty()) {
+            String partSerial = partInfoService.findLastPartSerial(cargoInfo.getCargoSerial());
+            int step = 0;
+            for (PartInfo partInfo : partInfos) {
+                if (step == 0) {
+                    partInfo.setPartSerial(Common.convertSerial(partSerial, 0));
+                } else {
+                    partInfo.setPartSerial(Common.convertSerial(partSerial, 1));
+                }
+                partInfo.setPartCode(cargoInfo.getCargoCode() + partInfo.getPartSerial());
+                partInfo.setIsDelete(Constant.DELETE_NO);
+                step++;
+            }
+        }
+        cargoInfo = cargoInfoRepository.save(cargoInfo);
+        List<Long> partIds = new ArrayList<>();
+        for (PartInfo partInfo : cargoInfo.getPartInfos()) {
+            partIds.add(partInfo.getPartId());
+        }
+        partInfoRepository.setCargoId(cargoInfo.getCargoId(), partIds);
+        return cargoInfo;
     }
 
-    public Specification<CargoInfo> getWhereClause(String isDelete,String cargoName) {
+    public Specification<CargoInfo> getWhereClause(String isDelete, String cargoName) {
         return (Specification<CargoInfo>) (root, criteriaQuery, criteriaBuilder) -> {
 
             List<Predicate> predicates = new ArrayList<>();
             if (Strings.isNotBlank(cargoName)) {
-                predicates.add(criteriaBuilder.like(root.get("cargoName").as(String.class), "%"+cargoName+"%"));
+                predicates.add(criteriaBuilder.like(root.get("cargoName").as(String.class), "%" + cargoName + "%"));
             }
             predicates.add(criteriaBuilder.equal(root.get("isDelete").as(Long.class), isDelete));
             Predicate[] pre = new Predicate[predicates.size()];
             return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
         };
-
-
     }
-
 
     public Page<CargoInfo> findCargoInfos(Specification<CargoInfo> specification, Pageable pageable) {
         return cargoInfoRepository.findAll(specification, pageable);
@@ -107,11 +125,12 @@ public class CargoInfoService {
     }
 
     public CargoInfo findOne(Long cargoId) {
-        CargoInfo cargoInfo= cargoInfoRepository.findAllByCargoId(cargoId);
+        CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(cargoId);
         return cargoInfo;
     }
-    public CargoInfo update(CargoInfo cargoInfo,JwtUser jwtUser) throws GlobalServiceException {
-       // CargoInfo cargoInfo = this.findOne(cargoInfoDto.getCargoId());
+
+    public CargoInfo update(CargoInfo cargoInfo, JwtUser jwtUser) throws GlobalServiceException {
+        // CargoInfo cargoInfo = this.findOne(cargoInfoDto.getCargoId());
         Date date = new Date();
         String userName = jwtUser.getUsername();
 
@@ -137,7 +156,7 @@ public class CargoInfoService {
     public void export(HttpServletResponse response, String cargoName) {
         try {
             String[] header = {"货物序号", "货物品目", "货物名称", "货物编号", "品牌", "型号", "主要参数",
-                    "产地", "进口/国产类别", "币种","*维保率/月","证明文件","备注"};
+                    "产地", "进口/国产类别", "币种", "*维保率/月", "证明文件", "备注"};
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet("货物列表");
             sheet.setDefaultColumnWidth(13);
@@ -154,11 +173,11 @@ public class CargoInfoService {
                 cell.setCellValue(text);
                 cell.setCellStyle(headerStyle);
             }
-            List<CargoInfo> list=null;
-            if(  cargoName!=null &&!cargoName.equals("")){
-                 list = cargoInfoRepository.findByCargoName(cargoName);
-            }else {
-                 list = cargoInfoRepository.findAll();
+            List<CargoInfo> list = null;
+            if (cargoName != null && !cargoName.equals("")) {
+                list = cargoInfoRepository.findByCargoName(cargoName);
+            } else {
+                list = cargoInfoRepository.findAll();
             }
             CargoInfo cargoInfo;
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -166,9 +185,9 @@ public class CargoInfoService {
                 DecimalFormat df = new DecimalFormat("0.00");
                 cargoInfo = list.get(i);
                 HSSFRow row = sheet.createRow(i + 1);
-                Attachment attachment =attachmentRepository.getOne(cargoInfo.getAttachment().getAttachId());
+                Attachment attachment = attachmentRepository.getOne(cargoInfo.getAttachment().getAttachId());
                 row.createCell(0).setCellValue(new HSSFRichTextString(cargoInfo.getCargoSerial()));
-                row.createCell(1).setCellValue(new HSSFRichTextString(cargoInfo.getCargoCategory()));
+                row.createCell(1).setCellValue(new HSSFRichTextString(cargoInfo.getItemName()));
                 row.createCell(2).setCellValue(new HSSFRichTextString(cargoInfo.getCargoName()));
                 row.createCell(3).setCellValue(new HSSFRichTextString(cargoInfo.getCargoCode()));
                 row.createCell(4).setCellValue(new HSSFRichTextString(cargoInfo.getBrand()));
@@ -191,7 +210,8 @@ public class CargoInfoService {
         }
     }
 
-
-
-
+    private String findLastCargoSerial() {
+        String serial = cargoInfoRepository.findLastCargoSerial();
+        return Common.convertSerial(serial, 1);
+    }
 }

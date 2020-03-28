@@ -1,16 +1,21 @@
-package com.etone.protocolsupply.model.entity;
+package com.etone.protocolsupply.model.entity.cargo;
 
+import com.etone.protocolsupply.model.entity.Attachment;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
+@ToString
 @Entity
 @Table(name = "CARGO_INFO")
 public class CargoInfo implements Serializable {
@@ -27,22 +32,28 @@ public class CargoInfo implements Serializable {
     private String  cargoSerial;
 
     /**
-     * 货物分类
+     * 货物编号
      */
-    @Column(name = "CARGO_CATEGORY", length = 100)
-    private String  cargoCategory;
+    @Column(name = "CARGO_Code", length = 100)
+    private String  cargoCode;
+
+    /**
+     * 货物品目Code
+     */
+    @Column(name = "ITEM_CODE", length = 100)
+    private String  itemCode;
+
+    /**
+     * 货物品目
+     */
+    @Column(name = "ITEM_NAME", length = 100)
+    private String  itemName;
 
     /**
      * 货物名称
      */
     @Column(name = "CARGO_NAME", length = 200)
     private String  cargoName;
-
-    /**
-     * 货物编号
-     */
-    @Column(name = "CARGO_CODE", length = 100)
-    private String  cargoCode;
 
     /**
      * 品牌
@@ -118,9 +129,8 @@ public class CargoInfo implements Serializable {
     @JoinColumn(name = "PROVE_FILE_ID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "cargoInfo",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
-    private List<PartInfo> partInfo;
+    private Set<PartInfo> partInfos = new HashSet<>();
 }

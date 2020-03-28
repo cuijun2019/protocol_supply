@@ -1,5 +1,6 @@
-package com.etone.protocolsupply.model.entity;
+package com.etone.protocolsupply.model.entity.template;
 
+import com.etone.protocolsupply.model.entity.Attachment;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
@@ -13,16 +14,16 @@ import java.util.Date;
  */
 @Data
 @Entity
-@Table(name = "CONTRACT_TEMPLATE")
-public class ContractTemplate implements Serializable {
+@Table(name = "BID_TEMPLATE")
+public class BidTemplate implements Serializable {
 
     @Id
-    @Column(name = "CONTRACT_TEMPLATE_ID")
+    @Column(name = "BID_TEMPLATE_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long    contractTemplateId;
+    private Long    bidTemplateId;
 
-    @Column(name = "CONTRACT_TEMPLATE_SUBJECT", length = 200)
-    private String  contractTemplateSubject;
+    @Column(name = "BID_TEMPLATE_SUBJECT", length = 200)
+    private String  bidTemplateSubject;
 
     @Column(name = "STATUS", length = 4)
     private Integer status;

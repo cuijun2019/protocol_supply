@@ -1,8 +1,9 @@
-package com.etone.protocolsupply.controller;
+package com.etone.protocolsupply.controller.cargo;
 
+import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
-import com.etone.protocolsupply.model.entity.BrandItem;
-import com.etone.protocolsupply.service.BrandItemService;
+import com.etone.protocolsupply.model.entity.cargo.BrandItem;
+import com.etone.protocolsupply.service.cargo.BrandItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;

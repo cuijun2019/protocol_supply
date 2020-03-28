@@ -1,6 +1,6 @@
 package com.etone.protocolsupply.model.dto.part;
 
-import com.etone.protocolsupply.model.entity.PartInfo;
+import com.etone.protocolsupply.model.entity.cargo.PartInfo;
 import lombok.Data;
 
 @Data

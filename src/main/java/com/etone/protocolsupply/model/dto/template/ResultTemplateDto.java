@@ -1,6 +1,6 @@
 package com.etone.protocolsupply.model.dto.template;
 
-import com.etone.protocolsupply.model.entity.ResultTemplate;
+import com.etone.protocolsupply.model.entity.template.ResultTemplate;
 
 /**
  * @author cuijun

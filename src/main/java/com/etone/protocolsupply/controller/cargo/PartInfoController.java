@@ -1,12 +1,13 @@
-package com.etone.protocolsupply.controller;
+package com.etone.protocolsupply.controller.cargo;
 
+import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.part.PartCollectionDto;
 import com.etone.protocolsupply.model.dto.part.PartInfoDto;
 import com.etone.protocolsupply.model.entity.Attachment;
-import com.etone.protocolsupply.model.entity.PartInfo;
+import com.etone.protocolsupply.model.entity.cargo.PartInfo;
 import com.etone.protocolsupply.service.AttachmentService;
-import com.etone.protocolsupply.service.PartInfoService;
+import com.etone.protocolsupply.service.cargo.PartInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,8 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
-import java.io.UnsupportedEncodingException;
-import java.util.Map;
 
 @RestController
 @RequestMapping(value = "${jwt.route.path}/partInfo")
@@ -43,7 +42,7 @@ public class PartInfoController extends GenericController {
     public ResponseValue postPartInfo(@Validated
                                       @RequestBody PartInfoDto partInfoDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        PartInfo partInfo= partInfoService.save(partInfoDto);
+        PartInfo partInfo = partInfoService.save(partInfoDto);
         responseBuilder.data(partInfo);
         return responseBuilder.build();
     }
@@ -84,6 +83,7 @@ public class PartInfoController extends GenericController {
 
     /**
      * 配件导入
+     *
      * @param cargoId
      * @param uploadFile
      * @return
@@ -94,7 +94,7 @@ public class PartInfoController extends GenericController {
             produces = {"application/json"},
             consumes = {"multipart/form-data"})
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseValue upLoadPart(@Validated @RequestParam("file") MultipartFile uploadFile,@RequestParam(value = "cargoId", required = false) String cargoId) {
+    public ResponseValue upLoadPart(@Validated @RequestParam("file") MultipartFile uploadFile, @RequestParam(value = "cargoId", required = false) String cargoId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Attachment attachment = attachmentService.upload(uploadFile, this.getUser());
         partInfoService.upLoad(attachment, cargoId);
@@ -104,6 +104,7 @@ public class PartInfoController extends GenericController {
 
     /**
      * 配件导出
+     *
      * @param cargoId
      * @param response
      * @return
@@ -115,14 +116,11 @@ public class PartInfoController extends GenericController {
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseValue exportPart(@PathVariable("cargoId") String cargoId,
-                                     @Context HttpServletResponse response) {
+                                    @Context HttpServletResponse response) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
 
         partInfoService.export(response, Long.parseLong(cargoId));
 
         return responseBuilder.build();
     }
-
-
-
 }

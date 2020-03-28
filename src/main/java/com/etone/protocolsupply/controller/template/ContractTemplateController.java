@@ -4,7 +4,7 @@ import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.template.ContractTemplateCollectionDto;
 import com.etone.protocolsupply.model.dto.template.ContractTemplateDto;
-import com.etone.protocolsupply.model.entity.ContractTemplate;
+import com.etone.protocolsupply.model.entity.template.ContractTemplate;
 import com.etone.protocolsupply.service.template.ContractTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

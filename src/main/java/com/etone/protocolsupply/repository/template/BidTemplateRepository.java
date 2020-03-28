@@ -1,6 +1,6 @@
-package com.etone.protocolsupply.repository;
+package com.etone.protocolsupply.repository.template;
 
-import com.etone.protocolsupply.model.entity.BidTemplate;
+import com.etone.protocolsupply.model.entity.template.BidTemplate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;

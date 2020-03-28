@@ -4,9 +4,7 @@ import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.cargo.CargoCollectionDto;
 import com.etone.protocolsupply.model.dto.cargo.CargoInfoDto;
-import com.etone.protocolsupply.model.entity.CargoInfo;
-import com.etone.protocolsupply.service.AttachmentService;
-import com.etone.protocolsupply.service.PartInfoService;
+import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.service.cargo.CargoInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,12 +27,6 @@ public class CargoInfoController extends GenericController {
     @Autowired
     private CargoInfoService cargoInfoService;
 
-    @Autowired
-    private PartInfoService partInfoService;
-
-    @Autowired
-    private AttachmentService attachmentService;
-
     /**
      * 新增货物
      *
@@ -50,8 +42,8 @@ public class CargoInfoController extends GenericController {
     public ResponseValue postCargoInfo(@Validated
                                        @RequestBody CargoInfoDto cargoInfoDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        CargoInfo cargoInfo1 = cargoInfoService.save(cargoInfoDto, this.getUser());
-        responseBuilder.data(cargoInfo1);
+        CargoInfo cargoInfo = cargoInfoService.save(cargoInfoDto, this.getUser());
+        responseBuilder.data(cargoInfo);
         return responseBuilder.build();
     }
 

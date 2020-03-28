@@ -1,16 +1,16 @@
-package com.etone.protocolsupply.service;
+package com.etone.protocolsupply.service.cargo;
 
 import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.exception.GlobalServiceException;
 import com.etone.protocolsupply.model.dto.ExcelHeaderColumnPojo;
 import com.etone.protocolsupply.model.dto.part.PartCollectionDto;
 import com.etone.protocolsupply.model.dto.part.PartInfoDto;
-import com.etone.protocolsupply.model.entity.AgentInfo;
 import com.etone.protocolsupply.model.entity.Attachment;
-import com.etone.protocolsupply.model.entity.CargoInfo;
-import com.etone.protocolsupply.model.entity.PartInfo;
-import com.etone.protocolsupply.repository.CargoInfoRepository;
-import com.etone.protocolsupply.repository.PartInfoRepository;
+import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
+import com.etone.protocolsupply.model.entity.cargo.PartInfo;
+import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
+import com.etone.protocolsupply.repository.cargo.PartInfoRepository;
+import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
@@ -23,16 +23,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import javax.activation.MimetypesFileTypeMap;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.net.URLEncoder;
-import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -353,5 +348,10 @@ public class PartInfoService {
         }
         partInfoRepository.deleteAll(listDel);
         partInfoRepository.saveAll(listSave);
+    }
+
+    public String findLastPartSerial(String categorySerial) {
+        String serial = partInfoRepository.findLastPartSerial(categorySerial);
+        return Common.convertSerial(serial, 1);
     }
 }

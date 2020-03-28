@@ -1,6 +1,6 @@
-package com.etone.protocolsupply.repository;
+package com.etone.protocolsupply.repository.template;
 
-import com.etone.protocolsupply.model.entity.ResultTemplate;
+import com.etone.protocolsupply.model.entity.template.ResultTemplate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;

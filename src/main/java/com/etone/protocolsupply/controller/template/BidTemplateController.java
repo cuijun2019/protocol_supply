@@ -4,7 +4,7 @@ import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.template.BidTemplateCollectionDto;
 import com.etone.protocolsupply.model.dto.template.BidTemplateDto;
-import com.etone.protocolsupply.model.entity.BidTemplate;
+import com.etone.protocolsupply.model.entity.template.BidTemplate;
 import com.etone.protocolsupply.service.template.BidTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

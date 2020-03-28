@@ -1,6 +1,7 @@
 package com.etone.protocolsupply.utils;
 
 import com.etone.protocolsupply.model.entity.Attachment;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -53,5 +54,20 @@ public class Common {
     public static String getYYYYMMDate(Date date) {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMM");
         return format.format(date);
+    }
+
+    public static String convertSerial(String serial, int step) {
+        if (Strings.isBlank(serial)) {
+            return "0001";
+        }
+        serial = String.valueOf(Long.parseLong(serial) + step);
+        if (serial.length() == 1) {
+            return "000" + serial;
+        } else if (serial.length() == 2) {
+            return "00" + serial;
+        } else if (serial.length() == 3) {
+            return "0" + serial;
+        }
+        return serial;
     }
 }
