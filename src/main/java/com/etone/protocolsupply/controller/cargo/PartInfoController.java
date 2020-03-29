@@ -18,9 +18,13 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URLEncoder;
 
 @RestController
 @RequestMapping(value = "${jwt.route.path}/partInfo")
@@ -122,5 +126,46 @@ public class PartInfoController extends GenericController {
         partInfoService.export(response, Long.parseLong(cargoId));
 
         return responseBuilder.build();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/downloadTemplate")
+    public void downloadExcel(HttpServletResponse res) {
+        FileInputStream inputStream = null;
+        ServletOutputStream out = null;
+        String fileName = "agentInfoTemplate.xls";
+        try {
+            res.setContentType("multipart/form-data");
+            res.setCharacterEncoding("UTF-8");
+            String filePath = getClass().getResource("/template/" + fileName).getPath();//文件在项目中的存放路径
+            res.setHeader("Content-Disposition", "attachment;filename=" + fileName + ";filename*=utf-8''"
+                    + URLEncoder.encode(fileName, "utf-8"));
+            inputStream = new FileInputStream(filePath);
+            out = res.getOutputStream();
+            int b;
+            byte[] buffer = new byte[1024];
+            while ((b = inputStream.read(buffer)) != -1) {
+                // 4.写到输出流(out)中
+                out.write(buffer, 0, b);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (out != null) {
+                try {
+                    out.flush();
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
