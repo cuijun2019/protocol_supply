@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "${jwt.route.path}/agentInfo")
@@ -117,7 +118,8 @@ public class AgentInfoController extends GenericController {
     public void exportAgent(@RequestParam(value = "agentName", required = false) String agentName,
                             @RequestParam(value = "status", required = false) String status,
                             @RequestParam(value = "isDelete", required = false) String isDelete,
+                            @RequestBody(required = false) List<Long> agentIds,
                             @Context HttpServletResponse response) {
-        agentInfoService.export(response, agentName, status, isDelete);
+        agentInfoService.export(response, agentName, status, isDelete, agentIds);
     }
 }

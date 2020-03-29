@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -17,6 +18,11 @@ public interface AgentInfoRepository extends JpaRepository<AgentInfo, Long>, Jpa
     void updateIsDelete(Long agentId);
 
     @Query(value = "select * from agent_info where is_delete=2 and " +
-            "if((?1 is not null), (agent_name like %?1%), (1=1)) and if((?2 is not null), (status like %?2%), (1=1))", nativeQuery = true)
-    List<AgentInfo> findAll(String agentName, String status);
+            "if((:agentName is not null), (agent_name like %:agentName%), (1=1)) and if((:status is not null), (status=:status), (1=1)) and " +
+            "agent_id in (:agentIds)", nativeQuery = true)
+    List<AgentInfo> findAll(@Param("agentName") String agentName, @Param("status") String status, @Param("agentIds") List<Long> agentIds);
+
+    @Query(value = "select * from agent_info where is_delete=2 and " +
+            "if((:agentName is not null), (agent_name like %:agentName%), (1=1)) and if((:status is not null), (status=:status), (1=1))", nativeQuery = true)
+    List<AgentInfo> findAll(@Param("agentName") String agentName, @Param("status") String status);
 }

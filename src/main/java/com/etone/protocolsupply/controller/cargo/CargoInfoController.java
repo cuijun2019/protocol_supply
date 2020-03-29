@@ -142,8 +142,8 @@ public class CargoInfoController extends GenericController {
         cargoInfo.setCreateDate(model.getCreateDate());
         cargoInfo.setCargoSerial(model.getCargoSerial());
         cargoInfo.setCargoCode(model.getCargoCode());
-        responseBuilder.data(cargoInfo);
         cargoInfo = cargoInfoService.update(cargoInfo, this.getUser());
+        responseBuilder.data(cargoInfo);
         return responseBuilder.build();
     }
 
