@@ -94,7 +94,7 @@ public class PartInfoService {
     }
 
     public Page<PartInfo> findPartInfos(String cargoId, String isDelete, Pageable pageable) {
-        return partInfoRepository.findAll(cargoId, isDelete, pageable);
+        return Common.listConvertToPage(partInfoRepository.findAll(cargoId, isDelete), pageable);
     }
 
     public PartCollectionDto to(Page<PartInfo> source, HttpServletRequest request) {

@@ -75,7 +75,7 @@ public class PartInfoController extends GenericController {
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseValue deleteAgent(@PathVariable("partId") String partId) {
+    public ResponseValue deletePartInfo(@PathVariable("partId") String partId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         partInfoService.delete(Long.parseLong(partId));
         return responseBuilder.build();

@@ -29,7 +29,7 @@ public interface PartInfoRepository extends JpaRepository<PartInfo, Long>, JpaSp
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying
-    @Query(value = "delete from part_info  where part_id in ?1", nativeQuery = true)
+    @Query(value = "delete from part_info where part_id in ?1", nativeQuery = true)
     void deleteAll(List<String> list);
 
     @Query(value = "select MIN(cargo_id)AS cargo_id from part_info where is_delete=2 and part_name like %?2% and  manufactor like %?3% GROUP BY cargo_id", nativeQuery = true)
@@ -43,5 +43,5 @@ public interface PartInfoRepository extends JpaRepository<PartInfo, Long>, JpaSp
     void setCargoId(@Param("cargoId") Long cargoId, @Param("partIds") List<Long> partIds);
 
     @Query(value = "select * from part_info where 1=1 and if((?1 is not null), (cargo_id=?1), (1=1)) and is_delete=?2", nativeQuery = true)
-    Page<PartInfo> findAll(String cargoId, String isDelete, Pageable pageable);
+    List<PartInfo> findAll(String cargoId, String isDelete);
 }

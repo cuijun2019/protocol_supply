@@ -25,8 +25,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -111,7 +109,7 @@ public class CargoInfoService {
     }
 
     public Page<CargoInfo> findCargoInfos(String isDelete, String cargoName, String partName, Pageable pageable) {
-        return cargoInfoRepository.findAll(isDelete, cargoName, partName, pageable);
+        return Common.listConvertToPage(cargoInfoRepository.findAll(isDelete, cargoName, partName), pageable);
     }
 
     public CargoCollectionDto to(Page<CargoInfo> source, HttpServletRequest request) {

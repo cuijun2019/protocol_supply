@@ -149,8 +149,7 @@ public class AgentInfoService {
                 cell.setCellStyle(headerStyle);
             }
 
-            Specification<AgentInfo> specification = getWhereClause(agentName, status, isDelete);
-            List<AgentInfo> list = agentInfoRepository.findAll(specification);
+            List<AgentInfo> list = agentInfoRepository.findAll(agentName, status);
             AgentInfo agentInfo;
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             for (int i = 0; i < list.size(); i++) {
