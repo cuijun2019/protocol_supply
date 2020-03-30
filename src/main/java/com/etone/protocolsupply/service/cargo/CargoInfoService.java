@@ -134,6 +134,7 @@ public class CargoInfoService {
     }
 
     public CargoInfo findOne(Long cargoId) {
+
         CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(cargoId);
         return cargoInfo;
     }
@@ -160,11 +161,11 @@ public class CargoInfoService {
     }
 
 
-    //配件导出
+    //货物导出
     public void export(HttpServletResponse response, String cargoName) {
         try {
             String[] header = {"货物序号", "货物品目", "货物名称", "货物编号", "品牌", "型号", "主要参数",
-                    "产地", "进口/国产类别", "币种", "*维保率/月", "证明文件", "备注"};
+                    "产地", "进口/国产类别", "币种", "维保率/月", "证明文件", "备注"};
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet("货物列表");
             sheet.setDefaultColumnWidth(13);
@@ -193,6 +194,7 @@ public class CargoInfoService {
                 DecimalFormat df = new DecimalFormat("0.00");
                 cargoInfo = list.get(i);
                 HSSFRow row = sheet.createRow(i + 1);
+
                 Attachment attachment = attachmentRepository.getOne(cargoInfo.getAttachment().getAttachId());
                 row.createCell(0).setCellValue(new HSSFRichTextString(cargoInfo.getCargoSerial()));
                 row.createCell(1).setCellValue(new HSSFRichTextString(cargoInfo.getItemName()));

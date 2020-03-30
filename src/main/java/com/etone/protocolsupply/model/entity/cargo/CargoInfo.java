@@ -134,4 +134,6 @@ public class CargoInfo implements Serializable {
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
     private Set<PartInfo> partInfos = new HashSet<>();
+
+
 }

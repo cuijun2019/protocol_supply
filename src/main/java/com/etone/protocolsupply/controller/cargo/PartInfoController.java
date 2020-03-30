@@ -43,10 +43,9 @@ public class PartInfoController extends GenericController {
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseValue postPartInfo(@Validated
-                                      @RequestBody PartInfoDto partInfoDto,
-                                      @RequestParam(value = "cargoId", required = false) String cargoId) {
+                                      @RequestBody PartInfoDto partInfoDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        PartInfo partInfo = partInfoService.save(partInfoDto, cargoId);
+        PartInfo partInfo = partInfoService.save(partInfoDto);
         responseBuilder.data(partInfo);
         return responseBuilder.build();
     }
@@ -102,7 +101,6 @@ public class PartInfoController extends GenericController {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Attachment attachment = attachmentService.upload(uploadFile, this.getUser());
         partInfoService.upLoad(attachment, cargoId);
-
         return responseBuilder.build();
     }
 
@@ -133,7 +131,7 @@ public class PartInfoController extends GenericController {
     public void downloadExcel(HttpServletResponse res) {
         FileInputStream inputStream = null;
         ServletOutputStream out = null;
-        String fileName = "agentInfoTemplate.xls";
+        String fileName = "partInfoTemplate.xls";
         try {
             res.setContentType("multipart/form-data");
             res.setCharacterEncoding("UTF-8");

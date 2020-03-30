@@ -50,13 +50,13 @@ public class PartInfoService {
     @Autowired
     private PagingMapper        pagingMapper;
 
-    public PartInfo save(PartInfoDto partInfoDto, String cargoId) throws GlobalServiceException {
-        if (Strings.isBlank(cargoId)) {
+    public PartInfo save(PartInfoDto partInfoDto) throws GlobalServiceException {
+        if (Strings.isBlank(partInfoDto.getCargoId())) {
             throw new GlobalServiceException(GlobalExceptionCode.NOTNULL_ERROR.getCode(), GlobalExceptionCode.NOTNULL_ERROR.getCause("cargoId"));
         }
         PartInfo partInfo = new PartInfo();
         BeanUtils.copyProperties(partInfoDto, partInfo);
-        CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(Long.parseLong(cargoId));
+        CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(Long.parseLong(partInfoDto.getCargoId()));
         partInfo.setPartSerial(Common.convertSerial(partInfoRepository.findLastPartSerial(cargoInfo.getCargoSerial()), 1));
         partInfo.setPartCode(cargoInfo.getCargoCode() + partInfo.getPartSerial());
         partInfo.setCargoInfo(cargoInfo);
@@ -364,5 +364,10 @@ public class PartInfoService {
     public String findLastPartSerial(String categorySerial) {
         String serial = partInfoRepository.findLastPartSerial(categorySerial);
         return Common.convertSerial(serial, 1);
+    }
+
+    public List<PartInfo> getPartInfoList(Long cargoId){
+        return partInfoRepository.findAllBycargoId(cargoId);
+
     }
 }

@@ -1,8 +1,6 @@
 package com.etone.protocolsupply.repository.cargo;
 
 import com.etone.protocolsupply.model.entity.cargo.PartInfo;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -21,6 +19,7 @@ public interface PartInfoRepository extends JpaRepository<PartInfo, Long>, JpaSp
 
     @Query(value = "select * from part_info where is_delete=2 and cargo_id=?1", nativeQuery = true)
     List<PartInfo> findAllBycargoId(Long cargoId);
+
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying
