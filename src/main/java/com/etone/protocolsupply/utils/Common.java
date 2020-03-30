@@ -2,6 +2,9 @@ package com.etone.protocolsupply.utils;
 
 import com.etone.protocolsupply.model.entity.Attachment;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -10,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -69,5 +73,11 @@ public class Common {
             return "0" + serial;
         }
         return serial;
+    }
+
+    public static <T> Page<T> listConvertToPage(List<T> list, Pageable pageable) {
+        int start = (int) pageable.getOffset();
+        int end = (start + pageable.getPageSize()) > list.size() ? list.size() : (start + pageable.getPageSize());
+        return new PageImpl<>(list.subList(start, end), pageable, list.size());
     }
 }

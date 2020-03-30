@@ -129,6 +129,7 @@ public class CargoInfo implements Serializable {
     @JoinColumn(name = "PROVE_FILE_ID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "cargoInfo",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)

@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -70,12 +69,10 @@ public class CargoInfoController extends GenericController {
                                        HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
 
-        Sort sort = new Sort(Sort.Direction.DESC, "cargoId");
+        Sort sort = new Sort(Sort.Direction.DESC, "cargo_id");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
 
-        Specification<CargoInfo> specification = cargoInfoService.getWhereClause(isDelete, cargoName);
-
-        Page<CargoInfo> page = cargoInfoService.findCargoInfos(specification, pageable);
+        Page<CargoInfo> page = cargoInfoService.findCargoInfos(isDelete, cargoName, partName, pageable);
 
         CargoCollectionDto cargoCollectionDto = cargoInfoService.to(page, request);
         responseBuilder.data(cargoCollectionDto);
@@ -145,8 +142,8 @@ public class CargoInfoController extends GenericController {
         cargoInfo.setCreateDate(model.getCreateDate());
         cargoInfo.setCargoSerial(model.getCargoSerial());
         cargoInfo.setCargoCode(model.getCargoCode());
-        responseBuilder.data(cargoInfo);
         cargoInfo = cargoInfoService.update(cargoInfo, this.getUser());
+        responseBuilder.data(cargoInfo);
         return responseBuilder.build();
     }
 

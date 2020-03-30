@@ -1,6 +1,7 @@
 package com.etone.protocolsupply.service.cargo;
 
 import com.etone.protocolsupply.constant.Constant;
+import com.etone.protocolsupply.exception.GlobalExceptionCode;
 import com.etone.protocolsupply.exception.GlobalServiceException;
 import com.etone.protocolsupply.model.dto.ExcelHeaderColumnPojo;
 import com.etone.protocolsupply.model.dto.part.PartCollectionDto;
@@ -27,54 +28,48 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Transactional(rollbackFor = Exception.class)
 @Service
 public class PartInfoService {
 
     @Autowired
-    private PartInfoRepository partInfoRepository;
+    private PartInfoRepository  partInfoRepository;
     @Autowired
     private CargoInfoRepository cargoInfoRepository;
     @Autowired
-    private PagingMapper       pagingMapper;
+    private PagingMapper        pagingMapper;
 
-    public PartInfo save(PartInfoDto partInfoDto) throws GlobalServiceException {
+    public PartInfo save(PartInfoDto partInfoDto, String cargoId) throws GlobalServiceException {
+        if (Strings.isBlank(cargoId)) {
+            throw new GlobalServiceException(GlobalExceptionCode.NOTNULL_ERROR.getCode(), GlobalExceptionCode.NOTNULL_ERROR.getCause("cargoId"));
+        }
         PartInfo partInfo = new PartInfo();
         BeanUtils.copyProperties(partInfoDto, partInfo);
+        CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(Long.parseLong(cargoId));
+        partInfo.setPartSerial(Common.convertSerial(partInfoRepository.findLastPartSerial(cargoInfo.getCargoSerial()), 1));
+        partInfo.setPartCode(cargoInfo.getCargoCode() + partInfo.getPartSerial());
+        partInfo.setCargoInfo(cargoInfo);
         partInfo.setIsDelete(Constant.DELETE_NO);
-       return partInfoRepository.save(partInfo);
+        return partInfoRepository.save(partInfo);
     }
 
-    public Specification<PartInfo> getWhereClause(String isDelete) {
-        return (Specification<PartInfo>) (root, criteriaQuery, criteriaBuilder) -> {
-
-            List<Predicate> predicates = new ArrayList<>();
-            predicates.add(criteriaBuilder.equal(root.get("isDelete").as(Long.class), isDelete));
-            Predicate[] pre = new Predicate[predicates.size()];
-            return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
-        };
-    }
-    public List<PartInfo> getWhereClause1(String isDelete,String partName,String manufactor ) {
-
-        return partInfoRepository.findAllBycon(isDelete,partName,manufactor);
-
-
-    }
-
-
-
-    //配件导出
-    public Specification<PartInfo> getWhereClauseEx(String cargoId, String isDelete) {
+    public Specification<PartInfo> getWhereClause(String isDelete, String cargoId) {
         return (Specification<PartInfo>) (root, criteriaQuery, criteriaBuilder) -> {
 
             List<Predicate> predicates = new ArrayList<>();
             if (Strings.isNotBlank(cargoId)) {
-                predicates.add(criteriaBuilder.equal(root.get("cargoId").as(String.class), cargoId));
+                predicates.add(criteriaBuilder.equal(root.get("cargoInfo").as(CargoInfo.class), cargoId));
             }
             predicates.add(criteriaBuilder.equal(root.get("isDelete").as(Long.class), isDelete));
             Predicate[] pre = new Predicate[predicates.size()];
@@ -82,8 +77,24 @@ public class PartInfoService {
         };
     }
 
-    public Page<PartInfo> findPartInfos(Specification<PartInfo> specification, Pageable pageable) {
-        return partInfoRepository.findAll(specification, pageable);
+    public List<PartInfo> getWhereClause1(String isDelete, String partName, String manufactor) {
+        return partInfoRepository.findAllBycon(isDelete, partName, manufactor);
+    }
+
+
+    //配件导出
+    public Specification<PartInfo> getWhereClauseEx(String isDelete) {
+        return (Specification<PartInfo>) (root, criteriaQuery, criteriaBuilder) -> {
+
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(criteriaBuilder.equal(root.get("isDelete").as(Long.class), isDelete));
+            Predicate[] pre = new Predicate[predicates.size()];
+            return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
+        };
+    }
+
+    public Page<PartInfo> findPartInfos(String cargoId, String isDelete, Pageable pageable) {
+        return Common.listConvertToPage(partInfoRepository.findAll(cargoId, isDelete), pageable);
     }
 
     public PartCollectionDto to(Page<PartInfo> source, HttpServletRequest request) {
@@ -104,22 +115,22 @@ public class PartInfoService {
 
     //配件导入
     public void upLoad(Attachment attachment, String cargoId) {
-        Map<String,Object> maps = new HashMap<String,Object>();
-        try{
-                //文件读取并插入数据库
-                List list = new ArrayList();
-                list =readPartInfoExcelData(attachment.getPath());
-                if (null == list || list.size() == 0) {
-                    //return StringUtil.getJsonString(true, 1, "导入数据为空!");
-                }
-                int num = list.size() / 200;
-                if (list.size() % 200 != 0) {
-                    num++;
-                }
-                for (int i = 0; i < num; i++) {
-                    List tempList = list.subList(i * 200, (i + 1) * 200 > list.size() ? list.size() : (i + 1) * 200);
-                    batchInsertPartInfo(tempList,cargoId);
-                }
+        Map<String, Object> maps = new HashMap<String, Object>();
+        try {
+            //文件读取并插入数据库
+            List list = new ArrayList();
+            list = readPartInfoExcelData(attachment.getPath());
+            if (null == list || list.size() == 0) {
+                //return StringUtil.getJsonString(true, 1, "导入数据为空!");
+            }
+            int num = list.size() / 200;
+            if (list.size() % 200 != 0) {
+                num++;
+            }
+            for (int i = 0; i < num; i++) {
+                List tempList = list.subList(i * 200, (i + 1) * 200 > list.size() ? list.size() : (i + 1) * 200);
+                batchInsertPartInfo(tempList, cargoId);
+            }
 
 
         } catch (Exception e) {
@@ -187,7 +198,7 @@ public class PartInfoService {
         Sheet sheet = null;
         Row row = null;
         List<Map<String, ExcelHeaderColumnPojo>> list = null;
-        List<String> keys=null;
+        List<String> keys = null;
         String[] columns = {};// 存放Excel中的列名
         wb = readExcel(exclePath);// Excel文件读取
         if (wb != null) {
@@ -196,7 +207,7 @@ public class PartInfoService {
             Map<String, Integer> nameMap = new HashMap<String, Integer>();
             List<Object> rowMap = new ArrayList<Object>();
             List<String> lists = new ArrayList<String>();
-            for(int sheetnum=0;sheetnum<wb.getNumberOfSheets();sheetnum++){
+            for (int sheetnum = 0; sheetnum < wb.getNumberOfSheets(); sheetnum++) {
                 sheet = wb.getSheetAt(sheetnum); // 获取第一个sheet
                 int maxRow = sheet.getPhysicalNumberOfRows();// 获取最大行数
                 keys = new ArrayList<String>();// 存放key
@@ -210,16 +221,16 @@ public class PartInfoService {
                     columns[i] = (String) getCellFormatValue(row.getCell(i));
                     nameMap.put(columns[i], i);
                 }
-                String result="";
+                String result = "";
                 lists = readPartInfoKey();
                 // 提取数据
                 for (int i = 1; i < maxRow; i++) {// 从第二行开始遍历所有行
                     json = new JSONObject();
                     row = sheet.getRow(i);// Excel中的第i行
                     if (row != null) {// 开始提取行内数据
-                        for (int c=0;c<lists.size();c++){
+                        for (int c = 0; c < lists.size(); c++) {
                             result = (String) getCellFormatValue(row.getCell(nameMap.get(lists.get(c))));
-                            json.put(lists.get(c),result);
+                            json.put(lists.get(c), result);
                         }
                         rowMap.add(json);
                     } else {
@@ -316,18 +327,18 @@ public class PartInfoService {
         return list;
     }
 
-    public void batchInsertPartInfo(List<Object> maps,String cargoId) {
-        Long lcargoId=Long.parseLong(cargoId);
-        Specification<PartInfo> specification = getWhereClause("2");
-        List<PartInfo> list=partInfoRepository.findAll(specification);
+    public void batchInsertPartInfo(List<Object> maps, String cargoId) {
+        Long lcargoId = Long.parseLong(cargoId);
+        Specification<PartInfo> specification = getWhereClause("2", null);
+        List<PartInfo> list = partInfoRepository.findAll(specification);
         List<String> listDel = new ArrayList<>();
         List<PartInfo> listSave = new ArrayList<>();
-        for (int i=0;i<maps.size();i++) {
-            String jsonStr=maps.get(i).toString();
+        for (int i = 0; i < maps.size(); i++) {
+            String jsonStr = maps.get(i).toString();
             JSONObject jsonObject = new JSONObject(jsonStr);
-            PartInfo partInfo=new PartInfo();
-            for(PartInfo item:list){
-                if(item.getPartCode().equals(jsonObject.get("配件编号").toString())){
+            PartInfo partInfo = new PartInfo();
+            for (PartInfo item : list) {
+                if (item.getPartCode().equals(jsonObject.get("配件编号").toString())) {
                     listDel.add(item.getPartId().toString());
                 }
             }
@@ -342,7 +353,7 @@ public class PartInfoService {
             partInfo.setTotal(Double.parseDouble(jsonObject.get("总价").toString()));
             partInfo.setRemark(jsonObject.get("备注").toString());
             partInfo.setIsDelete(2);
-            CargoInfo cargoInfo=cargoInfoRepository.findAllByCargoId(lcargoId);
+            CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(lcargoId);
             partInfo.setCargoInfo(cargoInfo);
             listSave.add(partInfo);
         }

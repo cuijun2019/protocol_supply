@@ -19,10 +19,10 @@ public interface BrandItemRepository extends JpaRepository<BrandItem, String>, J
     List<BrandItem> findAllByParentItemCode(String parentItemCode);
 
     @Modifying
-    @Query(value = "call brandItemtemp(?1)   ", nativeQuery = true)
+    @Query(value = "call brandItemtemp(?1)", nativeQuery = true)
     List<BrandItem> findAllByParentItemName(String itemName);
 
     @Override
-    @Query(value = "select * from brand_item   ", nativeQuery = true)
+    @Query(value = "select * from brand_item", nativeQuery = true)
     List<BrandItem> findAll();
 }

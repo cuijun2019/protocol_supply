@@ -18,7 +18,6 @@ import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -28,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -129,11 +127,11 @@ public class AgentInfoService {
         agentInfoRepository.updateIsDelete(agentId);
     }
 
-    public void export(HttpServletResponse response, Specification<AgentInfo> specification) {
+    public void export(HttpServletResponse response, String agentName, String status, String isDelete, List<Long> agentIds) {
         try {
             String[] header = {"代理商名称", "代理费用扣点（百分比）", "状态", "厂家授权函", "审核状态", "创建人", "创建时间"};
             HSSFWorkbook workbook = new HSSFWorkbook();
-            HSSFSheet sheet = workbook.createSheet("代理商表");
+            HSSFSheet sheet = workbook.createSheet("代理商信息表");
             sheet.setDefaultColumnWidth(10);
             //        创建标题的显示样式
             HSSFCellStyle headerStyle = workbook.createCellStyle();
@@ -149,7 +147,12 @@ public class AgentInfoService {
                 cell.setCellStyle(headerStyle);
             }
 
-            List<AgentInfo> list = agentInfoRepository.findAll(specification);
+            List<AgentInfo> list;
+            if (agentIds != null && !agentIds.isEmpty()) {
+                list = agentInfoRepository.findAll(agentName, status, agentIds);
+            } else {
+                list = agentInfoRepository.findAll(agentName, status);
+            }
             AgentInfo agentInfo;
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             for (int i = 0; i < list.size(); i++) {

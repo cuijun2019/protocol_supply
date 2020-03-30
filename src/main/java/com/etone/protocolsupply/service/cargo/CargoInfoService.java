@@ -91,21 +91,25 @@ public class CargoInfoService {
         return cargoInfo;
     }
 
-    public Specification<CargoInfo> getWhereClause(String isDelete, String cargoName) {
+    public Specification<CargoInfo> getWhereClause(String isDelete, String cargoName, String partName) {
         return (Specification<CargoInfo>) (root, criteriaQuery, criteriaBuilder) -> {
 
             List<Predicate> predicates = new ArrayList<>();
             if (Strings.isNotBlank(cargoName)) {
                 predicates.add(criteriaBuilder.like(root.get("cargoName").as(String.class), "%" + cargoName + "%"));
             }
+//            Join<CargoInfo, PartInfo> partJoin = root.join(root.getModel().getSingularAttribute("partInfo", PartInfo.class), JoinType.LEFT);
+//            if (Strings.isNotBlank(partName)) {
+//                predicates.add(criteriaBuilder.equal(partJoin.get("partName").as(String.class), partName));
+//            }
             predicates.add(criteriaBuilder.equal(root.get("isDelete").as(Long.class), isDelete));
             Predicate[] pre = new Predicate[predicates.size()];
             return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
         };
     }
 
-    public Page<CargoInfo> findCargoInfos(Specification<CargoInfo> specification, Pageable pageable) {
-        return cargoInfoRepository.findAll(specification, pageable);
+    public Page<CargoInfo> findCargoInfos(String isDelete, String cargoName, String partName, Pageable pageable) {
+        return Common.listConvertToPage(cargoInfoRepository.findAll(isDelete, cargoName, partName), pageable);
     }
 
     public CargoCollectionDto to(Page<CargoInfo> source, HttpServletRequest request) {
@@ -130,7 +134,6 @@ public class CargoInfoService {
     }
 
     public CargoInfo update(CargoInfo cargoInfo, JwtUser jwtUser) throws GlobalServiceException {
-        // CargoInfo cargoInfo = this.findOne(cargoInfoDto.getCargoId());
         Date date = new Date();
         String userName = jwtUser.getUsername();
 
