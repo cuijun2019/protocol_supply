@@ -86,10 +86,13 @@ public class CargoInfoService {
         }
         cargoInfo = cargoInfoRepository.save(cargoInfo);
         List<Long> partIds = new ArrayList<>();
-        for (PartInfo partInfo : cargoInfo.getPartInfos()) {
-            partIds.add(partInfo.getPartId());
+        if(partIds.size()>0){
+            for (PartInfo partInfo : cargoInfo.getPartInfos()) {
+                partIds.add(partInfo.getPartId());
+            }
+            partInfoRepository.setCargoId(cargoInfo.getCargoId(), partIds);
         }
-        partInfoRepository.setCargoId(cargoInfo.getCargoId(), partIds);
+
         return cargoInfo;
     }
 
