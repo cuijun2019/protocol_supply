@@ -65,7 +65,7 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTMyMDU3NiwiaWF0IjoxNTg0NzE1Nzc2fQ.PqJjC0mbpe867SnnNl_F_71GJzllfKDlJ9xLb7dyJikQsHmxqGZaVHGfoIC17KlTdRTreY2kDkBhpjmrrnjbPA",
+								"value": "{{auth2}}",
 								"type": "text"
 							}
 						],
@@ -92,6 +92,11 @@
 								{
 									"key": "isDelete",
 									"value": "2"
+								},
+								{
+									"key": "status",
+									"value": "1",
+									"disabled": true
 								}
 							]
 						}
@@ -174,6 +179,9 @@
 				},
 				{
 					"name": "导出代理商",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [
@@ -189,10 +197,14 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTM2NzQ1MCwiaWF0IjoxNTg0NzYyNjUwfQ.kLxHnw6fve0EJMH2wD2nFcDqHIb0XbnAQ4oEyyuOzewQLsTc8OzPN6wPFzcT93m6abFaPVqgcsS_i0_6FLOlUg",
+								"value": "{{auth2}}",
 								"type": "text"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\"2\", \"5\"]"
+						},
 						"url": {
 							"raw": "http://localhost:8780/api/agentInfo/export",
 							"protocol": "http",
@@ -208,95 +220,10 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "导出配件",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTM2NzQ1MCwiaWF0IjoxNTg0NzYyNjUwfQ.kLxHnw6fve0EJMH2wD2nFcDqHIb0XbnAQ4oEyyuOzewQLsTc8OzPN6wPFzcT93m6abFaPVqgcsS_i0_6FLOlUg",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:8780/api/partInfo/export",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8780",
-							"path": [
-								"api",
-								"partInfo",
-								"export"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "配件导入",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "multipart/form-data",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTQ5Mjg3MywiaWF0IjoxNTg0ODg4MDczfQ.LruYddhJBQtDh8eU0KNA0pqwNRLBO11AOV7Gfsp9mZF3X1lY82FvHFXo_AIRvkyCpDuU9grC_LlFjZHfkga-lA",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "file",
-									"type": "file",
-									"src": "/C:/Users/cuijun/Desktop/新建 Microsoft Excel 工作表.xlsx"
-								}
-							]
-						},
-						"url": {
-							"raw": "http://localhost:8780/api/partInfo/upLoad",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8780",
-							"path": [
-								"api",
-								"partInfo",
-								"upLoad"
-							]
-						}
-					},
-					"response": []
 				}
 			],
 			"protocolProfileBehavior": {}
 		},
-		
 		{
 			"name": "模板",
 			"item": [
@@ -320,13 +247,13 @@
 									},
 									{
 										"key": "Authorization",
-										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTAxMzQyMSwiaWF0IjoxNTg0NDA4NjIxfQ.gpyG4zPs0oad_aXdYh4-t46_RUQ26LWoq6RhBe2P48AIKQtWqlGgd6DtAMu6imyDiE_C1qcNATzZ5EfCDU5Flw",
+										"value": "{{auth2}}",
 										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"resultTemplateSubject\": \"采购结果通知书模板主题\",\r\n    \"status\": 1,\r\n    \"attachment\": {\r\n        \"attachId\": 1\r\n    }\r\n}"
+									"raw": "{\r\n    \"resultTemplateSubject\": \"采购结果通知书模板主题2\",\r\n    \"status\": 1,\r\n    \"attachment\": {\r\n        \"attachId\": 1\r\n    }\r\n}"
 								},
 								"url": {
 									"raw": "http://localhost:8780/api/resultTemplate",
@@ -361,7 +288,7 @@
 									{
 										"key": "Authorization",
 										"type": "text",
-										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTQwNDM1MywiaWF0IjoxNTg0Nzk5NTUzfQ.bTNa0NujoHH6LVwiC1USOJdAYauosGhTXsSwdvYPaXA1MNxKVDBVI-n8gosHtBtrBZ67w8td9W0LCfsnQs-YeA"
+										"value": "{{auth2}}"
 									}
 								],
 								"url": {
@@ -1056,6 +983,321 @@
 								"api",
 								"download",
 								"33"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "货物管理",
+			"item": [
+				{
+					"name": "货物品目",
+					"item": [
+						{
+							"name": "通过name查询所有父节点",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4NTk4MDM5MSwiaWF0IjoxNTg1Mzc1NTkxfQ.75ipyKIi9nzShAVj8Kr2K2gLoDUw3xYb0LYAQ6Vd_Uk-11mug0fvx7aqllaQrwv5c3zADtwGEQsaJGyQbOjSlw",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8780/api/brandItem/耕地",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"brandItem",
+										"耕地"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "通过父Code查询子信息",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{auth2}}"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8780/api/brandItem/A0101",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"brandItem",
+										"A0101"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "配件",
+					"item": [
+						{
+							"name": "创建配件",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{auth2}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"partName\": \"配件1\",\n\t\"standards\": \"规格1\",\n\t\"manufactor\": \"厂家1\",\n\t\"techParams\": \"技术参数1\",\n\t\"unit\":\"单位1\",\n\t\"quantity\":100,\n\t\"price\": 20,\n\t\"remark\": \"备注\"\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8780/api/partInfo?cargoId=18",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"partInfo"
+									],
+									"query": [
+										{
+											"key": "cargoId",
+											"value": "18"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "配件列表",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{auth2}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8780/api/partInfo?isDelete=2&currentPage=1&pageSize=10&cargoId=18",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"partInfo"
+									],
+									"query": [
+										{
+											"key": "isDelete",
+											"value": "2"
+										},
+										{
+											"key": "currentPage",
+											"value": "1"
+										},
+										{
+											"key": "pageSize",
+											"value": "10"
+										},
+										{
+											"key": "cargoId",
+											"value": "18"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "下载配件导入模板",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{auth2}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8780/api/partInfo/downloadTemplate",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"partInfo",
+										"downloadTemplate"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "创建货物",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{auth2}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"itemCode\": \"A010102\",\r\n    \"itemName\": \"园地\",\r\n    \"cargoName\": \"货物名称1\",\r\n    \"brand\": \"货物品牌1\",\r\n    \"model\":\"型号1\",\r\n    \"mainParams\":\"主要参数1\",\r\n    \"manufactor\":\"产地1\",\r\n    \"type\":\"进口1\",\r\n    \"currency\":\"币种1\",\r\n    \"guaranteeRate\":\"维保率/月\",\r\n    \"remark\":\"备注1\",\r\n    \"attachment\": {\r\n        \"attachId\": 1\r\n    },\r\n    \"partInfos\": [{\r\n\t\t\"partName\": \"配件1\",\r\n\t\t\"standards\": \"规格1\",\r\n\t\t\"manufactor\": \"厂家1\",\r\n\t\t\"techParams\": \"技术参数1\",\r\n\t\t\"unit\":\"单位1\",\r\n\t\t\"quantity\":100,\r\n\t\t\"price\": 20,\r\n\t\t\"remark\": \"备注\"\r\n    },{\r\n\t\t\"partName\": \"配件2\",\r\n\t\t\"standards\": \"规格2\",\r\n\t\t\"manufactor\": \"厂家2\",\r\n\t\t\"techParams\": \"技术参数2\",\r\n\t\t\"unit\":\"单位2\",\r\n\t\t\"quantity\":100,\r\n\t\t\"price\": 20,\r\n\t\t\"remark\": \"备注2\"\r\n    }]\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8780/api/cargoInfo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8780",
+							"path": [
+								"api",
+								"cargoInfo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "查询货物列表",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "{{auth2}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8780/api/cargoInfo?isDelete=2&cargoName=货物名称1&currentPage=1&pageSize=5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8780",
+							"path": [
+								"api",
+								"cargoInfo"
+							],
+							"query": [
+								{
+									"key": "isDelete",
+									"value": "2"
+								},
+								{
+									"key": "cargoName",
+									"value": "货物名称1"
+								},
+								{
+									"key": "currentPage",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "5"
+								}
 							]
 						}
 					},
