@@ -111,7 +111,7 @@ public class CargoInfoController extends GenericController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/delete/{cargoId}",
+    @RequestMapping(value = "/{cargoId}",
             method = RequestMethod.DELETE,
             consumes = {"application/json"},
             produces = {"application/json"})
@@ -130,7 +130,7 @@ public class CargoInfoController extends GenericController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/update/{cargoId}",
+    @RequestMapping(value = "/{cargoId}",
             method = RequestMethod.PUT,
             consumes = {"application/json"},
             produces = {"application/json"})
