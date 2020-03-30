@@ -58,11 +58,13 @@ public class CargoInfoService {
         cargoInfo.setMaintenanceDate(date);
         cargoInfo.setMaintenanceMan(userName);
         Attachment attachment = cargoInfoDto.getAttachment();
-        if (attachment != null) {
+        if (attachment != null && attachment.getAttachId()!=null && !attachment.getAttachId().equals("")) {
             Optional<Attachment> optional = attachmentRepository.findById(attachment.getAttachId());
             if (optional.isPresent()) {
                 cargoInfo.setAttachment(optional.get());
             }
+        }else {
+            cargoInfo.setAttachment(null);
         }
         cargoInfo.setCargoSerial(this.findLastCargoSerial());
         cargoInfo.setCargoCode(cargoInfo.getItemCode() + cargoInfo.getCargoSerial());
