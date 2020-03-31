@@ -134,8 +134,8 @@ public class CargoInfoService {
         return cargoCollectionDto;
     }
 
-    public void delete(Long cargoId) {
-        cargoInfoRepository.updateIsDelete(cargoId);
+    public void delete(String cargoIds) {
+        cargoInfoRepository.updateIsDelete(cargoIds);
     }
 
     public CargoInfo findOne(Long cargoId) {
@@ -165,15 +165,28 @@ public class CargoInfoService {
         return cargoInfo;
     }
 
+    private String getStatus(int status){
+        String name=null;
+        if(status==1){
+            name="待审核";
+        }
+        if(status==2){
+            name="审核中";
+        }
+        if(status==3){
+            name="待审完毕";
+        }
+        return name;
+    }
 
     //货物导出
-    public void export(HttpServletResponse response, String cargoName) {
+    public void export(HttpServletResponse response, String cargoIds) {
         try {
-            String[] header = {"货物序号", "货物品目", "货物名称", "货物编号", "品牌", "型号", "主要参数",
+            String[] header = {"货物序号", "货物品目", "货物名称", "货物编号","状态", "品牌", "型号", "主要参数",
                     "产地", "进口/国产类别", "币种", "维保率/月", "证明文件", "备注"};
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet("货物列表");
-            sheet.setDefaultColumnWidth(13);
+            sheet.setDefaultColumnWidth(14);
             //        创建标题的显示样式
             HSSFCellStyle headerStyle = workbook.createCellStyle();
             headerStyle.setFillForegroundColor(IndexedColors.YELLOW.index);
@@ -188,8 +201,8 @@ public class CargoInfoService {
                 cell.setCellStyle(headerStyle);
             }
             List<CargoInfo> list = null;
-            if (cargoName != null && !cargoName.equals("")) {
-                list = cargoInfoRepository.findByCargoName(cargoName);
+            if (cargoIds != null && !cargoIds.equals("")) {
+                list = cargoInfoRepository.findByCargoName(cargoIds);
             } else {
                 list = cargoInfoRepository.findAll();
             }
@@ -205,15 +218,16 @@ public class CargoInfoService {
                 row.createCell(1).setCellValue(new HSSFRichTextString(cargoInfo.getItemName()));
                 row.createCell(2).setCellValue(new HSSFRichTextString(cargoInfo.getCargoName()));
                 row.createCell(3).setCellValue(new HSSFRichTextString(cargoInfo.getCargoCode()));
-                row.createCell(4).setCellValue(new HSSFRichTextString(cargoInfo.getBrand()));
-                row.createCell(5).setCellValue(new HSSFRichTextString(cargoInfo.getModel()));
-                row.createCell(6).setCellValue(new HSSFRichTextString(cargoInfo.getMainParams()));
-                row.createCell(7).setCellValue(new HSSFRichTextString(cargoInfo.getManufactor()));
-                row.createCell(8).setCellValue(new HSSFRichTextString(cargoInfo.getType()));
-                row.createCell(9).setCellValue(new HSSFRichTextString(cargoInfo.getCurrency()));
-                row.createCell(10).setCellValue(new HSSFRichTextString(cargoInfo.getGuaranteeRate()));
-                row.createCell(11).setCellValue(new HSSFRichTextString(attachment.getAttachName()));
-                row.createCell(12).setCellValue(new HSSFRichTextString(cargoInfo.getRemark()));
+                row.createCell(4).setCellValue(new HSSFRichTextString(getStatus(cargoInfo.getStatus())));
+                row.createCell(5).setCellValue(new HSSFRichTextString(cargoInfo.getBrand()));
+                row.createCell(6).setCellValue(new HSSFRichTextString(cargoInfo.getModel()));
+                row.createCell(7).setCellValue(new HSSFRichTextString(cargoInfo.getMainParams()));
+                row.createCell(8).setCellValue(new HSSFRichTextString(cargoInfo.getManufactor()));
+                row.createCell(9).setCellValue(new HSSFRichTextString(cargoInfo.getType()));
+                row.createCell(10).setCellValue(new HSSFRichTextString(cargoInfo.getCurrency()));
+                row.createCell(11).setCellValue(new HSSFRichTextString(cargoInfo.getGuaranteeRate()));
+                row.createCell(12).setCellValue(new HSSFRichTextString(attachment.getAttachName()));
+                row.createCell(13).setCellValue(new HSSFRichTextString(cargoInfo.getRemark()));
             }
 
             response.setContentType("application/octet-stream");

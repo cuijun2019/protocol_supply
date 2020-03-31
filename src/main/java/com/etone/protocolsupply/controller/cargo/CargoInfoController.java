@@ -121,18 +121,18 @@ public class CargoInfoController extends GenericController {
     /**
      * 删除货物
      *
-     * @param cargoId
+     * @param cargoIds
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{cargoId}",
+    @RequestMapping(value = "/{cargoIds}",
             method = RequestMethod.DELETE,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseValue deleteCargo(@PathVariable("cargoId") String cargoId) {
+    public ResponseValue deleteCargo(@PathVariable("cargoIds") String cargoIds) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        cargoInfoService.delete(Long.parseLong(cargoId));
+        cargoInfoService.delete(cargoIds);
         return responseBuilder.build();
     }
 
@@ -167,7 +167,7 @@ public class CargoInfoController extends GenericController {
     /**
      * 货物导出
      *
-     * @param cargoName
+     * @param cargoIds
      * @param response
      * @return
      */
@@ -177,10 +177,10 @@ public class CargoInfoController extends GenericController {
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseValue exportPart(@RequestParam(value = "cargoName", required = false) String cargoName,
+    public ResponseValue exportPart(@RequestParam(value = "cargoIds", required = false) String cargoIds,
                                     @Context HttpServletResponse response) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        cargoInfoService.export(response, cargoName);
+        cargoInfoService.export(response, cargoIds);
         return responseBuilder.build();
     }
 
