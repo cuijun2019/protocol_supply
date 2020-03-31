@@ -166,9 +166,8 @@ public class AgentInfoService {
                 row.createCell(5).setCellValue(new HSSFRichTextString(agentInfo.getCreator()));
                 row.createCell(6).setCellValue(new HSSFRichTextString(format.format(agentInfo.getCreateDate())));
             }
-
-            response.setContentType("application/octet-stream");
             response.setHeader("Content-disposition", "attachment;filename=agentInfo.xls");
+            response.setContentType("application/vnd.ms-excel;charset=utf-8");
             response.flushBuffer();
             workbook.write(response.getOutputStream());
         } catch (Exception e) {
