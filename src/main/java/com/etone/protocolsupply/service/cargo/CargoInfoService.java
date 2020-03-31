@@ -69,6 +69,7 @@ public class CargoInfoService {
         cargoInfo.setCreateDate(date);
         cargoInfo.setMaintenanceDate(date);
         cargoInfo.setMaintenanceMan(userName);
+        cargoInfo.setStatus(1);
         Attachment attachment = cargoInfoDto.getAttachment();
         if (attachment != null && attachment.getAttachId()!=null && !attachment.getAttachId().equals("")) {
             Optional<Attachment> optional = attachmentRepository.findById(attachment.getAttachId());
@@ -279,7 +280,7 @@ public class CargoInfoService {
             cargoInfo.setCurrency(jsonObject.get("币种").toString());
             cargoInfo.setGuaranteeRate(jsonObject.get("维保率/月").toString());
             cargoInfo.setRemark(jsonObject.get("备注").toString());
-            cargoInfo.setStatus(1);//状态
+            cargoInfo.setStatus(1);//状态：草稿状态，审核中，审核完毕
             cargoInfo.setCreateDate(date);
             cargoInfo.setCreator(userName);
             cargoInfo.setMaintenanceDate(date);
