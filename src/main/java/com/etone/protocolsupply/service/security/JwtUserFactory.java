@@ -1,8 +1,8 @@
 package com.etone.protocolsupply.service.security;
 
 import com.etone.protocolsupply.model.dto.JwtUser;
-import com.etone.protocolsupply.model.entity.Role;
-import com.etone.protocolsupply.model.entity.User;
+import com.etone.protocolsupply.model.entity.user.Role;
+import com.etone.protocolsupply.model.entity.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 

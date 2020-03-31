@@ -1,7 +1,7 @@
 package com.etone.protocolsupply.repository;
 
-import com.etone.protocolsupply.model.entity.Role;
-import com.etone.protocolsupply.model.entity.User;
+import com.etone.protocolsupply.model.entity.user.Role;
+import com.etone.protocolsupply.model.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
