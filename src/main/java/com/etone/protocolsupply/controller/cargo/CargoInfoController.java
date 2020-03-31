@@ -240,7 +240,7 @@ public class CargoInfoController extends GenericController {
     public ResponseValue upLoadPart(@Validated @RequestParam("file") MultipartFile uploadFile) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Attachment attachment = attachmentService.upload(uploadFile, this.getUser());
-       // cargoInfoService.upLoad(attachment);
+        cargoInfoService.upLoad(attachment,this.getUser());
         return responseBuilder.build();
     }
 

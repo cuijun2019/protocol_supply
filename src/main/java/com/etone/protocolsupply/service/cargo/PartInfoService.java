@@ -131,13 +131,9 @@ public class PartInfoService {
                 List tempList = list.subList(i * 200, (i + 1) * 200 > list.size() ? list.size() : (i + 1) * 200);
                 batchInsertPartInfo(tempList, cargoId);
             }
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
     //配件导出

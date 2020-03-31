@@ -103,6 +103,12 @@ public class CargoInfo implements Serializable {
     @Column(name = "REMARK", length = 2000)
     private String  remark;
 
+    /**
+     * 审核状态
+     */
+    @Column(name = "STATUS", length = 4)
+    private Integer status;
+
     @Column(name = "CREATOR", length = 32)
     private String  creator;
 

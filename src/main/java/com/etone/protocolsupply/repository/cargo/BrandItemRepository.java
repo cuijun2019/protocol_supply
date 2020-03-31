@@ -25,4 +25,7 @@ public interface BrandItemRepository extends JpaRepository<BrandItem, String>, J
     @Override
     @Query(value = "select * from brand_item", nativeQuery = true)
     List<BrandItem> findAll();
+
+    @Query(value = "select * from brand_item where  item_name=?1", nativeQuery = true)
+    BrandItem findByItemName(String parentItemName);
 }

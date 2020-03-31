@@ -2,21 +2,24 @@ package com.etone.protocolsupply.service.cargo;
 
 import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.exception.GlobalServiceException;
+import com.etone.protocolsupply.model.dto.ExcelHeaderColumnPojo;
 import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.cargo.CargoCollectionDto;
 import com.etone.protocolsupply.model.dto.cargo.CargoInfoDto;
 import com.etone.protocolsupply.model.entity.Attachment;
+import com.etone.protocolsupply.model.entity.cargo.BrandItem;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.cargo.PartInfo;
 import com.etone.protocolsupply.repository.AttachmentRepository;
+import com.etone.protocolsupply.repository.cargo.BrandItemRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.repository.cargo.PartInfoRepository;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.*;
+import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,9 +31,15 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static com.etone.protocolsupply.service.cargo.PartInfoService.readPartInfoExcelData;
 
 @Transactional(rollbackFor = Exception.class)
 @Service
@@ -46,6 +55,9 @@ public class CargoInfoService {
     private AttachmentRepository attachmentRepository;
     @Autowired
     private PagingMapper         pagingMapper;
+
+    @Autowired
+    private BrandItemRepository brandItemRepository;
 
     public CargoInfo save(CargoInfoDto cargoInfoDto, JwtUser jwtUser) throws GlobalServiceException {
         Date date = new Date();
@@ -96,17 +108,9 @@ public class CargoInfoService {
         return cargoInfo;
     }
 
-    public Specification<CargoInfo> getWhereClause(String isDelete, String cargoName, String partName) {
+    public Specification<CargoInfo> getWhereClause(String isDelete) {
         return (Specification<CargoInfo>) (root, criteriaQuery, criteriaBuilder) -> {
-
             List<Predicate> predicates = new ArrayList<>();
-            if (Strings.isNotBlank(cargoName)) {
-                predicates.add(criteriaBuilder.like(root.get("cargoName").as(String.class), "%" + cargoName + "%"));
-            }
-//            Join<CargoInfo, PartInfo> partJoin = root.join(root.getModel().getSingularAttribute("partInfo", PartInfo.class), JoinType.LEFT);
-//            if (Strings.isNotBlank(partName)) {
-//                predicates.add(criteriaBuilder.equal(partJoin.get("partName").as(String.class), partName));
-//            }
             predicates.add(criteriaBuilder.equal(root.get("isDelete").as(Long.class), isDelete));
             Predicate[] pre = new Predicate[predicates.size()];
             return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
@@ -224,4 +228,204 @@ public class CargoInfoService {
         String serial = cargoInfoRepository.findLastCargoSerial();
         return Common.convertSerial(serial, 1);
     }
+
+    private String findLastCargoSerial2(int i) {
+        String serial = cargoInfoRepository.findLastCargoSerial();
+        return Common.convertSerial(serial, 1+i);
+    }
+
+    public void upLoad(Attachment attachment ,JwtUser jwtUser) {
+        Map<String, Object> maps = new HashMap<String, Object>();
+        try {
+            //文件读取并插入数据库
+            List list = new ArrayList();
+            list = readCargoInfoExcelData(attachment.getPath());
+            if (null == list || list.size() == 0) {
+                //return StringUtil.getJsonString(true, 1, "导入数据为空!");
+            }
+            int num = list.size() / 200;
+            if (list.size() % 200 != 0) {
+                num++;
+            }
+            for (int i = 0; i < num; i++) {
+                List tempList = list.subList(i * 200, (i + 1) * 200 > list.size() ? list.size() : (i + 1) * 200);
+                batchInsertCargoInfo(tempList,jwtUser);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public void batchInsertCargoInfo(List<Object> maps,JwtUser jwtUser) {
+        Date date = new Date();
+        String userName = jwtUser.getUsername();
+        List<CargoInfo> listSave = new ArrayList<>();
+        for (int i = 0; i < maps.size(); i++) {
+            String jsonStr = maps.get(i).toString();
+            JSONObject jsonObject = new JSONObject(jsonStr);
+            CargoInfo cargoInfo = new CargoInfo();
+//            cargoInfo.setCargoSerial(this.findLastCargoSerial());//序号
+//            cargoInfo.setCargoCode(cargoInfo.getItemCode() + cargoInfo.getCargoSerial());//编号
+            BrandItem brandItem=brandItemRepository.findByItemName(jsonObject.get("货物品目").toString());
+            cargoInfo.setCargoSerial(this.findLastCargoSerial2(i));//货物序号
+            cargoInfo.setItemCode(brandItem.getItemCode());//品目code
+            cargoInfo.setItemName(brandItem.getItemName());//品目name
+            cargoInfo.setCargoName(jsonObject.get("货物名称").toString());
+            cargoInfo.setCargoCode(cargoInfo.getItemCode() + cargoInfo.getCargoSerial());//货物编号
+            cargoInfo.setBrand(jsonObject.get("品牌").toString());
+            cargoInfo.setModel(jsonObject.get("型号").toString());
+            cargoInfo.setMainParams(jsonObject.get("主要参数").toString());
+            cargoInfo.setManufactor(jsonObject.get("产地").toString());
+            cargoInfo.setType(jsonObject.get("进口/国产类别").toString());
+            cargoInfo.setCurrency(jsonObject.get("币种").toString());
+            cargoInfo.setGuaranteeRate(jsonObject.get("维保率/月").toString());
+            cargoInfo.setRemark(jsonObject.get("备注").toString());
+            cargoInfo.setStatus(1);//状态
+            cargoInfo.setCreateDate(date);
+            cargoInfo.setCreator(userName);
+            cargoInfo.setMaintenanceDate(date);
+            cargoInfo.setMaintenanceMan(userName);
+            cargoInfo.setIsDelete(2);
+            //cargoInfo.getAttachment().setAttachId(null);
+            listSave.add(cargoInfo);
+        }
+
+        cargoInfoRepository.saveAll(listSave);
+    }
+
+    public static List<Object> readCargoInfoExcelData(String exclePath) {
+        //构建JSONObject对象
+        JSONObject json = null;
+        Workbook wb = null;
+        Sheet sheet = null;
+        Row row = null;
+        List<Map<String, ExcelHeaderColumnPojo>> list = null;
+        List<String> keys = null;
+        String[] columns = {};// 存放Excel中的列名
+        wb = readExcel(exclePath);// Excel文件读取
+        if (wb != null) {
+            list = new ArrayList<Map<String, ExcelHeaderColumnPojo>>();// 用来存放表中数据
+            // 保存表头的字段名
+            Map<String, Integer> nameMap = new HashMap<String, Integer>();
+            List<Object> rowMap = new ArrayList<Object>();
+            List<String> lists = new ArrayList<String>();
+            for (int sheetnum = 0; sheetnum < wb.getNumberOfSheets(); sheetnum++) {
+                sheet = wb.getSheetAt(sheetnum); // 获取第一个sheet
+                int maxRow = sheet.getPhysicalNumberOfRows();// 获取最大行数
+                keys = new ArrayList<String>();// 存放key
+                row = sheet.getRow(0);// 获取第一行
+                if (row == null) {
+                    System.out.println("OperationExcel.main():Excel第一行表头为空!!");
+                }
+                int maxColumn = row.getPhysicalNumberOfCells(); // 获取最大列数
+                columns = new String[maxColumn];
+                for (int i = 0; i < maxColumn; i++) {// 遍历第一行数据,保存数据表头
+                    columns[i] = (String) getCellFormatValue(row.getCell(i));
+                    nameMap.put(columns[i], i);
+                }
+                String result = "";
+                lists = readCargoInfoKey();
+                // 提取数据
+                for (int i = 1; i < maxRow; i++) {// 从第二行开始遍历所有行
+                    json = new JSONObject();
+                    row = sheet.getRow(i);// Excel中的第i行
+                    if (row != null) {// 开始提取行内数据
+                        for (int c = 0; c < lists.size(); c++) {
+                            result = (String) getCellFormatValue(row.getCell(nameMap.get(lists.get(c))));
+                            json.put(lists.get(c), result);
+                        }
+                        rowMap.add(json);
+                    } else {
+                        break;
+                    }
+                }
+            }
+            return rowMap;
+        }
+
+        return null;
+    }
+    /**
+     * 读取Excel文件,返回workbook对象
+     *
+     * @param filePath
+     * @return
+     */
+    public static Workbook readExcel(String filePath) {
+        Workbook wb = null;
+        if (filePath == null) {
+            return null;
+        }
+        String extString = filePath.substring(filePath.lastIndexOf("."));// 判断Excel是什么版本的
+        InputStream is = null;
+        try {
+            is = new FileInputStream(filePath);// 文件流对象
+            if (".xls".equals(extString)) {
+                return wb = new HSSFWorkbook(is);// Excel版本2003
+            } else {
+                wb = null;
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return wb;
+    }
+
+    /**
+     * 获取表格中的数据
+     *
+     * @param cell
+     * @return
+     */
+    public static Object getCellFormatValue(Cell cell) {
+        Object cellValue = null;
+        if (cell != null) {
+            // 判断cell类型
+            switch (cell.getCellType()) {
+                case Cell.CELL_TYPE_NUMERIC: {
+                    cellValue = String.valueOf((long) cell.getNumericCellValue());
+                    break;
+                }
+                case Cell.CELL_TYPE_FORMULA: {
+                    // 判断cell是否为日期格式
+                    if (DateUtil.isCellDateFormatted(cell)) {
+                        // 转换为日期格式YYYY-mm-dd
+                        cellValue = cell.getDateCellValue();
+                    } else {
+                        // 数字
+                        cellValue = cell.getNumericCellValue();
+                    }
+                    break;
+                }
+                case Cell.CELL_TYPE_STRING: {
+                    cellValue = cell.getRichStringCellValue().getString();
+                    break;
+                }
+                default:
+                    cellValue = "";
+            }
+        } else {
+            cellValue = "";
+        }
+        return cellValue;
+    }
+
+    public static List<String> readCargoInfoKey() {
+        List<String> list = new ArrayList<>();
+        list.add("货物品目");
+        list.add("货物名称");
+        list.add("品牌");
+        list.add("型号");
+        list.add("主要参数");
+        list.add("产地");
+        list.add("进口/国产类别");
+        list.add("币种");
+        list.add("维保率/月");
+        list.add("证明文件");
+        list.add("备注");
+        return list;
+    }
+
 }
