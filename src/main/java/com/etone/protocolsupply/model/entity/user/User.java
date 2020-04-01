@@ -1,5 +1,6 @@
-package com.etone.protocolsupply.model.entity;
+package com.etone.protocolsupply.model.entity.user;
 
+import com.etone.protocolsupply.model.entity.Attachment;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -24,6 +25,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * 用户名
+     */
     @Column(name = "USERNAME", length = 50, unique = true)
     @NotNull
     @Size(min = 4, max = 50)
@@ -34,24 +38,48 @@ public class User {
     @Size(min = 4, max = 100)
     private String password;
 
+    /**
+     * 用户姓名
+     */
     @Column(name = "FULLNAME", length = 50)
     @NotNull
     private String fullname;
 
+    /**
+     * 性别
+     */
+    @Column(name = "SEX", length = 10)
+    @NotNull
+    private String sex;
+
+    /**
+     * 所在公司
+     */
+    @Column(name = "COMPANY", length = 100)
+    @NotNull
+    private String company;
+
+    /**
+     * 联系电话
+     */
     @Column(name = "TELEPHONE", length = 50)
     @NotNull
     @Size(min = 4, max = 50)
     private String telephone;
 
+    /**
+     * 邮箱
+     */
+    @Column(name = "EMAIL", length = 50)
+    @NotNull
+    private String email;
+
+    /**
+     * 状态
+     */
     @Column(name = "ENABLED", length = 8)
     @NotNull
     private Boolean enabled;
-
-    /**
-     * 业主公司
-     */
-    @Column(name = "OWNER")
-    private String owner;
 
     @Column(name = "CREATE_TIME")
     @Temporal(TemporalType.TIMESTAMP)
