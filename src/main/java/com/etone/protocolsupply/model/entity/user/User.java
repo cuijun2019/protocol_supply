@@ -101,4 +101,7 @@ public class User {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ATTACH_ID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment;
+
+    @Column(name = "IS_DELETE", length = 4)
+    private Integer isDelete;
 }
