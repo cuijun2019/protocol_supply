@@ -134,8 +134,8 @@ public class CargoInfoService {
         return cargoCollectionDto;
     }
 
-    public void delete(String cargoIds) {
-        cargoInfoRepository.updateIsDelete(cargoIds);
+    public void delete(Long cargoId) {
+        cargoInfoRepository.updateIsDelete(cargoId);
     }
 
     public CargoInfo findOne(Long cargoId) {
@@ -212,8 +212,13 @@ public class CargoInfoService {
                 DecimalFormat df = new DecimalFormat("0.00");
                 cargoInfo = list.get(i);
                 HSSFRow row = sheet.createRow(i + 1);
-
-                Attachment attachment = attachmentRepository.getOne(cargoInfo.getAttachment().getAttachId());
+                Attachment attachment=cargoInfo.getAttachment();
+                if(attachment!=null){
+                    attachment = attachmentRepository.getOne(cargoInfo.getAttachment().getAttachId());
+                    row.createCell(12).setCellValue(new HSSFRichTextString(attachment.getAttachName()));
+                }else {
+                    row.createCell(12).setCellValue(new HSSFRichTextString(""));
+                }
                 row.createCell(0).setCellValue(new HSSFRichTextString(cargoInfo.getCargoSerial()));
                 row.createCell(1).setCellValue(new HSSFRichTextString(cargoInfo.getItemName()));
                 row.createCell(2).setCellValue(new HSSFRichTextString(cargoInfo.getCargoName()));
@@ -226,10 +231,12 @@ public class CargoInfoService {
                 row.createCell(9).setCellValue(new HSSFRichTextString(cargoInfo.getType()));
                 row.createCell(10).setCellValue(new HSSFRichTextString(cargoInfo.getCurrency()));
                 row.createCell(11).setCellValue(new HSSFRichTextString(cargoInfo.getGuaranteeRate()));
-                row.createCell(12).setCellValue(new HSSFRichTextString(attachment.getAttachName()));
-                row.createCell(13).setCellValue(new HSSFRichTextString(cargoInfo.getRemark()));
+                if(cargoInfo.getRemark()!=null && !"".equals(cargoInfo.getRemark())){
+                    row.createCell(13).setCellValue(new HSSFRichTextString(cargoInfo.getRemark()));
+                }else {
+                    row.createCell(13).setCellValue(new HSSFRichTextString(""));
+                }
             }
-
             response.setContentType("application/octet-stream");
             response.setHeader("Content-disposition", "attachment;filename=cargoInfo.xls");
             response.flushBuffer();

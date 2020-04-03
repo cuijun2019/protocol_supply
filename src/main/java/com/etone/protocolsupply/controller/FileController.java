@@ -45,9 +45,7 @@ public class FileController extends GenericController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseValue download(@PathVariable("attachId") String attachId, @Context HttpServletResponse response) throws UnsupportedEncodingException {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-
         attachmentService.download(response, Long.parseLong(attachId));
-
         return responseBuilder.build();
     }
 }
