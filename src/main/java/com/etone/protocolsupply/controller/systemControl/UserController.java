@@ -71,8 +71,8 @@ public class UserController extends GenericController {
     public ResponseValue saveUser(@Validated
                                    @RequestBody UserDto userDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        User user = userService.save(userDto,this.getUser());
-        responseBuilder.data(user);
+        userService.save(userDto,this.getUser());
+        responseBuilder.message("保存用户成功");
         return responseBuilder.build();
     }
 
@@ -107,10 +107,11 @@ public class UserController extends GenericController {
             method = RequestMethod.DELETE,
             consumes = {"application/json"},
             produces = {"application/json"})
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public ResponseValue deleteUser(@PathVariable("userId") String userId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         userService.delete(Long.parseLong(userId));
+        responseBuilder.message("删除用户成功");
         return responseBuilder.build();
     }
 
@@ -147,8 +148,27 @@ public class UserController extends GenericController {
                                         @PathVariable("roleId") String roleId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         userService.changeUserRole(userId,roleId);
-        responseBuilder.message("操作成功");
+        responseBuilder.message("修改用户角色成功");
         return responseBuilder.build();
     }
 
+    /**
+     * 更新用户信息
+     * @param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(
+            value = "/updateUser",
+            method = RequestMethod.POST,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseValue updateUser(@Validated
+                                    @RequestBody UserDto userDto) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        userService.updateUser(userDto);
+        responseBuilder.message("更新用户信息成功");
+        return responseBuilder.build();
+    }
 }

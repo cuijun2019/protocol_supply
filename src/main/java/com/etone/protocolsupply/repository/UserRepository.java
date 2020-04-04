@@ -9,8 +9,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,5 +33,10 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     @Query(value = "update users set is_delete=1 where id=?1", nativeQuery = true)
     void updateIsDelete(long userId);
 
+
+    @Transactional(rollbackFor = Exception.class)
+    @Modifying
+    @Query(value = "update users set company=?1,create_time=?2,email=?3,enabled=?4,fullname=?5,sex=?6,telephone=?7 where id=?8", nativeQuery = true)
+    void updateUser(String company, Date createTime, String email, Boolean enabled, String fullname, String sex, String telephone, Long id);
 
 }

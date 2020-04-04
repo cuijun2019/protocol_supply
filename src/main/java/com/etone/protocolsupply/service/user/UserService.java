@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -68,7 +70,7 @@ public class UserService {
         return userCollectionDto;
     }
 
-    public User save(UserDto userDto, JwtUser jwtUser) {
+    public void save(UserDto userDto, JwtUser jwtUser) {
         Date date = new Date();
         String creator = jwtUser.getUsername();
 
@@ -88,7 +90,7 @@ public class UserService {
         user.setUsername(userDto.getUsername());
         user.setAttachment(null);
 
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     public User findOne(long userId) {
@@ -119,5 +121,21 @@ public class UserService {
                 roleRepository.addUserRole(Long.parseLong(userId),Long.parseLong(roleIds[i]));
             }
         }
+    }
+
+    //更新用户信息
+    public void updateUser(UserDto userDto) {
+        Date date = new Date();
+        Long id = userDto.getId();
+        @NotNull String company = userDto.getCompany();
+        @NotNull Date createTime = userDto.getCreateTime();
+        @NotNull String email = userDto.getEmail();
+        @NotNull Boolean enabled = userDto.getEnabled();
+        @NotNull String fullname = userDto.getFullname();
+        Integer isDelete = userDto.getIsDelete();
+        @NotNull String sex = userDto.getSex();
+        @NotNull @Size(min = 4, max = 50) String telephone = userDto.getTelephone();
+
+        userRepository.updateUser(company,createTime,email,enabled,fullname,sex,telephone,id);
     }
 }
