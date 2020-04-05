@@ -1,5 +1,6 @@
 package com.etone.protocolsupply.model.entity;
 
+import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
@@ -42,12 +43,6 @@ public class AgentInfo implements Serializable {
     @Column(name = "REVIEW_STATUS", length = 4)
     private Integer reviewStatus;
 
-    /**
-     * 项目id
-     */
-    @Column(name = "PROJECT_ID")
-    private Long    projectId;
-
     @Column(name = "CREATOR", length = 32)
     private String  creator;
 
@@ -66,4 +61,10 @@ public class AgentInfo implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "ATTACH_ID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value={"hibernateLazyInitializer"})
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JoinColumn(name = "PROJECT_ID")
+    private ProjectInfo projectInfo;
 }
