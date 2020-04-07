@@ -1,4 +1,4 @@
-package com.etone.protocolsupply.service.user;
+package com.etone.protocolsupply.service.system;
 
 import com.etone.protocolsupply.exception.GlobalExceptionCode;
 import com.etone.protocolsupply.exception.GlobalServiceException;
@@ -70,7 +70,7 @@ public class UserService {
         return userCollectionDto;
     }
 
-    public void save(UserDto userDto, JwtUser jwtUser) {
+    public void save(UserDto userDto, JwtUser jwtUser, String roleId) {
         Date date = new Date();
         String creator = jwtUser.getUsername();
 
@@ -90,7 +90,14 @@ public class UserService {
         user.setUsername(userDto.getUsername());
         user.setAttachment(null);
 
-        userRepository.save(user);
+        User save = userRepository.save(user);
+        if(roleId!=null && roleId.length()>0){
+            //新增用户角色关系
+            String[] roleIds = roleId.split(",");
+                for (int i = 0; i < roleIds.length; i++) {
+                    roleRepository.addUserRole(save.getId(),Long.parseLong(roleIds[i]));
+                }
+        }
     }
 
     public User findOne(long userId) {

@@ -6,7 +6,7 @@ import com.etone.protocolsupply.model.dto.systemControl.UserCollectionDto;
 import com.etone.protocolsupply.model.dto.systemControl.UserDto;
 import com.etone.protocolsupply.model.entity.user.Role;
 import com.etone.protocolsupply.model.entity.user.User;
-import com.etone.protocolsupply.service.user.UserService;
+import com.etone.protocolsupply.service.system.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -63,15 +63,16 @@ public class UserController extends GenericController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(
+    @RequestMapping(value = "/{roleId}",
             method = RequestMethod.POST,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseValue saveUser(@Validated
-                                   @RequestBody UserDto userDto) {
+                                   @RequestBody UserDto userDto,
+                                  @PathVariable("roleId") String roleId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        userService.save(userDto,this.getUser());
+        userService.save(userDto,this.getUser(),roleId);
         responseBuilder.message("保存用户成功");
         return responseBuilder.build();
     }
