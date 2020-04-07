@@ -42,7 +42,13 @@ public class ProjectInfo implements Serializable {
      * 交货时间
      */
     @Column(name = "DELIVERY_DATE", length = 50)
-    private String deliveryDate;
+    private Double deliveryDate;
+
+    /**
+     * 交货时间
+     */
+    @Column(name = "DELIVERY_DATE_STATUS")
+    private Long deliveryDateStatus;
 
     /**
      * 设备付款方法
