@@ -120,10 +120,9 @@ public class ProjectInfoService {
 
     public Specification<ProjectInfo> getWhereClause(String projectSubject, String status, String isDelete) {
         return (Specification<ProjectInfo>) (root, criteriaQuery, criteriaBuilder) -> {
-
             List<Predicate> predicates = new ArrayList<>();
             if (Strings.isNotBlank(projectSubject)) {
-                predicates.add(criteriaBuilder.equal(root.get("projectSubject").as(String.class), projectSubject));
+                predicates.add(criteriaBuilder.like(root.get("projectSubject").as(String.class), '%'+projectSubject+'%'));
             }
             if (Strings.isNotBlank(status)) {
                 predicates.add(criteriaBuilder.equal(root.get("status").as(String.class), status));
