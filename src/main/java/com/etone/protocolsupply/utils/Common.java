@@ -59,6 +59,10 @@ public class Common {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMM");
         return format.format(date);
     }
+    public static String getYYYYMMDDDate(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+        return format.format(date);
+    }
 
     public static String convertSerial(String serial, int step) {
         if (Strings.isBlank(serial)) {
@@ -74,6 +78,20 @@ public class Common {
         }
         return serial;
     }
+
+    public static String convertSerialProject(String serial, int step) {
+        if (Strings.isBlank(serial)) {
+            return "001";
+        }
+        serial = String.valueOf(Long.parseLong(serial) + step);
+        if (serial.length() == 1) {
+            return "00" + serial;
+        } else if (serial.length() == 2) {
+            return "0" + serial;
+        }
+        return serial;
+    }
+
 
     public static <T> Page<T> listConvertToPage(List<T> list, Pageable pageable) {
         int start = (int) pageable.getOffset();

@@ -6,6 +6,7 @@ import com.etone.protocolsupply.model.dto.cargo.CargoCollectionDto;
 import com.etone.protocolsupply.model.dto.cargo.CargoInfoDto;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
+import com.etone.protocolsupply.model.entity.cargo.PartInfo;
 import com.etone.protocolsupply.service.AttachmentService;
 import com.etone.protocolsupply.service.cargo.CargoInfoService;
 import com.etone.protocolsupply.service.cargo.PartInfoService;
@@ -26,6 +27,8 @@ import javax.ws.rs.core.Context;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.HashSet;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "${jwt.route.path}/cargoInfo")
@@ -110,9 +113,10 @@ public class CargoInfoController extends GenericController {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
 
         CargoInfo cargoInfo = cargoInfoService.findOne(Long.parseLong(cargoId));
+
         //配件list
-//        List<PartInfo> partInfos=partInfoService.getPartInfoList(Long.parseLong(cargoId));
-//        cargoInfo.setPartInfos(new HashSet<>(partInfos));
+        //List<PartInfo> list=partInfoService.getPartInfoList(Long.parseLong(cargoId));
+//        cargoInfo.setPartInfoList(list);
         responseBuilder.data(cargoInfo);
 
         return responseBuilder.build();
@@ -184,6 +188,10 @@ public class CargoInfoController extends GenericController {
         return responseBuilder.build();
     }
 
+    /**
+     * 下载货物导入模板
+     * @param res
+     */
     @ResponseBody
     @RequestMapping(value = "/downloadTemplate")
     public void downloadExcel(HttpServletResponse res) {
@@ -243,5 +251,6 @@ public class CargoInfoController extends GenericController {
         cargoInfoService.upLoad(attachment,this.getUser());
         return responseBuilder.build();
     }
+
 
 }

@@ -1,8 +1,13 @@
 package com.etone.protocolsupply.model.entity.project;
 
+import com.etone.protocolsupply.model.dto.cargo.CargoInfoDto;
 import com.etone.protocolsupply.model.entity.AgentInfo;
+import com.etone.protocolsupply.model.entity.Attachment;
+import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.cargo.PartInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -74,15 +79,55 @@ public class ProjectInfo implements Serializable {
     @Column(name = "GUARANTEE_FEE")
     private String guaranteeFee;
 
+    /**
+     * 审核状态
+     */
+    @Column(name = "STATUS", length = 4)
+    private Integer status;
+
     @Column(name = "IS_DELETE", length = 4)
     private Integer isDelete;
 
+    /**
+     * 货物
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value={"hibernateLazyInitializer"})
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JoinColumn(name = "CARGO_ID", referencedColumnName = "CARGO_ID")
+    private CargoInfo cargoInfo;
+
+    /**
+     * 中标通知书
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value={"hibernateLazyInitializer"})
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JoinColumn(name = "NOTICE_ID", referencedColumnName = "ATTACH_ID")
+    private Attachment attachment_n;
+
+    /**
+     * 合同
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value={"hibernateLazyInitializer"})
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JoinColumn(name = "CONTRACT_ID", referencedColumnName = "ATTACH_ID")
+    private Attachment attachment_c;
+
+
+    /**
+     * 配件
+     */
     @JsonIgnore
     @OneToMany(mappedBy = "projectInfo",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
     private Set<PartInfo> partInfos = new HashSet<>();
 
+    /**
+     *代理商
+     */
     @JsonIgnore
     @OneToMany(mappedBy = "projectInfo",
             cascade = CascadeType.ALL,

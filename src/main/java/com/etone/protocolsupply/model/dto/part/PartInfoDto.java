@@ -6,4 +6,6 @@ import lombok.Data;
 @Data
 public class PartInfoDto extends PartInfo {
     private String cargoId;
+
+    private String projectId;
 }

@@ -9,8 +9,10 @@ import com.etone.protocolsupply.model.dto.part.PartInfoDto;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.cargo.PartInfo;
+import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.repository.cargo.PartInfoRepository;
+import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
@@ -48,6 +50,8 @@ public class PartInfoService {
     @Autowired
     private CargoInfoRepository cargoInfoRepository;
     @Autowired
+    private ProjectInfoRepository projectInfoRepository;
+    @Autowired
     private PagingMapper        pagingMapper;
 
     public PartInfo save(PartInfoDto partInfoDto) throws GlobalServiceException {
@@ -57,19 +61,24 @@ public class PartInfoService {
         PartInfo partInfo = new PartInfo();
         BeanUtils.copyProperties(partInfoDto, partInfo);
         CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(Long.parseLong(partInfoDto.getCargoId()));
+        ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(Long.parseLong(partInfoDto.getProjectId()));
         partInfo.setPartSerial(Common.convertSerial(partInfoRepository.findLastPartSerial(cargoInfo.getCargoSerial()), 1));
         partInfo.setPartCode(cargoInfo.getCargoCode() + partInfo.getPartSerial());
         partInfo.setCargoInfo(cargoInfo);
+        partInfo.setProjectInfo(projectInfo);
         partInfo.setIsDelete(Constant.DELETE_NO);
         return partInfoRepository.save(partInfo);
     }
 
-    public Specification<PartInfo> getWhereClause(String isDelete, String cargoId) {
+    public Specification<PartInfo> getWhereClause(String isDelete, String cargoId, String projectId) {
         return (Specification<PartInfo>) (root, criteriaQuery, criteriaBuilder) -> {
 
             List<Predicate> predicates = new ArrayList<>();
             if (Strings.isNotBlank(cargoId)) {
                 predicates.add(criteriaBuilder.equal(root.get("cargoInfo").as(CargoInfo.class), cargoId));
+            }
+            if (Strings.isNotBlank(projectId)) {
+                predicates.add(criteriaBuilder.equal(root.get("projectInfo").as(ProjectInfo.class), projectId));
             }
             predicates.add(criteriaBuilder.equal(root.get("isDelete").as(Long.class), isDelete));
             Predicate[] pre = new Predicate[predicates.size()];
@@ -114,7 +123,7 @@ public class PartInfoService {
     }
 
     //配件导入
-    public void upLoad(Attachment attachment, String cargoId) {
+    public void upLoad(Attachment attachment, String cargoId, String projectId) {
         Map<String, Object> maps = new HashMap<String, Object>();
         try {
             //文件读取并插入数据库
@@ -129,7 +138,7 @@ public class PartInfoService {
             }
             for (int i = 0; i < num; i++) {
                 List tempList = list.subList(i * 200, (i + 1) * 200 > list.size() ? list.size() : (i + 1) * 200);
-                batchInsertPartInfo(tempList, cargoId);
+                batchInsertPartInfo(tempList, cargoId,projectId);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -323,22 +332,45 @@ public class PartInfoService {
         return list;
     }
 
-    public void batchInsertPartInfo(List<Object> maps, String cargoId) {
+    public void batchInsertPartInfo(List<Object> maps, String cargoId, String projectId) {
         Long lcargoId = Long.parseLong(cargoId);
-        Specification<PartInfo> specification = getWhereClause("2", null);
-        List<PartInfo> list = partInfoRepository.findAll(specification);
+        Long lprojectId = Long.parseLong(projectId);
+        List<PartInfo> partInfos=partInfoRepository.findAll();
         List<String> listDel = new ArrayList<>();
         List<PartInfo> listSave = new ArrayList<>();
+        int num=0;
+        for (int i = 0; i < maps.size(); i++){
+            String jsonStr = maps.get(i).toString();
+            JSONObject jsonObject = new JSONObject(jsonStr);
+            PartInfo partInfo = new PartInfo();
+            if(partInfos.size()>0){
+                List<PartInfo> list = partInfoRepository.findAllBys(lcargoId,lprojectId);
+                if(list.size()>0){
+                    for (PartInfo item : list) {
+                        if (item.getPartName().equals(jsonObject.get("设备或配件名称").toString())) {
+                            listDel.add(item.getPartId().toString());
+                        }
+                    }
+                }
+            }
+        }
+        if(listDel.size()>0){
+            partInfoRepository.deleteAll(listDel);
+        }
         for (int i = 0; i < maps.size(); i++) {
             String jsonStr = maps.get(i).toString();
             JSONObject jsonObject = new JSONObject(jsonStr);
             PartInfo partInfo = new PartInfo();
-            for (PartInfo item : list) {
-                if (item.getPartCode().equals(jsonObject.get("配件编号").toString())) {
-                    listDel.add(item.getPartId().toString());
-                }
+            CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(lcargoId);
+            if(Strings.isBlank(partInfoRepository.findLastPartSerial(cargoInfo.getCargoSerial()))){
+                partInfo.setPartSerial("0001");
+                num=1;
+            }else if(num==1){
+                partInfo.setPartSerial(Common.convertSerial(partInfoRepository.findLastPartSerial(cargoInfo.getCargoSerial()), i));
+            } else {
+                partInfo.setPartSerial(Common.convertSerial(partInfoRepository.findLastPartSerial(cargoInfo.getCargoSerial()), i+1));
             }
-            partInfo.setPartCode(jsonObject.get("配件编号").toString());
+            partInfo.setPartCode(cargoInfo.getCargoCode() + partInfo.getPartSerial());
             partInfo.setPartName(jsonObject.get("设备或配件名称").toString());
             partInfo.setStandards(jsonObject.get("型号/规格").toString());
             partInfo.setManufactor(jsonObject.get("产地/厂家").toString());
@@ -349,11 +381,18 @@ public class PartInfoService {
             partInfo.setTotal(Double.parseDouble(jsonObject.get("总价").toString()));
             partInfo.setRemark(jsonObject.get("备注").toString());
             partInfo.setIsDelete(2);
-            CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(lcargoId);
+
+            ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(lprojectId);
             partInfo.setCargoInfo(cargoInfo);
-            listSave.add(partInfo);
+            partInfo.setProjectInfo(projectInfo);
+            if(partInfo.getPartSerial().equals("0001")){
+                partInfoRepository.save(partInfo);
+            }else {
+                listSave.add(partInfo);
+            }
+
         }
-        partInfoRepository.deleteAll(listDel);
+
         partInfoRepository.saveAll(listSave);
     }
 

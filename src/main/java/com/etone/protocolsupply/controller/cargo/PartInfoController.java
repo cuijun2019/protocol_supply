@@ -97,10 +97,12 @@ public class PartInfoController extends GenericController {
             produces = {"application/json"},
             consumes = {"multipart/form-data"})
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseValue upLoadPart(@Validated @RequestParam("file") MultipartFile uploadFile, @RequestParam(value = "cargoId", required = false) String cargoId) {
+    public ResponseValue upLoadPart(@Validated @RequestParam("file") MultipartFile uploadFile,
+                                    @RequestParam(value = "cargoId", required = false) String cargoId,
+                                    @RequestParam(value = "projectId", required = false) String projectId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Attachment attachment = attachmentService.upload(uploadFile, this.getUser());
-        partInfoService.upLoad(attachment, cargoId);
+        partInfoService.upLoad(attachment, cargoId,projectId);
         return responseBuilder.build();
     }
 
