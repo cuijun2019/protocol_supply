@@ -70,12 +70,11 @@ public class UserService {
         return userCollectionDto;
     }
 
-    public void save(UserDto userDto, JwtUser jwtUser, String roleId) {
+    public void save(UserDto userDto, JwtUser jwtUser) {
         Date date = new Date();
         String creator = jwtUser.getUsername();
 
         //TODO 密码加密
-
         User user = new User();
         user.setCompany(userDto.getCompany());
         user.setCreateTime(date);
@@ -91,12 +90,13 @@ public class UserService {
         user.setAttachment(null);
 
         User save = userRepository.save(user);
-        if(roleId!=null && roleId.length()>0){
+
+        List<Role> roles = userDto.getRoles();
+        if(roles!=null && roles.size()>0){
             //新增用户角色关系
-            String[] roleIds = roleId.split(",");
-                for (int i = 0; i < roleIds.length; i++) {
-                    roleRepository.addUserRole(save.getId(),Long.parseLong(roleIds[i]));
-                }
+            for (int i = 0; i < roles.size(); i++) {
+                roleRepository.addUserRole(save.getId(),roles.get(i).getId());
+            }
         }
     }
 

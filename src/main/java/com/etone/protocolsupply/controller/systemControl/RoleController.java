@@ -70,8 +70,10 @@ public class RoleController extends GenericController {
     public ResponseValue saveUser(@Validated
                                   @RequestBody RoleDto roleDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        roleService.save(roleDto);
+        roleService.save(roleDto,this.getUser());
         responseBuilder.message("保存角色成功");
         return responseBuilder.build();
     }
+
+
 }

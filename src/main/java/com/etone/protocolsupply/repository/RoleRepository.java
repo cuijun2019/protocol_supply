@@ -24,4 +24,12 @@ public interface RoleRepository extends JpaRepository<Role, Long>, JpaSpecificat
     @Modifying
     @Query(value = "insert into user_role (user_id,role_id) values (?1,?2)", nativeQuery = true)
     void addUserRole(Long userId, Long roleId);
+
+    @Transactional(rollbackFor = Exception.class)
+    @Modifying
+    @Query(value = "insert into role_permis (role_id,perm_id) values (?1,?2)", nativeQuery = true)
+    void saveRolePermissions(Long role_id, Long perm_id);
+
+
+
 }

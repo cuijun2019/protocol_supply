@@ -63,16 +63,14 @@ public class UserController extends GenericController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{roleId}",
-            method = RequestMethod.POST,
+    @RequestMapping(method = RequestMethod.POST,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseValue saveUser(@Validated
-                                   @RequestBody UserDto userDto,
-                                  @PathVariable("roleId") String roleId) {
+                                   @RequestBody UserDto userDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        userService.save(userDto,this.getUser(),roleId);
+        userService.save(userDto,this.getUser());
         responseBuilder.message("保存用户成功");
         return responseBuilder.build();
     }

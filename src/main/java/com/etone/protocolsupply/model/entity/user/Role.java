@@ -27,9 +27,8 @@ public class Role {
      * 角色名称
      * 将枚举的字符串写入
      */
-    @Enumerated(EnumType.STRING)
-    @Column(name = "NAME", nullable = false, length = 32)
-    private RoleName name;
+    @Column(name = "NAME", length = 32)
+    private String name;
 
     /**
      * 角色描述

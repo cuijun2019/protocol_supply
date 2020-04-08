@@ -1,8 +1,10 @@
 package com.etone.protocolsupply.service.system;
 
+import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.systemControl.RoleCollectionDto;
 import com.etone.protocolsupply.model.dto.systemControl.RoleDto;
 import com.etone.protocolsupply.model.dto.systemControl.UserDto;
+import com.etone.protocolsupply.model.entity.user.Permissions;
 import com.etone.protocolsupply.model.entity.user.Role;
 import com.etone.protocolsupply.model.entity.user.User;
 import com.etone.protocolsupply.repository.RoleRepository;
@@ -22,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Transactional(rollbackFor = Exception.class)
 @Service
@@ -59,14 +62,23 @@ public class RoleService {
         return roleCollectionDto;
     }
 
-    public void save(RoleDto roleDto) {
+    public void save(RoleDto roleDto, JwtUser user) {
         Role role = new Role();
+        String username = user.getUsername();
 
         role.setCreateTime(new Date());
         role.setDescription(roleDto.getDescription());
         role.setName(roleDto.getName());
         role.setStatus(1);
 
-        roleRepository.save(role);
+        Role save = roleRepository.save(role);
+
+        //保存角色对应的权限
+        Set<Permissions> permissions = roleDto.getPermissions();
+        if(permissions !=null && permissions.size()>0){
+            for(Permissions permission:permissions){
+                roleRepository.saveRolePermissions(save.getId(),permission.getPermId());
+            }
+        }
     }
 }
