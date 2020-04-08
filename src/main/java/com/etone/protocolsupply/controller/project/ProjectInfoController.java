@@ -31,6 +31,7 @@ import javax.ws.rs.core.Context;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "${jwt.route.path}/projectInfo")
@@ -88,17 +89,72 @@ public class ProjectInfoController extends GenericController {
                                        @RequestParam(value = "status", required = false) String status,
                                        HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-
         Sort sort = new Sort(Sort.Direction.DESC, "projectId");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-
         Specification<ProjectInfo> specification = projectInfoService.getWhereClause(projectSubject, status, isDelete);
         Page<ProjectInfo> page = projectInfoService.findAgents(specification, pageable);
-
         ProjectCollectionDto projectCollectionDto = projectInfoService.to(page, request);
         responseBuilder.data(projectCollectionDto);
-
         return responseBuilder.build();
+    }
+
+    /**
+     * 修改项目
+     * @param projectId
+     * @param projectInfoDto
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/{projectId}",
+            method = RequestMethod.PUT,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseValue updateProject(@PathVariable("projectId") String projectId,
+                                     @RequestBody ProjectInfoDto projectInfoDto) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+
+        projectInfoDto.setProjectId(Long.parseLong(projectId));
+        ProjectInfo projectInfo = projectInfoService.update(projectInfoDto);
+        responseBuilder.data(projectInfo);
+        return responseBuilder.build();
+    }
+
+    /**
+     * 删除
+     * @param projectId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/{projectId}",
+            method = RequestMethod.DELETE,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseValue deleteAgent(@PathVariable("projectId") String projectId) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        projectInfoService.delete(Long.parseLong(projectId));
+        return responseBuilder.build();
+    }
+
+    /**
+     * 项目导出
+     * @param projectSubject
+     * @param status
+     * @param response
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/export",
+            method = RequestMethod.GET,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    public void exportAgent(@RequestParam(value = "projectSubject", required = false) String projectSubject,
+                            @RequestParam(value = "status", required = false) String status,
+                            @RequestParam(value = "isDelete", required = false, defaultValue = "2") String isDelete,
+                            @RequestBody(required = false) List<Long> projectIds,
+                            @Context HttpServletResponse response) {
+        projectInfoService.export(response, projectSubject, status, isDelete, projectIds);
     }
 
 

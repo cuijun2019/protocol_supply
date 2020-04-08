@@ -61,11 +61,15 @@ public class PartInfoService {
         PartInfo partInfo = new PartInfo();
         BeanUtils.copyProperties(partInfoDto, partInfo);
         CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(Long.parseLong(partInfoDto.getCargoId()));
-        ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(Long.parseLong(partInfoDto.getProjectId()));
+        if(partInfoDto.getProjectId()!=null && !"".equals(partInfoDto.getProjectId())){
+            ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(Long.parseLong(partInfoDto.getProjectId()));
+            partInfo.setProjectInfo(projectInfo);
+        }else {
+            partInfo.setProjectInfo(null);
+        }
         partInfo.setPartSerial(Common.convertSerial(partInfoRepository.findLastPartSerial(cargoInfo.getCargoSerial()), 1));
         partInfo.setPartCode(cargoInfo.getCargoCode() + partInfo.getPartSerial());
         partInfo.setCargoInfo(cargoInfo);
-        partInfo.setProjectInfo(projectInfo);
         partInfo.setIsDelete(Constant.DELETE_NO);
         return partInfoRepository.save(partInfo);
     }

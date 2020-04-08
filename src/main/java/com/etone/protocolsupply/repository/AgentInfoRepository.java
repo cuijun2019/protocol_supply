@@ -25,4 +25,8 @@ public interface AgentInfoRepository extends JpaRepository<AgentInfo, Long>, Jpa
     @Query(value = "select * from agent_info where is_delete=2 and " +
             "if((:agentName is not null), (agent_name like %:agentName%), (1=1)) and if((:status is not null), (status=:status), (1=1))", nativeQuery = true)
     List<AgentInfo> findAll(@Param("agentName") String agentName, @Param("status") String status);
+
+    @Query(value = "update agent_info set project_id=:projectId where agent_id in (:agentIds)", nativeQuery = true)
+    @Modifying
+    void setProjectId(@Param("projectId") Long projectId, @Param("agentIds") List<Long> agentIds);
 }

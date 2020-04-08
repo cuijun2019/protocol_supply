@@ -122,9 +122,7 @@ public class PartInfoController extends GenericController {
     public ResponseValue exportPart(@PathVariable("cargoId") String cargoId,
                                     @Context HttpServletResponse response) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-
         partInfoService.export(response, Long.parseLong(cargoId));
-
         return responseBuilder.build();
     }
 

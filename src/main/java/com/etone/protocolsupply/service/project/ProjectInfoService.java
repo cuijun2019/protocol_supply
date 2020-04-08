@@ -1,6 +1,7 @@
 package com.etone.protocolsupply.service.project;
 
 import com.etone.protocolsupply.constant.Constant;
+import com.etone.protocolsupply.exception.GlobalExceptionCode;
 import com.etone.protocolsupply.exception.GlobalServiceException;
 import com.etone.protocolsupply.model.dto.ExcelHeaderColumnPojo;
 import com.etone.protocolsupply.model.dto.JwtUser;
@@ -8,11 +9,13 @@ import com.etone.protocolsupply.model.dto.cargo.CargoCollectionDto;
 import com.etone.protocolsupply.model.dto.cargo.CargoInfoDto;
 import com.etone.protocolsupply.model.dto.project.ProjectCollectionDto;
 import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
+import com.etone.protocolsupply.model.entity.AgentInfo;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.BrandItem;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.cargo.PartInfo;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
+import com.etone.protocolsupply.repository.AgentInfoRepository;
 import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.cargo.BrandItemRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
@@ -22,6 +25,7 @@ import com.etone.protocolsupply.service.cargo.CargoInfoService;
 import com.etone.protocolsupply.service.cargo.PartInfoService;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
+import com.etone.protocolsupply.utils.SpringUtil;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
@@ -54,6 +58,8 @@ public class ProjectInfoService {
     @Autowired
     private CargoInfoRepository  cargoInfoRepository;
     @Autowired
+    private AgentInfoRepository agentInfoRepository;
+    @Autowired
     private PartInfoService      partInfoService;
     @Autowired
     private CargoInfoService cargoInfoService;
@@ -74,7 +80,7 @@ public class ProjectInfoService {
         if(projectInfo1==null || "".equals(projectInfo1)){
             projectInfo.setProjectCode("SCUT"+Common.getYYYYMMDDDate(date)+"XY"+"001");
         }else {
-            projectInfo.setProjectCode("SCUT"+Common.getYYYYMMDDDate(date)+"XY"+Common.convertSerialProject(projectInfo1.getProjectCode().substring(12),1));
+            projectInfo.setProjectCode("SCUT"+Common.getYYYYMMDDDate(date)+"XY"+Common.convertSerialProject(projectInfo1.getProjectCode().substring(14),1));
         }
 
         projectInfo.setIsDelete(Constant.DELETE_NO);
@@ -113,6 +119,9 @@ public class ProjectInfoService {
         }else {
             projectInfo.setCargoInfo(null);
         }
+        //代理商list
+        Set<AgentInfo> agentInfos = projectInfoDto.getAgentInfos();
+
 
         return projectInfoRepository.save(projectInfo);
     }
@@ -147,6 +156,133 @@ public class ProjectInfoService {
             projectCollectionDto.add(agentInfoDto);
         }
         return projectCollectionDto;
+    }
+
+    public ProjectInfo update(ProjectInfoDto projectInfoDto) throws GlobalServiceException {
+        ProjectInfo projectInfo = this.findOne(projectInfoDto.getProjectId());
+        Attachment attachmentn = projectInfoDto.getAttachment_n();//中标通知书
+        Attachment attachmentc = projectInfoDto.getAttachment_c();//合同
+        CargoInfo cargoInfo =  projectInfoDto.getCargoInfo();//货物
+        SpringUtil.copyPropertiesIgnoreNull(projectInfoDto, projectInfo);
+        if (projectInfo != null && attachmentn == null && attachmentc==null && cargoInfo == null) {
+            projectInfoRepository.save(projectInfo);
+        }
+        if (attachmentn != null) {
+            Optional<Attachment> optional = attachmentRepository.findById(attachmentn.getAttachId());
+            if (optional.isPresent()) {
+                projectInfo.setAttachment_n(optional.get());
+            }
+        }
+        if (attachmentc != null) {
+            Optional<Attachment> optional = attachmentRepository.findById(attachmentc.getAttachId());
+            if (optional.isPresent()) {
+                projectInfo.setAttachment_c(optional.get());
+            }
+        }
+        if (cargoInfo != null) {
+            Optional<CargoInfo> optional = cargoInfoRepository.findById(cargoInfo.getCargoId());
+            if (optional.isPresent()) {
+                projectInfo.setCargoInfo(optional.get());
+            }
+        }
+        projectInfoRepository.save(projectInfo);
+        return projectInfo;
+    }
+    public ProjectInfo findOne(Long projectId) {
+        Optional<ProjectInfo> optional = projectInfoRepository.findById(projectId);
+        if (optional.isPresent()) {
+            return optional.get();
+        } else {
+            throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("通过项目id"));
+        }
+    }
+
+    public void delete(Long projectId) {
+        projectInfoRepository.updateIsDelete(projectId);
+    }
+
+    public void export(HttpServletResponse response, String projectSubject, String status, String isDelete, List<Long> projectIds) {
+        try {
+            String[] header = {"项目主题", "项目编号", "货物名称", "数量", "单位", "货物金额", "项目总金额", "币种", "状态",
+                    "采购结果通知书", "中标通知书","合同"};
+            HSSFWorkbook workbook = new HSSFWorkbook();
+            HSSFSheet sheet = workbook.createSheet("项目信息表");
+            sheet.setDefaultColumnWidth(10);
+            //        创建标题的显示样式
+            HSSFCellStyle headerStyle = workbook.createCellStyle();
+            headerStyle.setFillForegroundColor(IndexedColors.YELLOW.index);
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            //        创建第一行表头
+            HSSFRow headrow = sheet.createRow(0);
+
+            for (int i = 0; i < header.length; i++) {
+                HSSFCell cell = headrow.createCell(i);
+                HSSFRichTextString text = new HSSFRichTextString(header[i]);
+                cell.setCellValue(text);
+                cell.setCellStyle(headerStyle);
+            }
+
+            List<ProjectInfo> list;
+            if (projectIds != null && !projectIds.isEmpty()) {
+                list = projectInfoRepository.findAllp(projectSubject, status, projectIds);
+            } else {
+                list = projectInfoRepository.findAllp2(projectSubject, status);
+            }
+            ProjectInfo projectInfo;
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            for (int i = 0; i < list.size(); i++) {
+                projectInfo = list.get(i);
+                HSSFRow row = sheet.createRow(i + 1);
+                Attachment attachmentn=projectInfo.getAttachment_n();//中标通知书
+                Attachment attachmentc=projectInfo.getAttachment_c();//合同
+                if(attachmentn!=null){
+                    attachmentn = attachmentRepository.getOne(projectInfo.getAttachment_n().getAttachId());
+                    row.createCell(10).setCellValue(new HSSFRichTextString(attachmentn.getAttachName()));
+                }else {
+                    row.createCell(10).setCellValue(new HSSFRichTextString(""));
+                }
+                if(attachmentc!=null){
+                    attachmentc = attachmentRepository.getOne(projectInfo.getAttachment_c().getAttachId());
+                    row.createCell(11).setCellValue(new HSSFRichTextString(attachmentc.getAttachName()));
+                }else {
+                    row.createCell(11).setCellValue(new HSSFRichTextString(""));
+                }
+                CargoInfo cargoInfo=cargoInfoRepository.findAllByCargoId(projectInfo.getCargoInfo().getCargoId());
+                row.createCell(0).setCellValue(new HSSFRichTextString(projectInfo.getProjectSubject()));
+                row.createCell(1).setCellValue(new HSSFRichTextString(projectInfo.getProjectCode()));
+                row.createCell(2).setCellValue(new HSSFRichTextString(cargoInfo.getCargoName()));
+                row.createCell(3).setCellValue(new HSSFRichTextString("0"));//数量
+                row.createCell(4).setCellValue(new HSSFRichTextString("台"));//单位
+                row.createCell(5).setCellValue(new HSSFRichTextString("5000"));//货物金额
+                row.createCell(6).setCellValue(new HSSFRichTextString("6000"));//项目总金额
+                row.createCell(7).setCellValue(new HSSFRichTextString(cargoInfo.getCurrency()));//币种
+                row.createCell(8).setCellValue(new HSSFRichTextString(projectStatus(projectInfo.getStatus())));//状态
+                row.createCell(9).setCellValue(new HSSFRichTextString(""));//采购结果通知书
+                //row.createCell(10).setCellValue(new HSSFRichTextString("6000"));//中标通知书
+               // row.createCell(11).setCellValue(new HSSFRichTextString("6000"));//合同
+
+            }
+            response.setHeader("Content-disposition", "attachment;filename=projectInfo.xls");
+            response.setContentType("application/vnd.ms-excel;charset=utf-8");
+            response.flushBuffer();
+            workbook.write(response.getOutputStream());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String projectStatus(int status){
+        String str="";
+        if(status==1){
+             str="审核中";
+        }
+        if(status==2){
+            str="已完成";
+        }
+        if(status==3){
+            str="已退回";
+        }
+        return str;
     }
 
 }

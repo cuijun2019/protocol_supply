@@ -16,7 +16,6 @@ import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.repository.cargo.PartInfoRepository;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
-import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
 import org.json.JSONObject;
@@ -38,8 +37,6 @@ import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
-import static com.etone.protocolsupply.service.cargo.PartInfoService.readPartInfoExcelData;
 
 @Transactional(rollbackFor = Exception.class)
 @Service

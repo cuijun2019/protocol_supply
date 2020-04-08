@@ -94,7 +94,6 @@ public class AgentInfoController extends GenericController {
         agentInfoDto.setAgentId(Long.parseLong(agentId));
         AgentInfo agentInfo = agentInfoService.update(agentInfoDto);
         responseBuilder.data(agentInfo);
-
         return responseBuilder.build();
     }
 

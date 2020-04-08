@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -25,5 +26,12 @@ public interface ProjectInfoRepository extends JpaRepository<ProjectInfo, Long>,
     @Query(value = "select * from project_info where is_delete=2", nativeQuery = true)
     ProjectInfo findAlls();
 
+    @Query(value = "select * from project_info where is_delete=2 and " +
+            "if((:projectSubject is not null), (project_subject like %:projectSubject%), (1=1)) and if((:status is not null), (status=:status), (1=1)) and " +
+            "project_id in (:projectIds)", nativeQuery = true)
+    List<ProjectInfo> findAllp(@Param("projectSubject") String projectSubject, @Param("status") String status, @Param("projectIds") List<Long> projectIds);
 
+    @Query(value = "select * from project_info where is_delete=2 and " +
+            "if((:projectSubject is not null), (project_subject like %:projectSubject%), (1=1)) and if((:status is not null), (status=:status), (1=1))", nativeQuery = true)
+    List<ProjectInfo> findAllp2(@Param("projectSubject") String projectSubject, @Param("status") String status);
 }
