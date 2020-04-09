@@ -23,6 +23,7 @@ public interface ProjectInfoRepository extends JpaRepository<ProjectInfo, Long>,
     @Query(value = "select * from project_info where is_delete=2 and project_id=?1", nativeQuery = true)
     ProjectInfo findAllByProjectId(Long ProjectId);
 
+    @Transactional(rollbackFor = Exception.class)
     @Query(value = "select * from project_info where is_delete=2", nativeQuery = true)
     ProjectInfo findAlls();
 

@@ -15,6 +15,7 @@ import com.etone.protocolsupply.repository.cargo.PartInfoRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
+import com.etone.protocolsupply.utils.SpringUtil;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
@@ -124,6 +125,20 @@ public class PartInfoService {
         }
         return partCollectionDto;
     }
+
+    public PartInfo update(PartInfoDto partInfoDto) throws GlobalServiceException {
+        PartInfo partInfo = partInfoRepository.findOneModel(partInfoDto.getPartId());
+        partInfo.setPartName(partInfoDto.getPartName());
+        partInfo.setStandards(partInfoDto.getStandards());
+        partInfo.setTechParams(partInfoDto.getTechParams());
+        partInfo.setManufactor(partInfoDto.getManufactor());
+        partInfo.setUnit(partInfoDto.getUnit());
+        partInfo.setQuantity(partInfoDto.getQuantity());
+        partInfo.setPrice(partInfoDto.getPrice());
+        partInfo.setRemark(partInfoDto.getRemark());
+        return partInfoRepository.save(partInfo);
+    }
+
 
     public void delete(Long partId) {
         partInfoRepository.updateIsDelete(partId);

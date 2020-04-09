@@ -7,17 +7,18 @@ import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.cargo.CargoInfoDto;
 import com.etone.protocolsupply.model.dto.project.ProjectCollectionDto;
 import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
-import com.etone.protocolsupply.model.entity.AgentInfo;
+import com.etone.protocolsupply.model.entity.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
-import com.etone.protocolsupply.repository.AgentInfoRepository;
+import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
 import com.etone.protocolsupply.repository.AttachmentRepository;
-import com.etone.protocolsupply.repository.cargo.BrandItemRepository;
+import com.etone.protocolsupply.repository.PartnerInfoRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
+import com.etone.protocolsupply.repository.template.AgentInfoExpRepository;
+import com.etone.protocolsupply.service.agent.AgentInfoService;
 import com.etone.protocolsupply.service.cargo.CargoInfoService;
-import com.etone.protocolsupply.service.cargo.PartInfoService;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import com.etone.protocolsupply.utils.SpringUtil;
@@ -51,6 +52,12 @@ public class ProjectInfoService {
     private CargoInfoService cargoInfoService;
     @Autowired
     private AttachmentRepository attachmentRepository;
+    @Autowired
+    private AgentInfoService agentInfoService;
+    @Autowired
+    private PartnerInfoRepository partnerInfoRepository;
+    @Autowired
+    private AgentInfoExpRepository agentInfoExpRepository;
     @Autowired
     private PagingMapper         pagingMapper;
 
@@ -103,10 +110,28 @@ public class ProjectInfoService {
             projectInfo.setCargoInfo(null);
         }
         //代理商list
-        Set<AgentInfo> agentInfos = projectInfoDto.getAgentInfos();
-
-
-        return projectInfoRepository.save(projectInfo);
+        Set<AgentInfoExp> agentInfoExps = projectInfoDto.getAgentInfoExps();
+        if (agentInfoExps != null && !agentInfoExps.isEmpty()) {
+            Optional<PartnerInfo> optional= partnerInfoRepository.findById(Long.valueOf(projectInfoDto.getPartnerId()));
+            for (AgentInfoExp agentInfoExp : agentInfoExps) {
+                agentInfoExp.setCreator(userName);
+                agentInfoExp.setCreateDate(date);
+                agentInfoExp.setStatus(1);
+                if (optional.isPresent()) {
+                    agentInfoExp.setPartnerInfo(optional.get());
+                }
+                agentInfoExp.setIsDelete(Constant.DELETE_NO);
+            }
+        }
+         projectInfoRepository.save(projectInfo);
+        List<Long> partnerIds = new ArrayList<>();
+        if(agentInfoExps.size()>0){
+            for (AgentInfoExp agentInfoExp : projectInfo.getAgentInfoExps()) {
+                partnerIds.add(agentInfoExp.getAgentId());
+            }
+            agentInfoExpRepository.setProjectId(projectInfo.getProjectId(), partnerIds);
+        }
+        return projectInfo;
     }
 
 

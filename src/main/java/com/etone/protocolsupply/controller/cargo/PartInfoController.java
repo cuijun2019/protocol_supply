@@ -36,6 +36,11 @@ public class PartInfoController extends GenericController {
     @Autowired
     private AttachmentService attachmentService;
 
+    /**
+     * 新增配件
+     * @param partInfoDto
+     * @return
+     */
     @ResponseBody
     @RequestMapping(
             method = RequestMethod.POST,
@@ -51,6 +56,15 @@ public class PartInfoController extends GenericController {
         return responseBuilder.build();
     }
 
+    /**
+     * 配件列表
+     * @param isDelete
+     * @param currentPage
+     * @param pageSize
+     * @param cargoId
+     * @param request
+     * @return
+     */
     @ResponseBody
     @RequestMapping(method = RequestMethod.GET,
             consumes = {"application/json"},
@@ -62,7 +76,6 @@ public class PartInfoController extends GenericController {
                                       @RequestParam(value = "cargoId", required = false) String cargoId,
                                       HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-
         Sort sort = new Sort(Sort.Direction.DESC, "partId");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
         Page<PartInfo> page = partInfoService.findPartInfos(cargoId, isDelete, pageable);
@@ -71,12 +84,33 @@ public class PartInfoController extends GenericController {
         for(int i=0;i<page.getContent().size();i++){
             partCollectionDto.getPartInfoDtos().get(i).setCargoInfo(null);
         }
-
         responseBuilder.data(partCollectionDto);
-
         return responseBuilder.build();
     }
 
+
+    @ResponseBody
+    @RequestMapping(value = "/{partId}",
+            method = RequestMethod.PUT,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseValue updateAgent(@PathVariable("partId") String partId,
+                                     @RequestBody PartInfoDto partInfoDto) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+
+        partInfoDto.setPartId(Long.parseLong(partId));
+        PartInfo partInfo = partInfoService.update(partInfoDto);
+        partInfo.setCargoInfo(null);
+        responseBuilder.data(partInfo);
+        return responseBuilder.build();
+    }
+
+    /**
+     * 删除配件
+     * @param partId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/{partId}",
             method = RequestMethod.DELETE,
@@ -131,6 +165,10 @@ public class PartInfoController extends GenericController {
         return responseBuilder.build();
     }
 
+    /**
+     * 下载配件导入模板
+     * @param res
+     */
     @ResponseBody
     @RequestMapping(value = "/downloadTemplate")
     public void downloadExcel(HttpServletResponse res) {

@@ -1,6 +1,7 @@
 package com.etone.protocolsupply.model.entity.project;
 
 import com.etone.protocolsupply.model.entity.AgentInfo;
+import com.etone.protocolsupply.model.entity.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.cargo.PartInfo;
@@ -114,7 +115,6 @@ public class ProjectInfo implements Serializable {
     @JoinColumn(name = "CONTRACT_ID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment_c;
 
-
     /**
      * 配件
      */
@@ -125,10 +125,10 @@ public class ProjectInfo implements Serializable {
     private Set<PartInfo> partInfos = new HashSet<>();
 
     /**
-     *代理商
+     *代理商拓展表
      */
     @OneToMany(mappedBy = "projectInfo",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
-    private Set<AgentInfo> agentInfos = new HashSet<>();
+    private Set<AgentInfoExp> agentInfoExps = new HashSet<>();
 }
