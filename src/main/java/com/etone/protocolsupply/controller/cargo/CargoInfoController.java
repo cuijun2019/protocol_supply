@@ -90,6 +90,9 @@ public class CargoInfoController extends GenericController {
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
         Page<CargoInfo> page = cargoInfoService.findCargoInfos(isDelete, cargoName, partName, pageable);
         CargoCollectionDto cargoCollectionDto = cargoInfoService.to(page, request);
+        for(int i=0;i<page.getContent().size();i++){
+            cargoCollectionDto.getCargoInfoDtos().get(i).setPartInfos(null);
+        }
         responseBuilder.data(cargoCollectionDto);
 
         return responseBuilder.build();
@@ -109,13 +112,10 @@ public class CargoInfoController extends GenericController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseValue getCargo(@PathVariable("cargoId") String cargoId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-
         CargoInfo cargoInfo = cargoInfoService.findOne(Long.parseLong(cargoId));
-
         //配件list
         cargoInfo.setPartInfos(null);
         responseBuilder.data(cargoInfo);
-
         return responseBuilder.build();
     }
 

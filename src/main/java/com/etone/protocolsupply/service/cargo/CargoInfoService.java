@@ -116,7 +116,6 @@ public class CargoInfoService {
     }
 
     public Page<CargoInfo> findCargoInfos(String isDelete, String cargoName, String partName, Pageable pageable) {
-
         return Common.listConvertToPage(cargoInfoRepository.findAll(isDelete, cargoName, partName), pageable);
     }
 
