@@ -5,6 +5,8 @@ import lombok.Data;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author huangzairong
@@ -38,36 +40,43 @@ public class PartnerInfo implements Serializable {
     /**
      * 企业性质
      */
+    @Column(name = "BUSI_NATURE", length = 200)
     private String busiNature;
 
     /**
      * 行业分类
      */
+    @Column(name = "TRADE_CATEGORY", length = 200)
     private String tradeCategory;
 
     /**
      * 主营产品或业务
      */
+    @Column(name = "BUSINESS", length = 200)
     private String business;
 
     /**
      * 注册资金
      */
+    @Column(name = "FUND", length = 100)
     private String fund;
 
     /**
      * 注册资金币种
      */
+    @Column(name = "FUND_CURRENCY", length = 50)
     private String fundCurrency;
 
     /**
      * 注册资金单位
      */
+    @Column(name = "FUND_UNIT", length = 20)
     private String fundUnit;
 
     /**
      * 企业人数
      */
+    @Column(name = "BUSI_NUMBER", length = 20)
     private String busiNumber;
 
     /**
@@ -79,22 +88,25 @@ public class PartnerInfo implements Serializable {
     /**
      * 证件号码
      */
+    @Column(name = "IDENTIFICATION", length = 20)
     private String identification;
 
     /**
      * 详细地址
      */
+    @Column(name = "DETAIL_ADDRESS", length = 2000)
     private String detailAddress;
 
     /**
      * 机构注册地（1：境内；2：境外）
      */
+    @Column(name = "DOMICILE", length = 4)
     private Integer domicile;
 
     /**
      * 公司所在地
      */
-    @Column(name = "ADDRESS", length = 200)
+    @Column(name = "ADDRESS", length = 500)
     private String address;
 
     /**
@@ -106,11 +118,13 @@ public class PartnerInfo implements Serializable {
     /**
      * 公司网址
      */
+    @Column(name = "WEBSITE", length = 200)
     private String website;
 
     /**
      * 企业类别（1：监狱企业；2：残疾人企业；3：中小微企业）
      */
+    @Column(name = "BUSI_TYPE", length = 4)
     private Integer busiType;
 
     /**
@@ -119,7 +133,30 @@ public class PartnerInfo implements Serializable {
     @Column(name = "INTRODUCE", length = 2000)
     private String introduce;
 
+    /**
+     * 认证状态
+     */
+    @Column(name = "AUTH_STATUS", length = 4)
+    private Integer authStatus;
+
+    /**
+     * 认证方式
+     */
+    @Column(name = "AUTH_METHOD", length = 50)
+    private String authMethod;
+
+    /**
+     * 认证时间
+     */
+    @Column(name = "AUTH_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date authDate;
+
     @Column(name = "IS_DELETE", length = 4)
     private Integer isDelete;
 
+    @OneToMany(mappedBy = "partnerInfo",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    private Set<ContactInfo> contacts = new HashSet();
 }

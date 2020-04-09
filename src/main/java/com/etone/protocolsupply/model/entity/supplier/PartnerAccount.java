@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 @Data
 @Entity
-@Table(name = "PARTNER_INFO")
+@Table(name = "PARTNER_ACCOUNT")
 public class PartnerAccount implements Serializable {
 
     /**
@@ -18,7 +18,7 @@ public class PartnerAccount implements Serializable {
     @Id
     @Column(name = "ACCOUNT_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long    accountId;
+    private Long accountId;
 
     /**
      * 账号
@@ -51,4 +51,8 @@ public class PartnerAccount implements Serializable {
      */
     @Column(name = "FAX", length = 100)
     private String fax;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "PARTNER_ID", referencedColumnName = "PARTNER_ID", nullable = false)
+    private PartnerInfo partnerInfo;
 }
