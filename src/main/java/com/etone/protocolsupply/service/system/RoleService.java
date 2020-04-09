@@ -3,28 +3,21 @@ package com.etone.protocolsupply.service.system;
 import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.systemControl.RoleCollectionDto;
 import com.etone.protocolsupply.model.dto.systemControl.RoleDto;
-import com.etone.protocolsupply.model.dto.systemControl.UserDto;
 import com.etone.protocolsupply.model.entity.user.Permissions;
 import com.etone.protocolsupply.model.entity.user.Role;
-import com.etone.protocolsupply.model.entity.user.User;
 import com.etone.protocolsupply.repository.RoleRepository;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.BeanDefinitionDsl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.jws.soap.SOAPBinding;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Transactional(rollbackFor = Exception.class)
 @Service
@@ -78,6 +71,31 @@ public class RoleService {
         if(permissions !=null && permissions.size()>0){
             for(Permissions permission:permissions){
                 roleRepository.saveRolePermissions(save.getId(),permission.getPermId());
+            }
+        }
+    }
+
+
+    public void delete(long roleId) {
+        //逻辑删除角色表的角色
+        roleRepository.deleteByRoleId(roleId);
+
+        //删除角色权限中间表中维护的关系
+        roleRepository.deleteRolePermissions(roleId);
+    }
+
+
+    public void updateRolePermissions(RoleDto roleDto) {
+        //先删除角色权限关系表里维护的角色关系
+        Set<Permissions> permissions = roleDto.getPermissions();
+
+        //删除角色权限中间表中维护的关系
+        roleRepository.deleteRolePermissions(roleDto.getId());
+
+        //重新插入编辑后的角色权限关系
+        if(permissions!=null && permissions.size()>0){
+            for(Permissions permission:permissions){
+                roleRepository.saveRolePermissions(roleDto.getId(),permission.getPermId());
             }
         }
     }
