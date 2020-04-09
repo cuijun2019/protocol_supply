@@ -70,7 +70,7 @@ public class UserController extends GenericController {
     public ResponseValue saveUser(@Validated
                                    @RequestBody UserDto userDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        userService.save(userDto,this.getUser());
+        userService.save(userDto);
         responseBuilder.message("保存用户成功");
         return responseBuilder.build();
     }

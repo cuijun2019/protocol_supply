@@ -34,9 +34,10 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     void updateIsDelete(long userId);
 
 
+
     @Transactional(rollbackFor = Exception.class)
     @Modifying
-    @Query(value = "update users set company=?1,create_time=?2,email=?3,enabled=?4,fullname=?5,sex=?6,telephone=?7 where id=?8", nativeQuery = true)
-    void updateUser(String company, Date createTime, String email, Boolean enabled, String fullname, String sex, String telephone, Long id);
+    @Query(value = "update users set company=?1,create_time=?2,email=?3,enabled=?4,sex=?5,telephone=?6,update_time=?7,password=?8 where id=?9", nativeQuery = true)
+    void updateUser(String company, Date createTime, String email, Boolean enabled, String sex, String telephone, Date date, String password, Long id);
 
 }
