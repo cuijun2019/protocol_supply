@@ -121,16 +121,36 @@ public class PermissionService {
                 systemMap.put("list",systemList);
             }
         }
-        returnMap.add(systemMap);
-        returnMap.add(templateMap);
-        returnMap.add(contractMap);
-        returnMap.add(bidsMap);
-        returnMap.add(agentMap);
-        returnMap.add(supplierMap);
-        returnMap.add(pricesMap);
-        returnMap.add(goodsMap);
-        returnMap.add(projectMap);
-        returnMap.add(firstPageMap);
+        if(systemMap.size()>0){
+            returnMap.add(systemMap);
+        }
+        if(templateMap.size()>0){
+            returnMap.add(templateMap);
+        }
+        if(contractMap.size()>0){
+            returnMap.add(contractMap);
+        }
+        if(bidsMap.size()>0){
+            returnMap.add(bidsMap);
+        }
+        if(agentMap.size()>0){
+            returnMap.add(agentMap);
+        }
+        if(supplierMap.size()>0){
+            returnMap.add(supplierMap);
+        }
+        if(pricesMap.size()>0){
+            returnMap.add(pricesMap);
+        }
+        if(goodsMap.size()>0){
+            returnMap.add(goodsMap);
+        }
+        if(projectMap.size()>0){
+            returnMap.add(projectMap);
+        }
+        if(firstPageMap.size()>0){
+            returnMap.add(firstPageMap);
+        }
     }
 
     public List<Permissions> getThirdPermissionBySecondPermissionId(String permissionId) {
