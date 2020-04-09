@@ -2,7 +2,6 @@ package com.etone.protocolsupply.service.system;
 
 import com.etone.protocolsupply.exception.GlobalExceptionCode;
 import com.etone.protocolsupply.exception.GlobalServiceException;
-import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.systemControl.UserCollectionDto;
 import com.etone.protocolsupply.model.dto.systemControl.UserDto;
 import com.etone.protocolsupply.model.entity.user.Role;
@@ -70,17 +69,16 @@ public class UserService {
         return userCollectionDto;
     }
 
-    public void save(UserDto userDto, JwtUser jwtUser) {
+    public void save(UserDto userDto) {
         Date date = new Date();
-        String creator = jwtUser.getUsername();
 
         //TODO 密码加密
         User user = new User();
         user.setCompany(userDto.getCompany());
         user.setCreateTime(date);
         user.setEmail(userDto.getEmail());
-        user.setEnabled(true);
-        user.setFullname(creator);
+        user.setEnabled(userDto.getEnabled());
+        user.setFullname(userDto.getFullname());
         user.setIsDelete(2);
         user.setPassword(userDto.getPassword());
         user.setSex(userDto.getSex());
@@ -134,15 +132,29 @@ public class UserService {
     public void updateUser(UserDto userDto) {
         Date date = new Date();
         Long id = userDto.getId();
+        @NotNull @Size(min = 4, max = 100) String password = userDto.getPassword();
         @NotNull String company = userDto.getCompany();
         @NotNull Date createTime = userDto.getCreateTime();
         @NotNull String email = userDto.getEmail();
         @NotNull Boolean enabled = userDto.getEnabled();
-        @NotNull String fullname = userDto.getFullname();
-        Integer isDelete = userDto.getIsDelete();
         @NotNull String sex = userDto.getSex();
         @NotNull @Size(min = 4, max = 50) String telephone = userDto.getTelephone();
 
-        userRepository.updateUser(company,createTime,email,enabled,fullname,sex,telephone,id);
+        userRepository.updateUser(company,createTime,email,enabled,sex,telephone,date,password,id);
+
+
+
+        //更新用户的角色
+        List<Role> roleList = userDto.getRoles();
+        if(roleList!=null && roleList.size()>0){
+
+            //先删除用户角色表中选中用户和角色的关系
+            roleRepository.deleteByUserId(id);
+
+            //新增用户角色关系
+            for (int i = 0; i < roleList.size(); i++) {
+                roleRepository.addUserRole(id,roleList.get(i).getId());
+            }
+        }
     }
 }
