@@ -1,6 +1,5 @@
 package com.etone.protocolsupply.model.entity.project;
 
-import com.etone.protocolsupply.model.dto.cargo.CargoInfoDto;
 import com.etone.protocolsupply.model.entity.AgentInfo;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
@@ -128,7 +127,6 @@ public class ProjectInfo implements Serializable {
     /**
      *代理商
      */
-    @JsonIgnore
     @OneToMany(mappedBy = "projectInfo",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
