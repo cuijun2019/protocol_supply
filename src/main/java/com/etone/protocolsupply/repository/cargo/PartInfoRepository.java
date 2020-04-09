@@ -43,6 +43,10 @@ public interface PartInfoRepository extends JpaRepository<PartInfo, Long>, JpaSp
     @Modifying
     void setCargoId(@Param("cargoId") Long cargoId, @Param("partIds") List<Long> partIds);
 
+    @Query(value = "update part_info set project_id=:projectId where part_id in (:partIds)", nativeQuery = true)
+    @Modifying
+    void setProjectId(@Param("projectId") Long projectId, @Param("partIds") List<Long> partIds);
+
     @Query(value = "select * from part_info where 1=1 and if((?1 is not null), (cargo_id=?1), (1=1)) and is_delete=?2", nativeQuery = true)
     List<PartInfo> findAll(String cargoId, String isDelete);
 

@@ -88,7 +88,12 @@ public class PartInfoController extends GenericController {
         return responseBuilder.build();
     }
 
-
+    /**
+     * 修改配件
+     * @param partId
+     * @param partInfoDto
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/{partId}",
             method = RequestMethod.PUT,
@@ -98,7 +103,6 @@ public class PartInfoController extends GenericController {
     public ResponseValue updateAgent(@PathVariable("partId") String partId,
                                      @RequestBody PartInfoDto partInfoDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-
         partInfoDto.setPartId(Long.parseLong(partId));
         PartInfo partInfo = partInfoService.update(partInfoDto);
         partInfo.setCargoInfo(null);

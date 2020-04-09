@@ -24,8 +24,8 @@ public interface ProjectInfoRepository extends JpaRepository<ProjectInfo, Long>,
     ProjectInfo findAllByProjectId(Long ProjectId);
 
     @Transactional(rollbackFor = Exception.class)
-    @Query(value = "select * from project_info where is_delete=2", nativeQuery = true)
-    ProjectInfo findAlls();
+    @Query(value = "select max(p.project_id)from project_info p where p.is_delete=2 limit 1", nativeQuery = true)
+    String findMaxOne();
 
     @Query(value = "select * from project_info where is_delete=2 and " +
             "if((:projectSubject is not null), (project_subject like %:projectSubject%), (1=1)) and if((:status is not null), (status=:status), (1=1)) and " +

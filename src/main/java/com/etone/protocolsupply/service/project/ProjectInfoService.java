@@ -10,11 +10,13 @@ import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
 import com.etone.protocolsupply.model.entity.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
+import com.etone.protocolsupply.model.entity.cargo.PartInfo;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
 import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.PartnerInfoRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
+import com.etone.protocolsupply.repository.cargo.PartInfoRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.repository.template.AgentInfoExpRepository;
 import com.etone.protocolsupply.service.agent.AgentInfoService;
@@ -59,6 +61,8 @@ public class ProjectInfoService {
     @Autowired
     private AgentInfoExpRepository agentInfoExpRepository;
     @Autowired
+    private PartInfoRepository partInfoRepository;
+    @Autowired
     private PagingMapper         pagingMapper;
 
 
@@ -67,11 +71,12 @@ public class ProjectInfoService {
         String userName = jwtUser.getUsername();
         ProjectInfo projectInfo = new ProjectInfo();
         BeanUtils.copyProperties(projectInfoDto, projectInfo);
-        ProjectInfo projectInfo1=projectInfoRepository.findAlls();
-        if(projectInfo1==null || "".equals(projectInfo1)){
+        String maxOne=projectInfoRepository.findMaxOne();
+        ProjectInfo projectInfo1=projectInfoRepository.getOne(Long.parseLong(maxOne));
+        if(projectInfo1==null){
             projectInfo.setProjectCode("SCUT-"+Common.getYYYYMMDDDate(date)+"-XY001");
         }else {
-            projectInfo.setProjectCode("SCUT-"+Common.getYYYYMMDDDate(date)+"-XY"+Common.convertSerialProject(projectInfo1.getProjectCode().substring(14),1));
+            projectInfo.setProjectCode("SCUT-"+Common.getYYYYMMDDDate(date)+"-XY"+Common.convertSerialProject(projectInfo1.getProjectCode().substring(16),1));
         }
         projectInfo.setIsDelete(Constant.DELETE_NO);
         projectInfo.setCreator(userName);
@@ -112,24 +117,33 @@ public class ProjectInfoService {
         //代理商list
         Set<AgentInfoExp> agentInfoExps = projectInfoDto.getAgentInfoExps();
         if (agentInfoExps != null && !agentInfoExps.isEmpty()) {
-            Optional<PartnerInfo> optional= partnerInfoRepository.findById(Long.valueOf(projectInfoDto.getPartnerId()));
+            if(projectInfoDto.getPartnerId()!=null){
+                Optional<PartnerInfo> optional= partnerInfoRepository.findById(Long.valueOf(projectInfoDto.getPartnerId()));
+
+            }
             for (AgentInfoExp agentInfoExp : agentInfoExps) {
                 agentInfoExp.setCreator(userName);
                 agentInfoExp.setCreateDate(date);
                 agentInfoExp.setStatus(1);
-                if (optional.isPresent()) {
-                    agentInfoExp.setPartnerInfo(optional.get());
-                }
+                agentInfoExp.setPartnerInfo(null);//供应商暂时为null
                 agentInfoExp.setIsDelete(Constant.DELETE_NO);
             }
         }
          projectInfoRepository.save(projectInfo);
-        List<Long> partnerIds = new ArrayList<>();
+
+        List<Long> agentIds = new ArrayList<>();
         if(agentInfoExps.size()>0){
             for (AgentInfoExp agentInfoExp : projectInfo.getAgentInfoExps()) {
-                partnerIds.add(agentInfoExp.getAgentId());
+                agentIds.add(agentInfoExp.getAgentId());
             }
-            agentInfoExpRepository.setProjectId(projectInfo.getProjectId(), partnerIds);
+            agentInfoExpRepository.setProjectId(projectInfo.getProjectId(), agentIds);
+        }
+        List<Long> partIds = new ArrayList<>();
+        if(projectInfoDto.getCargoInfo().getPartInfos().size()>0){
+            for (PartInfo partInfo : projectInfoDto.getCargoInfo().getPartInfos()) {
+                partIds.add(partInfo.getPartId());
+            }
+            partInfoRepository.setProjectId(projectInfo.getProjectId(), partIds);
         }
         return projectInfo;
     }
