@@ -35,7 +35,8 @@ public interface PartInfoRepository extends JpaRepository<PartInfo, Long>, JpaSp
     @Query(value = "select MIN(cargo_id)AS cargo_id from part_info where is_delete=2 and part_name like %?2% and  manufactor like %?3% GROUP BY cargo_id", nativeQuery = true)
     List<PartInfo> findAllBycon(String isDelete,String partName,String manufactor);
 
-    @Query(value = "select max(p.part_serial) from part_info p left join cargo_info c on p.cargo_id = c.cargo_id where p.is_delete=2 and c.cargo_serial=?1 limit 1", nativeQuery = true)
+    @Transactional(rollbackFor = Exception.class)
+    @Query(value = "call lastPartSerial(?1)", nativeQuery = true)
     String findLastPartSerial(String categorySerial);
 
     @Query(value = "update part_info set cargo_id=:cargoId where part_id in (:partIds)", nativeQuery = true)

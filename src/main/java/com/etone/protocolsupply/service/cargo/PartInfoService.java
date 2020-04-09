@@ -36,10 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Transactional(rollbackFor = Exception.class)
 @Service
@@ -60,16 +57,22 @@ public class PartInfoService {
         }
         PartInfo partInfo = new PartInfo();
         BeanUtils.copyProperties(partInfoDto, partInfo);
-        CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(Long.parseLong(partInfoDto.getCargoId()));
+        //CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(Long.parseLong(partInfoDto.getCargoId()));
+        Optional<CargoInfo> optional=cargoInfoRepository.findById(Long.parseLong(partInfoDto.getCargoId()));
+        if (optional.isPresent()) {
+            partInfo.setCargoInfo(optional.get());
+        }
         if(partInfoDto.getProjectId()!=null && !"".equals(partInfoDto.getProjectId())){
             ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(Long.parseLong(partInfoDto.getProjectId()));
             partInfo.setProjectInfo(projectInfo);
         }else {
             partInfo.setProjectInfo(null);
         }
-        partInfo.setPartSerial(Common.convertSerial(partInfoRepository.findLastPartSerial(cargoInfo.getCargoSerial()), 1));
-        partInfo.setPartCode(cargoInfo.getCargoCode() + partInfo.getPartSerial());
-        partInfo.setCargoInfo(cargoInfo);
+        String cargoSerial=partInfo.getCargoInfo().getCargoSerial();
+        String partSerial = partInfoRepository.findLastPartSerial(cargoSerial);
+        partInfo.setPartSerial(Common.convertSerial(partSerial.toString(), 1));
+        partInfo.setPartCode(partInfo.getCargoInfo().getCargoCode() + partInfo.getPartSerial());
+       // partInfo.setCargoInfo(cargoInfo);
         partInfo.setIsDelete(Constant.DELETE_NO);
         return partInfoRepository.save(partInfo);
     }

@@ -46,6 +46,7 @@ public class PartInfoController extends GenericController {
                                       @RequestBody PartInfoDto partInfoDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         PartInfo partInfo = partInfoService.save(partInfoDto);
+        partInfo.setCargoInfo(null);
         responseBuilder.data(partInfo);
         return responseBuilder.build();
     }
