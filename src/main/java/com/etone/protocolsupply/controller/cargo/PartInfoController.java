@@ -62,11 +62,15 @@ public class PartInfoController extends GenericController {
                                       HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
 
-        Sort sort = new Sort(Sort.Direction.DESC, "part_id");
+        Sort sort = new Sort(Sort.Direction.DESC, "partId");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
         Page<PartInfo> page = partInfoService.findPartInfos(cargoId, isDelete, pageable);
 
         PartCollectionDto partCollectionDto = partInfoService.to(page, request);
+        for(int i=0;i<page.getContent().size();i++){
+            partCollectionDto.getPartInfoDtos().get(i).setCargoInfo(null);
+        }
+
         responseBuilder.data(partCollectionDto);
 
         return responseBuilder.build();

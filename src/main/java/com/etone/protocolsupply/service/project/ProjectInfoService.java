@@ -3,23 +3,18 @@ package com.etone.protocolsupply.service.project;
 import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.exception.GlobalExceptionCode;
 import com.etone.protocolsupply.exception.GlobalServiceException;
-import com.etone.protocolsupply.model.dto.ExcelHeaderColumnPojo;
 import com.etone.protocolsupply.model.dto.JwtUser;
-import com.etone.protocolsupply.model.dto.cargo.CargoCollectionDto;
 import com.etone.protocolsupply.model.dto.cargo.CargoInfoDto;
 import com.etone.protocolsupply.model.dto.project.ProjectCollectionDto;
 import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
 import com.etone.protocolsupply.model.entity.AgentInfo;
 import com.etone.protocolsupply.model.entity.Attachment;
-import com.etone.protocolsupply.model.entity.cargo.BrandItem;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
-import com.etone.protocolsupply.model.entity.cargo.PartInfo;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.repository.AgentInfoRepository;
 import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.cargo.BrandItemRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
-import com.etone.protocolsupply.repository.cargo.PartInfoRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.service.cargo.CargoInfoService;
 import com.etone.protocolsupply.service.cargo.PartInfoService;
@@ -28,8 +23,8 @@ import com.etone.protocolsupply.utils.PagingMapper;
 import com.etone.protocolsupply.utils.SpringUtil;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.usermodel.*;
-import org.json.JSONObject;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -41,11 +36,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -58,18 +48,12 @@ public class ProjectInfoService {
     @Autowired
     private CargoInfoRepository  cargoInfoRepository;
     @Autowired
-    private AgentInfoRepository agentInfoRepository;
-    @Autowired
-    private PartInfoService      partInfoService;
-    @Autowired
     private CargoInfoService cargoInfoService;
     @Autowired
     private AttachmentRepository attachmentRepository;
     @Autowired
     private PagingMapper         pagingMapper;
 
-    @Autowired
-    private BrandItemRepository brandItemRepository;
 
     public ProjectInfo save(ProjectInfoDto projectInfoDto, JwtUser jwtUser) throws GlobalServiceException {
         Date date = new Date();
@@ -78,11 +62,10 @@ public class ProjectInfoService {
         BeanUtils.copyProperties(projectInfoDto, projectInfo);
         ProjectInfo projectInfo1=projectInfoRepository.findAlls();
         if(projectInfo1==null || "".equals(projectInfo1)){
-            projectInfo.setProjectCode("SCUT"+Common.getYYYYMMDDDate(date)+"XY"+"001");
+            projectInfo.setProjectCode("SCUT-"+Common.getYYYYMMDDDate(date)+"-XY001");
         }else {
-            projectInfo.setProjectCode("SCUT"+Common.getYYYYMMDDDate(date)+"XY"+Common.convertSerialProject(projectInfo1.getProjectCode().substring(14),1));
+            projectInfo.setProjectCode("SCUT-"+Common.getYYYYMMDDDate(date)+"-XY"+Common.convertSerialProject(projectInfo1.getProjectCode().substring(14),1));
         }
-
         projectInfo.setIsDelete(Constant.DELETE_NO);
         projectInfo.setCreator(userName);
         projectInfo.setStatus(1);//审核状态：审核中、已完成、退回

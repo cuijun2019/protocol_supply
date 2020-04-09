@@ -96,7 +96,7 @@ public class CargoInfoService {
         }
         cargoInfo = cargoInfoRepository.save(cargoInfo);
         List<Long> partIds = new ArrayList<>();
-        if(partIds.size()>0){
+        if(partInfos.size()>0){
             for (PartInfo partInfo : cargoInfo.getPartInfos()) {
                 partIds.add(partInfo.getPartId());
             }
@@ -116,6 +116,7 @@ public class CargoInfoService {
     }
 
     public Page<CargoInfo> findCargoInfos(String isDelete, String cargoName, String partName, Pageable pageable) {
+
         return Common.listConvertToPage(cargoInfoRepository.findAll(isDelete, cargoName, partName), pageable);
     }
 
@@ -136,7 +137,6 @@ public class CargoInfoService {
     }
 
     public CargoInfo findOne(Long cargoId) {
-
         CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(cargoId);
         return cargoInfo;
     }

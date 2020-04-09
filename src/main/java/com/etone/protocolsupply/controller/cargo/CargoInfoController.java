@@ -86,11 +86,9 @@ public class CargoInfoController extends GenericController {
                                        HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
 
-        Sort sort = new Sort(Sort.Direction.DESC, "cargo_id");
+        Sort sort = new Sort(Sort.Direction.DESC, "cargoId");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-
         Page<CargoInfo> page = cargoInfoService.findCargoInfos(isDelete, cargoName, partName, pageable);
-
         CargoCollectionDto cargoCollectionDto = cargoInfoService.to(page, request);
         responseBuilder.data(cargoCollectionDto);
 
@@ -115,8 +113,7 @@ public class CargoInfoController extends GenericController {
         CargoInfo cargoInfo = cargoInfoService.findOne(Long.parseLong(cargoId));
 
         //配件list
-        //List<PartInfo> list=partInfoService.getPartInfoList(Long.parseLong(cargoId));
-//        cargoInfo.setPartInfoList(list);
+        cargoInfo.setPartInfos(null);
         responseBuilder.data(cargoInfo);
 
         return responseBuilder.build();
