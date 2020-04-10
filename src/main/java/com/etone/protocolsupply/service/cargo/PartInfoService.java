@@ -15,7 +15,6 @@ import com.etone.protocolsupply.repository.cargo.PartInfoRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
-import com.etone.protocolsupply.utils.SpringUtil;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
@@ -44,13 +43,13 @@ import java.util.*;
 public class PartInfoService {
 
     @Autowired
-    private PartInfoRepository  partInfoRepository;
+    private PartInfoRepository    partInfoRepository;
     @Autowired
-    private CargoInfoRepository cargoInfoRepository;
+    private CargoInfoRepository   cargoInfoRepository;
     @Autowired
     private ProjectInfoRepository projectInfoRepository;
     @Autowired
-    private PagingMapper        pagingMapper;
+    private PagingMapper          pagingMapper;
 
     public PartInfo save(PartInfoDto partInfoDto) throws GlobalServiceException {
         if (Strings.isBlank(partInfoDto.getCargoId())) {
@@ -59,21 +58,21 @@ public class PartInfoService {
         PartInfo partInfo = new PartInfo();
         BeanUtils.copyProperties(partInfoDto, partInfo);
         //CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(Long.parseLong(partInfoDto.getCargoId()));
-        Optional<CargoInfo> optional=cargoInfoRepository.findById(Long.parseLong(partInfoDto.getCargoId()));
+        Optional<CargoInfo> optional = cargoInfoRepository.findById(Long.parseLong(partInfoDto.getCargoId()));
         if (optional.isPresent()) {
             partInfo.setCargoInfo(optional.get());
         }
-        if(partInfoDto.getProjectId()!=null && !"".equals(partInfoDto.getProjectId())){
+        if (partInfoDto.getProjectId() != null && !"".equals(partInfoDto.getProjectId())) {
             ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(Long.parseLong(partInfoDto.getProjectId()));
             partInfo.setProjectInfo(projectInfo);
-        }else {
+        } else {
             partInfo.setProjectInfo(null);
         }
-        String cargoSerial=partInfo.getCargoInfo().getCargoSerial();
+        String cargoSerial = partInfo.getCargoInfo().getCargoSerial();
         String partSerial = partInfoRepository.findLastPartSerial(cargoSerial);
         partInfo.setPartSerial(Common.convertSerial(partSerial.toString(), 1));
         partInfo.setPartCode(partInfo.getCargoInfo().getCargoCode() + partInfo.getPartSerial());
-       // partInfo.setCargoInfo(cargoInfo);
+        // partInfo.setCargoInfo(cargoInfo);
         partInfo.setIsDelete(Constant.DELETE_NO);
         return partInfoRepository.save(partInfo);
     }
@@ -146,11 +145,12 @@ public class PartInfoService {
 
     //配件导入
     public void upLoad(Attachment attachment, String cargoId, String projectId) {
-        Map<String, Object> maps = new HashMap<String, Object>();
+        if (Strings.isBlank(cargoId)) {
+            throw new GlobalServiceException(GlobalExceptionCode.NOTNULL_ERROR.getCode(), GlobalExceptionCode.NOTNULL_ERROR.getCause("cargoId"));
+        }
         try {
             //文件读取并插入数据库
-            List list = new ArrayList();
-            list = readPartInfoExcelData(attachment.getPath());
+            List list = readPartInfoExcelData(attachment.getPath());
             if (null == list || list.size() == 0) {
                 //return StringUtil.getJsonString(true, 1, "导入数据为空!");
             }
@@ -160,7 +160,7 @@ public class PartInfoService {
             }
             for (int i = 0; i < num; i++) {
                 List tempList = list.subList(i * 200, (i + 1) * 200 > list.size() ? list.size() : (i + 1) * 200);
-                batchInsertPartInfo(tempList, cargoId,projectId);
+                batchInsertPartInfo(tempList, cargoId, projectId);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -357,17 +357,17 @@ public class PartInfoService {
     public void batchInsertPartInfo(List<Object> maps, String cargoId, String projectId) {
         Long lcargoId = Long.parseLong(cargoId);
         Long lprojectId = Long.parseLong(projectId);
-        List<PartInfo> partInfos=partInfoRepository.findAll();
+        List<PartInfo> partInfos = partInfoRepository.findAll();
         List<String> listDel = new ArrayList<>();
         List<PartInfo> listSave = new ArrayList<>();
-        int num=0;
-        for (int i = 0; i < maps.size(); i++){
+        int num = 0;
+        for (int i = 0; i < maps.size(); i++) {
             String jsonStr = maps.get(i).toString();
             JSONObject jsonObject = new JSONObject(jsonStr);
             PartInfo partInfo = new PartInfo();
-            if(partInfos.size()>0){
-                List<PartInfo> list = partInfoRepository.findAllBys(lcargoId,lprojectId);
-                if(list.size()>0){
+            if (partInfos.size() > 0) {
+                List<PartInfo> list = partInfoRepository.findAllBys(lcargoId, lprojectId);
+                if (list.size() > 0) {
                     for (PartInfo item : list) {
                         if (item.getPartName().equals(jsonObject.get("设备或配件名称").toString())) {
                             listDel.add(item.getPartId().toString());
@@ -376,7 +376,7 @@ public class PartInfoService {
                 }
             }
         }
-        if(listDel.size()>0){
+        if (listDel.size() > 0) {
             partInfoRepository.deleteAll(listDel);
         }
         for (int i = 0; i < maps.size(); i++) {
@@ -384,13 +384,13 @@ public class PartInfoService {
             JSONObject jsonObject = new JSONObject(jsonStr);
             PartInfo partInfo = new PartInfo();
             CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(lcargoId);
-            if(Strings.isBlank(partInfoRepository.findLastPartSerial(cargoInfo.getCargoSerial()))){
+            if (Strings.isBlank(partInfoRepository.findLastPartSerial(cargoInfo.getCargoSerial()))) {
                 partInfo.setPartSerial("0001");
-                num=1;
-            }else if(num==1){
+                num = 1;
+            } else if (num == 1) {
                 partInfo.setPartSerial(Common.convertSerial(partInfoRepository.findLastPartSerial(cargoInfo.getCargoSerial()), i));
             } else {
-                partInfo.setPartSerial(Common.convertSerial(partInfoRepository.findLastPartSerial(cargoInfo.getCargoSerial()), i+1));
+                partInfo.setPartSerial(Common.convertSerial(partInfoRepository.findLastPartSerial(cargoInfo.getCargoSerial()), i + 1));
             }
             partInfo.setPartCode(cargoInfo.getCargoCode() + partInfo.getPartSerial());
             partInfo.setPartName(jsonObject.get("设备或配件名称").toString());
@@ -407,9 +407,9 @@ public class PartInfoService {
             ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(lprojectId);
             partInfo.setCargoInfo(cargoInfo);
             partInfo.setProjectInfo(projectInfo);
-            if(partInfo.getPartSerial().equals("0001")){
+            if (partInfo.getPartSerial().equals("0001")) {
                 partInfoRepository.save(partInfo);
-            }else {
+            } else {
                 listSave.add(partInfo);
             }
 
@@ -423,7 +423,7 @@ public class PartInfoService {
         return Common.convertSerial(serial, 1);
     }
 
-    public List<PartInfo> getPartInfoList(Long cargoId){
+    public List<PartInfo> getPartInfoList(Long cargoId) {
         return partInfoRepository.findAllBycargoId(cargoId);
 
     }
