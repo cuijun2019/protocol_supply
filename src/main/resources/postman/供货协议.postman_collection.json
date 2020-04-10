@@ -1307,6 +1307,615 @@
 			"protocolProfileBehavior": {}
 		},
 		{
+			"name": "系统管理",
+			"description": "",
+			"item": [
+				{
+					"name": "用户管理",
+					"description": "",
+					"item": [
+						{
+							"name": "用户列表",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJST0xFX1BVUkNIQVNFUiIsImZ1bGxuYW1lIjoi55uR5o6n5Lq65ZGYIiwiZXhwIjoxNTg2NTg5NDk2LCJpYXQiOjE1ODU5ODQ2OTZ9.JjtstmE3-Tmm5xXe-sjemkz38TgJTdcHCNVnf2_pj8b3zLYePRlxdnKOJZTMJChaq_pQzdzY_7UsbSwtqOl3jg"
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "http://localhost:8780/api/user?pageSize=5&currentPage=1&isDelete=2&username=admin&enabled=false",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"user"
+									],
+									"query": [
+										{
+											"key": "pageSize",
+											"value": "5"
+										},
+										{
+											"key": "currentPage",
+											"value": "1"
+										},
+										{
+											"key": "isDelete",
+											"value": "2"
+										},
+										{
+											"key": "username",
+											"value": "admin"
+										},
+										{
+											"key": "enabled",
+											"value": "false"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "创建用户",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJST0xFX1BVUkNIQVNFUiIsImZ1bGxuYW1lIjoiYWFhIiwiZXhwIjoxNTg2ODUwMzc1LCJpYXQiOjE1ODYyNDU1NzV9.EZ82CRgQmtzXJPZ-O9ruy4WXDLjDdp080T7yiJjnv-xDA6CCPmJArwwyEfX3MRtlQebb-MP6MOj_COHXzOYrAA"
+									},
+									{
+										"key": "",
+										"value": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"username\":\"aasdssd33uuudsaa\",\n\t\"password\":\"123456\",\n\t\"company\":\"testcompany\",\n\t\"createTime\":\"2020-04-01\",\n\t\"email\":\"1111\",\n\t\"enabled\":true,\n\t\"fullname\":\"aaa\",\n\t\"is_delete\":2,\n\t\"sex\":\"男\",\n\t\"telephone\":\"595959\",\n\t\"update_time\":\"2020-04-01\",\n\t \"roles\": [\n            {\n                \"id\": 3\n            },\n            {\n                \"id\": 2\n            },\n            {\n                \"id\": 1\n            },\n            {\n                \"id\": 4\n            }\n        ]\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8780/api/user",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "根据用户id查询用户详情",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJST0xFX1BVUkNIQVNFUiIsImZ1bGxuYW1lIjoiYWFhIiwiZXhwIjoxNTg2ODUwMzc1LCJpYXQiOjE1ODYyNDU1NzV9.EZ82CRgQmtzXJPZ-O9ruy4WXDLjDdp080T7yiJjnv-xDA6CCPmJArwwyEfX3MRtlQebb-MP6MOj_COHXzOYrAA"
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "http://localhost:8780/api/user/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"user",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "根据用户id删除用户",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJST0xFX1BVUkNIQVNFUiIsImZ1bGxuYW1lIjoi55uR5o6n5Lq65ZGYIiwiZXhwIjoxNTg2NTk0NTEzLCJpYXQiOjE1ODU5ODk3MTN9.A__znsyMpVqfUp5xo0n2sAohDfpHb_GSt6z8RpRBPpvpWF4f1yMeHnEmWb8sOz19AOujCvKTH08IBQ2khbZiog"
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "http://localhost:8780/api/user/4",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"user",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "根据用户id查询用户拥有的角色",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJST0xFX1BVUkNIQVNFUiIsImZ1bGxuYW1lIjoi55uR5o6n5Lq65ZGYIiwiZXhwIjoxNTg2NTg5NDk2LCJpYXQiOjE1ODU5ODQ2OTZ9.JjtstmE3-Tmm5xXe-sjemkz38TgJTdcHCNVnf2_pj8b3zLYePRlxdnKOJZTMJChaq_pQzdzY_7UsbSwtqOl3jg"
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "http://localhost:8780/api/user/getUserRole/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"user",
+										"getUserRole",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "修改用户所拥有的角色",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJST0xFX1BVUkNIQVNFUiIsImZ1bGxuYW1lIjoi55uR5o6n5Lq65ZGYIiwiZXhwIjoxNTg2NTg5NDk2LCJpYXQiOjE1ODU5ODQ2OTZ9.JjtstmE3-Tmm5xXe-sjemkz38TgJTdcHCNVnf2_pj8b3zLYePRlxdnKOJZTMJChaq_pQzdzY_7UsbSwtqOl3jg"
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "http://localhost:8780/api/user/changeUserRole/1/1,2,3,4",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"user",
+										"changeUserRole",
+										"1",
+										"1,2,3,4"
+									]
+								},
+								"description": "角色传给后端的格式为：1,2,3,4...,数字中间用英文逗号隔开\n数字对应角色，详细关系如下：\n1：供应商\n2：代理商\n3：采购人\n4：采购人领导\n5：招标中心经办人\n6：招标中心科长\n7：系统管理员\n"
+							},
+							"response": []
+						},
+						{
+							"name": "修改用户信息",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJST0xFX1BVUkNIQVNFUiIsImZ1bGxuYW1lIjoiYWFhIiwiZXhwIjoxNTg3MDI4MDQ2LCJpYXQiOjE1ODY0MjMyNDZ9.guhFYL-qGwdVcg1HKsqkH8YlZAKrEHF_WyO0vhEyBDWNKvhxdIciRwekoSBCDHL3iPaHMD8eHLKG2bmCf1no7Q"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"id\":\"3\",\n\t\"username\":\"dadasda\",\n\t\"fullname\":\"dadasdas\",\n\t\"password\":\"111111\",\n\t\"company\":\"testcompany\",\n\t\"createTime\":\"2020-04-01\",\n\t\"email\":\"1111\",\n\t\"enabled\":true,\n\t\"is_delete\":3,\n\t\"sex\":\"男\",\n\t\"telephone\":\"595959\",\n\t\"update_time\":\"2020-04-01\",\n\t\"roles\": [\n            {\n                \"id\": 3\n            },\n            {\n                \"id\": 2\n            }\n        ]\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8780/api/user/updateUser",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"user",
+										"updateUser"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "角色管理",
+					"description": "",
+					"item": [
+						{
+							"name": "角色列表查询",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJST0xFX1BVUkNIQVNFUiIsImZ1bGxuYW1lIjoiYWFhIiwiZXhwIjoxNTg2ODM2NjYwLCJpYXQiOjE1ODYyMzE4NjB9.rIP9iEnmm4m8Zynbe8XUYmVuF9Kof4rI2IRHCA4nABYOpBS9805c-mbOO9BzPcr7m9AsGwZjMu2xB0IzDfbDzg"
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "http://localhost:8780/api/role?pageSize=10&currentPage=1&status=1&roleName=ROLE_ADMIN&statusSearch=1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"role"
+									],
+									"query": [
+										{
+											"key": "pageSize",
+											"value": "10"
+										},
+										{
+											"key": "currentPage",
+											"value": "1"
+										},
+										{
+											"key": "status",
+											"value": "1"
+										},
+										{
+											"key": "roleName",
+											"value": "ROLE_ADMIN"
+										},
+										{
+											"key": "statusSearch",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "新增角色",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJST0xFX1BVUkNIQVNFUiIsImZ1bGxuYW1lIjoiYWFhIiwiZXhwIjoxNTg2OTEyOTMyLCJpYXQiOjE1ODYzMDgxMzJ9.zW9d7qEBkG1puChetDBzA1JdvqZKDNmFBsLU-jaMfE0Atgl9SRi855vpIyOeRqOJ3WBXkjlF8IZY2iUziXSaFA"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"createTime\":\"2020-04-01\",\n\t\"status\":\"1\",\n\t\"description\":\"test\",\n\t\"name\":\"ROLE_TEST\",\n\t \"permissions\": [\n            {\n                \"permId\": 3\n            },\n            {\n                \"permId\": 2\n            },\n            {\n                \"permId\": 1\n            },\n            {\n                \"permId\": 4\n            }\n        ]\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8780/api/role",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"role"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "根据角色id删除角色",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJST0xFX1BVUkNIQVNFUiIsImZ1bGxuYW1lIjoiYWFhIiwiZXhwIjoxNTg2OTE0MDk0LCJpYXQiOjE1ODYzMDkyOTR9.ZmG4C5vJ2WeruzLKYz1bmVA075ZWID7fmEEP55MNSAi9OhxnDIaRE6Ojgag-XL5z60YvbzCVo0_GNV72jz-itQ"
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "http://localhost:8780/api/role/8",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"role",
+										"8"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "根据角色id查询角色拥有的权限",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJST0xFX1BVUkNIQVNFUiIsImZ1bGxuYW1lIjoiYWFhIiwiZXhwIjoxNTg3MDMxNTA3LCJpYXQiOjE1ODY0MjY3MDd9.2petZOkLJxY1UU9wjLHJ1TUuKiCaV3avbxhMxJRnwN2C0zlU_mHkVkIAA62Fa9N9_kKSxxXODUr43plx8v1loA"
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "http://localhost:8780/api/role/getRolePermission/2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"role",
+										"getRolePermission",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "查询所有一二级权限",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJST0xFX1BVUkNIQVNFUiIsImZ1bGxuYW1lIjoiYWFhIiwiZXhwIjoxNTg2OTM4OTAwLCJpYXQiOjE1ODYzMzQxMDB9.22SjzJuOylkgwM-J4tIf6_2U_slbGO6hFE4aasi1SSw71tV9i7lUUWcEsgi2ynfoqAPGrybmuIgPjf8-Nc7FZQ"
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "http://localhost:8780/api/role/getAllPermission",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"role",
+										"getAllPermission"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "根据二级权限id查询其三级权限",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJST0xFX1BVUkNIQVNFUiIsImZ1bGxuYW1lIjoiYWFhIiwiZXhwIjoxNTg2OTQzNzExLCJpYXQiOjE1ODYzMzg5MTF9.CbbjjzuyMtijjPl-lMaEq8cI4Y97GroJPlhtZcDn87bFx4AFLRMxhmvPoJU3PYI93pk6zK-gnybT19J4baoQNA"
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "http://localhost:8780/api/role/getThirdPermissionBySecondPermissionId/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"role",
+										"getThirdPermissionBySecondPermissionId",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "编辑角色对应的权限",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJST0xFX1BVUkNIQVNFUiIsImZ1bGxuYW1lIjoiYWFhIiwiZXhwIjoxNTg2OTQzNzExLCJpYXQiOjE1ODYzMzg5MTF9.CbbjjzuyMtijjPl-lMaEq8cI4Y97GroJPlhtZcDn87bFx4AFLRMxhmvPoJU3PYI93pk6zK-gnybT19J4baoQNA"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"id\":\"8\",\n\t\"createTime\":\"2020-04-01\",\n\t\"status\":\"1\",\n\t\"description\":\"test\",\n\t\"name\":\"ROLE_TEST\",\n\t \"permissions\": [\n            {\n                \"permId\": 5\n            },\n            {\n                \"permId\": 6\n            },\n            {\n                \"permId\": 7\n            },\n            {\n                \"permId\": 4\n            }\n        ]\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8780/api/role/updateRolePermissions",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"role",
+										"updateRolePermissions"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "根据角色id和二级权限id查询该角色所拥有的三级权限",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJST0xFX1BVUkNIQVNFUiIsImZ1bGxuYW1lIjoiYWFhIiwiZXhwIjoxNTg3MDA4NjgzLCJpYXQiOjE1ODY0MDM4ODN9.wYKILXN1AWy0YUfUhZhV6LnXhHmhRJHFX-IHUEU0D3m8lXhRduPJ8RQx9SN2fAEkacR-voa773qrYtpdIEUJxg"
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "http://localhost:8780/api/role/getThirdPermissionByRoleId/4/4",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8780",
+									"path": [
+										"api",
+										"role",
+										"getThirdPermissionByRoleId",
+										"4",
+										"4"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			]
+		},
+		{
 			"name": "用户登录",
 			"request": {
 				"method": "POST",

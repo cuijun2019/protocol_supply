@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
@@ -37,7 +36,7 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying
-    @Query(value = "update users set company=?1,create_time=?2,email=?3,enabled=?4,sex=?5,telephone=?6,update_time=?7,password=?8 where id=?9", nativeQuery = true)
-    void updateUser(String company, Date createTime, String email, Boolean enabled, String sex, String telephone, Date date, String password, Long id);
+    @Query(value = "update users set company=?1,create_time=?2,email=?3,enabled=?4,sex=?5,telephone=?6,update_time=?7,password=?8,fullname=?9 where id=?10", nativeQuery = true)
+    void updateUser(String company, Date createTime, String email, Boolean enabled, String sex, String telephone, Date date, String password,String fullname, Long id);
 
 }

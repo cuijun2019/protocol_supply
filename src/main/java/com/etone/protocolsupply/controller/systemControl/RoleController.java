@@ -47,6 +47,8 @@ public class RoleController extends GenericController {
             consumes = {"application/json"},
             produces = {"application/json"})
     public ResponseValue getRoles(@Validated
+                                  @RequestParam(value = "roleName", required = false) String roleName,
+                                  @RequestParam(value = "statusSearch", required = false)  String statusSearch,
                                   @RequestParam(value = "status", required = false) String status,
                                   @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
                                   @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
@@ -55,7 +57,7 @@ public class RoleController extends GenericController {
 
         Sort sort = new Sort(Sort.Direction.DESC, "createTime");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Specification<Role> specification = roleService.getWhereClause(status);
+        Specification<Role> specification = roleService.getWhereClause(status,roleName,statusSearch);
         Page<Role> page = roleService.findRoles(specification, pageable);
 
         RoleCollectionDto roleDtos = roleService.to(page, request);

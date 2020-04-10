@@ -7,6 +7,7 @@ import com.etone.protocolsupply.model.entity.user.Permissions;
 import com.etone.protocolsupply.model.entity.user.Role;
 import com.etone.protocolsupply.repository.RoleRepository;
 import com.etone.protocolsupply.utils.PagingMapper;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,11 +30,18 @@ public class RoleService {
     @Autowired
     private RoleRepository roleRepository;
 
-    public Specification<Role> getWhereClause(String status) {
+    public Specification<Role> getWhereClause(String status,String roleName,String statusSearch) {
         return (Specification<Role>) (root, criteriaQuery, criteriaBuilder) -> {
 
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(criteriaBuilder.equal(root.get("status").as(Long.class), status));
+            if(Strings.isNotBlank(roleName)){
+                predicates.add(criteriaBuilder.equal(root.get("name").as(String.class),roleName));
+            }
+            if(Strings.isNotBlank(statusSearch)){
+                predicates.add(criteriaBuilder.equal(root.get("status").as(String.class),statusSearch));
+            }else {
+                predicates.add(criteriaBuilder.equal(root.get("status").as(Long.class), status));
+            }
             Predicate[] pre = new Predicate[predicates.size()];
             return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
         };

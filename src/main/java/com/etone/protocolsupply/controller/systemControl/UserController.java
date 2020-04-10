@@ -40,6 +40,8 @@ public class UserController extends GenericController {
             consumes = {"application/json"},
             produces = {"application/json"})
     public ResponseValue getUsers(@Validated
+                                   @RequestParam(value = "username", required = false) String username,
+                                   @RequestParam(value = "enabled", required = false)  String enabled,
                                    @RequestParam(value = "isDelete", required = false) String isDelete,
                                    @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
                                    @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
@@ -48,7 +50,7 @@ public class UserController extends GenericController {
 
         Sort sort = new Sort(Sort.Direction.DESC, "createTime");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Specification<User> specification = userService.getWhereClause(isDelete);
+        Specification<User> specification = userService.getWhereClause(isDelete,username,enabled);
         Page<User> page = userService.findUsers(specification, pageable);
 
         UserCollectionDto userDtos = userService.to(page, request);
@@ -70,8 +72,13 @@ public class UserController extends GenericController {
     public ResponseValue saveUser(@Validated
                                    @RequestBody UserDto userDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        userService.save(userDto);
-        responseBuilder.message("保存用户成功");
+        String save = userService.save(userDto);
+        if(save.equals("该用户已经存在")){
+            responseBuilder.message("该用户已经存在");
+            responseBuilder.code(233);
+        }else {
+            responseBuilder.message("保存用户成功");
+        }
         return responseBuilder.build();
     }
 

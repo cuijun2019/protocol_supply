@@ -9,6 +9,7 @@ import com.etone.protocolsupply.model.entity.user.User;
 import com.etone.protocolsupply.repository.RoleRepository;
 import com.etone.protocolsupply.repository.UserRepository;
 import com.etone.protocolsupply.utils.PagingMapper;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -43,10 +44,20 @@ public class UserService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    public Specification<User> getWhereClause(String isDelete) {
+    public Specification<User> getWhereClause(String isDelete,String username,String enabled) {
         return (Specification<User>) (root, criteriaQuery, criteriaBuilder) -> {
 
             List<Predicate> predicates = new ArrayList<>();
+            if(Strings.isNotBlank(username)){
+                predicates.add(criteriaBuilder.equal(root.get("username").as(String.class),username));
+            }
+            if(Strings.isNotBlank(enabled)){
+                if("true".equals(enabled)){
+                    predicates.add(criteriaBuilder.equal(root.get("enabled").as(Boolean.class),true));
+                }else if("false".equals(enabled)){
+                    predicates.add(criteriaBuilder.equal(root.get("enabled").as(Boolean.class),false));
+                }
+            }
             predicates.add(criteriaBuilder.equal(root.get("isDelete").as(Long.class), isDelete));
             Predicate[] pre = new Predicate[predicates.size()];
             return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
@@ -66,12 +77,18 @@ public class UserService {
             BeanUtils.copyProperties(user, userDto);
             userCollectionDto.add(userDto);
         }
+
         return userCollectionDto;
     }
 
-    public void save(UserDto userDto) {
+    public String save(UserDto userDto) {
         Date date = new Date();
 
+        //先根据用户名查询是否已存在该用户
+        User check = userRepository.findByUsername(userDto.getUsername());
+        if(check!=null){
+            return "该用户已经存在";
+        }
         //TODO 密码加密
         User user = new User();
         user.setCompany(userDto.getCompany());
@@ -96,6 +113,7 @@ public class UserService {
                 roleRepository.addUserRole(save.getId(),roles.get(i).getId());
             }
         }
+        return "保存用户成功";
     }
 
     public User findOne(long userId) {
@@ -119,13 +137,16 @@ public class UserService {
         //先删除用户角色表中选中用户和角色的关系
         roleRepository.deleteByUserId(Long.parseLong(userId));
 
-        //新增用户角色关系
-        String[] roleIds = roleId.split(",");
-        if (roleIds.length>0){
-            for (int i = 0; i < roleIds.length; i++) {
-                roleRepository.addUserRole(Long.parseLong(userId),Long.parseLong(roleIds[i]));
+        //新增用户角色关系,如果roleId为0，说明这个用户没有添加新角色
+        if(!("0".equals(roleId))){
+            String[] roleIds = roleId.split(",");
+            if (roleIds.length>0){
+                for (int i = 0; i < roleIds.length; i++) {
+                    roleRepository.addUserRole(Long.parseLong(userId),Long.parseLong(roleIds[i]));
+                }
             }
         }
+
     }
 
     //更新用户信息
@@ -139,8 +160,9 @@ public class UserService {
         @NotNull Boolean enabled = userDto.getEnabled();
         @NotNull String sex = userDto.getSex();
         @NotNull @Size(min = 4, max = 50) String telephone = userDto.getTelephone();
+        @NotNull String fullname = userDto.getFullname();
 
-        userRepository.updateUser(company,createTime,email,enabled,sex,telephone,date,password,id);
+        userRepository.updateUser(company,createTime,email,enabled,sex,telephone,date,password,fullname,id);
 
 
 
