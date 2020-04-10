@@ -9,6 +9,7 @@ import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
+import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.service.AttachmentService;
 import com.etone.protocolsupply.service.cargo.CargoInfoService;
 import com.etone.protocolsupply.service.cargo.PartInfoService;
@@ -44,6 +45,11 @@ public class ProjectInfoController extends GenericController {
     private PartInfoService partInfoService;
     @Autowired
     private AttachmentService attachmentService;
+
+    @Autowired
+    private CargoInfoService cargoInfoService;
+    @Autowired
+    private CargoInfoRepository cargoInfoRepository;
 
 
     /**
@@ -95,6 +101,29 @@ public class ProjectInfoController extends GenericController {
         Page<ProjectInfo> page = projectInfoService.findAgents(specification, pageable);
         ProjectCollectionDto projectCollectionDto = projectInfoService.to(page, request);
         responseBuilder.data(projectCollectionDto);
+        return responseBuilder.build();
+    }
+
+    /**
+     * 项目详情
+     * @param projectId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/{projectId}",
+            method = RequestMethod.GET,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseValue getCargo(@PathVariable("projectId") String projectId) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        ProjectInfo projectInfo = projectInfoService.findOne(Long.parseLong(projectId));
+        Long a=projectInfo.getCargoInfo().getCargoId();
+        projectInfo.setCargoInfo(null);//货物
+        //配件list
+        projectInfo.setPartInfos(null);
+        projectInfo.setAgentInfoExps(null);
+        responseBuilder.data(projectInfo);
         return responseBuilder.build();
     }
 

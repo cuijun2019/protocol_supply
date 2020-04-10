@@ -1,6 +1,7 @@
 package com.etone.protocolsupply.service.cargo;
 
 import com.etone.protocolsupply.constant.Constant;
+import com.etone.protocolsupply.exception.GlobalExceptionCode;
 import com.etone.protocolsupply.exception.GlobalServiceException;
 import com.etone.protocolsupply.model.dto.ExcelHeaderColumnPojo;
 import com.etone.protocolsupply.model.dto.JwtUser;
@@ -136,8 +137,14 @@ public class CargoInfoService {
     }
 
     public CargoInfo findOne(Long cargoId) {
-        CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(cargoId);
-        return cargoInfo;
+//        CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(cargoId);
+//        return cargoInfo;
+        Optional<CargoInfo> optional = cargoInfoRepository.findById(cargoId);
+        if (optional.isPresent()) {
+            return optional.get();
+        } else {
+            throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("通过货物id"));
+        }
     }
 
     public CargoInfo update(CargoInfo cargoInfo, JwtUser jwtUser) throws GlobalServiceException {
