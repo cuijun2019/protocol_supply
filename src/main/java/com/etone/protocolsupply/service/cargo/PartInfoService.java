@@ -399,11 +399,10 @@ public class PartInfoService {
             partInfo.setTechParams(jsonObject.get("主要技术参数").toString());
             partInfo.setUnit(jsonObject.get("单位").toString());
             partInfo.setQuantity(jsonObject.get("数量").toString());
-            partInfo.setPrice(Double.parseDouble(jsonObject.get("单价").toString()));
-            partInfo.setTotal(Double.parseDouble(jsonObject.get("总价").toString()));
+            partInfo.setPrice(Double.valueOf("".equals(jsonObject.get("单价").toString())?"0.00":jsonObject.get("单价").toString()));
+            partInfo.setTotal(Double.valueOf("".equals(jsonObject.get("总价").toString())?"0.00":jsonObject.get("总价").toString()));
             partInfo.setRemark(jsonObject.get("备注").toString());
             partInfo.setIsDelete(2);
-
             ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(lprojectId);
             partInfo.setCargoInfo(cargoInfo);
             partInfo.setProjectInfo(projectInfo);
