@@ -20,6 +20,16 @@ public class Constant {
     public static int DELETE_NO = 2;
 
     /**
+     * 是否推荐供应商 -- 是
+     */
+    public static int RECOMMEND_SUPPLIER_YES = 1;
+
+    /**
+     * 是否推荐供应商 -- 否
+     */
+    public static int RECOMMEND_SUPPLIER_NO = 2;
+
+    /**
      * 状态 -- 激活
      */
     public static int STATUS_ACTIVE = 1;
@@ -53,13 +63,25 @@ public class Constant {
      */
     public static final int    STATE_APPROVED         = 3;
     public static final String STATE_STRING_APPROVED  = "审批完毕";
+    /**
+     * 待签收
+     */
+    public static final int    STATE_WAIT_SIGN         = 7;
+    public static final String STATE_STRING_WAIT_SIGN  = "待签收";
+    /**
+     * 已签收
+     */
+    public static final int    STATE_SIGNED         = 8;
+    public static final String STATE_STRING_SIGNED  = "已签收";
 
-    public static final Map<Integer, String> REVIEW_STATUS_MAP = new HashMap<Integer, String>();
+    public static final Map<Integer, String> REVIEW_STATUS_MAP = new HashMap<>();
 
     static {
         REVIEW_STATUS_MAP.put(STATE_DRAFT, STATE_STRING_DRAFT);
         REVIEW_STATUS_MAP.put(STATE_APPROVING, STATE_STRING_APPROVING);
         REVIEW_STATUS_MAP.put(STATE_APPROVED, STATE_STRING_APPROVED);
+        REVIEW_STATUS_MAP.put(STATE_WAIT_SIGN, STATE_STRING_WAIT_SIGN);
+        REVIEW_STATUS_MAP.put(STATE_SIGNED, STATE_STRING_SIGNED);
     }
 
     /**

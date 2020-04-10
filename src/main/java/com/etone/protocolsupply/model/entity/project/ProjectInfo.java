@@ -1,6 +1,5 @@
 package com.etone.protocolsupply.model.entity.project;
 
-import com.etone.protocolsupply.model.entity.AgentInfo;
 import com.etone.protocolsupply.model.entity.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
@@ -29,19 +28,25 @@ public class ProjectInfo implements Serializable {
      * 创建人
      */
     @Column(name = "CREATOR", length = 100)
-    private String  creator;
+    private String creator;
+
+    /**
+     * 采购人
+     */
+    @Column(name = "PURCHASER", length = 100)
+    private String purchaser;
 
     /**
      * 项目编号
      */
     @Column(name = "PROJECT_CODE", length = 100)
-    private String  projectCode;
+    private String projectCode;
 
     /**
      * 项目主题
      */
     @Column(name = "PROJECT_SUBJECT", length = 1000)
-    private String  projectSubject;
+    private String projectSubject;
 
     /**
      * 交货时间
@@ -85,6 +90,12 @@ public class ProjectInfo implements Serializable {
     @Column(name = "STATUS", length = 4)
     private Integer status;
 
+    /**
+     * 项目总金额
+     */
+    @Column(name = "AMOUNT", length = 50)
+    private String amount;
+
     @Column(name = "IS_DELETE", length = 4)
     private Integer isDelete;
 
@@ -92,7 +103,7 @@ public class ProjectInfo implements Serializable {
      * 货物
      */
     @OneToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value={"hibernateLazyInitializer"})
+    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "CARGO_ID", referencedColumnName = "CARGO_ID")
     private CargoInfo cargoInfo;
@@ -101,7 +112,7 @@ public class ProjectInfo implements Serializable {
      * 中标通知书
      */
     @OneToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value={"hibernateLazyInitializer"})
+    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "NOTICE_ID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment_n;
@@ -110,7 +121,7 @@ public class ProjectInfo implements Serializable {
      * 合同
      */
     @OneToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value={"hibernateLazyInitializer"})
+    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "CONTRACT_ID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment_c;
@@ -125,7 +136,7 @@ public class ProjectInfo implements Serializable {
     private Set<PartInfo> partInfos = new HashSet<>();
 
     /**
-     *代理商拓展表
+     * 代理商拓展表
      */
     @OneToMany(mappedBy = "projectInfo",
             cascade = CascadeType.ALL,

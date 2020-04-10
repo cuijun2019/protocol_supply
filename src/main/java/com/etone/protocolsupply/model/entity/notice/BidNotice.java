@@ -23,6 +23,18 @@ public class BidNotice implements Serializable {
     private Long bidId;
 
     /**
+     * 项目编号
+     */
+    @Column(name = "PROJECT_CODE", length = 100)
+    private String  projectCode;
+
+    /**
+     * 项目主题
+     */
+    @Column(name = "PROJECT_SUBJECT", length = 1000)
+    private String  projectSubject;
+
+    /**
      * 中标供应商
      */
     @Column(name = "SUPPLIER", length = 200)
@@ -31,7 +43,7 @@ public class BidNotice implements Serializable {
     /**
      * 中标金额
      */
-    @Column(name = "AMOUNT", length = 4)
+    @Column(name = "AMOUNT", length = 50)
     private String amount;
 
     /**
@@ -43,13 +55,13 @@ public class BidNotice implements Serializable {
     /**
      * 采购人
      */
-    @Column(name = "PURCHASER", length = 32)
+    @Column(name = "PURCHASER", length = 100)
     private String purchaser;
 
     /**
      * 创建人（招标中心）
      */
-    @Column(name = "CREATOR", length = 32)
+    @Column(name = "CREATOR", length = 100)
     private String creator;
 
     /**
