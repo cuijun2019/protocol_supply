@@ -30,7 +30,7 @@ public class RoleService {
     @Autowired
     private RoleRepository roleRepository;
 
-    public Specification<Role> getWhereClause(String status,String roleName,String statusSearch) {
+    public Specification<Role> getWhereClause(String roleName,String statusSearch) {
         return (Specification<Role>) (root, criteriaQuery, criteriaBuilder) -> {
 
             List<Predicate> predicates = new ArrayList<>();
@@ -39,8 +39,6 @@ public class RoleService {
             }
             if(Strings.isNotBlank(statusSearch)){
                 predicates.add(criteriaBuilder.equal(root.get("status").as(String.class),statusSearch));
-            }else {
-                predicates.add(criteriaBuilder.equal(root.get("status").as(Long.class), status));
             }
             Predicate[] pre = new Predicate[predicates.size()];
             return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
