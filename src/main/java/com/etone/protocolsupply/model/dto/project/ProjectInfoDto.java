@@ -6,4 +6,5 @@ import lombok.Data;
 @Data
 public class ProjectInfoDto extends ProjectInfo {
     private String partnerId;//供应商id
+
 }

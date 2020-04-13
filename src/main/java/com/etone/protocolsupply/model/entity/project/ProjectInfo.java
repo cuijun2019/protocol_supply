@@ -63,14 +63,14 @@ public class ProjectInfo implements Serializable {
     /**
      * 设备付款方法
      */
-    @Column(name = "PAYMENT_METHOD", length = 4)
-    private Integer paymentMethod;
+    @Column(name = "PAYMENT_METHOD", length = 2000)
+    private String paymentMethod;
 
     /**
      * 价格条款
      */
-    @Column(name = "PRICE_TERM", length = 4)
-    private Integer priceTerm;
+    @Column(name = "PRICE_TERM", length = 2000)
+    private String priceTerm;
 
     /**
      * 保修期
