@@ -170,7 +170,7 @@ public class RoleController extends GenericController {
 
 
     /**
-     * 编辑角色对应的权限
+     * 编辑角色部分内容和对应的权限
      * @param
      * @return
      */
@@ -185,10 +185,24 @@ public class RoleController extends GenericController {
                                     @RequestBody RoleDto roleDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         roleService.updateRolePermissions(roleDto);
-        responseBuilder.message("更新角色权限成功");
+        responseBuilder.message("更新角色及权限成功");
         return responseBuilder.build();
     }
 
+    /**
+     * 查询所有角色
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getAllRoles",
+            method = RequestMethod.GET,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    public ResponseValue getAllRoles() {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        List<Role> roleList = roleService.getAllRoles();
+        responseBuilder.data(roleList);
+        return responseBuilder.build();
+    }
 
 
 }

@@ -63,12 +63,13 @@ public class RoleService {
 
     public void save(RoleDto roleDto, JwtUser user) {
         Role role = new Role();
-        String username = user.getUsername();
+        String creator = user.getUsername();
 
         role.setCreateTime(new Date());
         role.setDescription(roleDto.getDescription());
         role.setName(roleDto.getName());
-        role.setStatus(1);
+        role.setStatus(roleDto.getStatus());
+        role.setCreator(creator);
 
         Role save = roleRepository.save(role);
 
@@ -92,17 +93,31 @@ public class RoleService {
 
 
     public void updateRolePermissions(RoleDto roleDto) {
+        //更新角色部分内容(激活状态和描述)
+        roleRepository.updateRole(roleDto.getDescription(),roleDto.getStatus(),roleDto.getId());
+
         //先删除角色权限关系表里维护的角色关系
         Set<Permissions> permissions = roleDto.getPermissions();
 
-        //删除角色权限中间表中维护的关系
-        roleRepository.deleteRolePermissions(roleDto.getId());
 
         //重新插入编辑后的角色权限关系
         if(permissions!=null && permissions.size()>0){
+
+            //删除角色权限中间表中维护的关系
+            roleRepository.deleteRolePermissions(roleDto.getId());
+
             for(Permissions permission:permissions){
                 roleRepository.saveRolePermissions(roleDto.getId(),permission.getPermId());
             }
         }
     }
+
+    public List<Role> getAllRoles() {
+        List<Role> roleList = roleRepository.findAll();
+        for (int i = 0; i < roleList.size(); i++) {
+            roleList.get(i).setPermissions(null);
+        }
+        return roleList;
+    }
+
 }

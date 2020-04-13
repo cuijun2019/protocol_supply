@@ -33,6 +33,16 @@ VALUES
 	);
 
 
+
+INSERT INTO `scms`.`roles`(`role_id`, `create_time`, `description`, `name`, `status`) VALUES (6, '2020-04-02 14:55:29', '招标中心科长', 'ROLE_TENDERCHIEF', 1);
+INSERT INTO `scms`.`roles`(`role_id`, `create_time`, `description`, `name`, `status`) VALUES (5, '2020-04-02 14:54:36', '招标中心经办人', 'ROLE_TENDERHANDLER', 1);
+INSERT INTO `scms`.`roles`(`role_id`, `create_time`, `description`, `name`, `status`) VALUES (4, '2020-04-02 14:54:16', '采购人领导', 'ROLE_PURCHASERLEADER', 1);
+INSERT INTO `scms`.`roles`(`role_id`, `create_time`, `description`, `name`, `status`) VALUES (3, '2020-04-02 14:53:13', '采购人', 'ROLE_PURCHASER', 1);
+INSERT INTO `scms`.`roles`(`role_id`, `create_time`, `description`, `name`, `status`) VALUES (2, '2020-04-02 14:52:39', '代理商', 'ROLE_AGENT', 1);
+INSERT INTO `scms`.`roles`(`role_id`, `create_time`, `description`, `name`, `status`) VALUES (1, '2020-04-02 14:52:02', '供应商', 'ROLE_SUPPLIER', 1);
+INSERT INTO `scms`.`roles`(`role_id`, `create_time`, `description`, `name`, `status`) VALUES (7, '2020-04-02 14:56:06', '系统管理员', 'ROLE_ADMIN', 1);
+
+
 INSERT INTO `scms`.`permissions`(`perm_id`, `create_date`, `creator`, `is_delete`, `menu_code`, `menu_name`, `menu_url`, `parent_perm_id`, `status`) VALUES (1, '2020-04-07 16:15:34', 'admin', 2, 'index', '首页', '/index', 0, 1);
 INSERT INTO `scms`.`permissions`(`perm_id`, `create_date`, `creator`, `is_delete`, `menu_code`, `menu_name`, `menu_url`, `parent_perm_id`, `status`) VALUES (2, '2020-04-07 16:25:23', 'admin', 2, 'todo', '待办', '/index/todo', 1, 1);
 INSERT INTO `scms`.`permissions`(`perm_id`, `create_date`, `creator`, `is_delete`, `menu_code`, `menu_name`, `menu_url`, `parent_perm_id`, `status`) VALUES (3, '2020-04-07 17:02:13', 'admin', 2, 'done', '已办', '/index/done', 1, 1);
