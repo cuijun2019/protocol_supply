@@ -80,7 +80,6 @@ public class ProjectInfoService {
 
         }
         //ProjectInfo projectInfo1=projectInfoRepository.getOne(Long.parseLong(maxOne));
-
         projectInfo.setIsDelete(Constant.DELETE_NO);
         projectInfo.setCreator(userName);
         projectInfo.setStatus(1);//审核状态：审核中、已完成、退回
@@ -103,6 +102,8 @@ public class ProjectInfoService {
         }else {
             projectInfo.setAttachment_c(null);
         }
+
+
         CargoInfo cargoInfo=projectInfoDto.getCargoInfo();//货物
         CargoInfoDto cargoInfoDto=new CargoInfoDto();
 

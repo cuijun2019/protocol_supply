@@ -125,7 +125,7 @@ public class ProjectInfoController extends GenericController {
         //Long a=projectInfo.getCargoInfo().getCargoId();
         projectInfo.setCargoInfo(null);//货物
         //配件list
-        projectInfo.setPartInfos(null);
+        projectInfo.setPartInfoExps(null);
         projectInfo.setAgentInfoExps(null);
         responseBuilder.data(projectInfo);
         return responseBuilder.build();

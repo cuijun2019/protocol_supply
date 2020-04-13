@@ -2,6 +2,7 @@ package com.etone.protocolsupply.model.entity.project;
 
 import com.etone.protocolsupply.model.entity.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.Attachment;
+import com.etone.protocolsupply.model.entity.PartInfoExp;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.cargo.PartInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -127,13 +128,13 @@ public class ProjectInfo implements Serializable {
     private Attachment attachment_c;
 
     /**
-     * 配件
+     * 配件拓展表
      */
     @JsonIgnore
     @OneToMany(mappedBy = "projectInfo",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
-    private Set<PartInfo> partInfos = new HashSet<>();
+    private Set<PartInfoExp> partInfoExps = new HashSet<>();
 
     /**
      * 代理商拓展表

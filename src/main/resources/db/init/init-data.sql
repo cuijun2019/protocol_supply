@@ -292,3 +292,22 @@ INSERT INTO `scms`.`role_permis`(`role_id`, `perm_id`) VALUES (7, 88);
 INSERT INTO `scms`.`role_permis`(`role_id`, `perm_id`) VALUES (7, 89);
 INSERT INTO `scms`.`role_permis`(`role_id`, `perm_id`) VALUES (7, 90);
 INSERT INTO `scms`.`role_permis`(`role_id`, `perm_id`) VALUES (7, 91);
+
+
+
+INSERT INTO `scms`.`attachment`(`attach_id`, `attach_name`, `attach_size`, `file_type`, `path`, `upload_time`, `uploader`) VALUES (1, '协议供货-采购结果通知书.xlsx', 85123, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', '/data/nginx/html/protocol_supply/202003/e17464aa-ed75-46ee-acc9-1960d7d4150a.xlsx', '2020-03-23 02:23:20', 'admin');
+INSERT INTO `scms`.`attachment`(`attach_id`, `attach_name`, `attach_size`, `file_type`, `path`, `upload_time`, `uploader`) VALUES (2, '新建 Microsoft Excel 工作表.xlsx', 10725, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', '/data/nginx/html/protocol_supply/202003/e1cf7ab5-8bdd-4e29-9bb9-ff8f267b06b1.xlsx', '2020-03-23 02:32:10', 'admin');
+INSERT INTO `scms`.`attachment`(`attach_id`, `attach_name`, `attach_size`, `file_type`, `path`, `upload_time`, `uploader`) VALUES (3, '新建 Microsoft Excel 工作表.xlsx', 10725, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', '/data/nginx/html/protocol_supply/202003/9af0b9b4-71c9-4e91-a04f-3d33b4cf4cdd.xlsx', '2020-03-23 02:33:39', 'admin');
+INSERT INTO `scms`.`attachment`(`attach_id`, `attach_name`, `attach_size`, `file_type`, `path`, `upload_time`, `uploader`) VALUES (4, '协议供货-中标通知书.xlsx', 12350, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', '/data/nginx/html/protocol_supply/202003/9809cc52-8e9e-48a2-8890-fc445283ac11.xlsx', '2020-03-23 02:52:43', 'admin');
+INSERT INTO `scms`.`attachment`(`attach_id`, `attach_name`, `attach_size`, `file_type`, `path`, `upload_time`, `uploader`) VALUES (5, '协议供货-中标通知书.xlsx', 12350, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', '/data/nginx/html/protocol_supply/202003/ea73b662-8424-4e14-9fcb-c5f4b175f90f.xlsx', '2020-03-23 03:01:34', 'admin');
+INSERT INTO `scms`.`attachment`(`attach_id`, `attach_name`, `attach_size`, `file_type`, `path`, `upload_time`, `uploader`) VALUES (6, '合同模板.doc', 70144, 'application/msword', '/data/nginx/html/protocol_supply/202003/079213b5-339f-43a8-ac77-c032b39a2163.doc', '2020-03-23 03:13:22', 'admin');
+INSERT INTO `scms`.`attachment`(`attach_id`, `attach_name`, `attach_size`, `file_type`, `path`, `upload_time`, `uploader`) VALUES (7, '合同模板.doc', 70144, 'application/msword', '/data/nginx/html/protocol_supply/202003/3b15d30b-c379-4a53-8876-84497588499e.doc', '2020-03-23 03:14:30', 'admin');
+INSERT INTO `scms`.`attachment`(`attach_id`, `attach_name`, `attach_size`, `file_type`, `path`, `upload_time`, `uploader`) VALUES (8, 'point-blue.png', 1510, 'image/png', '/data/nginx/html/protocol_supply/202003/bf8f1786-9892-434b-b0d3-ab4dc0662f86.png', '2020-03-23 09:10:12', 'admin');
+INSERT INTO `scms`.`attachment`(`attach_id`, `attach_name`, `attach_size`, `file_type`, `path`, `upload_time`, `uploader`) VALUES (9, 'point-red.png', 1554, 'image/png', '/data/nginx/html/protocol_supply/202003/1048f8a7-27ec-4ed6-bffb-e173e54896e7.png', '2020-03-23 09:49:13', 'admin');
+INSERT INTO `scms`.`attachment`(`attach_id`, `attach_name`, `attach_size`, `file_type`, `path`, `upload_time`, `uploader`) VALUES (10, 'partInfo.xls', 25600, 'application/vnd.ms-excel', 'D:\\data\\nginx\\html\\protocol_supply\\202003/c44f1689-430c-4e00-8b23-dcf39306dbeb.xls', '2020-03-25 10:42:29', 'admin');
+INSERT INTO `scms`.`attachment`(`attach_id`, `attach_name`, `attach_size`, `file_type`, `path`, `upload_time`, `uploader`) VALUES (11, 'point-blue.png', 1510, 'image/png', '/data/nginx/html/protocol_supply/202003/1da9362a-2288-4ac5-99bf-463a48fb0c56.png', '2020-03-27 03:30:32', 'admin');
+
+
+
+
+

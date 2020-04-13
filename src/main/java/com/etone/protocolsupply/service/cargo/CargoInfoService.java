@@ -291,9 +291,14 @@ public class CargoInfoService {
 //            cargoInfo.setCargoSerial(this.findLastCargoSerial());//序号
 //            cargoInfo.setCargoCode(cargoInfo.getItemCode() + cargoInfo.getCargoSerial());//编号
             BrandItem brandItem=brandItemRepository.findByItemName(jsonObject.get("货物品目").toString());
+            if(brandItem==null){
+                cargoInfo.setItemCode(null);//品目code
+                cargoInfo.setItemName(null);//品目name
+            }else {
+                cargoInfo.setItemCode(brandItem.getItemCode());//品目code
+                cargoInfo.setItemName(brandItem.getItemName());//品目name
+            }
             cargoInfo.setCargoSerial(this.findLastCargoSerial2(i));//货物序号
-            cargoInfo.setItemCode(brandItem.getItemCode());//品目code
-            cargoInfo.setItemName(brandItem.getItemName());//品目name
             cargoInfo.setCargoName(jsonObject.get("货物名称").toString());
             cargoInfo.setCargoCode(cargoInfo.getItemCode() + cargoInfo.getCargoSerial());//货物编号
             cargoInfo.setBrand(jsonObject.get("品牌").toString());
@@ -303,7 +308,7 @@ public class CargoInfoService {
             cargoInfo.setType(jsonObject.get("进口/国产类别").toString());
             cargoInfo.setCurrency(jsonObject.get("币种").toString());
             cargoInfo.setGuaranteeRate(jsonObject.get("维保率/月").toString());
-            cargoInfo.setRemark(jsonObject.get("备注").toString());
+            cargoInfo.setRemark(jsonObject.get("备注").toString()!=null?jsonObject.get("备注").toString():"");
             cargoInfo.setStatus(1);//状态：草稿状态，审核中，审核完毕
             cargoInfo.setCreateDate(date);
             cargoInfo.setCreator(userName);
