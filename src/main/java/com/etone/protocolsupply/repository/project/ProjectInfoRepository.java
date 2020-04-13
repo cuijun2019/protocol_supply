@@ -20,6 +20,7 @@ public interface ProjectInfoRepository extends JpaRepository<ProjectInfo, Long>,
     @Query(value = "update project_info set is_delete=1 where project_id=?1", nativeQuery = true)
     void updateIsDelete(Long projectId);
 
+    @Transactional(rollbackFor = Exception.class)
     @Query(value = "select * from project_info where is_delete=2 and project_id=?1", nativeQuery = true)
     ProjectInfo findAllByProjectId(Long ProjectId);
 

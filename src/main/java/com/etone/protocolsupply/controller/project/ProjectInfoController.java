@@ -100,6 +100,10 @@ public class ProjectInfoController extends GenericController {
         Specification<ProjectInfo> specification = projectInfoService.getWhereClause(projectSubject, status, isDelete);
         Page<ProjectInfo> page = projectInfoService.findAgents(specification, pageable);
         ProjectCollectionDto projectCollectionDto = projectInfoService.to(page, request);
+        for(int i=0;i<projectCollectionDto.getProjectInfoDtos().size();i++){
+            projectCollectionDto.getProjectInfoDtos().get(i).setCargoInfo(null);
+            projectCollectionDto.getProjectInfoDtos().get(i).setAgentInfoExps(null);
+        }
         responseBuilder.data(projectCollectionDto);
         return responseBuilder.build();
     }
@@ -118,7 +122,7 @@ public class ProjectInfoController extends GenericController {
     public ResponseValue getCargo(@PathVariable("projectId") String projectId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         ProjectInfo projectInfo = projectInfoService.findOne(Long.parseLong(projectId));
-        Long a=projectInfo.getCargoInfo().getCargoId();
+        //Long a=projectInfo.getCargoInfo().getCargoId();
         projectInfo.setCargoInfo(null);//货物
         //配件list
         projectInfo.setPartInfos(null);

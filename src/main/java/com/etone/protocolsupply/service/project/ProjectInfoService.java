@@ -72,12 +72,15 @@ public class ProjectInfoService {
         ProjectInfo projectInfo = new ProjectInfo();
         BeanUtils.copyProperties(projectInfoDto, projectInfo);
         String maxOne=projectInfoRepository.findMaxOne();
-        ProjectInfo projectInfo1=projectInfoRepository.getOne(Long.parseLong(maxOne));
-        if(projectInfo1==null){
+        if(maxOne==null){
             projectInfo.setProjectCode("SCUT-"+Common.getYYYYMMDDDate(date)+"-XY001");
         }else {
+            ProjectInfo projectInfo1=projectInfoRepository.findAllByProjectId(Long.parseLong(maxOne));
             projectInfo.setProjectCode("SCUT-"+Common.getYYYYMMDDDate(date)+"-XY"+Common.convertSerialProject(projectInfo1.getProjectCode().substring(16),1));
+
         }
+        //ProjectInfo projectInfo1=projectInfoRepository.getOne(Long.parseLong(maxOne));
+
         projectInfo.setIsDelete(Constant.DELETE_NO);
         projectInfo.setCreator(userName);
         projectInfo.setStatus(1);//审核状态：审核中、已完成、退回
