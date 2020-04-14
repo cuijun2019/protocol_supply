@@ -114,12 +114,6 @@ public class ProjectInfoService {
         Set<PartInfoExp> partInfoExps=projectInfoDto.getPartInfoExps();
         CargoInfo cargoInfo=new CargoInfo();
         if (partInfoExps != null && !partInfoExps.isEmpty()) {
-//            if(projectInfoDto.getCargoId()!=null){
-//                Optional<CargoInfo> optional= cargoInfoRepository.findById(Long.valueOf(projectInfoDto.getCargoId()));
-//                if (optional.isPresent()) {
-//                    cargoInfo=optional.get();
-//                }
-//            }
             for (PartInfoExp partInfoExp : partInfoExps) {
 
                 partInfoExp.setCargoInfo(null);//货物
@@ -141,8 +135,9 @@ public class ProjectInfoService {
                 agentInfoExp.setIsDelete(Constant.DELETE_NO);
             }
         }
-         projectInfoRepository.save(projectInfo);
 
+         projectInfoRepository.save(projectInfo);
+        projectInfoRepository.setCargoId(projectInfo.getProjectId(),Long.parseLong(projectInfoDto.getCargoId()));
         List<Long> agentIds = new ArrayList<>();
         if(agentInfoExps.size()>0){
             for (AgentInfoExp agentInfoExp : projectInfo.getAgentInfoExps()) {

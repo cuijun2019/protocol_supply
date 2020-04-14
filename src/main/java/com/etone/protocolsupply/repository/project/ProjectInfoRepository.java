@@ -36,4 +36,8 @@ public interface ProjectInfoRepository extends JpaRepository<ProjectInfo, Long>,
     @Query(value = "select * from project_info where is_delete=2 and " +
             "if((:projectSubject is not null), (project_subject like %:projectSubject%), (1=1)) and if((:status is not null), (status=:status), (1=1))", nativeQuery = true)
     List<ProjectInfo> findAllp2(@Param("projectSubject") String projectSubject, @Param("status") String status);
+
+    @Query(value = "update project_info set cargo_id=:cargoId where project_id =:projectId", nativeQuery = true)
+    @Modifying
+    void setCargoId(@Param("projectId") Long projectId,@Param("cargoId") Long cargoId);
 }

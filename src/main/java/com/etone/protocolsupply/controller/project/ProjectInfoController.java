@@ -101,8 +101,13 @@ public class ProjectInfoController extends GenericController {
         Page<ProjectInfo> page = projectInfoService.findAgents(specification, pageable);
         ProjectCollectionDto projectCollectionDto = projectInfoService.to(page, request);
         for(int i=0;i<projectCollectionDto.getProjectInfoDtos().size();i++){
+            CargoInfo cargoInfo=new CargoInfo();
+            cargoInfo=projectCollectionDto.getProjectInfoDtos().get(i).getCargoInfo();
             projectCollectionDto.getProjectInfoDtos().get(i).setCargoInfo(null);
             projectCollectionDto.getProjectInfoDtos().get(i).setAgentInfoExps(null);
+            projectCollectionDto.getProjectInfoDtos().get(i).setPartInfoExps(null);
+           // projectCollectionDto.getProjectInfoDtos().get(i).setCargoName(cargoInfo.getCargoName());//货物名称
+
         }
         responseBuilder.data(projectCollectionDto);
         return responseBuilder.build();
