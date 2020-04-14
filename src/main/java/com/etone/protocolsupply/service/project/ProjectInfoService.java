@@ -9,11 +9,13 @@ import com.etone.protocolsupply.model.dto.project.ProjectCollectionDto;
 import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
 import com.etone.protocolsupply.model.entity.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.Attachment;
+import com.etone.protocolsupply.model.entity.PartInfoExp;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.cargo.PartInfo;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
 import com.etone.protocolsupply.repository.AttachmentRepository;
+import com.etone.protocolsupply.repository.PartInfoExpRepository;
 import com.etone.protocolsupply.repository.PartnerInfoRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.repository.cargo.PartInfoRepository;
@@ -62,6 +64,9 @@ public class ProjectInfoService {
     private AgentInfoExpRepository agentInfoExpRepository;
     @Autowired
     private PartInfoRepository partInfoRepository;
+
+    @Autowired
+    private PartInfoExpRepository partInfoExpRepository;
     @Autowired
     private PagingMapper         pagingMapper;
 
@@ -103,33 +108,36 @@ public class ProjectInfoService {
             projectInfo.setAttachment_c(null);
         }
 
+        projectInfo.setProjectSubject(projectInfoDto.getCargoName()+"的采购");
 
-        CargoInfo cargoInfo=projectInfoDto.getCargoInfo();//货物
-        CargoInfoDto cargoInfoDto=new CargoInfoDto();
+        //配件
+        Set<PartInfoExp> partInfoExps=projectInfoDto.getPartInfoExps();
+        CargoInfo cargoInfo=new CargoInfo();
+        if (partInfoExps != null && !partInfoExps.isEmpty()) {
+//            if(projectInfoDto.getCargoId()!=null){
+//                Optional<CargoInfo> optional= cargoInfoRepository.findById(Long.valueOf(projectInfoDto.getCargoId()));
+//                if (optional.isPresent()) {
+//                    cargoInfo=optional.get();
+//                }
+//            }
+            for (PartInfoExp partInfoExp : partInfoExps) {
 
-        if (cargoInfo != null ) {
-            BeanUtils.copyProperties(cargoInfo, cargoInfoDto);
-            CargoInfo cargoInfo1=  cargoInfoService.save(cargoInfoDto, jwtUser);
-            Optional<CargoInfo> optional = cargoInfoRepository.findById(cargoInfo1.getCargoId());
-            if (optional.isPresent()) {
-                projectInfo.setCargoInfo(optional.get());
-                projectInfo.setProjectSubject(cargoInfo1.getCargoName()+"的采购");
+                partInfoExp.setCargoInfo(null);//货物
+                partInfoExp.setIsDelete(Constant.DELETE_NO);
             }
-        }else {
-            projectInfo.setCargoInfo(null);
         }
         //代理商list
         Set<AgentInfoExp> agentInfoExps = projectInfoDto.getAgentInfoExps();
         if (agentInfoExps != null && !agentInfoExps.isEmpty()) {
             if(projectInfoDto.getPartnerId()!=null){
                 Optional<PartnerInfo> optional= partnerInfoRepository.findById(Long.valueOf(projectInfoDto.getPartnerId()));
-
             }
             for (AgentInfoExp agentInfoExp : agentInfoExps) {
                 agentInfoExp.setCreator(userName);
                 agentInfoExp.setCreateDate(date);
-                agentInfoExp.setStatus(1);
-                agentInfoExp.setPartnerInfo(null);//供应商暂时为null
+                agentInfoExp.setStatus(1);//状态
+                agentInfoExp.setReviewStatus(1);//审核状态
+                agentInfoExp.setPartnerInfo(null);
                 agentInfoExp.setIsDelete(Constant.DELETE_NO);
             }
         }
@@ -143,11 +151,11 @@ public class ProjectInfoService {
             agentInfoExpRepository.setProjectId(projectInfo.getProjectId(), agentIds);
         }
         List<Long> partIds = new ArrayList<>();
-        if(projectInfoDto.getCargoInfo().getPartInfos().size()>0){
-            for (PartInfo partInfo : projectInfoDto.getCargoInfo().getPartInfos()) {
-                partIds.add(partInfo.getPartId());
+        if(partInfoExps.size()>0){
+            for (PartInfoExp partInfoExp  : projectInfo.getPartInfoExps()) {
+                partIds.add(partInfoExp.getPartId());
             }
-            partInfoRepository.setProjectId(projectInfo.getProjectId(), partIds);
+            partInfoExpRepository.setProjectId(projectInfo.getProjectId(),Long.parseLong(projectInfoDto.getCargoId()), partIds);
         }
         return projectInfo;
     }

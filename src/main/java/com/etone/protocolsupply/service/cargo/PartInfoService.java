@@ -120,8 +120,11 @@ public class PartInfoService {
         for (PartInfo partInfo : source) {
             partInfoDto = new PartInfoDto();
             BeanUtils.copyProperties(partInfo, partInfoDto);
+            partInfoDto.setCargoId(partInfo.getCargoInfo().getCargoId().toString());
+            partInfoDto.setCargoName(partInfo.getCargoInfo().getCargoName());
             partCollectionDto.add(partInfoDto);
         }
+
         return partCollectionDto;
     }
 

@@ -130,7 +130,6 @@ public class ProjectInfo implements Serializable {
     /**
      * 配件拓展表
      */
-    @JsonIgnore
     @OneToMany(mappedBy = "projectInfo",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
