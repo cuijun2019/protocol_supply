@@ -118,16 +118,14 @@ public class ProjectInfo implements Serializable {
     /**
      * 配件拓展表
      */
-    @OneToMany(mappedBy = "projectInfo",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
+    @OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY)
+    @JoinColumn(name = "PART_ID")
     private Set<PartInfoExp> partInfoExps = new HashSet<>();
 
     /**
      * 代理商拓展表
      */
-    @OneToMany(mappedBy = "projectInfo",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
+    @OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY)
+    @JoinColumn(name = "AGENT_ID")
     private Set<AgentInfoExp> agentInfoExps = new HashSet<>();
 }
