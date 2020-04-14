@@ -2,7 +2,7 @@ package com.etone.protocolsupply.service.system;
 
 
 import com.etone.protocolsupply.model.entity.user.Permissions;
-import com.etone.protocolsupply.repository.PermissionRepository;
+import com.etone.protocolsupply.repository.user.PermissionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -5,7 +5,7 @@ import com.etone.protocolsupply.model.dto.systemControl.RoleCollectionDto;
 import com.etone.protocolsupply.model.dto.systemControl.RoleDto;
 import com.etone.protocolsupply.model.entity.user.Permissions;
 import com.etone.protocolsupply.model.entity.user.Role;
-import com.etone.protocolsupply.repository.RoleRepository;
+import com.etone.protocolsupply.repository.user.RoleRepository;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.BeanUtils;

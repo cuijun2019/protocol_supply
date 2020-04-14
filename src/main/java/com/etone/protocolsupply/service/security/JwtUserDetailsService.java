@@ -2,7 +2,7 @@ package com.etone.protocolsupply.service.security;
 
 import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.model.entity.user.User;
-import com.etone.protocolsupply.repository.UserRepository;
+import com.etone.protocolsupply.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

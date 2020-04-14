@@ -1,4 +1,4 @@
-package com.etone.protocolsupply.repository;
+package com.etone.protocolsupply.repository.user;
 
 import com.etone.protocolsupply.model.entity.user.Permissions;
 import org.springframework.data.jpa.repository.JpaRepository;
