@@ -2,12 +2,8 @@ package com.etone.protocolsupply.controller.project;
 
 import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
-import com.etone.protocolsupply.model.dto.cargo.CargoCollectionDto;
-import com.etone.protocolsupply.model.dto.cargo.CargoInfoDto;
 import com.etone.protocolsupply.model.dto.project.ProjectCollectionDto;
 import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
-import com.etone.protocolsupply.model.entity.Attachment;
-import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.service.AttachmentService;
@@ -23,15 +19,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.List;
 
 @RestController
@@ -42,12 +33,12 @@ public class ProjectInfoController extends GenericController {
     private ProjectInfoService projectInfoService;
 
     @Autowired
-    private PartInfoService partInfoService;
+    private PartInfoService   partInfoService;
     @Autowired
     private AttachmentService attachmentService;
 
     @Autowired
-    private CargoInfoService cargoInfoService;
+    private CargoInfoService    cargoInfoService;
     @Autowired
     private CargoInfoRepository cargoInfoRepository;
 
@@ -65,21 +56,22 @@ public class ProjectInfoController extends GenericController {
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseValue postProjectInfo(@Validated
-                                       @RequestBody ProjectInfoDto projectInfoDto) {
+                                         @RequestBody ProjectInfoDto projectInfoDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         ProjectInfo projectInfo = projectInfoService.save(projectInfoDto, this.getUser());
-        projectInfo.setCargoInfo(null);//
+//        projectInfo.setCargoInfo(null);//
         responseBuilder.data(projectInfo);
         return responseBuilder.build();
     }
 
     /**
      * 项目列表
+     *
      * @param isDelete
      * @param currentPage
      * @param pageSize
      * @param projectSubject 项目主题
-     * @param status 项目状态
+     * @param status         项目状态
      * @param request
      * @return
      */
@@ -100,13 +92,11 @@ public class ProjectInfoController extends GenericController {
         Specification<ProjectInfo> specification = projectInfoService.getWhereClause(projectSubject, status, isDelete);
         Page<ProjectInfo> page = projectInfoService.findAgents(specification, pageable);
         ProjectCollectionDto projectCollectionDto = projectInfoService.to(page, request);
-        for(int i=0;i<projectCollectionDto.getProjectInfoDtos().size();i++){
-            CargoInfo cargoInfo=new CargoInfo();
-            cargoInfo=projectCollectionDto.getProjectInfoDtos().get(i).getCargoInfo();
-            projectCollectionDto.getProjectInfoDtos().get(i).setCargoInfo(null);
-            projectCollectionDto.getProjectInfoDtos().get(i).setAgentInfoExps(null);
-            projectCollectionDto.getProjectInfoDtos().get(i).setPartInfoExps(null);
-           // projectCollectionDto.getProjectInfoDtos().get(i).setCargoName(cargoInfo.getCargoName());//货物名称
+        for (ProjectInfoDto projectInfoDto : projectCollectionDto.getProjectInfoDtos()) {
+//            projectCollectionDto.getProjectInfoDtos().get(i).setCargoInfo(null);
+            projectInfoDto.setAgentInfoExps(null);
+            projectInfoDto.setPartInfoExps(null);
+            // projectCollectionDto.getProjectInfoDtos().get(i).setCargoName(cargoInfo.getCargoName());//货物名称
 
         }
         responseBuilder.data(projectCollectionDto);
@@ -114,10 +104,9 @@ public class ProjectInfoController extends GenericController {
     }
 
 
-
-
     /**
      * 项目详情
+     *
      * @param projectId
      * @return
      */
@@ -131,7 +120,7 @@ public class ProjectInfoController extends GenericController {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         ProjectInfo projectInfo = projectInfoService.findOne(Long.parseLong(projectId));
         //Long a=projectInfo.getCargoInfo().getCargoId();
-        projectInfo.setCargoInfo(null);//货物
+//        projectInfo.setCargoInfo(null);//货物
         //配件list
         projectInfo.setPartInfoExps(null);
         projectInfo.setAgentInfoExps(null);
@@ -141,6 +130,7 @@ public class ProjectInfoController extends GenericController {
 
     /**
      * 修改项目
+     *
      * @param projectId
      * @param projectInfoDto
      * @return
@@ -152,7 +142,7 @@ public class ProjectInfoController extends GenericController {
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
     public ResponseValue updateProject(@PathVariable("projectId") String projectId,
-                                     @RequestBody ProjectInfoDto projectInfoDto) {
+                                       @RequestBody ProjectInfoDto projectInfoDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
 
         projectInfoDto.setProjectId(Long.parseLong(projectId));
@@ -163,6 +153,7 @@ public class ProjectInfoController extends GenericController {
 
     /**
      * 删除
+     *
      * @param projectId
      * @return
      */
@@ -180,6 +171,7 @@ public class ProjectInfoController extends GenericController {
 
     /**
      * 项目导出
+     *
      * @param projectSubject
      * @param status
      * @param response

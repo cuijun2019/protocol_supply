@@ -62,12 +62,12 @@ public class PartInfoService {
         if (optional.isPresent()) {
             partInfo.setCargoInfo(optional.get());
         }
-        if (partInfoDto.getProjectId() != null && !"".equals(partInfoDto.getProjectId())) {
-            ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(Long.parseLong(partInfoDto.getProjectId()));
-            partInfo.setProjectInfo(projectInfo);
-        } else {
-            partInfo.setProjectInfo(null);
-        }
+//        if (Strings.isNotBlank(partInfoDto.getProjectId())) {
+//            ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(Long.parseLong(partInfoDto.getProjectId()));
+//            partInfo.setProjectInfo(projectInfo);
+//        } else {
+//            partInfo.setProjectInfo(null);
+//        }
         String cargoSerial = partInfo.getCargoInfo().getCargoSerial();
         String partSerial = partInfoRepository.findLastPartSerial(cargoSerial);
         partInfo.setPartSerial(Common.convertSerial(partSerial.toString(), 1));
@@ -406,9 +406,9 @@ public class PartInfoService {
             partInfo.setTotal(Double.valueOf("".equals(jsonObject.get("总价").toString())?"0.00":jsonObject.get("总价").toString()));
             partInfo.setRemark(jsonObject.get("备注").toString());
             partInfo.setIsDelete(2);
-            ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(lprojectId);
+//            ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(lprojectId);
             partInfo.setCargoInfo(cargoInfo);
-            partInfo.setProjectInfo(projectInfo);
+//            partInfo.setProjectInfo(projectInfo);
             if (partInfo.getPartSerial().equals("0001")) {
                 partInfoRepository.save(partInfo);
             } else {

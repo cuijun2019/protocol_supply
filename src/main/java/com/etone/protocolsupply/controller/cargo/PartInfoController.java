@@ -38,6 +38,7 @@ public class PartInfoController extends GenericController {
 
     /**
      * 新增配件
+     *
      * @param partInfoDto
      * @return
      */
@@ -58,6 +59,7 @@ public class PartInfoController extends GenericController {
 
     /**
      * 配件列表
+     *
      * @param isDelete
      * @param currentPage
      * @param pageSize
@@ -80,9 +82,8 @@ public class PartInfoController extends GenericController {
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
         Page<PartInfo> page = partInfoService.findPartInfos(cargoId, isDelete, pageable);
         PartCollectionDto partCollectionDto = partInfoService.to(page, request);
-        for(int i=0;i<page.getContent().size();i++){
-            partCollectionDto.getPartInfoDtos().get(i).setCargoInfo(null);
-            partCollectionDto.getPartInfoDtos().get(i).setProjectInfo(null);
+        for (PartInfo partInfo : page.getContent()) {
+            partInfo.setCargoInfo(null);
         }
         responseBuilder.data(partCollectionDto);
         return responseBuilder.build();
@@ -90,6 +91,7 @@ public class PartInfoController extends GenericController {
 
     /**
      * 修改配件
+     *
      * @param partId
      * @param partInfoDto
      * @return
@@ -112,6 +114,7 @@ public class PartInfoController extends GenericController {
 
     /**
      * 删除配件
+     *
      * @param partId
      * @return
      */
@@ -145,7 +148,7 @@ public class PartInfoController extends GenericController {
                                     @RequestParam(value = "projectId", required = false) String projectId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Attachment attachment = attachmentService.upload(uploadFile, this.getUser());
-        partInfoService.upLoad(attachment, cargoId,projectId);
+        partInfoService.upLoad(attachment, cargoId, projectId);
         return responseBuilder.build();
     }
 
@@ -171,6 +174,7 @@ public class PartInfoController extends GenericController {
 
     /**
      * 下载配件导入模板
+     *
      * @param res
      */
     @ResponseBody

@@ -2,10 +2,7 @@ package com.etone.protocolsupply.model.entity.project;
 
 import com.etone.protocolsupply.model.entity.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.Attachment;
-import com.etone.protocolsupply.model.entity.PartInfoExp;
-import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
-import com.etone.protocolsupply.model.entity.cargo.PartInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.etone.protocolsupply.model.entity.cargo.PartInfoExp;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
@@ -99,15 +96,6 @@ public class ProjectInfo implements Serializable {
 
     @Column(name = "IS_DELETE", length = 4)
     private Integer isDelete;
-
-    /**
-     * 货物
-     */
-    @OneToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JoinColumn(name = "CARGO_ID", referencedColumnName = "CARGO_ID")
-    private CargoInfo cargoInfo;
 
     /**
      * 中标通知书

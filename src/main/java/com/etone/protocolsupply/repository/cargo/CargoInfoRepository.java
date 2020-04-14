@@ -18,9 +18,13 @@ public interface CargoInfoRepository extends JpaRepository<CargoInfo, Long>, Jpa
     @Query(value = "update cargo_info set is_delete=1 where cargo_id=?1", nativeQuery = true)
     void updateIsDelete(Long cargoId);
 
-    @Transactional(rollbackFor = Exception.class)
     @Query(value = "select * from cargo_info where is_delete=2 and cargo_id=?1", nativeQuery = true)
     CargoInfo findAllByCargoId(Long cargoId);
+
+    @Query(value = "select * from cargo_info c where c.is_delete=2 " +
+            "and exists (select 1 from part_info_exp e, part_info pi, project_info p where e.PROJECT_ID = p.project_id and e.part_code = pi.part_code and pi.cargo_id = c.cargo_id and p.project_id=?1) " +
+            "limit 1", nativeQuery = true)
+    CargoInfo findAllByProjectId(Long projectId);
 
     @Query(value = "select * from cargo_info where is_delete=2 and cargo_id in ?1  ", nativeQuery = true)
     List<CargoInfo> findByCargoName(String cargoIds);

@@ -4,14 +4,12 @@ import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.exception.GlobalExceptionCode;
 import com.etone.protocolsupply.exception.GlobalServiceException;
 import com.etone.protocolsupply.model.dto.JwtUser;
-import com.etone.protocolsupply.model.dto.cargo.CargoInfoDto;
 import com.etone.protocolsupply.model.dto.project.ProjectCollectionDto;
 import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
 import com.etone.protocolsupply.model.entity.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.Attachment;
-import com.etone.protocolsupply.model.entity.PartInfoExp;
+import com.etone.protocolsupply.model.entity.cargo.PartInfoExp;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
-import com.etone.protocolsupply.model.entity.cargo.PartInfo;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
 import com.etone.protocolsupply.repository.AttachmentRepository;
@@ -116,7 +114,7 @@ public class ProjectInfoService {
         if (partInfoExps != null && !partInfoExps.isEmpty()) {
             for (PartInfoExp partInfoExp : partInfoExps) {
 
-                partInfoExp.setCargoInfo(null);//货物
+//                partInfoExp.setCargoInfo(null);//货物
                 partInfoExp.setIsDelete(Constant.DELETE_NO);
             }
         }
@@ -131,7 +129,7 @@ public class ProjectInfoService {
                 agentInfoExp.setCreateDate(date);
                 agentInfoExp.setStatus(1);//状态
                 agentInfoExp.setReviewStatus(1);//审核状态
-                agentInfoExp.setPartnerInfo(null);
+//                agentInfoExp.setPartnerInfo(null);
                 agentInfoExp.setIsDelete(Constant.DELETE_NO);
             }
         }
@@ -191,9 +189,9 @@ public class ProjectInfoService {
         ProjectInfo projectInfo = this.findOne(projectInfoDto.getProjectId());
         Attachment attachmentn = projectInfoDto.getAttachment_n();//中标通知书
         Attachment attachmentc = projectInfoDto.getAttachment_c();//合同
-        CargoInfo cargoInfo =  projectInfoDto.getCargoInfo();//货物
+//        CargoInfo cargoInfo =  projectInfoDto.getCargoInfo();//货物
         SpringUtil.copyPropertiesIgnoreNull(projectInfoDto, projectInfo);
-        if (projectInfo != null && attachmentn == null && attachmentc==null && cargoInfo == null) {
+        if (projectInfo != null && attachmentn == null && attachmentc==null) {
             projectInfoRepository.save(projectInfo);
         }
         if (attachmentn != null) {
@@ -208,12 +206,12 @@ public class ProjectInfoService {
                 projectInfo.setAttachment_c(optional.get());
             }
         }
-        if (cargoInfo != null) {
-            Optional<CargoInfo> optional = cargoInfoRepository.findById(cargoInfo.getCargoId());
-            if (optional.isPresent()) {
-                projectInfo.setCargoInfo(optional.get());
-            }
-        }
+//        if (cargoInfo != null) {
+//            Optional<CargoInfo> optional = cargoInfoRepository.findById(cargoInfo.getCargoId());
+//            if (optional.isPresent()) {
+//                projectInfo.setCargoInfo(optional.get());
+//            }
+//        }
         projectInfoRepository.save(projectInfo);
         return projectInfo;
     }
@@ -276,7 +274,8 @@ public class ProjectInfoService {
                 }else {
                     row.createCell(11).setCellValue(new HSSFRichTextString(""));
                 }
-                CargoInfo cargoInfo=cargoInfoRepository.findAllByCargoId(projectInfo.getCargoInfo().getCargoId());
+//                CargoInfo cargoInfo=cargoInfoRepository.findAllByCargoId(projectInfo.getCargoInfo().getCargoId());
+                CargoInfo cargoInfo=cargoInfoRepository.findAllByProjectId(projectInfo.getProjectId());
                 row.createCell(0).setCellValue(new HSSFRichTextString(projectInfo.getProjectSubject()));
                 row.createCell(1).setCellValue(new HSSFRichTextString(projectInfo.getProjectCode()));
                 row.createCell(2).setCellValue(new HSSFRichTextString(cargoInfo.getCargoName()));
