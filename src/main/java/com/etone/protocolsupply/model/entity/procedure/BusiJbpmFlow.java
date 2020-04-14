@@ -3,12 +3,13 @@ package com.etone.protocolsupply.model.entity.procedure;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @Entity
 @Table(name = "BUSI_JBPM_FLOW")
-public class BusiJbpmFlow {
+public class BusiJbpmFlow implements Serializable {
 
     @Id
     @Column(name = "ID")
@@ -33,10 +34,6 @@ public class BusiJbpmFlow {
     @Column(name = "FLOW_STARTTIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date flowStartTime; // 创建时间
-
-
-
-
 
 
 }
