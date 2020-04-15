@@ -89,9 +89,12 @@ public class PartInfoExp implements Serializable {
     @Column(name = "IS_DELETE", length = 4)
     private Integer isDelete;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
-//    @JsonInclude(JsonInclude.Include.NON_NULL)
-//    @JoinColumn(name = "PROJECT_ID", referencedColumnName = "PROJECT_ID")
-//    private ProjectInfo projectInfo;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JoinColumn(name = "PROJECT_ID", referencedColumnName = "PROJECT_ID")
+    private ProjectInfo projectInfo;
+
+
+
 }

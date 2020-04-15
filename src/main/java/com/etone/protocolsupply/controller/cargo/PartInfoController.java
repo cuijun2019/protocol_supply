@@ -4,6 +4,7 @@ import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.part.PartCollectionDto;
 import com.etone.protocolsupply.model.dto.part.PartInfoDto;
+import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.PartInfo;
 import com.etone.protocolsupply.service.AttachmentService;
@@ -82,8 +83,9 @@ public class PartInfoController extends GenericController {
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
         Page<PartInfo> page = partInfoService.findPartInfos(cargoId, isDelete, pageable);
         PartCollectionDto partCollectionDto = partInfoService.to(page, request);
-        for (PartInfo partInfo : page.getContent()) {
-            partInfo.setCargoInfo(null);
+        for (PartInfoDto partInfoDto : partCollectionDto.getPartInfoDtos()) {
+            partInfoDto.getCargoInfo().setPartInfos(null);
+            partInfoDto.setCargoInfo(null);
         }
         responseBuilder.data(partCollectionDto);
         return responseBuilder.build();
@@ -144,11 +146,10 @@ public class PartInfoController extends GenericController {
             consumes = {"multipart/form-data"})
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseValue upLoadPart(@Validated @RequestParam("file") MultipartFile uploadFile,
-                                    @RequestParam(value = "cargoId", required = false) String cargoId,
-                                    @RequestParam(value = "projectId", required = false) String projectId) {
+                                    @RequestParam(value = "cargoId", required = false) String cargoId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Attachment attachment = attachmentService.upload(uploadFile, this.getUser());
-        partInfoService.upLoad(attachment, cargoId, projectId);
+        partInfoService.upLoad(attachment, cargoId);
         return responseBuilder.build();
     }
 

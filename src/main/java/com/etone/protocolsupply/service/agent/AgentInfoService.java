@@ -3,13 +3,19 @@ package com.etone.protocolsupply.service.agent;
 import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.exception.GlobalExceptionCode;
 import com.etone.protocolsupply.exception.GlobalServiceException;
+import com.etone.protocolsupply.model.dto.AgentExpCollectionDto;
+import com.etone.protocolsupply.model.dto.AgentInfoExpDto;
 import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.agent.AgentCollectionDto;
 import com.etone.protocolsupply.model.dto.agent.AgentInfoDto;
 import com.etone.protocolsupply.model.entity.AgentInfo;
+import com.etone.protocolsupply.model.entity.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.Attachment;
+import com.etone.protocolsupply.model.entity.cargo.PartInfoExp;
 import com.etone.protocolsupply.repository.AgentInfoRepository;
 import com.etone.protocolsupply.repository.AttachmentRepository;
+import com.etone.protocolsupply.repository.template.AgentInfoExpRepository;
+import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import com.etone.protocolsupply.utils.SpringUtil;
 import org.apache.logging.log4j.util.Strings;
@@ -21,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +46,8 @@ public class AgentInfoService {
 
     @Autowired
     private AgentInfoRepository  agentInfoRepository;
+    @Autowired
+    private AgentInfoExpRepository agentInfoExpRepository;
     @Autowired
     private AttachmentRepository attachmentRepository;
     @Autowired
@@ -67,7 +76,6 @@ public class AgentInfoService {
 
     public Specification<AgentInfo> getWhereClause(String agentName, String status, String isDelete) {
         return (Specification<AgentInfo>) (root, criteriaQuery, criteriaBuilder) -> {
-
             List<Predicate> predicates = new ArrayList<>();
             if (Strings.isNotBlank(agentName)) {
                 predicates.add(criteriaBuilder.equal(root.get("agentName").as(String.class), agentName));
@@ -85,6 +93,11 @@ public class AgentInfoService {
         return agentInfoRepository.findAll(specification, pageable);
     }
 
+    //项目-代理商列表
+    public Page<AgentInfoExp> findAgentExps(String projectId,String isDelete, Pageable pageable) {
+        return Common.listConvertToPage(agentInfoExpRepository.findAll(projectId, isDelete), pageable);
+    }
+
     public AgentCollectionDto to(Page<AgentInfo> source, HttpServletRequest request) {
         AgentCollectionDto agentCollectionDto = new AgentCollectionDto();
         pagingMapper.storeMappedInstanceBefore(source, agentCollectionDto, request);
@@ -95,6 +108,18 @@ public class AgentInfoService {
             agentCollectionDto.add(agentInfoDto);
         }
         return agentCollectionDto;
+    }
+    //项目-代理商列表
+    public AgentExpCollectionDto toExp(Page<AgentInfoExp> source, HttpServletRequest request) {
+        AgentExpCollectionDto agentExpCollectionDto = new AgentExpCollectionDto();
+        pagingMapper.storeMappedInstanceBefore(source, agentExpCollectionDto, request);
+        AgentInfoExpDto agentInfoExpDto;
+        for (AgentInfoExp agentInfoExp : source) {
+            agentInfoExpDto = new AgentInfoExpDto();
+            BeanUtils.copyProperties(agentInfoExp, agentInfoExpDto);
+            agentExpCollectionDto.add(agentInfoExpDto);
+        }
+        return agentExpCollectionDto;
     }
 
     public AgentInfo findOne(Long agentId) {

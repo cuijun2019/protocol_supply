@@ -116,38 +116,37 @@ public class ProjectInfoService {
         if (partInfoExps != null && !partInfoExps.isEmpty()) {
             for (PartInfoExp partInfoExp : partInfoExps) {
                 partInfoExp.setIsDelete(Constant.DELETE_NO);
+                partInfoExpRepository.save(partInfoExp);
             }
         }
         //代理商list
         Set<AgentInfoExp> agentInfoExps = projectInfoDto.getAgentInfoExps();
         if (agentInfoExps != null && !agentInfoExps.isEmpty()) {
-            if(projectInfoDto.getPartnerId()!=null){
-                Optional<PartnerInfo> optional= partnerInfoRepository.findById(Long.valueOf(projectInfoDto.getPartnerId()));
-            }
             for (AgentInfoExp agentInfoExp : agentInfoExps) {
                 agentInfoExp.setCreator(userName);
                 agentInfoExp.setCreateDate(date);
                 agentInfoExp.setStatus(1);//状态
                 agentInfoExp.setReviewStatus(1);//审核状态
                 agentInfoExp.setIsDelete(Constant.DELETE_NO);
+                agentInfoExpRepository.save(agentInfoExp);
             }
         }
 
          projectInfoRepository.save(projectInfo);
-        projectInfoRepository.setCargoId(projectInfo.getProjectId(),Long.parseLong(projectInfoDto.getCargoId()));
+
         List<Long> agentIds = new ArrayList<>();
         if(agentInfoExps.size()>0){
-            for (AgentInfoExp agentInfoExp : projectInfo.getAgentInfoExps()) {
+            for (AgentInfoExp agentInfoExp : projectInfoDto.getAgentInfoExps()) {
                 agentIds.add(agentInfoExp.getAgentId());
             }
             agentInfoExpRepository.setProjectId(projectInfo.getProjectId(), agentIds);
         }
         List<Long> partIds = new ArrayList<>();
         if(partInfoExps.size()>0){
-            for (PartInfoExp partInfoExp  : projectInfo.getPartInfoExps()) {
+            for (PartInfoExp partInfoExp  : projectInfoDto.getPartInfoExps()) {
                 partIds.add(partInfoExp.getPartId());
             }
-            partInfoExpRepository.setProjectId(projectInfo.getProjectId(),Long.parseLong(projectInfoDto.getCargoId()), partIds);
+            partInfoExpRepository.setProjectId(projectInfo.getProjectId(), partIds);
         }
         return projectInfo;
     }
@@ -175,11 +174,16 @@ public class ProjectInfoService {
     public ProjectCollectionDto to(Page<ProjectInfo> source, HttpServletRequest request) {
         ProjectCollectionDto projectCollectionDto = new ProjectCollectionDto();
         pagingMapper.storeMappedInstanceBefore(source, projectCollectionDto, request);
-        ProjectInfoDto agentInfoDto;
-        for (ProjectInfo agentInfo : source) {
-            agentInfoDto = new ProjectInfoDto();
-            BeanUtils.copyProperties(agentInfo, agentInfoDto);
-            projectCollectionDto.add(agentInfoDto);
+        ProjectInfoDto projectInfoDto;
+        for (ProjectInfo projectInfo : source) {
+            CargoInfo cargoInfo=cargoInfoRepository.findAllByProjectId(projectInfo.getProjectId());
+            projectInfoDto = new ProjectInfoDto();
+            BeanUtils.copyProperties(projectInfo, projectInfoDto);
+            projectInfoDto.setCargoId(cargoInfo.getCargoId().toString());//货物id
+            projectInfoDto.setCargoName(cargoInfo.getCargoName());//货物名称
+            projectInfoDto.setCurrency(cargoInfo.getCurrency());//币种
+            projectInfoDto.setGuaranteeRate(cargoInfo.getGuaranteeRate());//维保率
+            projectCollectionDto.add(projectInfoDto);
         }
         return projectCollectionDto;
     }
@@ -209,28 +213,24 @@ public class ProjectInfoService {
 
         //agentInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
         //供应商
-        Set<AgentInfoExp> agentInfoExps=projectInfoDto.getAgentInfoExps();
-        if (agentInfoExps != null && !agentInfoExps.isEmpty()) {
-            for (AgentInfoExp agentInfoExp : agentInfoExps) {
-                agentInfoExp.setReviewStatus(1);
-                agentInfoExp.setIsDelete(Constant.DELETE_NO);
-                agentInfoExp.setCreateDate(new Date());
-                agentInfoExp.setCreator(username);
-
-            }
-
-
-        }
-       // partInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
-        //货物配件
-        Set<PartInfoExp>partInfoExps=projectInfoDto.getPartInfoExps();
-        if (partInfoExps != null && !partInfoExps.isEmpty()) {
-            for (PartInfoExp partInfoExp : partInfoExps) {
-                partInfoExp.setIsDelete(Constant.DELETE_NO);
-//                partInfoExp.setCargoInfo(cargoInfo);
-//                partInfoExp.setProjectInfo(projectInfo);
-            }
-        }
+//        Set<AgentInfoExp> agentInfoExps=projectInfoDto.getAgentInfoExps();
+//        if (agentInfoExps != null && !agentInfoExps.isEmpty()) {
+//            for (AgentInfoExp agentInfoExp : agentInfoExps) {
+//                agentInfoExp.setReviewStatus(1);
+//                agentInfoExp.setIsDelete(Constant.DELETE_NO);
+//                agentInfoExp.setCreateDate(new Date());
+//                agentInfoExp.setCreator(username);
+//            }
+//        }
+//       // partInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
+//        //货物配件
+//        Set<PartInfoExp>partInfoExps=projectInfoDto.getPartInfoExps();
+//        if (partInfoExps != null && !partInfoExps.isEmpty()) {
+//            for (PartInfoExp partInfoExp : partInfoExps) {
+//                partInfoExp.setIsDelete(Constant.DELETE_NO);
+//
+//            }
+//        }
 
         projectInfoRepository.save(projectInfo);
         return projectInfo;
@@ -284,27 +284,25 @@ public class ProjectInfoService {
                 Attachment attachmentc=projectInfo.getAttachment_c();//合同
                 if(attachmentn!=null){
                     attachmentn = attachmentRepository.getOne(projectInfo.getAttachment_n().getAttachId());
-                    row.createCell(10).setCellValue(new HSSFRichTextString(attachmentn.getAttachName()));
+                    row.createCell(8).setCellValue(new HSSFRichTextString(attachmentn.getAttachName()));
                 }else {
-                    row.createCell(10).setCellValue(new HSSFRichTextString(""));
+                    row.createCell(8).setCellValue(new HSSFRichTextString(""));
                 }
                 if(attachmentc!=null){
                     attachmentc = attachmentRepository.getOne(projectInfo.getAttachment_c().getAttachId());
-                    row.createCell(11).setCellValue(new HSSFRichTextString(attachmentc.getAttachName()));
+                    row.createCell(9).setCellValue(new HSSFRichTextString(attachmentc.getAttachName()));
                 }else {
-                    row.createCell(11).setCellValue(new HSSFRichTextString(""));
+                    row.createCell(9).setCellValue(new HSSFRichTextString(""));
                 }
                 CargoInfo cargoInfo=cargoInfoRepository.findAllByProjectId(projectInfo.getProjectId());
                 row.createCell(0).setCellValue(new HSSFRichTextString(projectInfo.getProjectSubject()));
                 row.createCell(1).setCellValue(new HSSFRichTextString(projectInfo.getProjectCode()));
                 row.createCell(2).setCellValue(new HSSFRichTextString(cargoInfo.getCargoName()));
-                row.createCell(3).setCellValue(new HSSFRichTextString("0"));//数量
-                row.createCell(4).setCellValue(new HSSFRichTextString("台"));//单位
-                row.createCell(5).setCellValue(new HSSFRichTextString("5000"));//货物金额
-                row.createCell(6).setCellValue(new HSSFRichTextString("6000"));//项目总金额
-                row.createCell(7).setCellValue(new HSSFRichTextString(cargoInfo.getCurrency()));//币种
-                row.createCell(8).setCellValue(new HSSFRichTextString(projectStatus(projectInfo.getStatus())));//状态
-                row.createCell(9).setCellValue(new HSSFRichTextString(""));//采购结果通知书
+                row.createCell(3).setCellValue(new HSSFRichTextString("5000"));//货物金额
+                row.createCell(4).setCellValue(new HSSFRichTextString("6000"));//项目总金额
+                row.createCell(5).setCellValue(new HSSFRichTextString(cargoInfo.getCurrency()));//币种
+                row.createCell(6).setCellValue(new HSSFRichTextString(projectStatus(projectInfo.getStatus())));//状态
+                row.createCell(7).setCellValue(new HSSFRichTextString(""));//采购结果通知书
                 //row.createCell(10).setCellValue(new HSSFRichTextString("6000"));//中标通知书
                // row.createCell(11).setCellValue(new HSSFRichTextString("6000"));//合同
 

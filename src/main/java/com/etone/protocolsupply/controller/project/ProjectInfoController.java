@@ -1,14 +1,24 @@
 package com.etone.protocolsupply.controller.project;
 
 import com.etone.protocolsupply.controller.GenericController;
+import com.etone.protocolsupply.model.dto.AgentExpCollectionDto;
+import com.etone.protocolsupply.model.dto.PartExpCollectionDto;
+import com.etone.protocolsupply.model.dto.PartInfoExpDto;
 import com.etone.protocolsupply.model.dto.ResponseValue;
+import com.etone.protocolsupply.model.dto.agent.AgentCollectionDto;
+import com.etone.protocolsupply.model.dto.part.PartCollectionDto;
+import com.etone.protocolsupply.model.dto.part.PartInfoDto;
 import com.etone.protocolsupply.model.dto.project.ProjectCollectionDto;
 import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
+import com.etone.protocolsupply.model.entity.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
+import com.etone.protocolsupply.model.entity.cargo.PartInfo;
+import com.etone.protocolsupply.model.entity.cargo.PartInfoExp;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.repository.PartInfoExpRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.service.AttachmentService;
+import com.etone.protocolsupply.service.agent.AgentInfoService;
 import com.etone.protocolsupply.service.cargo.CargoInfoService;
 import com.etone.protocolsupply.service.cargo.PartInfoService;
 import com.etone.protocolsupply.service.project.ProjectInfoService;
@@ -46,6 +56,8 @@ public class ProjectInfoController extends GenericController {
 
     @Autowired
     private PartInfoExpRepository partInfoExpRepository;
+    @Autowired
+    private AgentInfoService agentInfoService;
 
 
     /**
@@ -95,17 +107,68 @@ public class ProjectInfoController extends GenericController {
         Specification<ProjectInfo> specification = projectInfoService.getWhereClause(projectSubject, status, isDelete);
         Page<ProjectInfo> page = projectInfoService.findAgents(specification, pageable);
         ProjectCollectionDto projectCollectionDto = projectInfoService.to(page, request);
-        for(int i=0;i<projectCollectionDto.getProjectInfoDtos().size();i++){
-
-            projectCollectionDto.getProjectInfoDtos().get(i).setAgentInfoExps(null);
-            projectCollectionDto.getProjectInfoDtos().get(i).setPartInfoExps(null);
-
-        }
         responseBuilder.data(projectCollectionDto);
         return responseBuilder.build();
     }
 
+    /**
+     * 项目-配件列表
+     *
+     * @param isDelete
+     * @param currentPage
+     * @param pageSize
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/partInfoExp",
+            method = RequestMethod.GET,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    public ResponseValue getPartInfos(@Validated
+                                      @RequestParam(value = "isDelete", required = false) String isDelete,
+                                      @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
+                                      @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+                                      @RequestParam(value = "projectId", required = false) String projectId,
+                                      HttpServletRequest request) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        Sort sort = new Sort(Sort.Direction.DESC, "partId");
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
+        Page<PartInfoExp> page = partInfoService.findPartInfoExps(projectId, isDelete, pageable);
+        PartExpCollectionDto partInfoExpDtos  = partInfoService.toExp(page, request);
+        responseBuilder.data(partInfoExpDtos);
+        return responseBuilder.build();
+    }
 
+    /**
+     * 项目-代理商列表
+     * @param projectId
+     * @param isDelete
+     * @param currentPage
+     * @param pageSize
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/agentInfoExp",
+            method = RequestMethod.GET,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    public ResponseValue getAgents(@Validated
+                                   @RequestParam(value = "isDelete", required = false) String isDelete,
+                                   @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
+                                   @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+                                   @RequestParam(value = "projectId", required = false) String projectId,
+                                   HttpServletRequest request) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        Sort sort = new Sort(Sort.Direction.DESC, "createDate");
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
+
+        Page<AgentInfoExp> page = agentInfoService.findAgentExps(projectId,isDelete, pageable);
+        AgentExpCollectionDto agentCollectionDto = agentInfoService.toExp(page, request);
+        responseBuilder.data(agentCollectionDto);
+        return responseBuilder.build();
+    }
 
 
     /**
@@ -124,9 +187,7 @@ public class ProjectInfoController extends GenericController {
         ProjectInfo projectInfo = projectInfoService.findOne(Long.parseLong(projectId));
         //Long a=projectInfo.getCargoInfo().getCargoId();
 
-        //配件list
-        projectInfo.setPartInfoExps(null);
-        projectInfo.setAgentInfoExps(null);
+
         responseBuilder.data(projectInfo);
         return responseBuilder.build();
     }
@@ -146,12 +207,8 @@ public class ProjectInfoController extends GenericController {
     public ResponseValue updateProject(@PathVariable("projectId") String projectId,
                                      @RequestBody ProjectInfoDto projectInfoDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-
         projectInfoDto.setProjectId(Long.parseLong(projectId));
         ProjectInfo projectInfo = projectInfoService.update(projectInfoDto,this.getUser());
-
-        projectInfo.setPartInfoExps(null);
-        projectInfo.setAgentInfoExps(null);
         responseBuilder.data(projectInfo);
         return responseBuilder.build();
     }

@@ -4,12 +4,16 @@ import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.exception.GlobalExceptionCode;
 import com.etone.protocolsupply.exception.GlobalServiceException;
 import com.etone.protocolsupply.model.dto.ExcelHeaderColumnPojo;
+import com.etone.protocolsupply.model.dto.PartExpCollectionDto;
+import com.etone.protocolsupply.model.dto.PartInfoExpDto;
 import com.etone.protocolsupply.model.dto.part.PartCollectionDto;
 import com.etone.protocolsupply.model.dto.part.PartInfoDto;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.cargo.PartInfo;
+import com.etone.protocolsupply.model.entity.cargo.PartInfoExp;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
+import com.etone.protocolsupply.repository.PartInfoExpRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.repository.cargo.PartInfoRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
@@ -44,6 +48,8 @@ public class PartInfoService {
 
     @Autowired
     private PartInfoRepository    partInfoRepository;
+    @Autowired
+    private PartInfoExpRepository partInfoExpRepository;
     @Autowired
     private CargoInfoRepository   cargoInfoRepository;
     @Autowired
@@ -113,6 +119,11 @@ public class PartInfoService {
         return Common.listConvertToPage(partInfoRepository.findAll(cargoId, isDelete), pageable);
     }
 
+    //货物项目-配件列表
+    public Page<PartInfoExp> findPartInfoExps(String projectId, String isDelete, Pageable pageable) {
+        return Common.listConvertToPage(partInfoExpRepository.findAll(projectId, isDelete), pageable);
+    }
+
     public PartCollectionDto to(Page<PartInfo> source, HttpServletRequest request) {
         PartCollectionDto partCollectionDto = new PartCollectionDto();
         pagingMapper.storeMappedInstanceBefore(source, partCollectionDto, request);
@@ -120,14 +131,29 @@ public class PartInfoService {
         for (PartInfo partInfo : source) {
             partInfoDto = new PartInfoDto();
             BeanUtils.copyProperties(partInfo, partInfoDto);
-            partInfoDto.setCargoId(partInfo.getCargoInfo().getCargoId().toString());
-            partInfoDto.setCargoName(partInfo.getCargoInfo().getCargoName());
+            partInfoDto.setCargoId(partInfo.getCargoInfo().getCargoId().toString());//货物id
+            partInfoDto.setCargoName(partInfo.getCargoInfo().getCargoName());//货物名称
+            partInfoDto.setCurrency(partInfo.getCargoInfo().getCurrency());//币种
+            partInfoDto.setGuaranteeRate(partInfo.getCargoInfo().getGuaranteeRate());//维保率
             partCollectionDto.add(partInfoDto);
         }
 
         return partCollectionDto;
     }
+    //货物项目-配件列表
+    public PartExpCollectionDto toExp(Page<PartInfoExp> source, HttpServletRequest request) {
+        PartExpCollectionDto partExpCollectionDto = new PartExpCollectionDto();
+        pagingMapper.storeMappedInstanceBefore(source, partExpCollectionDto, request);
+        PartInfoExpDto partInfoExpDto;
+        for (PartInfoExp partInfoExp : source) {
+            partInfoExpDto = new PartInfoExpDto();
+            BeanUtils.copyProperties(partInfoExp, partInfoExpDto);
 
+            partExpCollectionDto.add(partInfoExpDto);
+        }
+
+        return partExpCollectionDto;
+    }
     public PartInfo update(PartInfoDto partInfoDto) throws GlobalServiceException {
         PartInfo partInfo = partInfoRepository.findOneModel(partInfoDto.getPartId());
         partInfo.setPartName(partInfoDto.getPartName());
@@ -147,7 +173,7 @@ public class PartInfoService {
     }
 
     //配件导入
-    public void upLoad(Attachment attachment, String cargoId, String projectId) {
+    public void upLoad(Attachment attachment, String cargoId) {
         if (Strings.isBlank(cargoId)) {
             throw new GlobalServiceException(GlobalExceptionCode.NOTNULL_ERROR.getCode(), GlobalExceptionCode.NOTNULL_ERROR.getCause("cargoId"));
         }
@@ -163,7 +189,7 @@ public class PartInfoService {
             }
             for (int i = 0; i < num; i++) {
                 List tempList = list.subList(i * 200, (i + 1) * 200 > list.size() ? list.size() : (i + 1) * 200);
-                batchInsertPartInfo(tempList, cargoId, projectId);
+                batchInsertPartInfo(tempList, cargoId);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -357,9 +383,8 @@ public class PartInfoService {
         return list;
     }
 
-    public void batchInsertPartInfo(List<Object> maps, String cargoId, String projectId) {
+    public void batchInsertPartInfo(List<Object> maps, String cargoId) {
         Long lcargoId = Long.parseLong(cargoId);
-        Long lprojectId = Long.parseLong(projectId);
         List<PartInfo> partInfos = partInfoRepository.findAll();
         List<String> listDel = new ArrayList<>();
         List<PartInfo> listSave = new ArrayList<>();
@@ -369,7 +394,7 @@ public class PartInfoService {
             JSONObject jsonObject = new JSONObject(jsonStr);
             PartInfo partInfo = new PartInfo();
             if (partInfos.size() > 0) {
-                List<PartInfo> list = partInfoRepository.findAllBys(lcargoId, lprojectId);
+                List<PartInfo> list = partInfoRepository.findAllBys(lcargoId);
                 if (list.size() > 0) {
                     for (PartInfo item : list) {
                         if (item.getPartName().equals(jsonObject.get("设备或配件名称").toString())) {
@@ -406,9 +431,7 @@ public class PartInfoService {
             partInfo.setTotal(Double.valueOf("".equals(jsonObject.get("总价").toString())?"0.00":jsonObject.get("总价").toString()));
             partInfo.setRemark(jsonObject.get("备注").toString());
             partInfo.setIsDelete(2);
-//            ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(lprojectId);
             partInfo.setCargoInfo(cargoInfo);
-//            partInfo.setProjectInfo(projectInfo);
             if (partInfo.getPartSerial().equals("0001")) {
                 partInfoRepository.save(partInfo);
             } else {

@@ -71,14 +71,14 @@ public class AgentInfoExp implements Serializable {
     @JoinColumn(name = "ATTACH_ID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment;
 
-//    /**
-//     * 项目
-//     */
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
-//    @JsonInclude(JsonInclude.Include.NON_NULL)
-//    @JoinColumn(name = "PROJECT_ID")
-//    private ProjectInfo projectInfo;
+    /**
+     * 项目
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JoinColumn(name = "PROJECT_ID")
+    private ProjectInfo projectInfo;
 //
 //    /**
 //     * 供应商

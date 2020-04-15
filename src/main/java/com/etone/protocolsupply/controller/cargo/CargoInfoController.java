@@ -90,8 +90,8 @@ public class CargoInfoController extends GenericController {
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
         Page<CargoInfo> page = cargoInfoService.findCargoInfos(isDelete, cargoName, partName, pageable);
         CargoCollectionDto cargoCollectionDto = cargoInfoService.to(page, request);
-        for(int i=0;i<page.getContent().size();i++){
-            cargoCollectionDto.getCargoInfoDtos().get(i).setPartInfos(null);
+        for(CargoInfoDto cargoInfoDto:cargoCollectionDto.getCargoInfoDtos()){
+            cargoInfoDto.setPartInfos(null);
         }
         responseBuilder.data(cargoCollectionDto);
 

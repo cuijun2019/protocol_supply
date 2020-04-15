@@ -59,10 +59,8 @@ public class AgentInfoController extends GenericController {
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
         Specification<AgentInfo> specification = agentInfoService.getWhereClause(agentName, status, isDelete);
         Page<AgentInfo> page = agentInfoService.findAgents(specification, pageable);
-
         AgentCollectionDto agentCollectionDto = agentInfoService.to(page, request);
         responseBuilder.data(agentCollectionDto);
-
         return responseBuilder.build();
     }
 

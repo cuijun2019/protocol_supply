@@ -1,7 +1,16 @@
 package com.etone.protocolsupply.model.dto.project;
 
+import com.etone.protocolsupply.model.entity.AgentInfoExp;
+import com.etone.protocolsupply.model.entity.cargo.PartInfoExp;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import lombok.Data;
+
+import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 public class ProjectInfoDto extends ProjectInfo {
@@ -10,5 +19,20 @@ public class ProjectInfoDto extends ProjectInfo {
     private String cargoName;//货物名称
     private Double price;//货物金额=配件*数量
     private String currency;//币种
+    private String guaranteeRate;//维保率/月
+
+        /**
+     * 配件拓展表
+     */
+    @OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY)
+    @JoinColumn(name = "PART_ID")
+    private Set<PartInfoExp> partInfoExps = new HashSet<>();
+
+    /**
+     * 代理商拓展表
+     */
+    @OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY)
+    @JoinColumn(name = "AGENT_ID")
+    private Set<AgentInfoExp> agentInfoExps = new HashSet<>();
 
 }

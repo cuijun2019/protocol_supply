@@ -116,17 +116,17 @@ public class ProjectInfo implements Serializable {
     @JoinColumn(name = "CONTRACT_ID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment_c;
 
-    /**
-     * 配件拓展表
-     */
-    @OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY)
-    @JoinColumn(name = "PART_ID")
-    private Set<PartInfoExp> partInfoExps = new HashSet<>();
-
-    /**
-     * 代理商拓展表
-     */
-    @OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY)
-    @JoinColumn(name = "AGENT_ID")
-    private Set<AgentInfoExp> agentInfoExps = new HashSet<>();
+//    /**
+//     * 配件拓展表
+//     */
+//    @OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY)
+//    @JoinColumn(name = "PART_ID")
+//    private Set<PartInfoExp> partInfoExps = new HashSet<>();
+//
+//    /**
+//     * 代理商拓展表
+//     */
+//    @OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY)
+//    @JoinColumn(name = "AGENT_ID")
+//    private Set<AgentInfoExp> agentInfoExps = new HashSet<>();
 }
