@@ -2,10 +2,7 @@ package com.etone.protocolsupply.model.entity.project;
 
 import com.etone.protocolsupply.model.entity.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.Attachment;
-import com.etone.protocolsupply.model.entity.PartInfoExp;
-import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
-import com.etone.protocolsupply.model.entity.cargo.PartInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.etone.protocolsupply.model.entity.cargo.PartInfoExp;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
@@ -101,15 +98,6 @@ public class ProjectInfo implements Serializable {
     private Integer isDelete;
 
     /**
-     * 货物
-     */
-    @OneToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JoinColumn(name = "CARGO_ID", referencedColumnName = "CARGO_ID")
-    private CargoInfo cargoInfo;
-
-    /**
      * 中标通知书
      */
     @OneToOne(fetch = FetchType.LAZY)
@@ -130,16 +118,14 @@ public class ProjectInfo implements Serializable {
     /**
      * 配件拓展表
      */
-    @OneToMany(mappedBy = "projectInfo",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
+    @OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY)
+    @JoinColumn(name = "PART_ID")
     private Set<PartInfoExp> partInfoExps = new HashSet<>();
 
     /**
      * 代理商拓展表
      */
-    @OneToMany(mappedBy = "projectInfo",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
+    @OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY)
+    @JoinColumn(name = "AGENT_ID")
     private Set<AgentInfoExp> agentInfoExps = new HashSet<>();
 }

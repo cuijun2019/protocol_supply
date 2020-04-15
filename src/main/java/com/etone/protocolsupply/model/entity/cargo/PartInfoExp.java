@@ -1,6 +1,5 @@
-package com.etone.protocolsupply.model.entity;
+package com.etone.protocolsupply.model.entity.cargo;
 
-import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -90,15 +89,9 @@ public class PartInfoExp implements Serializable {
     @Column(name = "IS_DELETE", length = 4)
     private Integer isDelete;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value={"hibernateLazyInitializer"})
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JoinColumn(name = "CARGO_ID", referencedColumnName = "CARGO_ID")
-    private CargoInfo cargoInfo;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value={"hibernateLazyInitializer"})
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JoinColumn(name = "PROJECT_ID", referencedColumnName = "PROJECT_ID")
-    private ProjectInfo projectInfo;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
+//    @JsonInclude(JsonInclude.Include.NON_NULL)
+//    @JoinColumn(name = "PROJECT_ID", referencedColumnName = "PROJECT_ID")
+//    private ProjectInfo projectInfo;
 }

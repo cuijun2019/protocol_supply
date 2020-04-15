@@ -1,6 +1,6 @@
 package com.etone.protocolsupply.repository;
 
-import com.etone.protocolsupply.model.entity.PartInfoExp;
+import com.etone.protocolsupply.model.entity.cargo.PartInfoExp;
 import com.etone.protocolsupply.model.entity.cargo.PartInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;

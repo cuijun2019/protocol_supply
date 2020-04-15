@@ -3,12 +3,13 @@ package com.etone.protocolsupply.model.entity.procedure;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @Entity
 @Table(name = "BUSI_APPROVE_RESULT")
-public class BusiApproveResult {
+public class BusiApproveResult implements Serializable {
 
     @Id
     @Column(name = "APPROVE_ID")
