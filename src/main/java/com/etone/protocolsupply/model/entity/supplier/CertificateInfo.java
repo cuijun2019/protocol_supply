@@ -12,7 +12,7 @@ import java.io.Serializable;
  */
 @Data
 @Entity
-@Table(name = "CONTACT_INFO")
+@Table(name = "CERTIFICATE_INFO")
 public class CertificateInfo implements Serializable {
 
     @Id
