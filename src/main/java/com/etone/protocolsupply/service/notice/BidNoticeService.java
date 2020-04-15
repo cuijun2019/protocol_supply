@@ -128,7 +128,8 @@ public class BidNoticeService {
 
             List<BidNotice> list;
             if (bidNoticeIds != null && !bidNoticeIds.isEmpty()) {
-                list = bidNoticeRepository.findAll(projectCode, projectSubject, bidNoticeIds);
+                //list = bidNoticeRepository.findAll(projectCode, projectSubject, bidNoticeIds);
+                list = bidNoticeRepository.findAll(bidNoticeIds);
             } else {
                 list = bidNoticeRepository.findAll(projectCode, projectSubject);
             }
@@ -139,13 +140,19 @@ public class BidNoticeService {
                 HSSFRow row = sheet.createRow(i + 1);
                 row.createCell(0).setCellValue(new HSSFRichTextString(bidNotice.getProjectSubject()));
                 row.createCell(1).setCellValue(new HSSFRichTextString(bidNotice.getProjectCode()));
-                row.createCell(2).setCellValue(new HSSFRichTextString(bidNotice.getSupplier()));
+                row.createCell(2).setCellValue(new HSSFRichTextString(bidNotice.getSupplier()==null?"":bidNotice.getSupplier()));
                 row.createCell(3).setCellValue(new HSSFRichTextString(bidNotice.getAmount()));
                 row.createCell(4).setCellValue(new HSSFRichTextString(Constant.REVIEW_STATUS_MAP.get(bidNotice.getStatus())));
                 row.createCell(5).setCellValue(new HSSFRichTextString(bidNotice.getPurchaser()));
                 row.createCell(6).setCellValue(new HSSFRichTextString(bidNotice.getCreator()));
                 row.createCell(7).setCellValue(new HSSFRichTextString(format.format(bidNotice.getCreateDate())));
-                row.createCell(8).setCellValue(new HSSFRichTextString(format.format(bidNotice.getSignDate())));
+                String signDate;
+                if(bidNotice.getSignDate()==null){
+                    signDate="";
+                }else {
+                    signDate=format.format(bidNotice.getSignDate());
+                }
+                row.createCell(8).setCellValue(new HSSFRichTextString(signDate));
             }
             response.setHeader("Content-disposition", "attachment;filename=bidNotice.xls");
             response.setContentType("application/vnd.ms-excel;charset=utf-8");
@@ -154,5 +161,10 @@ public class BidNoticeService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    public BidNotice getBidNoticeById(String bidNoticeId) {
+        return bidNoticeRepository.findById(Long.parseLong(bidNoticeId)).get();
     }
 }

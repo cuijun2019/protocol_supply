@@ -2,9 +2,10 @@ package com.etone.protocolsupply.controller.notice;
 
 import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
-import com.etone.protocolsupply.model.dto.notice.BidNoticeCollectionDto;
-import com.etone.protocolsupply.model.entity.notice.BidNotice;
-import com.etone.protocolsupply.service.notice.BidNoticeService;
+import com.etone.protocolsupply.model.dto.notice.ContractNoticeCollectionDto;
+import com.etone.protocolsupply.model.entity.notice.ContractNotice;
+import com.etone.protocolsupply.model.entity.notice.ResultNotice;
+import com.etone.protocolsupply.service.notice.ContractNoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,14 +22,14 @@ import javax.ws.rs.core.Context;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "${jwt.route.path}/bidNotice")
-public class BidNoticeController extends GenericController {
+@RequestMapping(value = "${jwt.route.path}/contractNotice")
+public class ContractNoticeController extends GenericController {
 
     @Autowired
-    private BidNoticeService bidNoticeService;
+    private ContractNoticeService ContractNoticeService;
 
     /**
-     * 生成成交通知书
+     * 生成合同通知书
      *
      * @param projectId
      * @return
@@ -39,16 +40,16 @@ public class BidNoticeController extends GenericController {
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseValue postBidNotice(@Validated
-                                       @PathVariable("projectId") String projectId) {
+    public ResponseValue postContractNotice(@Validated
+                                          @PathVariable("projectId") String projectId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        BidNotice bidNotice = bidNoticeService.save(projectId, this.getUser());
-        responseBuilder.data(bidNotice);
+        ContractNotice contractNotice = ContractNoticeService.save(projectId, this.getUser());
+        responseBuilder.data(contractNotice);
         return responseBuilder.build();
     }
 
     /**
-     * 成交通知书列表
+     * 合同列表
      *
      * @param currentPage
      * @param pageSize
@@ -59,7 +60,7 @@ public class BidNoticeController extends GenericController {
     @RequestMapping(method = RequestMethod.GET,
             consumes = {"application/json"},
             produces = {"application/json"})
-    public ResponseValue getCargoInfos(@Validated
+    public ResponseValue getContractList(@Validated
                                        @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
                                        @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
                                        @RequestParam(value = "projectCode", required = false) String projectCode,
@@ -67,42 +68,41 @@ public class BidNoticeController extends GenericController {
                                        HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
 
-        Sort sort = new Sort(Sort.Direction.DESC, "bidId");
+        Sort sort = new Sort(Sort.Direction.DESC, "contractId");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Specification<BidNotice> specification = bidNoticeService.getWhereClause(projectCode, projectSubject);
-        Page<BidNotice> page = bidNoticeService.findBidNotices(specification, pageable);
-        BidNoticeCollectionDto bidNoticeCollectionDto = bidNoticeService.to(page, request);
-        responseBuilder.data(bidNoticeCollectionDto);
+        Specification<ContractNotice> specification = ContractNoticeService.getWhereClause(projectCode, projectSubject);
+        Page<ContractNotice> page = ContractNoticeService.findContractNotice(specification, pageable);
+        ContractNoticeCollectionDto contractNoticeCollectionDto = ContractNoticeService.to(page, request);
+        responseBuilder.data(contractNoticeCollectionDto);
 
         return responseBuilder.build();
     }
 
     /**
-     * 处理（修改状态）
+     * 处理合同信息（修改状态）
      *
-     * @param bidNoticeId
+     * @param contractNoticeId
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{bidNoticeId}",
+    @RequestMapping(value = "/{contractNoticeId}",
             method = RequestMethod.PUT,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
-    public ResponseValue updateBidTemplate(@PathVariable("bidNoticeId") String bidNoticeId) {
+    public ResponseValue updateContractNotice(@PathVariable("contractNoticeId") String contractNoticeId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
 
-        BidNotice bidNotice = bidNoticeService.update(bidNoticeId);
-        responseBuilder.data(bidNotice);
+        ContractNotice contractNotice = ContractNoticeService.update(contractNoticeId);
+        responseBuilder.data(contractNotice);
 
         return responseBuilder.build();
     }
 
+
     /**
      * 导出
-     * @param projectCode
-     * @param projectSubject
-     * @param bidNoticeIds
+     * @param contractNoticeIds
      * @param response
      */
     @ResponseBody
@@ -110,31 +110,30 @@ public class BidNoticeController extends GenericController {
             method = RequestMethod.POST,
             consumes = {"application/json"},
             produces = {"application/json"})
-    public void exportAgent(@RequestParam(value = "projectCode", required = false) String projectCode,
-                            @RequestParam(value = "projectSubject", required = false) String projectSubject,
-                            @RequestBody(required = false) List<Long> bidNoticeIds,
-                            @Context HttpServletResponse response) {
-        bidNoticeService.export(response, projectCode, projectSubject, bidNoticeIds);
+    public void exportContract(@RequestBody(required = false) List<Long> contractNoticeIds,
+                               @Context HttpServletResponse response) {
+        ContractNoticeService.export(response, contractNoticeIds);
     }
 
 
+
     /**
-     * 查看中标通知书详情
+     * 查看合同详情
      *
-     * @param bidNoticeId
+     * @param contractNoticeId
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{bidNoticeId}",
+    @RequestMapping(value = "/{contractNoticeId}",
             method = RequestMethod.GET,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
-    public ResponseValue getBidNoticeById(@Validated
-                                       @PathVariable("bidNoticeId") String bidNoticeId) {
+    public ResponseValue getContractNoticeById(@Validated
+                                          @PathVariable("contractNoticeId") String contractNoticeId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        BidNotice bidNotice = bidNoticeService.getBidNoticeById(bidNoticeId);
-        responseBuilder.data(bidNotice);
+        ContractNotice contractNotice = ContractNoticeService.getContractNoticeById(contractNoticeId);
+        responseBuilder.data(contractNotice);
         return responseBuilder.build();
     }
 }

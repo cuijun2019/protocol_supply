@@ -2,6 +2,7 @@ package com.etone.protocolsupply.model.entity.notice;
 
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
@@ -68,6 +69,7 @@ public class ContractNotice implements Serializable {
      * 合同
      */
     @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "ATTACH_ID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment;
@@ -87,6 +89,7 @@ public class ContractNotice implements Serializable {
     private Date signDate;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
     @JoinColumn(name = "PROJECT_ID", referencedColumnName = "PROJECT_ID", nullable = false)
     private ProjectInfo projectInfo;
 }
