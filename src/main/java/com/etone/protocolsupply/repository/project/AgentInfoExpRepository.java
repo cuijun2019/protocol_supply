@@ -1,4 +1,4 @@
-package com.etone.protocolsupply.repository.template;
+package com.etone.protocolsupply.repository.project;
 
 import com.etone.protocolsupply.model.entity.AgentInfoExp;
 import org.springframework.data.jpa.repository.JpaRepository;

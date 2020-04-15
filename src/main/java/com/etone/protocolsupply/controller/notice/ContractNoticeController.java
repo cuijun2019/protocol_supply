@@ -107,7 +107,7 @@ public class ContractNoticeController extends GenericController {
      */
     @ResponseBody
     @RequestMapping(value = "/export",
-            method = RequestMethod.POST,
+            method = RequestMethod.GET,
             consumes = {"application/json"},
             produces = {"application/json"})
     public void exportContract(@RequestBody(required = false) List<Long> contractNoticeIds,

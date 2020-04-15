@@ -124,7 +124,6 @@ public class BidNoticeService {
 
             List<BidNotice> list;
             if (bidNoticeIds != null && !bidNoticeIds.isEmpty()) {
-                //list = bidNoticeRepository.findAll(projectCode, projectSubject, bidNoticeIds);
                 list = bidNoticeRepository.findAll(bidNoticeIds);
             } else {
                 list = bidNoticeRepository.findAll(projectCode, projectSubject);

@@ -13,7 +13,7 @@ import com.etone.protocolsupply.model.entity.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.repository.AgentInfoRepository;
 import com.etone.protocolsupply.repository.AttachmentRepository;
-import com.etone.protocolsupply.repository.template.AgentInfoExpRepository;
+import com.etone.protocolsupply.repository.project.AgentInfoExpRepository;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import com.etone.protocolsupply.utils.SpringUtil;

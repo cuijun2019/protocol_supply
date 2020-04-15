@@ -99,6 +99,7 @@ public class BidNoticeController extends GenericController {
 
     /**
      * 导出
+     *
      * @param projectCode
      * @param projectSubject
      * @param bidNoticeIds
@@ -106,7 +107,7 @@ public class BidNoticeController extends GenericController {
      */
     @ResponseBody
     @RequestMapping(value = "/export",
-            method = RequestMethod.POST,
+            method = RequestMethod.GET,
             consumes = {"application/json"},
             produces = {"application/json"})
     public void exportAgent(@RequestParam(value = "projectCode", required = false) String projectCode,
@@ -130,7 +131,7 @@ public class BidNoticeController extends GenericController {
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
     public ResponseValue getBidNoticeById(@Validated
-                                       @PathVariable("bidNoticeId") String bidNoticeId) {
+                                          @PathVariable("bidNoticeId") String bidNoticeId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         BidNotice bidNotice = bidNoticeService.getBidNoticeById(bidNoticeId);
         responseBuilder.data(bidNotice);
