@@ -94,7 +94,6 @@ public class BidNoticeController extends GenericController {
 
         BidNotice bidNotice = bidNoticeService.update(bidNoticeId);
         responseBuilder.data(bidNotice);
-
         return responseBuilder.build();
     }
 

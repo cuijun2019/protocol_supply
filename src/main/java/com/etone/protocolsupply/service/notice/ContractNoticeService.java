@@ -153,11 +153,11 @@ public class ContractNoticeService {
         contractNotice.setProjectCode(projectInfo.getProjectCode());
         contractNotice.setProjectSubject(projectInfo.getProjectSubject());
         contractNotice.setAmount(projectInfo.getAmount());
-        for (AgentInfoExp agentInfoExp : projectInfo.getAgentInfoExps()) {
+        /*for (AgentInfoExp agentInfoExp : projectInfo.getAgentInfoExps()) {
             if (Constant.RECOMMEND_SUPPLIER_YES == agentInfoExp.getIsRecommendSupplier().intValue()) {
                 contractNotice.setSupplier(agentInfoExp.getAgentName());
             }
-        }
+        }*/
         contractNotice.setStatus(Constant.STATE_WAIT_SIGN);
         contractNotice.setCreator(user.getFullname());
         contractNotice.setCreateDate(new Date());

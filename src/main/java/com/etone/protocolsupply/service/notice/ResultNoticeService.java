@@ -144,11 +144,11 @@ public class ResultNoticeService {
         resultNotice.setProjectCode(projectInfo.getProjectCode());
         resultNotice.setProjectSubject(projectInfo.getProjectSubject());
         resultNotice.setAmount(projectInfo.getAmount());
-        for (AgentInfoExp agentInfoExp : projectInfo.getAgentInfoExps()) {
+        /*for (AgentInfoExp agentInfoExp : projectInfo.getAgentInfoExps()) {
             if (Constant.RECOMMEND_SUPPLIER_YES == agentInfoExp.getIsRecommendSupplier().intValue()) {
                 resultNotice.setSupplier(agentInfoExp.getAgentName());
             }
-        }
+        }*/
         resultNotice.setStatus(Constant.STATE_WAIT_SIGN);
         resultNotice.setCreator(user.getFullname());
         resultNotice.setCreateDate(new Date());

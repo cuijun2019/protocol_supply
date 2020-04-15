@@ -48,11 +48,11 @@ public class BidNoticeService {
         bidNotice.setProjectCode(projectInfo.getProjectCode());
         bidNotice.setProjectSubject(projectInfo.getProjectSubject());
         bidNotice.setAmount(projectInfo.getAmount());
-        for (AgentInfoExp agentInfoExp : projectInfo.getAgentInfoExps()) {
+        /*for (AgentInfoExp agentInfoExp : projectInfo.getAgentInfoExps()) {
             if (Constant.RECOMMEND_SUPPLIER_YES == agentInfoExp.getIsRecommendSupplier().intValue()) {
                 bidNotice.setSupplier(agentInfoExp.getAgentName());
             }
-        }
+        }*/
         bidNotice.setStatus(Constant.STATE_WAIT_SIGN);
         bidNotice.setCreator(jwtUser.getFullname());
         bidNotice.setCreateDate(new Date());
