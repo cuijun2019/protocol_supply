@@ -1,7 +1,6 @@
-package com.etone.protocolsupply.repository;
+package com.etone.protocolsupply.repository.project;
 
-import com.etone.protocolsupply.model.entity.cargo.PartInfoExp;
-import com.etone.protocolsupply.model.entity.cargo.PartInfo;
+import com.etone.protocolsupply.model.entity.project.PartInfoExp;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -33,6 +32,4 @@ public interface PartInfoExpRepository extends JpaRepository<PartInfoExp, Long>,
     @Modifying
     @Query(value = "delete from part_info_exp  where project_id=?1", nativeQuery = true)
     void deleteByProjectId(Long projectId);
-
-
 }

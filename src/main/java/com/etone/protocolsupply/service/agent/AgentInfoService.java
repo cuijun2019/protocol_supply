@@ -9,7 +9,7 @@ import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.agent.AgentCollectionDto;
 import com.etone.protocolsupply.model.dto.agent.AgentInfoDto;
 import com.etone.protocolsupply.model.entity.AgentInfo;
-import com.etone.protocolsupply.model.entity.AgentInfoExp;
+import com.etone.protocolsupply.model.entity.project.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.repository.AgentInfoRepository;
 import com.etone.protocolsupply.repository.AttachmentRepository;

@@ -4,8 +4,6 @@ import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.notice.ContractNoticceDto;
 import com.etone.protocolsupply.model.dto.notice.ContractNoticeCollectionDto;
-import com.etone.protocolsupply.model.entity.AgentInfoExp;
-import com.etone.protocolsupply.model.entity.notice.BidNotice;
 import com.etone.protocolsupply.model.entity.notice.ContractNotice;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.repository.notice.ContractNoticeRepository;
@@ -148,16 +146,13 @@ public class ContractNoticeService {
     }
 
     public ContractNotice save(String projectId, JwtUser user) {
-        ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(Long.valueOf(projectId));
+        Long proId = Long.valueOf(projectId);
+        ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(proId);
         ContractNotice contractNotice = new ContractNotice();
         contractNotice.setProjectCode(projectInfo.getProjectCode());
         contractNotice.setProjectSubject(projectInfo.getProjectSubject());
         contractNotice.setAmount(projectInfo.getAmount());
-        /*for (AgentInfoExp agentInfoExp : projectInfo.getAgentInfoExps()) {
-            if (Constant.RECOMMEND_SUPPLIER_YES == agentInfoExp.getIsRecommendSupplier().intValue()) {
-                contractNotice.setSupplier(agentInfoExp.getAgentName());
-            }
-        }*/
+        contractNotice.setSupplier(projectInfoRepository.getAgentName(proId));
         contractNotice.setStatus(Constant.STATE_WAIT_SIGN);
         contractNotice.setCreator(user.getFullname());
         contractNotice.setCreateDate(new Date());

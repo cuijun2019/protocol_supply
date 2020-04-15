@@ -1,6 +1,6 @@
-package com.etone.protocolsupply.model.entity;
+package com.etone.protocolsupply.model.entity.project;
 
-import com.etone.protocolsupply.model.entity.project.ProjectInfo;
+import com.etone.protocolsupply.model.entity.Attachment;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
@@ -79,13 +79,4 @@ public class AgentInfoExp implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "PROJECT_ID")
     private ProjectInfo projectInfo;
-//
-//    /**
-//     * 供应商
-//     */
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
-//    @JsonInclude(JsonInclude.Include.NON_NULL)
-//    @JoinColumn(name = "PARTNER_ID")
-//    private PartnerInfo partnerInfo;
 }

@@ -5,7 +5,7 @@ import com.etone.protocolsupply.exception.GlobalServiceException;
 import com.etone.protocolsupply.model.dto.partner.PartnerInfoDto;
 import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
-import com.etone.protocolsupply.repository.PartnerInfoRepository;
+import com.etone.protocolsupply.repository.supplier.PartnerInfoRepository;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

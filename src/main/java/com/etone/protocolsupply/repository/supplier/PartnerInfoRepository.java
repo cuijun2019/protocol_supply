@@ -1,4 +1,4 @@
-package com.etone.protocolsupply.repository;
+package com.etone.protocolsupply.repository.supplier;
 
 import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,6 +13,4 @@ public interface PartnerInfoRepository extends JpaRepository<PartnerInfo, Long>,
     @Modifying
     @Query(value = "update partner_info set is_delete=1 where partner_id=?1", nativeQuery = true)
     void updateIsDelete(Long partnerId);
-
-
 }

@@ -1,6 +1,6 @@
 package com.etone.protocolsupply.repository.project;
 
-import com.etone.protocolsupply.model.entity.AgentInfoExp;
+import com.etone.protocolsupply.model.entity.project.AgentInfoExp;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;

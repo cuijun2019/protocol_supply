@@ -1,4 +1,4 @@
-package com.etone.protocolsupply.model.entity.cargo;
+package com.etone.protocolsupply.model.entity.project;
 
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -94,7 +94,5 @@ public class PartInfoExp implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "PROJECT_ID", referencedColumnName = "PROJECT_ID")
     private ProjectInfo projectInfo;
-
-
 
 }

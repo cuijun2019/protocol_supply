@@ -3,23 +3,13 @@ package com.etone.protocolsupply.controller.project;
 import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.AgentExpCollectionDto;
 import com.etone.protocolsupply.model.dto.PartExpCollectionDto;
-import com.etone.protocolsupply.model.dto.PartInfoExpDto;
 import com.etone.protocolsupply.model.dto.ResponseValue;
-import com.etone.protocolsupply.model.dto.agent.AgentCollectionDto;
-import com.etone.protocolsupply.model.dto.part.PartCollectionDto;
-import com.etone.protocolsupply.model.dto.part.PartInfoDto;
 import com.etone.protocolsupply.model.dto.project.ProjectCollectionDto;
 import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
-import com.etone.protocolsupply.model.entity.AgentInfoExp;
-import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
-import com.etone.protocolsupply.model.entity.cargo.PartInfo;
-import com.etone.protocolsupply.model.entity.cargo.PartInfoExp;
+import com.etone.protocolsupply.model.entity.project.AgentInfoExp;
+import com.etone.protocolsupply.model.entity.project.PartInfoExp;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
-import com.etone.protocolsupply.repository.PartInfoExpRepository;
-import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
-import com.etone.protocolsupply.service.AttachmentService;
 import com.etone.protocolsupply.service.agent.AgentInfoService;
-import com.etone.protocolsupply.service.cargo.CargoInfoService;
 import com.etone.protocolsupply.service.cargo.PartInfoService;
 import com.etone.protocolsupply.service.project.ProjectInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,17 +35,7 @@ public class ProjectInfoController extends GenericController {
     private ProjectInfoService projectInfoService;
 
     @Autowired
-    private PartInfoService partInfoService;
-    @Autowired
-    private AttachmentService attachmentService;
-
-    @Autowired
-    private CargoInfoService cargoInfoService;
-    @Autowired
-    private CargoInfoRepository cargoInfoRepository;
-
-    @Autowired
-    private PartInfoExpRepository partInfoExpRepository;
+    private PartInfoService  partInfoService;
     @Autowired
     private AgentInfoService agentInfoService;
 
@@ -73,7 +53,7 @@ public class ProjectInfoController extends GenericController {
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseValue postProjectInfo(@Validated
-                                       @RequestBody ProjectInfoDto projectInfoDto) {
+                                         @RequestBody ProjectInfoDto projectInfoDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         ProjectInfo projectInfo = projectInfoService.save(projectInfoDto, this.getUser());
         responseBuilder.data(projectInfo);
@@ -82,11 +62,12 @@ public class ProjectInfoController extends GenericController {
 
     /**
      * 项目列表
+     *
      * @param isDelete
      * @param currentPage
      * @param pageSize
      * @param projectSubject 项目主题
-     * @param status 项目状态
+     * @param status         项目状态
      * @param request
      * @return
      */
@@ -135,13 +116,14 @@ public class ProjectInfoController extends GenericController {
         Sort sort = new Sort(Sort.Direction.DESC, "partId");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
         Page<PartInfoExp> page = partInfoService.findPartInfoExps(projectId, isDelete, pageable);
-        PartExpCollectionDto partInfoExpDtos  = partInfoService.toExp(page, request);
+        PartExpCollectionDto partInfoExpDtos = partInfoService.toExp(page, request);
         responseBuilder.data(partInfoExpDtos);
         return responseBuilder.build();
     }
 
     /**
      * 项目-代理商列表
+     *
      * @param projectId
      * @param isDelete
      * @param currentPage
@@ -164,7 +146,7 @@ public class ProjectInfoController extends GenericController {
         Sort sort = new Sort(Sort.Direction.DESC, "createDate");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
 
-        Page<AgentInfoExp> page = agentInfoService.findAgentExps(projectId,isDelete, pageable);
+        Page<AgentInfoExp> page = agentInfoService.findAgentExps(projectId, isDelete, pageable);
         AgentExpCollectionDto agentCollectionDto = agentInfoService.toExp(page, request);
         responseBuilder.data(agentCollectionDto);
         return responseBuilder.build();
@@ -173,6 +155,7 @@ public class ProjectInfoController extends GenericController {
 
     /**
      * 项目详情
+     *
      * @param projectId
      * @return
      */
@@ -194,6 +177,7 @@ public class ProjectInfoController extends GenericController {
 
     /**
      * 修改项目
+     *
      * @param projectId
      * @param projectInfoDto
      * @return
@@ -205,16 +189,17 @@ public class ProjectInfoController extends GenericController {
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
     public ResponseValue updateProject(@PathVariable("projectId") String projectId,
-                                     @RequestBody ProjectInfoDto projectInfoDto) {
+                                       @RequestBody ProjectInfoDto projectInfoDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         projectInfoDto.setProjectId(Long.parseLong(projectId));
-        ProjectInfo projectInfo = projectInfoService.update(projectInfoDto,this.getUser());
+        ProjectInfo projectInfo = projectInfoService.update(projectInfoDto, this.getUser());
         responseBuilder.data(projectInfo);
         return responseBuilder.build();
     }
 
     /**
      * 删除
+     *
      * @param projectId
      * @return
      */
@@ -232,6 +217,7 @@ public class ProjectInfoController extends GenericController {
 
     /**
      * 项目导出
+     *
      * @param projectSubject
      * @param status
      * @param response
@@ -249,6 +235,4 @@ public class ProjectInfoController extends GenericController {
                             @Context HttpServletResponse response) {
         projectInfoService.export(response, projectSubject, status, isDelete, projectIds);
     }
-
-
 }

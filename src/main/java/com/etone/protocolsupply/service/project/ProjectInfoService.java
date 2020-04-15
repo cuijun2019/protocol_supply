@@ -6,21 +6,16 @@ import com.etone.protocolsupply.exception.GlobalServiceException;
 import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.project.ProjectCollectionDto;
 import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
-import com.etone.protocolsupply.model.entity.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.Attachment;
-
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
-import com.etone.protocolsupply.model.entity.cargo.PartInfoExp;
+import com.etone.protocolsupply.model.entity.project.AgentInfoExp;
+import com.etone.protocolsupply.model.entity.project.PartInfoExp;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.repository.AttachmentRepository;
-import com.etone.protocolsupply.repository.PartInfoExpRepository;
-import com.etone.protocolsupply.repository.PartnerInfoRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
-import com.etone.protocolsupply.repository.cargo.PartInfoRepository;
-import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.repository.project.AgentInfoExpRepository;
-import com.etone.protocolsupply.service.agent.AgentInfoService;
-import com.etone.protocolsupply.service.cargo.CargoInfoService;
+import com.etone.protocolsupply.repository.project.PartInfoExpRepository;
+import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import com.etone.protocolsupply.utils.SpringUtil;
@@ -47,26 +42,17 @@ import java.util.*;
 public class ProjectInfoService {
 
     @Autowired
-    private ProjectInfoRepository projectInfoRepository;
+    private ProjectInfoRepository  projectInfoRepository;
     @Autowired
-    private CargoInfoRepository  cargoInfoRepository;
+    private CargoInfoRepository    cargoInfoRepository;
     @Autowired
-    private CargoInfoService cargoInfoService;
-    @Autowired
-    private AttachmentRepository attachmentRepository;
-    @Autowired
-    private AgentInfoService agentInfoService;
-    @Autowired
-    private PartnerInfoRepository partnerInfoRepository;
+    private AttachmentRepository   attachmentRepository;
     @Autowired
     private AgentInfoExpRepository agentInfoExpRepository;
     @Autowired
-    private PartInfoRepository partInfoRepository;
-
+    private PartInfoExpRepository  partInfoExpRepository;
     @Autowired
-    private PartInfoExpRepository partInfoExpRepository;
-    @Autowired
-    private PagingMapper         pagingMapper;
+    private PagingMapper           pagingMapper;
 
 
     public ProjectInfo save(ProjectInfoDto projectInfoDto, JwtUser jwtUser) throws GlobalServiceException {
@@ -74,42 +60,41 @@ public class ProjectInfoService {
         String userName = jwtUser.getUsername();
         ProjectInfo projectInfo = new ProjectInfo();
         BeanUtils.copyProperties(projectInfoDto, projectInfo);
-        String maxOne=projectInfoRepository.findMaxOne();
-        if(maxOne==null){
-            projectInfo.setProjectCode("SCUT-"+Common.getYYYYMMDDDate(date)+"-XY001");
-        }else {
-            ProjectInfo projectInfo1=projectInfoRepository.findAllByProjectId(Long.parseLong(maxOne));
-            projectInfo.setProjectCode("SCUT-"+Common.getYYYYMMDDDate(date)+"-XY"+Common.convertSerialProject(projectInfo1.getProjectCode().substring(16),1));
+        String maxOne = projectInfoRepository.findMaxOne();
+        if (maxOne == null) {
+            projectInfo.setProjectCode("SCUT-" + Common.getYYYYMMDDDate(date) + "-XY001");
+        } else {
+            ProjectInfo projectInfo1 = projectInfoRepository.findAllByProjectId(Long.parseLong(maxOne));
+            projectInfo.setProjectCode("SCUT-" + Common.getYYYYMMDDDate(date) + "-XY" + Common.convertSerialProject(projectInfo1.getProjectCode().substring(16), 1));
 
         }
-        //ProjectInfo projectInfo1=projectInfoRepository.getOne(Long.parseLong(maxOne));
         projectInfo.setIsDelete(Constant.DELETE_NO);
         projectInfo.setCreator(userName);
         projectInfo.setStatus(1);//审核状态：审核中、已完成、退回
 
         Attachment attachment = projectInfoDto.getAttachment_n();//中标通知书
-        if (attachment != null && attachment.getAttachId()!=null && !attachment.getAttachId().equals("")) {
+        if (attachment != null && attachment.getAttachId() != null && !attachment.getAttachId().equals("")) {
             Optional<Attachment> optional = attachmentRepository.findById(attachment.getAttachId());
             if (optional.isPresent()) {
                 projectInfo.setAttachment_n(optional.get());
             }
-        }else {
+        } else {
             projectInfo.setAttachment_n(null);
         }
         Attachment attachment_c = projectInfoDto.getAttachment_c();//合同
-        if (attachment_c != null && attachment_c.getAttachId()!=null && !attachment_c.getAttachId().equals("")) {
+        if (attachment_c != null && attachment_c.getAttachId() != null && !attachment_c.getAttachId().equals("")) {
             Optional<Attachment> optional = attachmentRepository.findById(attachment_c.getAttachId());
             if (optional.isPresent()) {
                 projectInfo.setAttachment_c(optional.get());
             }
-        }else {
+        } else {
             projectInfo.setAttachment_c(null);
         }
 
-        projectInfo.setProjectSubject(projectInfoDto.getCargoName()+"的采购");
+        projectInfo.setProjectSubject(projectInfoDto.getCargoName() + "的采购");
 
         //配件
-        Set<PartInfoExp> partInfoExps=projectInfoDto.getPartInfoExps();
+        Set<PartInfoExp> partInfoExps = projectInfoDto.getPartInfoExps();
         if (partInfoExps != null && !partInfoExps.isEmpty()) {
             for (PartInfoExp partInfoExp : partInfoExps) {
                 partInfoExp.setIsDelete(Constant.DELETE_NO);
@@ -129,18 +114,18 @@ public class ProjectInfoService {
             }
         }
 
-         projectInfoRepository.save(projectInfo);
+        projectInfoRepository.save(projectInfo);
 
         List<Long> agentIds = new ArrayList<>();
-        if(agentInfoExps.size()>0){
+        if (agentInfoExps.size() > 0) {
             for (AgentInfoExp agentInfoExp : projectInfoDto.getAgentInfoExps()) {
                 agentIds.add(agentInfoExp.getAgentId());
             }
             agentInfoExpRepository.setProjectId(projectInfo.getProjectId(), agentIds);
         }
         List<Long> partIds = new ArrayList<>();
-        if(partInfoExps.size()>0){
-            for (PartInfoExp partInfoExp  : projectInfoDto.getPartInfoExps()) {
+        if (partInfoExps.size() > 0) {
+            for (PartInfoExp partInfoExp : projectInfoDto.getPartInfoExps()) {
                 partIds.add(partInfoExp.getPartId());
             }
             partInfoExpRepository.setProjectId(projectInfo.getProjectId(), partIds);
@@ -153,7 +138,7 @@ public class ProjectInfoService {
         return (Specification<ProjectInfo>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (Strings.isNotBlank(projectSubject)) {
-                predicates.add(criteriaBuilder.like(root.get("projectSubject").as(String.class), '%'+projectSubject+'%'));
+                predicates.add(criteriaBuilder.like(root.get("projectSubject").as(String.class), '%' + projectSubject + '%'));
             }
             if (Strings.isNotBlank(status)) {
                 predicates.add(criteriaBuilder.equal(root.get("status").as(String.class), status));
@@ -173,7 +158,7 @@ public class ProjectInfoService {
         pagingMapper.storeMappedInstanceBefore(source, projectCollectionDto, request);
         ProjectInfoDto projectInfoDto;
         for (ProjectInfo projectInfo : source) {
-            CargoInfo cargoInfo=cargoInfoRepository.findAllByProjectId(projectInfo.getProjectId());
+            CargoInfo cargoInfo = cargoInfoRepository.findAllByProjectId(projectInfo.getProjectId());
             projectInfoDto = new ProjectInfoDto();
             BeanUtils.copyProperties(projectInfo, projectInfoDto);
             projectInfoDto.setCargoId(cargoInfo.getCargoId().toString());//货物id
@@ -185,14 +170,14 @@ public class ProjectInfoService {
         return projectCollectionDto;
     }
 
-    public ProjectInfo update(ProjectInfoDto projectInfoDto,JwtUser jwtUser ) throws GlobalServiceException {
+    public ProjectInfo update(ProjectInfoDto projectInfoDto, JwtUser jwtUser) throws GlobalServiceException {
         String username = jwtUser.getUsername();
         ProjectInfo projectInfo = this.findOne(projectInfoDto.getProjectId());
         Attachment attachmentn = projectInfoDto.getAttachment_n();//中标通知书
         Attachment attachmentc = projectInfoDto.getAttachment_c();//合同
-        CargoInfo cargoInfo =  cargoInfoRepository.findAllByCargoId(Long.parseLong(projectInfoDto.getCargoId()));//货物
+        CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(Long.parseLong(projectInfoDto.getCargoId()));//货物
         SpringUtil.copyPropertiesIgnoreNull(projectInfoDto, projectInfo);
-        if (projectInfo != null && attachmentn == null && attachmentc==null && cargoInfo == null) {
+        if (projectInfo != null && attachmentn == null && attachmentc == null && cargoInfo == null) {
             projectInfoRepository.save(projectInfo);
         }
         if (attachmentn != null) {
@@ -232,6 +217,7 @@ public class ProjectInfoService {
         projectInfoRepository.save(projectInfo);
         return projectInfo;
     }
+
     public ProjectInfo findOne(Long projectId) {
         Optional<ProjectInfo> optional = projectInfoRepository.findById(projectId);
         if (optional.isPresent()) {
@@ -247,8 +233,8 @@ public class ProjectInfoService {
 
     public void export(HttpServletResponse response, String projectSubject, String status, String isDelete, List<Long> projectIds) {
         try {
-            String[] header = {"项目主题", "项目编号", "货物名称",  "货物金额", "项目总金额", "币种", "状态",
-                    "采购结果通知书", "中标通知书","合同"};
+            String[] header = {"项目主题", "项目编号", "货物名称", "货物金额", "项目总金额", "币种", "状态",
+                    "采购结果通知书", "中标通知书", "合同"};
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet("项目信息表");
             sheet.setDefaultColumnWidth(10);
@@ -277,21 +263,21 @@ public class ProjectInfoService {
             for (int i = 0; i < list.size(); i++) {
                 projectInfo = list.get(i);
                 HSSFRow row = sheet.createRow(i + 1);
-                Attachment attachmentn=projectInfo.getAttachment_n();//中标通知书
-                Attachment attachmentc=projectInfo.getAttachment_c();//合同
-                if(attachmentn!=null){
+                Attachment attachmentn = projectInfo.getAttachment_n();//中标通知书
+                Attachment attachmentc = projectInfo.getAttachment_c();//合同
+                if (attachmentn != null) {
                     attachmentn = attachmentRepository.getOne(projectInfo.getAttachment_n().getAttachId());
                     row.createCell(8).setCellValue(new HSSFRichTextString(attachmentn.getAttachName()));
-                }else {
+                } else {
                     row.createCell(8).setCellValue(new HSSFRichTextString(""));
                 }
-                if(attachmentc!=null){
+                if (attachmentc != null) {
                     attachmentc = attachmentRepository.getOne(projectInfo.getAttachment_c().getAttachId());
                     row.createCell(9).setCellValue(new HSSFRichTextString(attachmentc.getAttachName()));
-                }else {
+                } else {
                     row.createCell(9).setCellValue(new HSSFRichTextString(""));
                 }
-                CargoInfo cargoInfo=cargoInfoRepository.findAllByProjectId(projectInfo.getProjectId());
+                CargoInfo cargoInfo = cargoInfoRepository.findAllByProjectId(projectInfo.getProjectId());
                 row.createCell(0).setCellValue(new HSSFRichTextString(projectInfo.getProjectSubject()));
                 row.createCell(1).setCellValue(new HSSFRichTextString(projectInfo.getProjectCode()));
                 row.createCell(2).setCellValue(new HSSFRichTextString(cargoInfo.getCargoName()));
@@ -301,7 +287,7 @@ public class ProjectInfoService {
                 row.createCell(6).setCellValue(new HSSFRichTextString(projectStatus(projectInfo.getStatus())));//状态
                 row.createCell(7).setCellValue(new HSSFRichTextString(""));//采购结果通知书
                 //row.createCell(10).setCellValue(new HSSFRichTextString("6000"));//中标通知书
-               // row.createCell(11).setCellValue(new HSSFRichTextString("6000"));//合同
+                // row.createCell(11).setCellValue(new HSSFRichTextString("6000"));//合同
 
             }
             response.setHeader("Content-disposition", "attachment;filename=projectInfo.xls");
@@ -313,18 +299,17 @@ public class ProjectInfoService {
         }
     }
 
-    private String projectStatus(int status){
-        String str="";
-        if(status==1){
-             str="审核中";
+    private String projectStatus(int status) {
+        String str = "";
+        if (status == 1) {
+            str = "审核中";
         }
-        if(status==2){
-            str="已完成";
+        if (status == 2) {
+            str = "已完成";
         }
-        if(status==3){
-            str="已退回";
+        if (status == 3) {
+            str = "已退回";
         }
         return str;
     }
-
 }

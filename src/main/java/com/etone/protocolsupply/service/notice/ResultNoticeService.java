@@ -4,8 +4,6 @@ import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.notice.ResultNoticeCollectionDto;
 import com.etone.protocolsupply.model.dto.notice.ResultNoticeDto;
-import com.etone.protocolsupply.model.entity.AgentInfoExp;
-import com.etone.protocolsupply.model.entity.notice.BidNotice;
 import com.etone.protocolsupply.model.entity.notice.ResultNotice;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.repository.notice.ResultNoticeRepository;
@@ -61,7 +59,7 @@ public class ResultNoticeService {
     }
 
     public Page<ResultNotice> findContractNotice(Specification<ResultNotice> specification, Pageable pageable) {
-        return resultNoticeRepository.findAll(specification,pageable);
+        return resultNoticeRepository.findAll(specification, pageable);
     }
 
     public ResultNoticeCollectionDto to(Page<ResultNotice> page, HttpServletRequest request) {
@@ -111,17 +109,17 @@ public class ResultNoticeService {
                 HSSFRow row = sheet.createRow(i + 1);
                 row.createCell(0).setCellValue(new HSSFRichTextString(resultNotice.getProjectSubject()));
                 row.createCell(1).setCellValue(new HSSFRichTextString(resultNotice.getProjectCode()));
-                row.createCell(2).setCellValue(new HSSFRichTextString(resultNotice.getSupplier()==null?"":resultNotice.getSupplier()));
+                row.createCell(2).setCellValue(new HSSFRichTextString(resultNotice.getSupplier() == null ? "" : resultNotice.getSupplier()));
                 row.createCell(3).setCellValue(new HSSFRichTextString(resultNotice.getAmount()));
                 row.createCell(4).setCellValue(new HSSFRichTextString(Constant.REVIEW_STATUS_MAP.get(resultNotice.getStatus())));
                 row.createCell(5).setCellValue(new HSSFRichTextString(resultNotice.getPurchaser()));
                 row.createCell(6).setCellValue(new HSSFRichTextString(resultNotice.getCreator()));
                 row.createCell(7).setCellValue(new HSSFRichTextString(format.format(resultNotice.getCreateDate())));
                 String signDate;
-                if(resultNotice.getSignDate()==null){
-                    signDate="";
-                }else {
-                    signDate=format.format(resultNotice.getSignDate());
+                if (resultNotice.getSignDate() == null) {
+                    signDate = "";
+                } else {
+                    signDate = format.format(resultNotice.getSignDate());
                 }
                 row.createCell(8).setCellValue(new HSSFRichTextString(signDate));
             }
@@ -139,16 +137,13 @@ public class ResultNoticeService {
     }
 
     public ResultNotice save(String projectId, JwtUser user) {
-        ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(Long.valueOf(projectId));
+        Long proId = Long.valueOf(projectId);
+        ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(proId);
         ResultNotice resultNotice = new ResultNotice();
         resultNotice.setProjectCode(projectInfo.getProjectCode());
         resultNotice.setProjectSubject(projectInfo.getProjectSubject());
         resultNotice.setAmount(projectInfo.getAmount());
-        /*for (AgentInfoExp agentInfoExp : projectInfo.getAgentInfoExps()) {
-            if (Constant.RECOMMEND_SUPPLIER_YES == agentInfoExp.getIsRecommendSupplier().intValue()) {
-                resultNotice.setSupplier(agentInfoExp.getAgentName());
-            }
-        }*/
+        resultNotice.setSupplier(projectInfoRepository.getAgentName(proId));
         resultNotice.setStatus(Constant.STATE_WAIT_SIGN);
         resultNotice.setCreator(user.getFullname());
         resultNotice.setCreateDate(new Date());

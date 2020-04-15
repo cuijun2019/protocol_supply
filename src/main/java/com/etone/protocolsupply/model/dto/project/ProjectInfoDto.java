@@ -1,7 +1,7 @@
 package com.etone.protocolsupply.model.dto.project;
 
-import com.etone.protocolsupply.model.entity.AgentInfoExp;
-import com.etone.protocolsupply.model.entity.cargo.PartInfoExp;
+import com.etone.protocolsupply.model.entity.project.AgentInfoExp;
+import com.etone.protocolsupply.model.entity.project.PartInfoExp;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import lombok.Data;
 
