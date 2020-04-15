@@ -4,7 +4,6 @@ import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.notice.BidNoticeCollectionDto;
 import com.etone.protocolsupply.model.dto.notice.BidNoticeDto;
-import com.etone.protocolsupply.model.entity.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.notice.BidNotice;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.repository.notice.BidNoticeRepository;
@@ -43,16 +42,13 @@ public class BidNoticeService {
     private ProjectInfoRepository projectInfoRepository;
 
     public BidNotice save(String projectId, JwtUser jwtUser) {
-        ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(Long.valueOf(projectId));
+        Long proId = Long.valueOf(projectId);
+        ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(proId);
         BidNotice bidNotice = new BidNotice();
         bidNotice.setProjectCode(projectInfo.getProjectCode());
         bidNotice.setProjectSubject(projectInfo.getProjectSubject());
         bidNotice.setAmount(projectInfo.getAmount());
-        /*for (AgentInfoExp agentInfoExp : projectInfo.getAgentInfoExps()) {
-            if (Constant.RECOMMEND_SUPPLIER_YES == agentInfoExp.getIsRecommendSupplier().intValue()) {
-                bidNotice.setSupplier(agentInfoExp.getAgentName());
-            }
-        }*/
+        bidNotice.setSupplier(projectInfoRepository.getAgentName(proId));
         bidNotice.setStatus(Constant.STATE_WAIT_SIGN);
         bidNotice.setCreator(jwtUser.getFullname());
         bidNotice.setCreateDate(new Date());
@@ -140,17 +136,17 @@ public class BidNoticeService {
                 HSSFRow row = sheet.createRow(i + 1);
                 row.createCell(0).setCellValue(new HSSFRichTextString(bidNotice.getProjectSubject()));
                 row.createCell(1).setCellValue(new HSSFRichTextString(bidNotice.getProjectCode()));
-                row.createCell(2).setCellValue(new HSSFRichTextString(bidNotice.getSupplier()==null?"":bidNotice.getSupplier()));
+                row.createCell(2).setCellValue(new HSSFRichTextString(bidNotice.getSupplier() == null ? "" : bidNotice.getSupplier()));
                 row.createCell(3).setCellValue(new HSSFRichTextString(bidNotice.getAmount()));
                 row.createCell(4).setCellValue(new HSSFRichTextString(Constant.REVIEW_STATUS_MAP.get(bidNotice.getStatus())));
                 row.createCell(5).setCellValue(new HSSFRichTextString(bidNotice.getPurchaser()));
                 row.createCell(6).setCellValue(new HSSFRichTextString(bidNotice.getCreator()));
                 row.createCell(7).setCellValue(new HSSFRichTextString(format.format(bidNotice.getCreateDate())));
                 String signDate;
-                if(bidNotice.getSignDate()==null){
-                    signDate="";
-                }else {
-                    signDate=format.format(bidNotice.getSignDate());
+                if (bidNotice.getSignDate() == null) {
+                    signDate = "";
+                } else {
+                    signDate = format.format(bidNotice.getSignDate());
                 }
                 row.createCell(8).setCellValue(new HSSFRichTextString(signDate));
             }
