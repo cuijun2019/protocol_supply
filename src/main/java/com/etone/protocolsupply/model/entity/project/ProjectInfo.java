@@ -15,6 +15,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "PROJECT_INFO")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler","fieldHandler"})
 public class ProjectInfo implements Serializable {
 
     @Id
