@@ -6,10 +6,8 @@ import com.etone.protocolsupply.model.dto.cargo.CargoCollectionDto;
 import com.etone.protocolsupply.model.dto.cargo.CargoInfoDto;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
-import com.etone.protocolsupply.model.entity.cargo.PartInfo;
 import com.etone.protocolsupply.service.AttachmentService;
 import com.etone.protocolsupply.service.cargo.CargoInfoService;
-import com.etone.protocolsupply.service.cargo.PartInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,21 +25,15 @@ import javax.ws.rs.core.Context;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.HashSet;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "${jwt.route.path}/cargoInfo")
 public class CargoInfoController extends GenericController {
 
     @Autowired
-    private CargoInfoService cargoInfoService;
-
-    @Autowired
-    private PartInfoService partInfoService;
+    private CargoInfoService  cargoInfoService;
     @Autowired
     private AttachmentService attachmentService;
-
 
     /**
      * 新增货物
@@ -90,7 +82,7 @@ public class CargoInfoController extends GenericController {
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
         Page<CargoInfo> page = cargoInfoService.findCargoInfos(isDelete, cargoName, partName, pageable);
         CargoCollectionDto cargoCollectionDto = cargoInfoService.to(page, request);
-        for(CargoInfoDto cargoInfoDto:cargoCollectionDto.getCargoInfoDtos()){
+        for (CargoInfoDto cargoInfoDto : cargoCollectionDto.getCargoInfoDtos()) {
             cargoInfoDto.setPartInfos(null);
         }
         responseBuilder.data(cargoCollectionDto);
@@ -187,6 +179,7 @@ public class CargoInfoController extends GenericController {
 
     /**
      * 下载货物导入模板
+     *
      * @param res
      */
     @ResponseBody
@@ -245,9 +238,7 @@ public class CargoInfoController extends GenericController {
     public ResponseValue upLoadPart(@Validated @RequestParam("file") MultipartFile uploadFile) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Attachment attachment = attachmentService.upload(uploadFile, this.getUser());
-        cargoInfoService.upLoad(attachment,this.getUser());
+        cargoInfoService.upLoad(attachment, this.getUser());
         return responseBuilder.build();
     }
-
-
 }
