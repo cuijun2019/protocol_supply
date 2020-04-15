@@ -9,9 +9,10 @@ import com.etone.protocolsupply.model.dto.project.ProjectCollectionDto;
 import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
 import com.etone.protocolsupply.model.entity.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.Attachment;
-import com.etone.protocolsupply.model.entity.PartInfoExp;
+
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.cargo.PartInfo;
+import com.etone.protocolsupply.model.entity.cargo.PartInfoExp;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
 import com.etone.protocolsupply.repository.AttachmentRepository;
@@ -114,8 +115,6 @@ public class ProjectInfoService {
         Set<PartInfoExp> partInfoExps=projectInfoDto.getPartInfoExps();
         if (partInfoExps != null && !partInfoExps.isEmpty()) {
             for (PartInfoExp partInfoExp : partInfoExps) {
-
-                partInfoExp.setCargoInfo(null);//货物
                 partInfoExp.setIsDelete(Constant.DELETE_NO);
             }
         }
@@ -130,7 +129,6 @@ public class ProjectInfoService {
                 agentInfoExp.setCreateDate(date);
                 agentInfoExp.setStatus(1);//状态
                 agentInfoExp.setReviewStatus(1);//审核状态
-                agentInfoExp.setPartnerInfo(null);
                 agentInfoExp.setIsDelete(Constant.DELETE_NO);
             }
         }
@@ -208,12 +206,7 @@ public class ProjectInfoService {
                 projectInfo.setAttachment_c(optional.get());
             }
         }
-        if (cargoInfo != null) {
-            Optional<CargoInfo> optional = cargoInfoRepository.findById(cargoInfo.getCargoId());
-            if (optional.isPresent()) {
-                projectInfo.setCargoInfo(optional.get());
-            }
-        }
+
         //agentInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
         //供应商
         Set<AgentInfoExp> agentInfoExps=projectInfoDto.getAgentInfoExps();
@@ -223,7 +216,7 @@ public class ProjectInfoService {
                 agentInfoExp.setIsDelete(Constant.DELETE_NO);
                 agentInfoExp.setCreateDate(new Date());
                 agentInfoExp.setCreator(username);
-                agentInfoExp.setProjectInfo(projectInfo);
+
             }
 
 
@@ -234,8 +227,8 @@ public class ProjectInfoService {
         if (partInfoExps != null && !partInfoExps.isEmpty()) {
             for (PartInfoExp partInfoExp : partInfoExps) {
                 partInfoExp.setIsDelete(Constant.DELETE_NO);
-                partInfoExp.setCargoInfo(cargoInfo);
-                partInfoExp.setProjectInfo(projectInfo);
+//                partInfoExp.setCargoInfo(cargoInfo);
+//                partInfoExp.setProjectInfo(projectInfo);
             }
         }
 
@@ -301,7 +294,7 @@ public class ProjectInfoService {
                 }else {
                     row.createCell(11).setCellValue(new HSSFRichTextString(""));
                 }
-                CargoInfo cargoInfo=cargoInfoRepository.findAllByCargoId(projectInfo.getCargoInfo().getCargoId());
+                CargoInfo cargoInfo=cargoInfoRepository.findAllByProjectId(projectInfo.getProjectId());
                 row.createCell(0).setCellValue(new HSSFRichTextString(projectInfo.getProjectSubject()));
                 row.createCell(1).setCellValue(new HSSFRichTextString(projectInfo.getProjectCode()));
                 row.createCell(2).setCellValue(new HSSFRichTextString(cargoInfo.getCargoName()));
