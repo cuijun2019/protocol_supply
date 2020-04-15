@@ -19,13 +19,19 @@ public interface PartInfoExpRepository extends JpaRepository<PartInfoExp, Long>,
     @Query(value = "update part_info_exp set is_delete=1 where part_id=?1", nativeQuery = true)
     void updateIsDelete(Long partId);
 
-
-
     @Query(value = "update part_info_exp set project_id=:projectId,cargo_id=:cargoId where part_id in (:partIds)", nativeQuery = true)
     @Modifying
     void setProjectId(@Param("projectId") Long projectId,@Param("cargoId") Long cargoId, @Param("partIds") List<Long> partIds);
 
     @Query(value = "select * from part_info_exp where 1=1 and if((?1 is not null), (cargo_id=?1), (1=1)) and is_delete=?2", nativeQuery = true)
-    List<PartInfo> findAll(String cargoId, String isDelete);
+    List<PartInfoExp> findAll(String cargoId, String isDelete);
+
+    @Query(value = "select * from part_info_exp where 1=1 and cargo_id=?1 and is_delete=2", nativeQuery = true)
+    List<PartInfoExp> findByCargoId(Long cargoId);
+
+    @Transactional(rollbackFor = Exception.class)
+    @Modifying
+    @Query(value = "delete from part_info_exp  where project_id=?1", nativeQuery = true)
+    void deleteByProjectId(Long projectId);
 
 }

@@ -112,7 +112,6 @@ public class ProjectInfoService {
 
         //配件
         Set<PartInfoExp> partInfoExps=projectInfoDto.getPartInfoExps();
-        CargoInfo cargoInfo=new CargoInfo();
         if (partInfoExps != null && !partInfoExps.isEmpty()) {
             for (PartInfoExp partInfoExp : partInfoExps) {
 
@@ -187,11 +186,12 @@ public class ProjectInfoService {
         return projectCollectionDto;
     }
 
-    public ProjectInfo update(ProjectInfoDto projectInfoDto) throws GlobalServiceException {
+    public ProjectInfo update(ProjectInfoDto projectInfoDto,JwtUser jwtUser ) throws GlobalServiceException {
+        String username = jwtUser.getUsername();
         ProjectInfo projectInfo = this.findOne(projectInfoDto.getProjectId());
         Attachment attachmentn = projectInfoDto.getAttachment_n();//中标通知书
         Attachment attachmentc = projectInfoDto.getAttachment_c();//合同
-        CargoInfo cargoInfo =  projectInfoDto.getCargoInfo();//货物
+        CargoInfo cargoInfo =  cargoInfoRepository.findAllByCargoId(Long.parseLong(projectInfoDto.getCargoId()));//货物
         SpringUtil.copyPropertiesIgnoreNull(projectInfoDto, projectInfo);
         if (projectInfo != null && attachmentn == null && attachmentc==null && cargoInfo == null) {
             projectInfoRepository.save(projectInfo);
@@ -214,6 +214,31 @@ public class ProjectInfoService {
                 projectInfo.setCargoInfo(optional.get());
             }
         }
+        //agentInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
+        //供应商
+        Set<AgentInfoExp> agentInfoExps=projectInfoDto.getAgentInfoExps();
+        if (agentInfoExps != null && !agentInfoExps.isEmpty()) {
+            for (AgentInfoExp agentInfoExp : agentInfoExps) {
+                agentInfoExp.setReviewStatus(1);
+                agentInfoExp.setIsDelete(Constant.DELETE_NO);
+                agentInfoExp.setCreateDate(new Date());
+                agentInfoExp.setCreator(username);
+                agentInfoExp.setProjectInfo(projectInfo);
+            }
+
+
+        }
+       // partInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
+        //货物配件
+        Set<PartInfoExp>partInfoExps=projectInfoDto.getPartInfoExps();
+        if (partInfoExps != null && !partInfoExps.isEmpty()) {
+            for (PartInfoExp partInfoExp : partInfoExps) {
+                partInfoExp.setIsDelete(Constant.DELETE_NO);
+                partInfoExp.setCargoInfo(cargoInfo);
+                partInfoExp.setProjectInfo(projectInfo);
+            }
+        }
+
         projectInfoRepository.save(projectInfo);
         return projectInfo;
     }
@@ -232,7 +257,7 @@ public class ProjectInfoService {
 
     public void export(HttpServletResponse response, String projectSubject, String status, String isDelete, List<Long> projectIds) {
         try {
-            String[] header = {"项目主题", "项目编号", "货物名称", "数量", "单位", "货物金额", "项目总金额", "币种", "状态",
+            String[] header = {"项目主题", "项目编号", "货物名称",  "货物金额", "项目总金额", "币种", "状态",
                     "采购结果通知书", "中标通知书","合同"};
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet("项目信息表");

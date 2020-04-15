@@ -1,5 +1,6 @@
 package com.etone.protocolsupply.controller.project;
 
+import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.cargo.CargoCollectionDto;
@@ -7,8 +8,10 @@ import com.etone.protocolsupply.model.dto.cargo.CargoInfoDto;
 import com.etone.protocolsupply.model.dto.project.ProjectCollectionDto;
 import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
 import com.etone.protocolsupply.model.entity.Attachment;
+import com.etone.protocolsupply.model.entity.PartInfoExp;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
+import com.etone.protocolsupply.repository.PartInfoExpRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.service.AttachmentService;
 import com.etone.protocolsupply.service.cargo.CargoInfoService;
@@ -33,6 +36,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping(value = "${jwt.route.path}/projectInfo")
@@ -50,6 +54,9 @@ public class ProjectInfoController extends GenericController {
     private CargoInfoService cargoInfoService;
     @Autowired
     private CargoInfoRepository cargoInfoRepository;
+
+    @Autowired
+    private PartInfoExpRepository partInfoExpRepository;
 
 
     /**
@@ -106,8 +113,11 @@ public class ProjectInfoController extends GenericController {
             projectCollectionDto.getProjectInfoDtos().get(i).setCargoInfo(null);
             projectCollectionDto.getProjectInfoDtos().get(i).setAgentInfoExps(null);
             projectCollectionDto.getProjectInfoDtos().get(i).setPartInfoExps(null);
-           // projectCollectionDto.getProjectInfoDtos().get(i).setCargoName(cargoInfo.getCargoName());//货物名称
-
+            if(cargoInfo!=null){
+                projectCollectionDto.getProjectInfoDtos().get(i).setCargoId(cargoInfo.getCargoId().toString());//货物id
+                projectCollectionDto.getProjectInfoDtos().get(i).setCargoName(cargoInfo.getCargoName());//货物名称
+                projectCollectionDto.getProjectInfoDtos().get(i).setCurrency(cargoInfo.getCurrency());//币种
+            }
         }
         responseBuilder.data(projectCollectionDto);
         return responseBuilder.build();
@@ -156,7 +166,10 @@ public class ProjectInfoController extends GenericController {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
 
         projectInfoDto.setProjectId(Long.parseLong(projectId));
-        ProjectInfo projectInfo = projectInfoService.update(projectInfoDto);
+        ProjectInfo projectInfo = projectInfoService.update(projectInfoDto,this.getUser());
+        projectInfo.setCargoInfo(null);
+        projectInfo.setPartInfoExps(null);
+        projectInfo.setAgentInfoExps(null);
         responseBuilder.data(projectInfo);
         return responseBuilder.build();
     }
