@@ -1,0 +1,21 @@
+version: '3.2'
+
+networks:
+  ri-net:
+
+services:
+  protocol_supply:
+    image: protocol_supply:latest
+    container_name: protocol_supply
+    hostname: protocol_supply
+    environment:
+      TZ: Asia/Shanghai
+    networks:
+      - ri-net
+    restart: always
+    ports:
+      - "8780:8780"
+    volumes:
+      - /hainan/protocol_supply:/hainan/protocol_supply
+      - /hainan/protocol_supply/lib:/hainan/protocol_supply/lib
+      - /etc/localtime:/etc/localtime:ro
