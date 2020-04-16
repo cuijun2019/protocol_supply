@@ -110,6 +110,8 @@ public class ContractNoticeService {
             List<ContractNotice> list = new ArrayList<>();
             if (contractNoticeIds != null && !contractNoticeIds.isEmpty()) {
                 list = ContractNoticeRepository.findAll(contractNoticeIds);
+            }else {
+                list = ContractNoticeRepository.findAll();
             }
             ContractNotice contractNotice;
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

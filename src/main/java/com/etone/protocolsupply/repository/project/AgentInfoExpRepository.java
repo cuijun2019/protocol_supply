@@ -23,4 +23,8 @@ public interface AgentInfoExpRepository extends JpaRepository<AgentInfoExp, Long
 
     @Query(value = "select * from agent_info_exp where 1=1 and if((?1 is not null), (project_id=?1), (1=1)) and is_delete=?2", nativeQuery = true)
     List<AgentInfoExp> findAll(String projectId, String isDelete);
+
+
+    @Query(value = "select * from agent_info_exp where project_id=?1", nativeQuery = true)
+    List<AgentInfoExp> findByProjectId(Long projectId);
 }

@@ -42,6 +42,8 @@ public class ContractNoticeController extends GenericController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseValue postContractNotice(@Validated
                                           @PathVariable("projectId") String projectId) {
+        //todo 查询
+
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         ContractNotice contractNotice = ContractNoticeService.save(projectId, this.getUser());
         responseBuilder.data(contractNotice);
@@ -107,7 +109,7 @@ public class ContractNoticeController extends GenericController {
      */
     @ResponseBody
     @RequestMapping(value = "/export",
-            method = RequestMethod.GET,
+            method = RequestMethod.POST,
             consumes = {"application/json"},
             produces = {"application/json"})
     public void exportContract(@RequestBody(required = false) List<Long> contractNoticeIds,

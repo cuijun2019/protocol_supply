@@ -3,7 +3,9 @@ package com.etone.protocolsupply.controller.notice;
 import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.notice.BidNoticeCollectionDto;
+import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.notice.BidNotice;
+import com.etone.protocolsupply.service.AttachmentService;
 import com.etone.protocolsupply.service.notice.BidNoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,6 +29,10 @@ public class BidNoticeController extends GenericController {
     @Autowired
     private BidNoticeService bidNoticeService;
 
+    @Autowired
+    private AttachmentService attachmentService;
+
+
     /**
      * 生成成交通知书
      *
@@ -41,8 +47,12 @@ public class BidNoticeController extends GenericController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseValue postBidNotice(@Validated
                                        @PathVariable("projectId") String projectId) {
+
+        //查看成交通知书模板路径
+        Attachment attachment =  attachmentService.findBidTemplate();
+
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        BidNotice bidNotice = bidNoticeService.save(projectId, this.getUser());
+        BidNotice bidNotice = bidNoticeService.save(projectId, this.getUser(),attachment.getPath());
         responseBuilder.data(bidNotice);
         return responseBuilder.build();
     }
@@ -107,14 +117,14 @@ public class BidNoticeController extends GenericController {
      */
     @ResponseBody
     @RequestMapping(value = "/export",
-            method = RequestMethod.GET,
+            method = RequestMethod.POST,
             consumes = {"application/json"},
             produces = {"application/json"})
     public void exportAgent(@RequestParam(value = "projectCode", required = false) String projectCode,
                             @RequestParam(value = "projectSubject", required = false) String projectSubject,
                             @RequestBody(required = false) List<Long> bidNoticeIds,
                             @Context HttpServletResponse response) {
-        bidNoticeService.export(response, projectCode, projectSubject, bidNoticeIds);
+        bidNoticeService.export(response, bidNoticeIds);
     }
 
 

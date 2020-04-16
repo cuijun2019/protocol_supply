@@ -87,4 +87,12 @@ public class AttachmentService {
             }
         }
     }
+
+    public Attachment findById() {
+        return attachmentRepository.findByAttachmentId();
+    }
+
+    public Attachment findBidTemplate() {
+        return attachmentRepository.findBidTemplate();
+    }
 }

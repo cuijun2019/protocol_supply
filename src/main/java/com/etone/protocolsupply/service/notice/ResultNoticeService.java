@@ -4,17 +4,22 @@ import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.notice.ResultNoticeCollectionDto;
 import com.etone.protocolsupply.model.dto.notice.ResultNoticeDto;
+import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.notice.ResultNotice;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
+import com.etone.protocolsupply.model.entity.user.User;
+import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.notice.ResultNoticeRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
+import com.etone.protocolsupply.repository.user.UserRepository;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,10 +29,14 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Transactional(rollbackFor = Exception.class)
 @Service
@@ -41,6 +50,15 @@ public class ResultNoticeService {
 
     @Autowired
     private ProjectInfoRepository projectInfoRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private AttachmentRepository attachmentRepository;
+
+    @Value("${file.upload.path.filePath}")
+    protected String uploadFilePath;
 
 
     public Specification<ResultNotice> getWhereClause(String projectCode, String projectSubject) {
@@ -101,6 +119,8 @@ public class ResultNoticeService {
             List<ResultNotice> list = new ArrayList<>();
             if (resultNoticeIds != null && !resultNoticeIds.isEmpty()) {
                 list = resultNoticeRepository.findAll(resultNoticeIds);
+            }else {
+                list = resultNoticeRepository.findAll();
             }
             ResultNotice resultNotice;
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -136,9 +156,81 @@ public class ResultNoticeService {
         return resultNoticeRepository.findById(Long.parseLong(resultNoticeId)).get().getProjectInfo();
     }
 
-    public ResultNotice save(String projectId, JwtUser user) {
+    public ResultNotice save(String projectId, JwtUser user, String templatePath) {
+        Attachment attachment = new Attachment();
+
+        //查询项目详情
+        ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(Long.valueOf(projectId));
+
+        try{
+
+            //查询创建人所在公司
+            User creator = userRepository.findByUsername(projectInfo.getCreator());
+
+            //文件类型
+            String fileType = templatePath.substring(templatePath.lastIndexOf(".") + 1);
+
+            //生成采购结果通知书并上传保存
+            InputStream is = new FileInputStream(templatePath);
+
+            //获取工作薄
+            Workbook wb = null;
+            if (fileType.equals("xls")) {
+                wb = new HSSFWorkbook(is);
+            } else if (fileType.equals("xlsx")) {
+                wb = new XSSFWorkbook(is);
+            }
+
+            //读取第一个工作页sheet
+            Sheet sheet = wb.getSheetAt(0);
+            //第一行为标题
+            for (Row row : sheet) {
+                for (Cell cell : row) {
+                    //根据不同类型转化成字符串
+                    cell.setCellType(CellType.STRING);
+                    if("学生就业指导中心".equals(cell.getStringCellValue())){
+                        cell.setCellValue(creator.getCompany());
+                    }
+                    if("FW008".equals(cell.getStringCellValue())){
+                        cell.setCellValue(projectInfo.getProjectCode());
+                    }
+                    if("毕业典礼和学位授予仪式布展".equals(cell.getStringCellValue())){
+                        cell.setCellValue(projectInfo.getProjectSubject());
+                    }
+                    if("供应商成交".equals(cell.getStringCellValue())){
+                        cell.setCellValue(projectInfo.getCreator());
+                    }
+                    if("5000".equals(cell.getStringCellValue())){
+                        cell.setCellValue(projectInfo.getAmount());
+                    }
+                    if("2018年6月6日".equals(cell.getStringCellValue().trim())){
+                        Date date = new Date();
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日");
+                        cell.setCellValue(simpleDateFormat.format(date));
+                    }
+                }
+            }
+
+            //改名保存
+            UUID uuid = UUID.randomUUID();
+            FileOutputStream excelFileOutPutStream = new FileOutputStream(uploadFilePath+uuid+".xlsx");
+            wb.write(excelFileOutPutStream);
+            excelFileOutPutStream.flush();
+            excelFileOutPutStream.close();
+
+
+            //附件表增加记录
+            attachment.setAttachName(uuid+".xlsx");
+            attachment.setFileType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            attachment.setPath(uploadFilePath+uuid+".xlsx");
+            attachment.setUploadTime(new Date());
+            attachment.setUploader(user.getUsername());
+            attachment = attachmentRepository.save(attachment);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         Long proId = Long.valueOf(projectId);
-        ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(proId);
         ResultNotice resultNotice = new ResultNotice();
         resultNotice.setProjectCode(projectInfo.getProjectCode());
         resultNotice.setProjectSubject(projectInfo.getProjectSubject());
@@ -149,6 +241,7 @@ public class ResultNoticeService {
         resultNotice.setCreateDate(new Date());
         resultNotice.setPurchaser(projectInfo.getPurchaser());
         resultNotice.setProjectInfo(projectInfo);
+        resultNotice.setAttachment(attachment);
         resultNoticeRepository.save(resultNotice);
         return resultNotice;
     }

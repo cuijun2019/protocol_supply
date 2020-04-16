@@ -4,17 +4,24 @@ import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.notice.BidNoticeCollectionDto;
 import com.etone.protocolsupply.model.dto.notice.BidNoticeDto;
+import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.notice.BidNotice;
+import com.etone.protocolsupply.model.entity.project.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
+import com.etone.protocolsupply.model.entity.user.User;
+import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.notice.BidNoticeRepository;
+import com.etone.protocolsupply.repository.project.AgentInfoExpRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
+import com.etone.protocolsupply.repository.user.UserRepository;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,11 +31,11 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Transactional(rollbackFor = Exception.class)
 @Service
@@ -36,14 +43,103 @@ public class BidNoticeService {
 
     @Autowired
     private PagingMapper          pagingMapper;
+
     @Autowired
     private BidNoticeRepository   bidNoticeRepository;
+
     @Autowired
     private ProjectInfoRepository projectInfoRepository;
 
-    public BidNotice save(String projectId, JwtUser jwtUser) {
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private AttachmentRepository attachmentRepository;
+
+    @Autowired
+    private AgentInfoExpRepository agentInfoExpRepository;
+
+    @Value("${file.upload.path.filePath}")
+    protected String uploadFilePath;
+
+    public BidNotice save(String projectId, JwtUser jwtUser, String bidTemplatePath) {
+        Attachment attachment = new Attachment();
+
+        //查询项目详情
+        ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(Long.valueOf(projectId));
+
+        //根据项目id查询代理商名称
+        List<AgentInfoExp> agentInfoExp = agentInfoExpRepository.findByProjectId(Long.valueOf(projectId));
+
+        try{
+
+            //查询创建人所在公司
+            User creator = userRepository.findByUsername(projectInfo.getCreator());
+
+            //文件类型
+            String fileType = bidTemplatePath.substring(bidTemplatePath.lastIndexOf(".") + 1);
+
+            //生成成交通知书并上传保存
+            InputStream is = new FileInputStream(bidTemplatePath);
+
+            //获取工作薄
+            Workbook wb = null;
+            if (fileType.equals("xls")) {
+                wb = new HSSFWorkbook(is);
+            } else if (fileType.equals("xlsx")) {
+                wb = new XSSFWorkbook(is);
+            }
+
+            //读取第一个工作页sheet
+            Sheet sheet = wb.getSheetAt(0);
+            //第一行为标题
+            for (Row row : sheet) {
+                for (Cell cell : row) {
+                    //根据不同类型转化成字符串
+                    cell.setCellType(CellType.STRING);
+                    if("成交供应商名称:".equals(cell.getStringCellValue())){
+                        cell.setCellValue(agentInfoExp.get(0).getAgentName());
+                    }
+                    if("FW008".equals(cell.getStringCellValue())){
+                        cell.setCellValue(projectInfo.getProjectCode());
+                    }
+                    if("FW009".equals(cell.getStringCellValue())){
+                        cell.setCellValue(projectInfo.getProjectSubject());
+                    }
+                    if("FW010".equals(cell.getStringCellValue())){
+                        cell.setCellValue(projectInfo.getAmount());
+                    }
+                    if("FW011".equals(cell.getStringCellValue())){
+                        cell.setCellValue(creator.getCompany());
+                    }
+                    if("2018年6月6日".equals(cell.getStringCellValue().trim())){
+                        Date date = new Date();
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日");
+                        cell.setCellValue(simpleDateFormat.format(date));
+                    }
+                }
+            }
+
+            //改名保存
+            UUID uuid = UUID.randomUUID();
+            FileOutputStream excelFileOutPutStream = new FileOutputStream(uploadFilePath+uuid+".xlsx");
+            wb.write(excelFileOutPutStream);
+            excelFileOutPutStream.flush();
+            excelFileOutPutStream.close();
+
+
+            //附件表增加记录
+            attachment.setAttachName(uuid+".xlsx");
+            attachment.setFileType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            attachment.setPath(uploadFilePath+uuid+".xlsx");
+            attachment.setUploadTime(new Date());
+            attachment.setUploader(jwtUser.getUsername());
+            attachment = attachmentRepository.save(attachment);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         Long proId = Long.valueOf(projectId);
-        ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(proId);
         BidNotice bidNotice = new BidNotice();
         bidNotice.setProjectCode(projectInfo.getProjectCode());
         bidNotice.setProjectSubject(projectInfo.getProjectSubject());
@@ -54,6 +150,7 @@ public class BidNoticeService {
         bidNotice.setCreateDate(new Date());
         bidNotice.setPurchaser(projectInfo.getPurchaser());
         bidNotice.setProjectInfo(projectInfo);
+        bidNotice.setAttachment(attachment);
         bidNoticeRepository.save(bidNotice);
         return bidNotice;
     }
@@ -102,7 +199,7 @@ public class BidNoticeService {
         return bidNotice;
     }
 
-    public void export(HttpServletResponse response, String projectCode, String projectSubject, List<Long> bidNoticeIds) {
+    public void export(HttpServletResponse response, List<Long> bidNoticeIds) {
         try {
             String[] header = {"项目主题", "项目编号", "成交供应商", "成交金额", "状态", "采购人", "创建人", "创建时间", "签收时间"};
             HSSFWorkbook workbook = new HSSFWorkbook();
@@ -126,7 +223,7 @@ public class BidNoticeService {
             if (bidNoticeIds != null && !bidNoticeIds.isEmpty()) {
                 list = bidNoticeRepository.findAll(bidNoticeIds);
             } else {
-                list = bidNoticeRepository.findAll(projectCode, projectSubject);
+                list = bidNoticeRepository.findAll();
             }
             BidNotice bidNotice;
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

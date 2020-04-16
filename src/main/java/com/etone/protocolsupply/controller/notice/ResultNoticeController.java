@@ -3,9 +3,11 @@ package com.etone.protocolsupply.controller.notice;
 import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.notice.ResultNoticeCollectionDto;
+import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.notice.BidNotice;
 import com.etone.protocolsupply.model.entity.notice.ResultNotice;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
+import com.etone.protocolsupply.service.AttachmentService;
 import com.etone.protocolsupply.service.notice.ResultNoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,6 +31,9 @@ public class ResultNoticeController extends GenericController {
     @Autowired
     private ResultNoticeService resultNoticeService;
 
+    @Autowired
+    private AttachmentService attachmentService;
+
     /**
      * 生成结果通知书
      *
@@ -43,8 +48,11 @@ public class ResultNoticeController extends GenericController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseValue postResultNotice(@Validated
                                        @PathVariable("projectId") String projectId) {
+        //查询结果通知书模板的路径
+        Attachment attachment = attachmentService.findById();
+
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        ResultNotice resultNotice = resultNoticeService.save(projectId, this.getUser());
+        ResultNotice resultNotice = resultNoticeService.save(projectId, this.getUser(),attachment.getPath());
         responseBuilder.data(resultNotice);
         return responseBuilder.build();
     }
@@ -108,7 +116,7 @@ public class ResultNoticeController extends GenericController {
      */
     @ResponseBody
     @RequestMapping(value = "/export",
-            method = RequestMethod.GET,
+            method = RequestMethod.POST,
             consumes = {"application/json"},
             produces = {"application/json"})
     public void exportContract(@RequestBody(required = false) List<Long> resultNoticeIds,
