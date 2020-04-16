@@ -183,7 +183,7 @@ public class CargoInfoService {
     }
 
     //货物导出
-    public void export(HttpServletResponse response, String cargoIds) {
+    public void export(HttpServletResponse response, List<Long> cargoIds) {
         try {
             String[] header = {"货物序号", "货物品目", "货物名称", "货物编号","状态", "品牌", "型号", "主要参数",
                     "产地", "进口/国产类别", "币种", "维保率/月", "证明文件", "备注"};
