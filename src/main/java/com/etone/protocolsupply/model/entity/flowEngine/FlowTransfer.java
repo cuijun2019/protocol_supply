@@ -44,8 +44,9 @@ public class FlowTransfer implements Serializable {
     /**
      * SQL语句
      */
-    @Column(name = "SQL", length = 1000)
-    private String sql;
+    @Lob
+    @Column(name = "SQL_STR", columnDefinition="text")
+    private String sqlStr;
 
     /**
      * 备注

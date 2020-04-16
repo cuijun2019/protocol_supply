@@ -36,7 +36,8 @@ public class FlowInfo implements Serializable {
     /**
      * 流程JSON数据
      */
-    @Column(name = "JSON_DATA", length = 4000)
+    @Lob
+    @Column(name = "JSON_DATA", columnDefinition="text")
     private String jsonData;
 
     /**
