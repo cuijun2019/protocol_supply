@@ -73,6 +73,11 @@
 			<version>3.17</version>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.17</version>
+		</dependency>
+		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>jsr311-api</artifactId>
 			<version>1.1.1</version>
@@ -96,12 +101,46 @@
 				</configuration>
 			</plugin>
 
+			<!--<plugin>-->
+				<!--<groupId>org.springframework.boot</groupId>-->
+				<!--<artifactId>spring-boot-maven-plugin</artifactId>-->
+				<!--<configuration>-->
+					<!--<classifier>exec</classifier>-->
+				<!--</configuration>-->
+			<!--</plugin>-->
+
+			<!-- 打jar包 -->
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
-					<classifier>exec</classifier>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<!-- MANIFEST.MF 中 Class-Path 加入前缀 -->
+							<classpathPrefix>lib/</classpathPrefix>
+							<!--指定入口类 -->
+							<mainClass>com.etone.protocolsupply.ProtocolSupplyApplication</mainClass>
+						</manifest>
+					</archive>
 				</configuration>
+			</plugin>
+			<!-- 复制依赖的jar包到指定的文件夹里，相当于：mvn dependency:copy-dependencies -DoutputDirectory=lib -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/src/main/lib</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
