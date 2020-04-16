@@ -195,24 +195,27 @@ public class ProjectInfoService {
 
         //agentInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
         //供应商
-//        Set<AgentInfoExp> agentInfoExps=projectInfoDto.getAgentInfoExps();
-//        if (agentInfoExps != null && !agentInfoExps.isEmpty()) {
-//            for (AgentInfoExp agentInfoExp : agentInfoExps) {
-//                agentInfoExp.setReviewStatus(1);
-//                agentInfoExp.setIsDelete(Constant.DELETE_NO);
-//                agentInfoExp.setCreateDate(new Date());
-//                agentInfoExp.setCreator(username);
-//            }
-//        }
+        Set<AgentInfoExp> agentInfoExps=projectInfoDto.getAgentInfoExps();
+        if (agentInfoExps != null && !agentInfoExps.isEmpty()) {
+            for (AgentInfoExp agentInfoExp : agentInfoExps) {
+                agentInfoExp.setReviewStatus(1);
+                agentInfoExp.setIsDelete(Constant.DELETE_NO);
+                agentInfoExp.setCreateDate(new Date());
+                agentInfoExp.setCreator(username);
+                agentInfoExp.setProjectInfo(projectInfo);
+                agentInfoExpRepository.save(agentInfoExp);
+            }
+        }
 //       // partInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
-//        //货物配件
-//        Set<PartInfoExp>partInfoExps=projectInfoDto.getPartInfoExps();
-//        if (partInfoExps != null && !partInfoExps.isEmpty()) {
-//            for (PartInfoExp partInfoExp : partInfoExps) {
-//                partInfoExp.setIsDelete(Constant.DELETE_NO);
-//
-//            }
-//        }
+        //货物配件
+        Set<PartInfoExp>partInfoExps=projectInfoDto.getPartInfoExps();
+        if (partInfoExps != null && !partInfoExps.isEmpty()) {
+            for (PartInfoExp partInfoExp : partInfoExps) {
+                partInfoExp.setIsDelete(Constant.DELETE_NO);
+                partInfoExp.setProjectInfo(projectInfo);
+                partInfoExpRepository.save(partInfoExp);
+            }
+        }
 
         projectInfoRepository.save(projectInfo);
         return projectInfo;
