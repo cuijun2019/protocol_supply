@@ -17,9 +17,8 @@ public class FlowInfo implements Serializable {
      * 流程id
      */
     @Id
-    @Column(name = "FLOW_ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long flowId;
+    @Column(name = "FLOW_ID", length = 50)
+    private String flowId;
 
     /**
      * 流程编号

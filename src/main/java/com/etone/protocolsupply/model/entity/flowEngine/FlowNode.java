@@ -16,16 +16,9 @@ import java.io.Serializable;
 public class FlowNode implements Serializable {
 
     /**
-     * 流程节点id
-     */
-    @Id
-    @Column(name = "FLOW_NODE_ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long flowNodeId;
-
-    /**
      * 流程节点编号
      */
+    @Id
     @Column(name = "FLOW_NODE_CODE", length = 100)
     private String flowNodeCode;
 
@@ -47,6 +40,6 @@ public class FlowNode implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JoinColumn(name = "FLOW_ID")
+    @JoinColumn(name = "FLOW_CODE")
     private FlowInfo flowInfo;
 }

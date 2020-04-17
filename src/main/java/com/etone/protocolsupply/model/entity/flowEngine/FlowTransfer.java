@@ -16,12 +16,11 @@ import java.io.Serializable;
 public class FlowTransfer implements Serializable {
 
     /**
-     * 流程线id
+     * 流程线编号
      */
     @Id
-    @Column(name = "FLOW_TRANSFER_ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long flowTransferId;
+    @Column(name = "FLOW_TRANSFER_CODE", length = 100)
+    private String flowTransferCode;
 
     /**
      * 上一节点编号
@@ -60,6 +59,6 @@ public class FlowTransfer implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JoinColumn(name = "FLOW_ID")
+    @JoinColumn(name = "FLOW_CODE")
     private FlowInfo flowInfo;
 }
