@@ -73,10 +73,18 @@ public class InquiryInfoService {
         String userName = jwtUser.getUsername();
         InquiryInfo inquiryInfo = new InquiryInfo();
         BeanUtils.copyProperties(inquiryInfoDto, inquiryInfo);
-        inquiryInfo.setInquiryCode("xjc-");//未定义
+        String maxOne = inquiryInfoRepository.findMaxOne();
+        if (maxOne == null) {
+            inquiryInfo.setInquiryCode("XJD-" + Common.getYYYYMMDDDate(date) + "-001");
+        } else {
+            InquiryInfo inquiryInfo1 = inquiryInfoRepository.findAllByInquiryId(Long.parseLong(maxOne));
+            inquiryInfo.setInquiryCode("XJD-" + Common.getYYYYMMDDDate(date) + "-" + Common.convertSerialProject(inquiryInfo1.getInquiryCode().substring(13), 1));
+
+        }
         inquiryInfo.setInquiryDate(date);//询价时间
         inquiryInfo.setIsDelete(Constant.DELETE_NO);
         inquiryInfo.setStatus(1);//询价状态
+        inquiryInfo.setRemark("配件列表");//配件导出接口连接，传参：货物id
         CargoInfo cargoInfo = inquiryInfoDto.getCargoInfo();
         if (cargoInfo != null && cargoInfo.getCargoId()!=null && !cargoInfo.getCargoId().equals("")) {
             Optional<CargoInfo> optional = cargoInfoRepository.findById(cargoInfo.getCargoId());

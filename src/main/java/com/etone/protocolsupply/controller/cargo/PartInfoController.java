@@ -26,6 +26,7 @@ import javax.ws.rs.core.Context;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "${jwt.route.path}/partInfo")
@@ -162,14 +163,15 @@ public class PartInfoController extends GenericController {
      */
     @ResponseBody
     @RequestMapping(value = "/export/{cargoId}",
-            method = RequestMethod.GET,
+            method = RequestMethod.POST,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseValue exportPart(@PathVariable("cargoId") String cargoId,
+                                    @RequestBody(required = false) List<Long> partIds,
                                     @Context HttpServletResponse response) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        partInfoService.export(response, Long.parseLong(cargoId));
+        partInfoService.export(response, Long.parseLong(cargoId),partIds);
         return responseBuilder.build();
     }
 

@@ -169,8 +169,6 @@ public class ProjectInfoController extends GenericController {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         ProjectInfo projectInfo = projectInfoService.findOne(Long.parseLong(projectId));
         //Long a=projectInfo.getCargoInfo().getCargoId();
-
-
         responseBuilder.data(projectInfo);
         return responseBuilder.build();
     }
@@ -218,21 +216,20 @@ public class ProjectInfoController extends GenericController {
     /**
      * 项目导出
      *
-     * @param projectSubject
-     * @param status
      * @param response
      * @return
      */
     @ResponseBody
     @RequestMapping(value = "/export",
-            method = RequestMethod.GET,
+            method = RequestMethod.POST,
             consumes = {"application/json"},
             produces = {"application/json"})
-    public void exportAgent(@RequestParam(value = "projectSubject", required = false) String projectSubject,
-                            @RequestParam(value = "status", required = false) String status,
-                            @RequestParam(value = "isDelete", required = false, defaultValue = "2") String isDelete,
+    public void exportAgent(
+//            @RequestParam(value = "projectSubject", required = false) String projectSubject,
+//                            @RequestParam(value = "status", required = false) String status,
+//                            @RequestParam(value = "isDelete", required = false, defaultValue = "2") String isDelete,
                             @RequestBody(required = false) List<Long> projectIds,
                             @Context HttpServletResponse response) {
-        projectInfoService.export(response, projectSubject, status, isDelete, projectIds);
+        projectInfoService.export(response, projectIds);
     }
 }

@@ -24,4 +24,12 @@ public interface InquiryInfoRepository extends JpaRepository<InquiryInfo, Long>,
 
     @Query(value = "select * from inquiry_info where is_delete=2 and inquiry_id in ?1  ", nativeQuery = true)
     List<InquiryInfo> findByInquiryIds(List<Long> inquiryIds);
+
+    @Transactional(rollbackFor = Exception.class)
+    @Query(value = "select max(i.inquiry_id)from inquiry_info i where i.is_delete=2 limit 1", nativeQuery = true)
+    String findMaxOne();
+
+    @Transactional(rollbackFor = Exception.class)
+    @Query(value = "select * from inquiry_info where is_delete=2 and inquiry_id=?1", nativeQuery = true)
+    InquiryInfo findAllByInquiryId(Long inquiryId);
 }

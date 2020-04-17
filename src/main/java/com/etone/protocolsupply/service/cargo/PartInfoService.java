@@ -197,7 +197,7 @@ public class PartInfoService {
     }
 
     //配件导出
-    public void export(HttpServletResponse response, Long cargoId) {
+    public void export(HttpServletResponse response, Long cargoId, List<Long> partIds) {
         try {
             String[] header = {"配件编号", "设备或配件名称", "型号/规格", "产地/厂家", "主要技术参数", "单位", "数量",
                     "单价", "总价", "备注"};
@@ -218,7 +218,7 @@ public class PartInfoService {
                 cell.setCellStyle(headerStyle);
             }
 
-            List<PartInfo> list = partInfoRepository.findAllBycargoId(cargoId);
+            List<PartInfo> list = partInfoRepository.findAllBycargoId(cargoId,partIds);
             PartInfo partInfo;
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             for (int i = 0; i < list.size(); i++) {
@@ -448,8 +448,5 @@ public class PartInfoService {
         return Common.convertSerial(serial, 1);
     }
 
-    public List<PartInfo> getPartInfoList(Long cargoId) {
-        return partInfoRepository.findAllBycargoId(cargoId);
 
-    }
 }

@@ -99,7 +99,7 @@ public class ProjectInfo implements Serializable {
      */
     @OneToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    //@JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "NOTICE_ID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment_n;
 
@@ -108,9 +108,18 @@ public class ProjectInfo implements Serializable {
      */
     @OneToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    //@JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "CONTRACT_ID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment_c;
+
+    /**
+     * 采购结果通知书
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
+    //@JsonInclude(JsonInclude.Include.NON_NULL)
+    @JoinColumn(name = "PURCHASE_ID", referencedColumnName = "ATTACH_ID")
+    private Attachment attachment_p;
 
 //    /**
 //     * 配件拓展表

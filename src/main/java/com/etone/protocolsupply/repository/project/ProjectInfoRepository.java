@@ -25,10 +25,8 @@ public interface ProjectInfoRepository extends JpaRepository<ProjectInfo, Long>,
     @Query(value = "select max(p.project_id)from project_info p where p.is_delete=2 limit 1", nativeQuery = true)
     String findMaxOne();
 
-    @Query(value = "select * from project_info where is_delete=2 and " +
-            "if((:projectSubject is not null), (project_subject like %:projectSubject%), (1=1)) and if((:status is not null), (status=:status), (1=1)) and " +
-            "project_id in (:projectIds)", nativeQuery = true)
-    List<ProjectInfo> findAllp(@Param("projectSubject") String projectSubject, @Param("status") String status, @Param("projectIds") List<Long> projectIds);
+    @Query(value = "select * from project_info where is_delete=2 and project_id in (:projectIds)", nativeQuery = true)
+    List<ProjectInfo> findAllp(@Param("projectIds") List<Long> projectIds);
 
     @Query(value = "select * from project_info where is_delete=2 and " +
             "if((:projectSubject is not null), (project_subject like %:projectSubject%), (1=1)) and if((:status is not null), (status=:status), (1=1))", nativeQuery = true)

@@ -167,7 +167,7 @@ public class CargoInfoController extends GenericController {
      */
     @ResponseBody
     @RequestMapping(value = "/export",
-            method = RequestMethod.GET,
+            method = RequestMethod.POST,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.NO_CONTENT)

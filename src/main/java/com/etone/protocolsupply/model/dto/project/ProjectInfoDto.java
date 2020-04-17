@@ -3,8 +3,11 @@ package com.etone.protocolsupply.model.dto.project;
 import com.etone.protocolsupply.model.entity.project.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.project.PartInfoExp;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,6 +28,12 @@ public class ProjectInfoDto extends ProjectInfo {
     /**
      * 代理商拓展表
      */
-    private Set<AgentInfoExp> agentInfoExps = new HashSet<>();
+    //private Set<AgentInfoExp> agentInfoExps = new HashSet<>();
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
+    //@JsonInclude(JsonInclude.Include.NON_NULL)
+   // @JoinColumn(name = "CARGO_ID", referencedColumnName = "CARGO_ID")
+    private AgentInfoExp agentInfoExp;
 
 }
