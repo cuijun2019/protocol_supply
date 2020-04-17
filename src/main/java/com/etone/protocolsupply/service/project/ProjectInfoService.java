@@ -8,11 +8,13 @@ import com.etone.protocolsupply.model.dto.project.ProjectCollectionDto;
 import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
+import com.etone.protocolsupply.model.entity.inquiry.InquiryInfo;
 import com.etone.protocolsupply.model.entity.project.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.project.PartInfoExp;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
+import com.etone.protocolsupply.repository.inquiry.InquiryInfoRepository;
 import com.etone.protocolsupply.repository.project.AgentInfoExpRepository;
 import com.etone.protocolsupply.repository.project.PartInfoExpRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
@@ -52,6 +54,8 @@ public class ProjectInfoService {
     @Autowired
     private PartInfoExpRepository  partInfoExpRepository;
     @Autowired
+    private InquiryInfoRepository inquiryInfoRepository;
+    @Autowired
     private PagingMapper           pagingMapper;
 
 
@@ -70,7 +74,7 @@ public class ProjectInfoService {
         }
         projectInfo.setIsDelete(Constant.DELETE_NO);
         projectInfo.setCreator(userName);
-        projectInfo.setStatus(1);//审核状态：审核中、已完成、退回
+       // projectInfo.setStatus(1);//审核状态：草稿、审核中、已完成、退回
         Attachment attachment = projectInfoDto.getAttachment_n();//中标通知书
         if (attachment != null && attachment.getAttachId() != null && !attachment.getAttachId().equals("")) {
             Optional<Attachment> optional = attachmentRepository.findById(attachment.getAttachId());
@@ -89,18 +93,39 @@ public class ProjectInfoService {
         } else {
             projectInfo.setAttachment_c(null);
         }
+        Attachment attachment_p = projectInfoDto.getAttachment_p();//采购结果通知书
+        if (attachment_p != null && attachment_p.getAttachId() != null && !attachment_p.getAttachId().equals("")) {
+            Optional<Attachment> optional = attachmentRepository.findById(attachment_p.getAttachId());
+            if (optional.isPresent()) {
+                projectInfo.setAttachment_p(optional.get());
+            }
+        } else {
+            projectInfo.setAttachment_p(null);
+        }
+        InquiryInfo inquiryInfo = projectInfoDto.getInquiryInfo();//关联询价
+        if (inquiryInfo != null && inquiryInfo.getInquiryId() != null && !inquiryInfo.getInquiryId().equals("")) {
+            Optional<InquiryInfo> optional = inquiryInfoRepository.findById(inquiryInfo.getInquiryId());
+            if (optional.isPresent()) {
+                projectInfo.setInquiryInfo(optional.get());
+            }
+        } else {
+            projectInfo.setInquiryInfo(null);
+        }
 
         projectInfo.setProjectSubject(projectInfoDto.getCargoName() + "的采购");
-
+        Optional<CargoInfo> optional = cargoInfoRepository.findById(Long.parseLong(projectInfoDto.getCargoId()));
+        if (optional.isPresent()) {
+            projectInfoDto.setCargoInfo(optional.get());
+        }
         //配件
         Set<PartInfoExp> partInfoExps = projectInfoDto.getPartInfoExps();
         if (partInfoExps != null && !partInfoExps.isEmpty()) {
             for (PartInfoExp partInfoExp : partInfoExps) {
                 partInfoExp.setIsDelete(Constant.DELETE_NO);
+                partInfoExp.setCargoInfo(projectInfoDto.getCargoInfo());
                 partInfoExpRepository.save(partInfoExp);
             }
         }
-
         projectInfoRepository.save(projectInfo);
         List<Long> partIds = new ArrayList<>();
         if (partInfoExps.size() > 0) {
@@ -114,7 +139,7 @@ public class ProjectInfoService {
         if (agentInfoExp != null ) {
             agentInfoExp.setCreator(userName);
             agentInfoExp.setCreateDate(date);
-            agentInfoExp.setStatus(1);//状态
+           // agentInfoExp.setStatus(1);//状态
             agentInfoExp.setReviewStatus(1);//审核状态
             agentInfoExp.setIsDelete(Constant.DELETE_NO);
             agentInfoExp.setProjectInfo(projectInfo);
@@ -126,7 +151,7 @@ public class ProjectInfoService {
     }
 
 
-    public Specification<ProjectInfo> getWhereClause(String projectSubject, String status, String isDelete) {
+    public Specification<ProjectInfo> getWhereClause(String projectSubject,String projectCode, String status,String inquiryId, String isDelete) {
         return (Specification<ProjectInfo>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (Strings.isNotBlank(projectSubject)) {
@@ -134,6 +159,12 @@ public class ProjectInfoService {
             }
             if (Strings.isNotBlank(status)) {
                 predicates.add(criteriaBuilder.equal(root.get("status").as(String.class), status));
+            }
+            if (Strings.isNotBlank(inquiryId)) {
+                predicates.add(criteriaBuilder.equal(root.get("inquiryId").as(Long.class), inquiryId));
+            }
+            if (Strings.isNotBlank(projectCode)) {
+                predicates.add(criteriaBuilder.like(root.get("projectCode").as(String.class), '%' + projectCode + '%'));
             }
             predicates.add(criteriaBuilder.equal(root.get("isDelete").as(Long.class), isDelete));
             Predicate[] pre = new Predicate[predicates.size()];

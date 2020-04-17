@@ -148,7 +148,7 @@ public class PartInfoService {
         for (PartInfoExp partInfoExp : source) {
             partInfoExpDto = new PartInfoExpDto();
             BeanUtils.copyProperties(partInfoExp, partInfoExpDto);
-
+            partInfoExpDto.getCargoInfo().setPartInfos(null);
             partExpCollectionDto.add(partInfoExpDto);
         }
 
@@ -170,6 +170,10 @@ public class PartInfoService {
 
     public void delete(Long partId) {
         partInfoRepository.updateIsDelete(partId);
+    }
+    //删除货物项目-配件列表
+    public void deleteExp(Long partId) {
+        partInfoExpRepository.updateIsDelete(partId);
     }
 
     //配件导入
@@ -239,6 +243,56 @@ public class PartInfoService {
 
             response.setContentType("application/octet-stream");
             response.setHeader("Content-disposition", "attachment;filename=partInfo.xls");
+            response.flushBuffer();
+            workbook.write(response.getOutputStream());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //项目-配件导出
+    public void exportExp(HttpServletResponse response, List<Long> partIds) {
+        try {
+            String[] header = {"货物名称", "配件序号", "配件编号", "配件/设备名称", "型号/规格", "产地", "主要技术参数",
+                    "单位", "数量", "备注"};
+            HSSFWorkbook workbook = new HSSFWorkbook();
+            HSSFSheet sheet = workbook.createSheet("项目货物列表");
+            sheet.setDefaultColumnWidth(10);
+            //        创建标题的显示样式
+            HSSFCellStyle headerStyle = workbook.createCellStyle();
+            headerStyle.setFillForegroundColor(IndexedColors.YELLOW.index);
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            //        创建第一行表头
+            HSSFRow headrow = sheet.createRow(0);
+
+            for (int i = 0; i < header.length; i++) {
+                HSSFCell cell = headrow.createCell(i);
+                HSSFRichTextString text = new HSSFRichTextString(header[i]);
+                cell.setCellValue(text);
+                cell.setCellStyle(headerStyle);
+            }
+
+            List<PartInfoExp> list = partInfoExpRepository.findAllBypartIds(partIds);
+            PartInfoExp partInfoExp;
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            for (int i = 0; i < list.size(); i++) {
+                DecimalFormat df = new DecimalFormat("0.00");
+                partInfoExp = list.get(i);
+                HSSFRow row = sheet.createRow(i + 1);
+                row.createCell(0).setCellValue(new HSSFRichTextString(partInfoExp.getCargoInfo().getCargoName()));
+                row.createCell(1).setCellValue(new HSSFRichTextString(partInfoExp.getPartSerial()));
+                row.createCell(2).setCellValue(new HSSFRichTextString(partInfoExp.getPartCode()));
+                row.createCell(3).setCellValue(new HSSFRichTextString(partInfoExp.getPartName()));
+                row.createCell(4).setCellValue(new HSSFRichTextString(partInfoExp.getStandards()));
+                row.createCell(5).setCellValue(new HSSFRichTextString(partInfoExp.getManufactor()));
+                row.createCell(6).setCellValue(new HSSFRichTextString(partInfoExp.getTechParams()));
+                row.createCell(7).setCellValue(new HSSFRichTextString(partInfoExp.getUnit()));
+                row.createCell(8).setCellValue(new HSSFRichTextString(partInfoExp.getQuantity()));
+                row.createCell(9).setCellValue(new HSSFRichTextString(partInfoExp.getRemark()));
+            }
+
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-disposition", "attachment;filename=partInfoExp.xls");
             response.flushBuffer();
             workbook.write(response.getOutputStream());
         } catch (Exception e) {

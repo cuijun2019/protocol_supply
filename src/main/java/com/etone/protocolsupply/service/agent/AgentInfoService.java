@@ -54,9 +54,7 @@ public class AgentInfoService {
     public AgentInfo save(AgentInfoDto agentInfoDto, JwtUser jwtUser) throws GlobalServiceException {
         Date date = new Date();
         String userName = jwtUser.getUsername();
-
         Attachment attachment = agentInfoDto.getAttachment();
-
         AgentInfo agentInfo = new AgentInfo();
         BeanUtils.copyProperties(agentInfoDto, agentInfo);
         agentInfo.setReviewStatus(Constant.STATE_DRAFT);

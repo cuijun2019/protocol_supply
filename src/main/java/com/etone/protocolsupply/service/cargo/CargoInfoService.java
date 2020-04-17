@@ -67,7 +67,7 @@ public class CargoInfoService {
         cargoInfo.setCreateDate(date);
         cargoInfo.setMaintenanceDate(date);
         cargoInfo.setMaintenanceMan(userName);
-        cargoInfo.setStatus(1);
+        //cargoInfo.setStatus(1);
         Attachment attachment = cargoInfoDto.getAttachment();
         if (attachment != null && attachment.getAttachId()!=null && !attachment.getAttachId().equals("")) {
             Optional<Attachment> optional = attachmentRepository.findById(attachment.getAttachId());

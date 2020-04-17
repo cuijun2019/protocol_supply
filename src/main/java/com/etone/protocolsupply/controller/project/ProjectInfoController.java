@@ -56,6 +56,7 @@ public class ProjectInfoController extends GenericController {
                                          @RequestBody ProjectInfoDto projectInfoDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         ProjectInfo projectInfo = projectInfoService.save(projectInfoDto, this.getUser());
+        projectInfo.getInquiryInfo().getCargoInfo().setPartInfos(null);
         responseBuilder.data(projectInfo);
         return responseBuilder.build();
     }
@@ -80,12 +81,14 @@ public class ProjectInfoController extends GenericController {
                                        @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
                                        @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
                                        @RequestParam(value = "projectSubject", required = false) String projectSubject,
+                                       @RequestParam(value = "projectCode", required = false) String projectCode,
                                        @RequestParam(value = "status", required = false) String status,
+                                       @RequestParam(value = "inquiryId", required = false) String inquiryId,
                                        HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort = new Sort(Sort.Direction.DESC, "projectId");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Specification<ProjectInfo> specification = projectInfoService.getWhereClause(projectSubject, status, isDelete);
+        Specification<ProjectInfo> specification = projectInfoService.getWhereClause(projectSubject,projectCode, status,inquiryId, isDelete);
         Page<ProjectInfo> page = projectInfoService.findAgents(specification, pageable);
         ProjectCollectionDto projectCollectionDto = projectInfoService.to(page, request);
         responseBuilder.data(projectCollectionDto);
@@ -120,6 +123,44 @@ public class ProjectInfoController extends GenericController {
         responseBuilder.data(partInfoExpDtos);
         return responseBuilder.build();
     }
+
+    /**
+     * 删除-配件列表
+     *
+     * @param partExpId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/partInfoExp/{partExpId}",
+            method = RequestMethod.DELETE,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseValue deletepartInfoExp(@PathVariable("partExpId") String partExpId) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        partInfoService.deleteExp(Long.parseLong(partExpId));
+        return responseBuilder.build();
+    }
+
+    /**
+     * 项目-配件列表导出
+     *
+     * @param response
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/partInfoExp/export",
+            method = RequestMethod.POST,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseValue exportPartExp(@RequestBody(required = false) List<Long> partIds,
+                                    @Context HttpServletResponse response) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        partInfoService.exportExp(response,partIds);
+        return responseBuilder.build();
+    }
+
 
     /**
      * 项目-代理商列表
@@ -196,7 +237,7 @@ public class ProjectInfoController extends GenericController {
     }
 
     /**
-     * 删除
+     * 删除项目
      *
      * @param projectId
      * @return

@@ -1,6 +1,7 @@
 package com.etone.protocolsupply.model.entity.project;
 
 import com.etone.protocolsupply.model.entity.Attachment;
+import com.etone.protocolsupply.model.entity.inquiry.InquiryInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
@@ -86,10 +87,22 @@ public class ProjectInfo implements Serializable {
     private Integer status;
 
     /**
+     * 货物金额
+     */
+    @Column(name = "CARGOTOTAL", length = 50)
+    private Double cargoTotal;
+
+    /**
      * 项目总金额
      */
     @Column(name = "AMOUNT", length = 50)
     private String amount;
+
+    /**
+     * 币种
+     */
+    @Column(name = "CURRENCY", length = 20)
+    private String currency;
 
     @Column(name = "IS_DELETE", length = 4)
     private Integer isDelete;
@@ -120,6 +133,15 @@ public class ProjectInfo implements Serializable {
     //@JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "PURCHASE_ID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment_p;
+
+    /**
+     * 询价记录
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
+    //@JsonInclude(JsonInclude.Include.NON_NULL)
+    @JoinColumn(name = "INQUIRY_ID", referencedColumnName = "INQUIRY_ID")
+    private InquiryInfo inquiryInfo;
 
 //    /**
 //     * 配件拓展表

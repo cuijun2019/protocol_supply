@@ -1,5 +1,6 @@
 package com.etone.protocolsupply.model.dto.project;
 
+import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.project.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.project.PartInfoExp;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
@@ -30,10 +31,10 @@ public class ProjectInfoDto extends ProjectInfo {
      */
     //private Set<AgentInfoExp> agentInfoExps = new HashSet<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
     //@JsonInclude(JsonInclude.Include.NON_NULL)
    // @JoinColumn(name = "CARGO_ID", referencedColumnName = "CARGO_ID")
     private AgentInfoExp agentInfoExp;
+
+    private CargoInfo cargoInfo;
 
 }
