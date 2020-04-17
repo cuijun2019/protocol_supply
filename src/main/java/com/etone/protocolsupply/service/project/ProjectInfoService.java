@@ -157,6 +157,7 @@ public class ProjectInfoService {
             projectInfoDto.setCargoName(cargoInfo.getCargoName());//货物名称
             projectInfoDto.setCurrency(cargoInfo.getCurrency());//币种
             projectInfoDto.setGuaranteeRate(cargoInfo.getGuaranteeRate());//维保率
+            projectInfoDto.setCargoTotal(0.00);//货物总金额
             projectCollectionDto.add(projectInfoDto);
         }
         return projectCollectionDto;
