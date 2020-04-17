@@ -68,12 +68,6 @@ public class PartInfoService {
         if (optional.isPresent()) {
             partInfo.setCargoInfo(optional.get());
         }
-//        if (Strings.isNotBlank(partInfoDto.getProjectId())) {
-//            ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(Long.parseLong(partInfoDto.getProjectId()));
-//            partInfo.setProjectInfo(projectInfo);
-//        } else {
-//            partInfo.setProjectInfo(null);
-//        }
         String cargoSerial = partInfo.getCargoInfo().getCargoSerial();
         String partSerial = partInfoRepository.findLastPartSerial(cargoSerial);
         partInfo.setPartSerial(Common.convertSerial(partSerial.toString(), 1));

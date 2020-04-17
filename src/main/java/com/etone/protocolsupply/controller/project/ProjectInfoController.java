@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping(value = "${jwt.route.path}/projectInfo")
@@ -77,9 +78,9 @@ public class ProjectInfoController extends GenericController {
             consumes = {"application/json"},
             produces = {"application/json"})
     public ResponseValue getCargoInfos(@Validated
-                                       @RequestParam(value = "isDelete", required = false) String isDelete,
+                                           @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
                                        @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
-                                       @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+                                       @RequestParam(value = "isDelete", required = false) String isDelete,
                                        @RequestParam(value = "projectSubject", required = false) String projectSubject,
                                        @RequestParam(value = "projectCode", required = false) String projectCode,
                                        @RequestParam(value = "status", required = false) String status,
@@ -123,6 +124,27 @@ public class ProjectInfoController extends GenericController {
         responseBuilder.data(partInfoExpDtos);
         return responseBuilder.build();
     }
+
+    /**
+     * 新增项目配件列表
+     *
+     * @param projectInfoDto
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/partInfoExp",
+            method = RequestMethod.POST,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseValue postpartInfoExpInfo(@Validated
+                                         @RequestBody ProjectInfoDto projectInfoDto) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        Set<PartInfoExp> partInfoExps = projectInfoService.savePartExp(projectInfoDto, this.getUser());
+        responseBuilder.data(partInfoExps);
+        return responseBuilder.build();
+    }
+
 
     /**
      * 删除-配件列表

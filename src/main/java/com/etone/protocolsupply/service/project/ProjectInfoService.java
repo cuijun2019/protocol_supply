@@ -144,10 +144,31 @@ public class ProjectInfoService {
             agentInfoExp.setIsDelete(Constant.DELETE_NO);
             agentInfoExp.setProjectInfo(projectInfo);
             agentInfoExpRepository.save(agentInfoExp);
+        }
+        return projectInfo;
+    }
 
+    public Set<PartInfoExp> savePartExp(ProjectInfoDto projectInfoDto, JwtUser jwtUser) throws GlobalServiceException {
+        Optional<CargoInfo> optional = cargoInfoRepository.findById(Long.parseLong(projectInfoDto.getCargoId()));
+        Optional<ProjectInfo> optionalProjectInfo = projectInfoRepository.findById(projectInfoDto.getProjectId());
+        //配件
+        Set<PartInfoExp> partInfoExps = projectInfoDto.getPartInfoExps();
+        if (partInfoExps != null && !partInfoExps.isEmpty()) {
+            for (PartInfoExp partInfoExp : partInfoExps) {
+                partInfoExp.setIsDelete(Constant.DELETE_NO);
+                if (optional.isPresent()) {
+                    partInfoExp.setCargoInfo(optional.get());
+                }
+                if (optionalProjectInfo.isPresent()) {
+                    partInfoExp.setProjectInfo(optionalProjectInfo.get());
+                }
+                partInfoExpRepository.save(partInfoExp);
+                partInfoExp.getCargoInfo().setPartInfos(null);
+                partInfoExp.setCargoInfo(null);
+            }
         }
 
-        return projectInfo;
+        return partInfoExps;
     }
 
 
@@ -160,9 +181,9 @@ public class ProjectInfoService {
             if (Strings.isNotBlank(status)) {
                 predicates.add(criteriaBuilder.equal(root.get("status").as(String.class), status));
             }
-            if (Strings.isNotBlank(inquiryId)) {
-                predicates.add(criteriaBuilder.equal(root.get("inquiryId").as(Long.class), inquiryId));
-            }
+//            if (Strings.isNotBlank(inquiryId)) {
+//                predicates.add(criteriaBuilder.equal(root.get("inquiryId").as(Long.class), inquiryId));
+//            }
             if (Strings.isNotBlank(projectCode)) {
                 predicates.add(criteriaBuilder.like(root.get("projectCode").as(String.class), '%' + projectCode + '%'));
             }
@@ -182,6 +203,7 @@ public class ProjectInfoService {
         ProjectInfoDto projectInfoDto;
         for (ProjectInfo projectInfo : source) {
             CargoInfo cargoInfo = cargoInfoRepository.findAllByProjectId(projectInfo.getProjectId());
+            cargoInfo.setPartInfos(null);
             projectInfoDto = new ProjectInfoDto();
             BeanUtils.copyProperties(projectInfo, projectInfoDto);
             projectInfoDto.setCargoId(cargoInfo.getCargoId().toString());//货物id
