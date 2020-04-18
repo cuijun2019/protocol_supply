@@ -27,4 +27,7 @@ public interface AgentInfoExpRepository extends JpaRepository<AgentInfoExp, Long
 
     @Query(value = "select * from agent_info_exp where project_id=?1", nativeQuery = true)
     List<AgentInfoExp> findByProjectId(Long projectId);
+
+    @Query(value = "select * from agent_info_exp where project_id=?1", nativeQuery = true)
+    AgentInfoExp findByProjectId2(Long projectId);
 }

@@ -183,39 +183,6 @@ public class ProjectInfoController extends GenericController {
         return responseBuilder.build();
     }
 
-
-    /**
-     * 项目-代理商列表
-     *
-     * @param projectId
-     * @param isDelete
-     * @param currentPage
-     * @param pageSize
-     * @param request
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(value = "/agentInfoExp",
-            method = RequestMethod.GET,
-            consumes = {"application/json"},
-            produces = {"application/json"})
-    public ResponseValue getAgents(@Validated
-                                   @RequestParam(value = "isDelete", required = false) String isDelete,
-                                   @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
-                                   @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
-                                   @RequestParam(value = "projectId", required = false) String projectId,
-                                   HttpServletRequest request) {
-        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        Sort sort = new Sort(Sort.Direction.DESC, "createDate");
-        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-
-        Page<AgentInfoExp> page = agentInfoService.findAgentExps(projectId, isDelete, pageable);
-        AgentExpCollectionDto agentCollectionDto = agentInfoService.toExp(page, request);
-        responseBuilder.data(agentCollectionDto);
-        return responseBuilder.build();
-    }
-
-
     /**
      * 项目详情
      *
@@ -230,9 +197,8 @@ public class ProjectInfoController extends GenericController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseValue getCargo(@PathVariable("projectId") String projectId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        ProjectInfo projectInfo = projectInfoService.findOne(Long.parseLong(projectId));
-        //Long a=projectInfo.getCargoInfo().getCargoId();
-        responseBuilder.data(projectInfo);
+        ProjectInfoDto projectInfoDto = projectInfoService.findOne(Long.parseLong(projectId));
+        responseBuilder.data(projectInfoDto);
         return responseBuilder.build();
     }
 

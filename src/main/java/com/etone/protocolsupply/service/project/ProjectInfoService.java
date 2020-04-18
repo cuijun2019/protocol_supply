@@ -266,13 +266,20 @@ public class ProjectInfoService {
         return projectInfo;
     }
 
-    public ProjectInfo findOne(Long projectId) {
+    public ProjectInfoDto findOne(Long projectId) {
         Optional<ProjectInfo> optional = projectInfoRepository.findById(projectId);
+        ProjectInfoDto projectInfoDto=new ProjectInfoDto();
+        ProjectInfo projectInfo=new ProjectInfo();
         if (optional.isPresent()) {
-            return optional.get();
-        } else {
-            throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("通过项目id"));
+             projectInfo=optional.get();
+            BeanUtils.copyProperties(projectInfo, projectInfoDto);
         }
+        AgentInfoExp agentInfoExp=agentInfoExpRepository.findByProjectId2(projectId);
+        projectInfoDto.setAgentInfoExp(agentInfoExp);
+        projectInfoDto.getInquiryInfo().getCargoInfo().setPartInfos(null);
+        projectInfoDto.setInquiryInfo(null);
+        projectInfoDto.getAgentInfoExp().setProjectInfo(null);
+        return projectInfoDto;
     }
 
     public void delete(Long projectId) {
