@@ -12,10 +12,15 @@ public interface AttachmentRepository extends JpaRepository<Attachment, Long>, J
 
     @Query(value = "select * from attachment where attach_id=(select attach_id from result_template r where r.status=1)",
             nativeQuery = true)
-    Attachment findByAttachmentId();
+    Attachment findByResultTemplate();
 
 
     @Query(value = "select * from attachment where attach_id=(select attach_id from bid_template b where b.status=1)",
             nativeQuery = true)
     Attachment findBidTemplate();
+
+    @Query(value = "select * from attachment where attach_id=(select attach_id from contract_template c where c.status=1)",
+            nativeQuery = true)
+    Attachment findContractTemplate();
+
 }

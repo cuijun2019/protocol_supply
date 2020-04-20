@@ -88,11 +88,15 @@ public class AttachmentService {
         }
     }
 
-    public Attachment findById() {
-        return attachmentRepository.findByAttachmentId();
+    public Attachment findByResultTemplate() {
+        return attachmentRepository.findByResultTemplate();
     }
 
     public Attachment findBidTemplate() {
         return attachmentRepository.findBidTemplate();
+    }
+
+    public Attachment findContractTemplate() {
+        return attachmentRepository.findContractTemplate();
     }
 }

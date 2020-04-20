@@ -4,17 +4,30 @@ import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.notice.ContractNoticceDto;
 import com.etone.protocolsupply.model.dto.notice.ContractNoticeCollectionDto;
+import com.etone.protocolsupply.model.entity.Attachment;
+import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.notice.ContractNotice;
+import com.etone.protocolsupply.model.entity.project.PartInfoExp;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
+import com.etone.protocolsupply.model.entity.user.User;
+import com.etone.protocolsupply.repository.AttachmentRepository;
+import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.repository.notice.ContractNoticeRepository;
+import com.etone.protocolsupply.repository.project.PartInfoExpRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
+import com.etone.protocolsupply.repository.user.UserRepository;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,11 +37,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Transactional(rollbackFor = Exception.class)
 @Service
@@ -42,6 +53,21 @@ public class ContractNoticeService {
 
     @Autowired
     private PagingMapper pagingMapper;
+
+    @Autowired
+    private AttachmentRepository attachmentRepository;
+
+    @Autowired
+    private PartInfoExpRepository partInfoExpRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private CargoInfoRepository cargoInfoRepository;
+
+    @Value("${file.upload.path.filePath}")
+    protected String uploadFilePath;
 
     public Specification<ContractNotice> getWhereClause(String projectCode, String projectSubject) {
         return (Specification<ContractNotice>) (root, criteriaQuery, criteriaBuilder) -> {
@@ -147,9 +173,115 @@ public class ContractNoticeService {
         return ContractNoticeRepository.findById(Long.parseLong(contractNoticeId)).get();
     }
 
-    public ContractNotice save(String projectId, JwtUser user) {
+    public ContractNotice save(String projectId, JwtUser user, String path) {
+        //
+        Attachment attachment = new Attachment();
+
+        //查询项目详情
+        ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(Long.valueOf(projectId));
+
+        //查询创建人所在公司
+        User creator = userRepository.findByUsername(projectInfo.getCreator());
+
+        //根据项目id查询配件表得到货物id
+        //list<CargoInfo>  cargoInfolist = cargo
+
+
+        HashMap<String, String> contentMap = new HashMap<>();
+        contentMap.put("${NAME}",creator.getCompany());
+        contentMap.put("${GOODS}",projectInfo.getProjectSubject());
+        contentMap.put("${EQUIPMENT}","设备");
+        contentMap.put("${AMOUNT}","1000");
+        contentMap.put("${DONETIME}","2020-04-20");
+        contentMap.put("${CHMONEY}","壹拾贰");
+        contentMap.put("${MONEY}","1000");
+        contentMap.put("${MONEYTYPE}","A");
+        contentMap.put("${CHDAY}","100");
+        XWPFDocument document;
+
+
+        try{
+            document = new XWPFDocument(new FileInputStream(new File(path)));
+
+            //获取文件中的所有表格
+            List<XWPFTable> tables = document.getTables();
+            XWPFTable table = tables.get(0);
+
+            ArrayList<PartInfoExp> expList = new ArrayList<>();
+
+            //查询配件列表
+            List<PartInfoExp> partInfoExpList = partInfoExpRepository.findByProjectId(Long.parseLong(projectId));
+
+            if(partInfoExpList!=null && partInfoExpList.size()>0){
+                for (int i = 0; i < partInfoExpList.size(); i++) {
+                    expList.add(partInfoExpList.get(i));
+                }
+            }
+
+
+            //
+            if(expList!=null){
+                //根据配件表集合大小增加空白单元格
+                if(expList.size()>1){
+                    for (int i = 0; i < expList.size() - 1; i++) {
+                        table.createRow();
+                    }
+                }
+
+                //填充数据
+                for (int i = 0; i < expList.size(); i++) {
+                    table.getRow(i+1).getCell(0).setText(expList.get(i).getManufactor());
+                    table.getRow(i+1).getCell(1).setText(expList.get(i).getManufactor());
+                    table.getRow(i+1).getCell(2).setText(expList.get(i).getManufactor());
+                    table.getRow(i+1).getCell(3).setText(expList.get(i).getManufactor());
+                    table.getRow(i+1).getCell(4).setText(expList.get(i).getManufactor());
+                    table.getRow(i+1).getCell(5).setText(expList.get(i).getManufactor());
+                    table.getRow(i+1).getCell(6).setText(expList.get(i).getManufactor());
+                    table.getRow(i+1).getCell(7).setText(expList.get(i).getManufactor());
+                }
+            }
+
+
+            // 获取word中的所有段落，替换目标文字
+            Iterator<XWPFParagraph> itPara = document.getParagraphsIterator();
+            while (itPara.hasNext()) {
+                XWPFParagraph paragraph = itPara.next();
+                List<XWPFRun> runs = paragraph.getRuns();
+                for (int i = 0; i < runs.size(); i++) {
+                    String oneparaString = runs.get(i).getText(runs.get(i).getTextPosition());
+                    for (Map.Entry<String, String> entry : contentMap.entrySet()) {
+                        if(oneparaString!=null && oneparaString.contains(entry.getKey())){
+                            oneparaString = oneparaString.replace(entry.getKey(), entry.getValue());
+                        }
+                    }
+                    runs.get(i).setText(oneparaString, 0);
+                }
+            }
+
+            //导出到文件
+            UUID uuid = UUID.randomUUID();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            document.write(byteArrayOutputStream);
+            OutputStream outputStream = new FileOutputStream(uploadFilePath+uuid+".docx");
+            outputStream.write(byteArrayOutputStream.toByteArray());
+            outputStream.close();
+
+
+            //附件表增加记录
+            attachment.setAttachName(uuid+".docx");
+            attachment.setFileType("application/msword");
+            attachment.setPath(uploadFilePath+uuid+".docx");
+            attachment.setUploadTime(new Date());
+            attachment.setUploader(user.getUsername());
+            attachment = attachmentRepository.save(attachment);
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
         Long proId = Long.valueOf(projectId);
-        ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(proId);
         ContractNotice contractNotice = new ContractNotice();
         contractNotice.setProjectCode(projectInfo.getProjectCode());
         contractNotice.setProjectSubject(projectInfo.getProjectSubject());
@@ -160,6 +292,7 @@ public class ContractNoticeService {
         contractNotice.setCreateDate(new Date());
         contractNotice.setPurchaser(projectInfo.getPurchaser());
         contractNotice.setProjectInfo(projectInfo);
+        contractNotice.setAttachment(attachment);
         ContractNoticeRepository.save(contractNotice);
         return contractNotice;
     }

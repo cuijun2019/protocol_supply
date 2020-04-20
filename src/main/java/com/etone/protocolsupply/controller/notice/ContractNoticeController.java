@@ -3,8 +3,10 @@ package com.etone.protocolsupply.controller.notice;
 import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.notice.ContractNoticeCollectionDto;
+import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.notice.ContractNotice;
 import com.etone.protocolsupply.model.entity.notice.ResultNotice;
+import com.etone.protocolsupply.service.AttachmentService;
 import com.etone.protocolsupply.service.notice.ContractNoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,6 +30,9 @@ public class ContractNoticeController extends GenericController {
     @Autowired
     private ContractNoticeService ContractNoticeService;
 
+    @Autowired
+    private AttachmentService attachmentService;
+
     /**
      * 生成合同通知书
      *
@@ -42,10 +47,11 @@ public class ContractNoticeController extends GenericController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseValue postContractNotice(@Validated
                                           @PathVariable("projectId") String projectId) {
-        //todo 查询
+        //查询合同模板所在路径
+        Attachment attachment = attachmentService.findContractTemplate();
 
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        ContractNotice contractNotice = ContractNoticeService.save(projectId, this.getUser());
+        ContractNotice contractNotice = ContractNoticeService.save(projectId, this.getUser(),attachment.getPath());
         responseBuilder.data(contractNotice);
         return responseBuilder.build();
     }

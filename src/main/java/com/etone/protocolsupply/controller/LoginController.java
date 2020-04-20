@@ -4,10 +4,15 @@ import com.etone.protocolsupply.exception.AuthenticationException;
 import com.etone.protocolsupply.exception.GlobalExceptionCode;
 import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.LoginRequest;
+import com.etone.protocolsupply.model.dto.systemControl.UserDto;
+import com.etone.protocolsupply.model.entity.user.User;
+import com.etone.protocolsupply.repository.user.UserRepository;
 import com.etone.protocolsupply.service.security.JwtTokenUtil;
 import com.etone.protocolsupply.model.dto.ResponseValue;
+import com.etone.protocolsupply.service.system.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,6 +55,9 @@ public class LoginController {
     private JwtTokenUtil jwtTokenUtil;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     @Qualifier("cachingUserDetailsService")
     private UserDetailsService userDetailsService;
 
@@ -66,8 +74,13 @@ public class LoginController {
         // Reload password post-security so we can generate the token
         final String token = jwtTokenUtil.generateToken((UserDetails) authentication.getPrincipal());
 
+        UserDto userDto = new UserDto();
+        User user = userService.findUserByUsername(username);
+        BeanUtils.copyProperties(user, userDto);
+        userDto.setToken(token);
+
         // Return the token
-        return ResponseEntity.ok(ResponseValue.createBuilder().data(token).build());
+        return ResponseEntity.ok(ResponseValue.createBuilder().data(userDto).build());
     }
 
     @RequestMapping(value = "${jwt.route.authentication.refresh}", method = RequestMethod.GET)
@@ -91,7 +104,7 @@ public class LoginController {
     }
 
     /**
-     * Authenticates the user. If something is wrong, an {@link AuthenticationException} will be thrown
+     * Authenticates the system. If something is wrong, an {@link AuthenticationException} will be thrown
      */
     private Authentication authenticate(String username, String password) {
         Objects.requireNonNull(username);
