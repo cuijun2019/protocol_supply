@@ -152,6 +152,10 @@ public class BidNoticeService {
         bidNotice.setProjectInfo(projectInfo);
         bidNotice.setAttachment(attachment);
         bidNoticeRepository.save(bidNotice);
+
+        //更新项目表的采购结果附件id字段
+        projectInfoRepository.updateNoticeId(attachment.getAttachId(),Long.parseLong(projectId));
+
         return bidNotice;
     }
 

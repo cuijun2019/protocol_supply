@@ -38,6 +38,6 @@ public interface PartInfoExpRepository extends JpaRepository<PartInfoExp, Long>,
     @Query(value = "select * from part_info_exp where is_delete=2 and part_id in ?1", nativeQuery = true)
     List<PartInfoExp> findAllBypartIds(List<Long> partIds);
 
-    @Query(value = "select * from part_info_exp where is_delete=2 and project_id in ?1", nativeQuery = true)
+    @Query(value = "select * from part_info_exp where is_delete=2 and project_id=?1", nativeQuery = true)
     List<PartInfoExp> findByProjectId(long parseLong);
 }

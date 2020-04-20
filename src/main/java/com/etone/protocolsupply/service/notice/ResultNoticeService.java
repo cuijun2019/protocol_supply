@@ -243,6 +243,8 @@ public class ResultNoticeService {
         resultNotice.setProjectInfo(projectInfo);
         resultNotice.setAttachment(attachment);
         resultNoticeRepository.save(resultNotice);
+
+        projectInfoRepository.updatePurchaseId(attachment.getAttachId(),Long.parseLong(projectId));
         return resultNotice;
     }
 }

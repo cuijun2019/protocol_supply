@@ -40,4 +40,20 @@ public interface ProjectInfoRepository extends JpaRepository<ProjectInfo, Long>,
             "where exists (select 1 from project_info p where p.project_id = a.project_id and p.project_id = :projectId) " +
             "and a.is_recommend_supplier = 1", nativeQuery = true)
     String getAgentName(@Param("projectId") Long projectId);
+
+    @Transactional(rollbackFor = Exception.class)
+    @Modifying
+    @Query(value = "update project_info set purchase_id=?1 where project_id=?2", nativeQuery = true)
+    void updatePurchaseId(Long attachId, Long projectId);
+
+    @Transactional(rollbackFor = Exception.class)
+    @Modifying
+    @Query(value = "update project_info set contract_id=?1 where project_id=?2", nativeQuery = true)
+    void updateContractId(Long attachId, long parseLong);
+
+    @Transactional(rollbackFor = Exception.class)
+    @Modifying
+    @Query(value = "update project_info set notice_id=?1 where project_id=?2", nativeQuery = true)
+    void updateNoticeId(Long attachId, long parseLong);
+
 }

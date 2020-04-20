@@ -5,7 +5,6 @@ import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.notice.ContractNoticeCollectionDto;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.notice.ContractNotice;
-import com.etone.protocolsupply.model.entity.notice.ResultNotice;
 import com.etone.protocolsupply.service.AttachmentService;
 import com.etone.protocolsupply.service.notice.ContractNoticeService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -16,6 +16,7 @@ import com.etone.protocolsupply.repository.notice.ContractNoticeRepository;
 import com.etone.protocolsupply.repository.project.PartInfoExpRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.repository.user.UserRepository;
+import com.etone.protocolsupply.utils.ConvertUpMoney;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
@@ -38,6 +39,7 @@ import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -183,20 +185,20 @@ public class ContractNoticeService {
         //查询创建人所在公司
         User creator = userRepository.findByUsername(projectInfo.getCreator());
 
-        //根据项目id查询配件表得到货物id
-        //list<CargoInfo>  cargoInfolist = cargo
+        //根据项目id查询配件表得到货物
+        List<CargoInfo> cargoInfoList = cargoInfoRepository.findByProjectId(Long.parseLong(projectId));
 
 
         HashMap<String, String> contentMap = new HashMap<>();
         contentMap.put("${NAME}",creator.getCompany());
         contentMap.put("${GOODS}",projectInfo.getProjectSubject());
-        contentMap.put("${EQUIPMENT}","设备");
-        contentMap.put("${AMOUNT}","1000");
-        contentMap.put("${DONETIME}","2020-04-20");
-        contentMap.put("${CHMONEY}","壹拾贰");
-        contentMap.put("${MONEY}","1000");
-        contentMap.put("${MONEYTYPE}","A");
-        contentMap.put("${CHDAY}","100");
+        contentMap.put("${EQUIPMENT}",cargoInfoList.get(0).getCargoName());
+        contentMap.put("${AMOUNT}","test-1000");
+        contentMap.put("${DONETIME}",projectInfo.getDeliveryDate()+"");
+        contentMap.put("${CHMONEY}", ConvertUpMoney.toChinese(projectInfo.getAmount()));
+        contentMap.put("${MONEY}",projectInfo.getAmount());
+        contentMap.put("${MONEYTYPE}",projectInfo.getPaymentMethod());
+        contentMap.put("${CHDAY}",ConvertUpMoney.toChinese(projectInfo.getGuaranteeDate()).substring(0,ConvertUpMoney.toChinese(projectInfo.getGuaranteeDate()).length()-1));
         XWPFDocument document;
 
 
@@ -230,14 +232,16 @@ public class ContractNoticeService {
 
                 //填充数据
                 for (int i = 0; i < expList.size(); i++) {
-                    table.getRow(i+1).getCell(0).setText(expList.get(i).getManufactor());
-                    table.getRow(i+1).getCell(1).setText(expList.get(i).getManufactor());
+                    table.getRow(i+1).getCell(0).setText(expList.get(i).getPartName());
+                    table.getRow(i+1).getCell(1).setText(expList.get(i).getStandards());
                     table.getRow(i+1).getCell(2).setText(expList.get(i).getManufactor());
-                    table.getRow(i+1).getCell(3).setText(expList.get(i).getManufactor());
-                    table.getRow(i+1).getCell(4).setText(expList.get(i).getManufactor());
-                    table.getRow(i+1).getCell(5).setText(expList.get(i).getManufactor());
-                    table.getRow(i+1).getCell(6).setText(expList.get(i).getManufactor());
-                    table.getRow(i+1).getCell(7).setText(expList.get(i).getManufactor());
+                    table.getRow(i+1).getCell(3).setText(expList.get(i).getTechParams());
+                    table.getRow(i+1).getCell(4).setText(expList.get(i).getUnit());
+                    table.getRow(i+1).getCell(5).setText(expList.get(i).getQuantity());
+                    table.getRow(i+1).getCell(6).setText(expList.get(i).getPrice()+"");
+                    BigDecimal quantity = new BigDecimal(expList.get(i).getQuantity());
+                    BigDecimal price = new BigDecimal(Double.toString(expList.get(i).getPrice()));
+                    table.getRow(i+1).getCell(7).setText(quantity.multiply(price)+"");
                 }
             }
 
@@ -267,6 +271,7 @@ public class ContractNoticeService {
             outputStream.close();
 
 
+
             //附件表增加记录
             attachment.setAttachName(uuid+".docx");
             attachment.setFileType("application/msword");
@@ -294,6 +299,10 @@ public class ContractNoticeService {
         contractNotice.setProjectInfo(projectInfo);
         contractNotice.setAttachment(attachment);
         ContractNoticeRepository.save(contractNotice);
+
+
+        //TODO 更新工程表的附件字段
+        projectInfoRepository.updateContractId(attachment.getAttachId(),Long.parseLong(projectId));
         return contractNotice;
     }
 }
