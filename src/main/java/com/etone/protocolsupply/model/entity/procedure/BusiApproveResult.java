@@ -28,7 +28,6 @@ public class BusiApproveResult implements Serializable {
     /**
      * 流程节点编号
      */
-    @Id
     @Column(name = "FLOW_NODE_CODE", length = 100)
     private String flowNodeCode;
 
