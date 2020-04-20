@@ -59,9 +59,9 @@ public class InquiryInfoController extends GenericController {
                                        @RequestBody InquiryInfoDto inquiryInfoDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         InquiryInfo inquiryInfo = inquiryInfoService.save(inquiryInfoDto, this.getUser());
-        inquiryInfo.getCargoInfo().setPartInfos(null);
-        inquiryInfo.setCargoInfo(null);
-        inquiryInfo.setPartnerInfo(null);
+        //inquiryInfo.getCargoInfo().setPartInfos(null);
+        //inquiryInfo.setCargoInfo(null);
+        //inquiryInfo.setPartnerInfo(null);
         responseBuilder.data(inquiryInfo);
         return responseBuilder.build();
     }

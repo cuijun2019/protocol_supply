@@ -35,5 +35,7 @@ public class BusiJbpmFlow implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date flowStartTime; // 创建时间
 
+    @Column(name = "BUSINESS_ID", length = 20)
+    private Long businessId; // 代办id（项目、产品id）
 
 }

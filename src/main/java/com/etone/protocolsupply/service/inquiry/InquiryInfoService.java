@@ -3,16 +3,10 @@ package com.etone.protocolsupply.service.inquiry;
 import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.exception.GlobalExceptionCode;
 import com.etone.protocolsupply.exception.GlobalServiceException;
-import com.etone.protocolsupply.model.dto.ExcelHeaderColumnPojo;
 import com.etone.protocolsupply.model.dto.JwtUser;
-import com.etone.protocolsupply.model.dto.cargo.CargoCollectionDto;
-import com.etone.protocolsupply.model.dto.cargo.CargoInfoDto;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryCollectionDto;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoDto;
-import com.etone.protocolsupply.model.entity.Attachment;
-import com.etone.protocolsupply.model.entity.cargo.BrandItem;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
-import com.etone.protocolsupply.model.entity.cargo.PartInfo;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfo;
 import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
 import com.etone.protocolsupply.repository.AttachmentRepository;
@@ -25,26 +19,22 @@ import com.etone.protocolsupply.service.cargo.PartInfoService;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.usermodel.*;
-import org.json.JSONObject;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Transactional(rollbackFor = Exception.class)
 @Service
@@ -57,16 +47,8 @@ public class InquiryInfoService {
     @Autowired
     private PartnerInfoRepository partnerInfoRepository;
     @Autowired
-    private PartInfoService      partInfoService;
-    @Autowired
-    private PartInfoRepository   partInfoRepository;
-    @Autowired
-    private AttachmentRepository attachmentRepository;
-    @Autowired
     private PagingMapper         pagingMapper;
 
-    @Autowired
-    private BrandItemRepository brandItemRepository;
 
     public InquiryInfo save(InquiryInfoDto inquiryInfoDto, JwtUser jwtUser) throws GlobalServiceException {
         Date date = new Date();
@@ -103,7 +85,7 @@ public class InquiryInfoService {
         }else {
             inquiryInfo.setPartnerInfo(null);
         }
-        inquiryInfo = inquiryInfoRepository.save(inquiryInfo);
+          inquiryInfoRepository.save(inquiryInfo);
         return inquiryInfo;
     }
 

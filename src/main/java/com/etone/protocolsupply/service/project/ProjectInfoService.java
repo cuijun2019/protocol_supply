@@ -105,6 +105,8 @@ public class ProjectInfoService {
         InquiryInfo inquiryInfo = projectInfoDto.getInquiryInfo();//关联询价
         if (inquiryInfo != null && inquiryInfo.getInquiryId() != null && !inquiryInfo.getInquiryId().equals("")) {
             Optional<InquiryInfo> optional = inquiryInfoRepository.findById(inquiryInfo.getInquiryId());
+            projectInfo.getInquiryInfo().getCargoInfo().setPartInfos(null);
+
             if (optional.isPresent()) {
                 projectInfo.setInquiryInfo(optional.get());
             }
@@ -126,7 +128,7 @@ public class ProjectInfoService {
                 partInfoExpRepository.save(partInfoExp);
             }
         }
-        projectInfoRepository.save(projectInfo);
+         projectInfoRepository.save(projectInfo);
         List<Long> partIds = new ArrayList<>();
         if (partInfoExps.size() > 0) {
             for (PartInfoExp partInfoExp : projectInfoDto.getPartInfoExps()) {
@@ -277,8 +279,6 @@ public class ProjectInfoService {
         AgentInfoExp agentInfoExp=agentInfoExpRepository.findByProjectId2(projectId);
         projectInfoDto.setAgentInfoExp(agentInfoExp);
         projectInfoDto.getInquiryInfo().getCargoInfo().setPartInfos(null);
-        projectInfoDto.setInquiryInfo(null);
-        projectInfoDto.getAgentInfoExp().setProjectInfo(null);
         return projectInfoDto;
     }
 

@@ -57,7 +57,6 @@ public class ProjectInfoController extends GenericController {
                                          @RequestBody ProjectInfoDto projectInfoDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         ProjectInfo projectInfo = projectInfoService.save(projectInfoDto, this.getUser());
-        projectInfo.getInquiryInfo().getCargoInfo().setPartInfos(null);
         responseBuilder.data(projectInfo);
         return responseBuilder.build();
     }
@@ -195,7 +194,7 @@ public class ProjectInfoController extends GenericController {
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
-    public ResponseValue getCargo(@PathVariable("projectId") String projectId) {
+    public ResponseValue getProject(@PathVariable("projectId") String projectId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         ProjectInfoDto projectInfoDto = projectInfoService.findOne(Long.parseLong(projectId));
         responseBuilder.data(projectInfoDto);
