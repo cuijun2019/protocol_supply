@@ -48,11 +48,7 @@ import java.util.Optional;
 public class BusiJbpmFlowService {
 
     @Autowired
-    private CargoInfoRepository  cargoInfoRepository;
-    @Autowired
     private BusiJbpmFlowRepository busiJbpmFlowRepository;
-    @Autowired
-    private PartnerInfoRepository partnerInfoRepository;
     @Autowired
     private PagingMapper         pagingMapper;
 
