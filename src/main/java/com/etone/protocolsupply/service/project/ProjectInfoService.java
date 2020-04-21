@@ -193,7 +193,13 @@ public class ProjectInfoService {
             Predicate[] pre = new Predicate[predicates.size()];
             return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
         };
+
     }
+
+    public Page<ProjectInfo> findProjectInfos(String isDelete, String projectSubject, String projectCode,String status,String inquiryId, Pageable pageable) {
+        return Common.listConvertToPage(projectInfoRepository.findAll(isDelete, projectSubject, projectCode,status,inquiryId), pageable);
+    }
+
 
     public Page<ProjectInfo> findAgents(Specification<ProjectInfo> specification, Pageable pageable) {
         return projectInfoRepository.findAll(specification, pageable);
@@ -280,6 +286,7 @@ public class ProjectInfoService {
         AgentInfoExp agentInfoExp=agentInfoExpRepository.findByProjectId2(projectId);
         projectInfoDto.setAgentInfoExp(agentInfoExp);
         projectInfoDto.getInquiryInfo().getCargoInfo().setPartInfos(null);
+        projectInfoDto.getInquiryInfo().getPartnerInfo().setContacts(null);
         return projectInfoDto;
     }
 
@@ -348,11 +355,10 @@ public class ProjectInfoService {
                 row.createCell(3).setCellValue(new HSSFRichTextString("5000"));//货物金额
                 row.createCell(4).setCellValue(new HSSFRichTextString("6000"));//项目总金额
                 row.createCell(5).setCellValue(new HSSFRichTextString(cargoInfo.getCurrency()));//币种
-                row.createCell(6).setCellValue(new HSSFRichTextString(projectStatus(projectInfo.getStatus())));//状态
+                row.createCell(6).setCellValue(new HSSFRichTextString(Constant.REVIEW_STATUS_MAP.get(projectInfo.getStatus())));//状态
                // row.createCell(7).setCellValue(new HSSFRichTextString(""));//采购结果通知书
                 //row.createCell(10).setCellValue(new HSSFRichTextString("6000"));//中标通知书
                 // row.createCell(11).setCellValue(new HSSFRichTextString("6000"));//合同
-
             }
             response.setHeader("Content-disposition", "attachment;filename=projectInfo.xls");
             response.setContentType("application/vnd.ms-excel;charset=utf-8");
@@ -363,19 +369,6 @@ public class ProjectInfoService {
         }
     }
 
-    private String projectStatus(int status) {
-        String str = "";
-        if (status == 1) {
-            str = "审核中";
-        }
-        if (status == 2) {
-            str = "已完成";
-        }
-        if (status == 3) {
-            str = "已退回";
-        }
-        return str;
-    }
 
 
 }

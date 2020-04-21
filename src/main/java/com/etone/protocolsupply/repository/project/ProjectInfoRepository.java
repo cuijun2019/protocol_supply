@@ -1,5 +1,6 @@
 package com.etone.protocolsupply.repository.project;
 
+import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -55,5 +56,11 @@ public interface ProjectInfoRepository extends JpaRepository<ProjectInfo, Long>,
     @Modifying
     @Query(value = "update project_info set notice_id=?1 where project_id=?2", nativeQuery = true)
     void updateNoticeId(Long attachId, long parseLong);
+
+    @Query(value = "select * from project_info where is_delete=:isDelete and  if((:projectSubject is not null), (project_subject like %:projectSubject%), (1=1)) " +
+            "and if((:status is not null), (status=:status), (1=1)) and if((:projectCode is not null), (project_code=:projectCode), (1=1)) " +
+            "and if((:inquiryId is not null), (inquiry_id=:inquiryId), (1=1))",  nativeQuery = true)
+    List<ProjectInfo> findAll(@Param("isDelete") String isDelete,@Param("projectSubject") String projectSubject,@Param("projectCode") String projectCode
+            ,@Param("status") String status,@Param("inquiryId") String inquiryId);
 
 }

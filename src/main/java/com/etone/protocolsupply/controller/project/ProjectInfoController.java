@@ -1,12 +1,10 @@
 package com.etone.protocolsupply.controller.project;
 
 import com.etone.protocolsupply.controller.GenericController;
-import com.etone.protocolsupply.model.dto.AgentExpCollectionDto;
 import com.etone.protocolsupply.model.dto.PartExpCollectionDto;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.project.ProjectCollectionDto;
 import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
-import com.etone.protocolsupply.model.entity.project.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.project.PartInfoExp;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.service.agent.AgentInfoService;
@@ -17,7 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -88,8 +85,7 @@ public class ProjectInfoController extends GenericController {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort = new Sort(Sort.Direction.DESC, "projectId");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Specification<ProjectInfo> specification = projectInfoService.getWhereClause(projectSubject,projectCode, status,inquiryId, isDelete);
-        Page<ProjectInfo> page = projectInfoService.findAgents(specification, pageable);
+        Page<ProjectInfo> page = projectInfoService.findProjectInfos(isDelete, projectSubject, projectCode, status,inquiryId,pageable);
         ProjectCollectionDto projectCollectionDto = projectInfoService.to(page, request);
         responseBuilder.data(projectCollectionDto);
         return responseBuilder.build();
