@@ -167,6 +167,7 @@ public class ProjectInfoService {
                 partInfoExpRepository.save(partInfoExp);
                 partInfoExp.getCargoInfo().setPartInfos(null);
                 partInfoExp.setCargoInfo(null);
+                partInfoExp.getProjectInfo().getInquiryInfo().getPartnerInfo().setContacts(null);
             }
         }
 
