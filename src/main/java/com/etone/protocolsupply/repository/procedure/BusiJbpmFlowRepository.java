@@ -21,8 +21,8 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
 
     @Query(value = "select * from busi_jbpm_flow where 1=1 and " +
             "if((:businessType is not null), (business_type =:businessType), (1=1)) and if((:businessSubject is not null), (business_subject like %:businessSubject%), (1=1)) and " +
-            "id in (:ids)", nativeQuery = true)
-    List<BusiJbpmFlow> findAll(@Param("businessType") String businessType, @Param("businessSubject") String businessSubject, @Param("ids") List<Long> ids);
+            "id in (:ids) and type=:type", nativeQuery = true)
+    List<BusiJbpmFlow> findAll(@Param("businessType") String businessType, @Param("businessSubject") String businessSubject, @Param("ids") List<Long> ids,Integer type);
 
     @Query(value = "select * from busi_jbpm_flow where 1=1 and " +
             "if((:businessType is not null), (business_type =:agentName), (1=1)) and if((:businessSubject is not null), (business_subject like %:businessSubject%), (1=1)) ", nativeQuery = true)

@@ -1,25 +1,12 @@
 package com.etone.protocolsupply.service.procedure;
 
 import com.etone.protocolsupply.constant.Constant;
-import com.etone.protocolsupply.exception.GlobalExceptionCode;
 import com.etone.protocolsupply.exception.GlobalServiceException;
 import com.etone.protocolsupply.model.dto.JwtUser;
-import com.etone.protocolsupply.model.dto.agent.AgentCollectionDto;
-import com.etone.protocolsupply.model.dto.agent.AgentInfoDto;
-import com.etone.protocolsupply.model.dto.inquiry.InquiryCollectionDto;
-import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoDto;
 import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowCollectionDto;
 import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowDto;
-import com.etone.protocolsupply.model.entity.AgentInfo;
-import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
-import com.etone.protocolsupply.model.entity.inquiry.InquiryInfo;
 import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
-import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
-import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
-import com.etone.protocolsupply.repository.inquiry.InquiryInfoRepository;
 import com.etone.protocolsupply.repository.procedure.BusiJbpmFlowRepository;
-import com.etone.protocolsupply.repository.supplier.PartnerInfoRepository;
-import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
@@ -36,12 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Transactional(rollbackFor = Exception.class)
 @Service
@@ -64,7 +49,7 @@ public class BusiJbpmFlowService {
         return busiJbpmFlow;
     }
 
-    public Specification<BusiJbpmFlow> getWhereClause(String businessType, String businessSubject ) {
+    public Specification<BusiJbpmFlow> getWhereClause(String businessType, String businessSubject,Integer type ) {
         return (Specification<BusiJbpmFlow>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (Strings.isNotBlank(businessType)) {
@@ -73,6 +58,8 @@ public class BusiJbpmFlowService {
             if (Strings.isNotBlank(businessSubject)) {
                 predicates.add(criteriaBuilder.like(root.get("businessSubject").as(String.class), '%'+businessSubject+'%'));
             }
+
+                predicates.add(criteriaBuilder.equal(root.get("type").as(String.class), type));
             Predicate[] pre = new Predicate[predicates.size()];
             return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
         };
@@ -95,9 +82,15 @@ public class BusiJbpmFlowService {
         return busiJbpmFlowCollectionDto;
     }
 
-    public void export(HttpServletResponse response, String businessType, String businessSubject, List<Long> ids,JwtUser jwtUser) {
+    public void export(HttpServletResponse response, String businessType, String businessSubject, List<Long> ids,Integer type) {
         try {
-            String[] header = {"待办类型", "待办主题", "状态", "当前处理人", "创建人", "创建时间"};
+            String str1=null;
+            if(type==0){
+                str1="待办";
+            } else {
+                str1="已办";
+            }
+            String[] header = {str1+"类型", str1+"主题", "状态", "当前处理人", "创建人", "创建时间"};
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet("待办信息表");
             sheet.setDefaultColumnWidth(10);
@@ -117,7 +110,7 @@ public class BusiJbpmFlowService {
 
             List<BusiJbpmFlow> list;
             if (ids != null && !ids.isEmpty()) {
-                list = busiJbpmFlowRepository.findAll(businessType, businessSubject, ids);
+                list = busiJbpmFlowRepository.findAll(businessType, businessSubject, ids,type);
             } else {
                 list = busiJbpmFlowRepository.findAll(businessType, businessSubject);
             }
@@ -129,11 +122,15 @@ public class BusiJbpmFlowService {
                 row.createCell(0).setCellValue(new HSSFRichTextString(Constant.BUSINESS_TYPE_STATUS_MAP.get(busiJbpmFlow.getBusinessType())));
                 row.createCell(1).setCellValue(new HSSFRichTextString(busiJbpmFlow.getBusinessSubject()));
                 row.createCell(2).setCellValue(new HSSFRichTextString(Constant.REVIEW_STATUS_MAP.get(Integer.parseInt(busiJbpmFlow.getTaskState()))));
-                row.createCell(3).setCellValue(new HSSFRichTextString(jwtUser.getUsername()));
+                row.createCell(3).setCellValue(new HSSFRichTextString(busiJbpmFlow.getParentActor()));
                 row.createCell(4).setCellValue(new HSSFRichTextString(busiJbpmFlow.getFlowInitorId()));
                 row.createCell(5).setCellValue(new HSSFRichTextString(format.format(busiJbpmFlow.getFlowStartTime())));
             }
-            response.setHeader("Content-disposition", "attachment;filename=busiJbpmFlow.xls");
+            if(type==0){
+                response.setHeader("Content-disposition", "attachment;filename=busiJbpmFlow.xls");
+            }else {
+                response.setHeader("Content-disposition", "attachment;filename=busiApproveResult.xls");
+            }
             response.setContentType("application/vnd.ms-excel;charset=utf-8");
             response.flushBuffer();
             workbook.write(response.getOutputStream());

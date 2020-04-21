@@ -67,4 +67,16 @@ public class BusiJbpmFlow implements Serializable {
     @Column(name = "FLOW_START_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date flowStartTime;
+
+    /**
+     * 动作
+     */
+    @Column(name = "ACTION", length = 100)
+    private String action;
+
+    /**
+     * 类型：0：待办 1：已办
+     */
+    @Column(name = "TYPE", length = 4)
+    private Integer type;
 }

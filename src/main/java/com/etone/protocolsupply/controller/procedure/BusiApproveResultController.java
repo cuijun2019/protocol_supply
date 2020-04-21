@@ -2,10 +2,11 @@ package com.etone.protocolsupply.controller.procedure;
 
 import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
-import com.etone.protocolsupply.model.dto.procedure.BusiApproveResultCollectionDto;
-import com.etone.protocolsupply.model.dto.procedure.BusiApproveResultDto;
-import com.etone.protocolsupply.model.entity.procedure.BusiApproveResult;
+import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowCollectionDto;
+import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowDto;
+import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
 import com.etone.protocolsupply.service.procedure.BusiApproveResultService;
+import com.etone.protocolsupply.service.procedure.BusiJbpmFlowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,12 +28,14 @@ public class BusiApproveResultController extends GenericController {
 
     @Autowired
     private BusiApproveResultService busiApproveResultService;
+    @Autowired
+    private BusiJbpmFlowService busiJbpmFlowService;
 
 
     /**
      * 新增已办
      *
-     * @param busiApproveResultDto
+     * @param busiJbpmFlowDto
      * @return
      */
     @ResponseBody
@@ -42,10 +45,10 @@ public class BusiApproveResultController extends GenericController {
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseValue postBusiApproveResult(@Validated
-                                       @RequestBody BusiApproveResultDto busiApproveResultDto) {
+                                       @RequestBody BusiJbpmFlowDto busiJbpmFlowDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        BusiApproveResult busiApproveResult = busiApproveResultService.save(busiApproveResultDto, this.getUser());
-        responseBuilder.data(busiApproveResult);
+        BusiJbpmFlow busiJbpmFlow = busiJbpmFlowService.save(busiJbpmFlowDto, this.getUser());
+        responseBuilder.data(busiJbpmFlow);
         return responseBuilder.build();
     }
 
@@ -53,8 +56,8 @@ public class BusiApproveResultController extends GenericController {
      * 已办列表
      * @param currentPage
      * @param pageSize
-     * @param approveType
-     * @param approveSubject
+     * @param businessType
+     * @param businessSubject
      * @param request
      * @return
      */
@@ -63,23 +66,25 @@ public class BusiApproveResultController extends GenericController {
             consumes = {"application/json"},
             produces = {"application/json"})
     public ResponseValue getBusiJbpmFlows(@Validated
-                                       @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
-                                       @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
-                                       @RequestParam(value = "approveType", required = false) String approveType,
-                                       @RequestParam(value = "approveSubject", required = false) String approveSubject,
-                                       HttpServletRequest request) {
+                                          @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
+                                          @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+                                          @RequestParam(value = "businessType", required = false) String businessType,
+                                          @RequestParam(value = "businessSubject", required = false) String businessSubject,
+                                          HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        Sort sort = new Sort(Sort.Direction.DESC, "approveStartTime");
+        Sort sort = new Sort(Sort.Direction.DESC, "flowStartTime");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Specification<BusiApproveResult> specification = busiApproveResultService.getWhereClause(approveType, approveSubject);
-        Page<BusiApproveResult> page = busiApproveResultService.findbusiApproveResults(specification, pageable);
-        BusiApproveResultCollectionDto busiApproveResultCollectionDto = busiApproveResultService.to(page, request,this.getUser());
-        responseBuilder.data(busiApproveResultCollectionDto);
+        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereClause(businessType, businessSubject,1);
+        Page<BusiJbpmFlow> page = busiJbpmFlowService.findAgents(specification, pageable);
+        BusiJbpmFlowCollectionDto busiJbpmFlowDto = busiJbpmFlowService.to(page, request,this.getUser());
+        responseBuilder.data(busiJbpmFlowDto);
         return responseBuilder.build();
     }
 
     /**
      * 导出已办
+     * @param businessType
+     * @param businessSubject
      * @param ids
      * @param response
      */
@@ -88,10 +93,11 @@ public class BusiApproveResultController extends GenericController {
             method = RequestMethod.POST,
             consumes = {"application/json"},
             produces = {"application/json"})
-    public void exportAgent(@RequestBody(required = false) List<Long> ids,
+    public void exportAgent(@RequestParam(value = "businessType", required = false) String businessType,
+                            @RequestParam(value = "businessSubject", required = false) String businessSubject,
+                            @RequestBody(required = false) List<Long> ids,
                             @Context HttpServletResponse response) {
-        busiApproveResultService.export(response, ids,this.getUser());
+        busiJbpmFlowService.export(response, businessType, businessSubject, ids,1);
     }
-
 
 }

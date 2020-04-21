@@ -2,13 +2,8 @@ package com.etone.protocolsupply.controller.procedure;
 
 import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
-import com.etone.protocolsupply.model.dto.agent.AgentCollectionDto;
-import com.etone.protocolsupply.model.dto.inquiry.InquiryCollectionDto;
-import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoDto;
 import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowCollectionDto;
 import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowDto;
-import com.etone.protocolsupply.model.entity.AgentInfo;
-import com.etone.protocolsupply.model.entity.inquiry.InquiryInfo;
 import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
 import com.etone.protocolsupply.service.AttachmentService;
 import com.etone.protocolsupply.service.cargo.CargoInfoService;
@@ -84,7 +79,7 @@ public class BusiJbpmFlowController extends GenericController {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort = new Sort(Sort.Direction.DESC, "flowStartTime");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereClause(businessType, businessSubject);
+        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereClause(businessType, businessSubject,0);
         Page<BusiJbpmFlow> page = busiJbpmFlowService.findAgents(specification, pageable);
         BusiJbpmFlowCollectionDto busiJbpmFlowDto = busiJbpmFlowService.to(page, request,this.getUser());
         responseBuilder.data(busiJbpmFlowDto);
@@ -107,7 +102,7 @@ public class BusiJbpmFlowController extends GenericController {
                             @RequestParam(value = "businessSubject", required = false) String businessSubject,
                             @RequestBody(required = false) List<Long> ids,
                             @Context HttpServletResponse response) {
-        busiJbpmFlowService.export(response, businessType, businessSubject, ids,this.getUser());
+        busiJbpmFlowService.export(response, businessType, businessSubject, ids,0);
     }
 
 
