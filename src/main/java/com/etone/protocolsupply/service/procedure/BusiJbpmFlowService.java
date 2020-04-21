@@ -99,4 +99,51 @@ public class BusiJbpmFlowService {
         return busiJbpmFlowCollectionDto;
     }
 
+    public void export(HttpServletResponse response, String businessType, String businessSubject, List<Long> ids,JwtUser jwtUser) {
+        try {
+            String[] header = {"待办类型", "待办主题", "状态", "当前处理人", "创建人", "创建时间"};
+            HSSFWorkbook workbook = new HSSFWorkbook();
+            HSSFSheet sheet = workbook.createSheet("待办信息表");
+            sheet.setDefaultColumnWidth(10);
+            //        创建标题的显示样式
+            HSSFCellStyle headerStyle = workbook.createCellStyle();
+            headerStyle.setFillForegroundColor(IndexedColors.YELLOW.index);
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            //        创建第一行表头
+            HSSFRow headrow = sheet.createRow(0);
+
+            for (int i = 0; i < header.length; i++) {
+                HSSFCell cell = headrow.createCell(i);
+                HSSFRichTextString text = new HSSFRichTextString(header[i]);
+                cell.setCellValue(text);
+                cell.setCellStyle(headerStyle);
+            }
+
+            List<BusiJbpmFlow> list;
+            if (ids != null && !ids.isEmpty()) {
+                list = busiJbpmFlowRepository.findAll(businessType, businessSubject, ids);
+            } else {
+                list = busiJbpmFlowRepository.findAll(businessType, businessSubject);
+            }
+            BusiJbpmFlow busiJbpmFlow;
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            for (int i = 0; i < list.size(); i++) {
+                busiJbpmFlow = list.get(i);
+                HSSFRow row = sheet.createRow(i + 1);
+                row.createCell(0).setCellValue(new HSSFRichTextString(Constant.BUSINESS_TYPE_STATUS_MAP.get(busiJbpmFlow.getBusinessType())));
+                row.createCell(1).setCellValue(new HSSFRichTextString(busiJbpmFlow.getBusinessSubject()));
+                row.createCell(2).setCellValue(new HSSFRichTextString(Constant.REVIEW_STATUS_MAP.get(Integer.parseInt(busiJbpmFlow.getTaskState()))));
+                row.createCell(3).setCellValue(new HSSFRichTextString(jwtUser.getUsername()));
+                row.createCell(4).setCellValue(new HSSFRichTextString(busiJbpmFlow.getFlowInitorId()));
+                row.createCell(5).setCellValue(new HSSFRichTextString(format.format(busiJbpmFlow.getFlowStartTime())));
+            }
+            response.setHeader("Content-disposition", "attachment;filename=busiJbpmFlow.xls");
+            response.setContentType("application/vnd.ms-excel;charset=utf-8");
+            response.flushBuffer();
+            workbook.write(response.getOutputStream());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

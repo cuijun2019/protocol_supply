@@ -6,12 +6,14 @@ import com.etone.protocolsupply.model.dto.cargo.CargoCollectionDto;
 import com.etone.protocolsupply.model.dto.cargo.CargoInfoDto;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryCollectionDto;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoDto;
+import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfo;
 import com.etone.protocolsupply.service.AttachmentService;
 import com.etone.protocolsupply.service.cargo.CargoInfoService;
 import com.etone.protocolsupply.service.inquiry.InquiryInfoService;
+import com.etone.protocolsupply.service.project.ProjectInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,6 +44,8 @@ public class InquiryInfoController extends GenericController {
     private InquiryInfoService inquiryInfoService;
     @Autowired
     private AttachmentService attachmentService;
+    @Autowired
+    private ProjectInfoService projectInfoService;
 
     /**
      * 新增询价
@@ -94,6 +98,7 @@ public class InquiryInfoController extends GenericController {
         InquiryCollectionDto inquiryCollectionDto = inquiryInfoService.to(page, request);
         for (InquiryInfoDto inquiryInfoDto : inquiryCollectionDto.getInquiryInfoDtos()) {
             inquiryInfoDto.getCargoInfo().setPartInfos(null);
+            inquiryInfoDto.getPartnerInfo().setContacts(null);
         }
         responseBuilder.data(inquiryCollectionDto);
         return responseBuilder.build();
@@ -156,5 +161,7 @@ public class InquiryInfoController extends GenericController {
         inquiryInfoService.export(response, inquiryIds);
         return responseBuilder.build();
     }
+
+
 
 }

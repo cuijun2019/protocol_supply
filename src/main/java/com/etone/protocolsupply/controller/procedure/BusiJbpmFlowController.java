@@ -91,6 +91,24 @@ public class BusiJbpmFlowController extends GenericController {
         return responseBuilder.build();
     }
 
+    /**
+     * 导出待办
+     * @param businessType
+     * @param businessSubject
+     * @param ids
+     * @param response
+     */
+    @ResponseBody
+    @RequestMapping(value = "/export",
+            method = RequestMethod.POST,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    public void exportAgent(@RequestParam(value = "businessType", required = false) String businessType,
+                            @RequestParam(value = "businessSubject", required = false) String businessSubject,
+                            @RequestBody(required = false) List<Long> ids,
+                            @Context HttpServletResponse response) {
+        busiJbpmFlowService.export(response, businessType, businessSubject, ids,this.getUser());
+    }
 
 
 }

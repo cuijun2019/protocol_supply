@@ -214,6 +214,7 @@ public class ProjectInfoService {
             projectInfoDto.setGuaranteeRate(cargoInfo.getGuaranteeRate());//维保率
             projectInfoDto.setCargoTotal(0.00);//货物总金额
             projectCollectionDto.add(projectInfoDto);
+            projectInfoDto.getInquiryInfo().getPartnerInfo().setContacts(null);
         }
         return projectCollectionDto;
     }
@@ -375,4 +376,6 @@ public class ProjectInfoService {
         }
         return str;
     }
+
+
 }

@@ -89,4 +89,27 @@ public class Constant {
      */
     public static String DEFAULT_PASSWORD = "$2a$10$Lq4xOF33YvM6voT15RuTw.0kmfTWOlFX/v4wM1n2OaRQDbBOVCPxi";
 
+    /**
+     * 待办类型
+     */
+    public static final String    BUSINESS_TYPE_P        = "projectAudit";
+    public static final String BUSINESS_TYPE_P_STRING  = "项目管理审核";
+
+    public static final String    BUSINESS_TYPE_E        = "enquiryAudit";
+    public static final String BUSINESS_TYPE_E_STRING  = "询价管理审核";
+
+    public static final String    BUSINESS_TYPE_C        = "cargoAudit";
+    public static final String BUSINESS_TYPE_C_STRING  = "货物管理审核";
+
+    public static final String    BUSINESS_TYPE_A        = "agentAudit";
+    public static final String BUSINESS_TYPE_A_STRING  = "代理商管理审核";
+
+    public static final Map<String, String> BUSINESS_TYPE_STATUS_MAP = new HashMap<>();
+    static {
+        BUSINESS_TYPE_STATUS_MAP.put(BUSINESS_TYPE_P, BUSINESS_TYPE_P_STRING);
+        BUSINESS_TYPE_STATUS_MAP.put(BUSINESS_TYPE_E, BUSINESS_TYPE_E_STRING);
+        BUSINESS_TYPE_STATUS_MAP.put(BUSINESS_TYPE_C, BUSINESS_TYPE_C_STRING);
+        BUSINESS_TYPE_STATUS_MAP.put(BUSINESS_TYPE_A, BUSINESS_TYPE_A_STRING);
+    }
+
 }

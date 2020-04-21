@@ -109,7 +109,7 @@ public class AgentInfoController extends GenericController {
 
     @ResponseBody
     @RequestMapping(value = "/export",
-            method = RequestMethod.GET,
+            method = RequestMethod.POST,
             consumes = {"application/json"},
             produces = {"application/json"})
     public void exportAgent(@RequestParam(value = "agentName", required = false) String agentName,
