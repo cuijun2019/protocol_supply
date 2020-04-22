@@ -87,7 +87,7 @@ public class InquiryInfoController extends GenericController {
         InquiryCollectionDto inquiryCollectionDto = inquiryInfoService.to(page, request);
         for (InquiryInfoDto inquiryInfoDto : inquiryCollectionDto.getInquiryInfoDtos()) {
             inquiryInfoDto.getCargoInfo().setPartInfos(null);
-            inquiryInfoDto.getPartnerInfo().setContacts(null);
+            //inquiryInfoDto.getPartnerInfo().setContacts(null);
         }
         responseBuilder.data(inquiryCollectionDto);
         return responseBuilder.build();

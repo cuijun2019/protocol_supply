@@ -66,4 +66,11 @@ public interface PartInfoRepository extends JpaRepository<PartInfo, Long>, JpaSp
     @Transactional(rollbackFor = Exception.class)
     @Query(value = "select * from part_info where is_delete=2 and part_id=?1", nativeQuery = true)
     PartInfo findOneModel(Long partId);
+
+    @Transactional(rollbackFor = Exception.class)
+    @Modifying
+    @Query(value = "delete from part_info  where cargo_id=?1", nativeQuery = true)
+    void deleteByCargoId(Long cargoId);
+
+
 }

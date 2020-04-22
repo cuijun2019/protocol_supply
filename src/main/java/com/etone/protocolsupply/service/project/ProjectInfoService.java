@@ -70,7 +70,6 @@ public class ProjectInfoService {
         } else {
             ProjectInfo projectInfo1 = projectInfoRepository.findAllByProjectId(Long.parseLong(maxOne));
             projectInfo.setProjectCode("SCUT-" + Common.getYYYYMMDDDate(date) + "-XY" + Common.convertSerialProject(projectInfo1.getProjectCode().substring(16), 1));
-
         }
         projectInfo.setIsDelete(Constant.DELETE_NO);
         projectInfo.setCreator(userName);
@@ -167,7 +166,7 @@ public class ProjectInfoService {
                 partInfoExpRepository.save(partInfoExp);
                 partInfoExp.getCargoInfo().setPartInfos(null);
                 partInfoExp.setCargoInfo(null);
-                partInfoExp.getProjectInfo().getInquiryInfo().getPartnerInfo().setContacts(null);
+                //partInfoExp.getProjectInfo().getInquiryInfo().getPartnerInfo().setContacts(null);
             }
         }
 
@@ -221,7 +220,7 @@ public class ProjectInfoService {
             projectInfoDto.setGuaranteeRate(cargoInfo.getGuaranteeRate());//维保率
             projectInfoDto.setCargoTotal(0.00);//货物总金额
             projectCollectionDto.add(projectInfoDto);
-            projectInfoDto.getInquiryInfo().getPartnerInfo().setContacts(null);
+            //projectInfoDto.getInquiryInfo().getPartnerInfo().setContacts(null);
         }
         return projectCollectionDto;
     }
@@ -231,25 +230,52 @@ public class ProjectInfoService {
         ProjectInfo projectInfo = this.findOne(projectInfoDto.getProjectId());
         Attachment attachmentn = projectInfoDto.getAttachment_n();//中标通知书
         Attachment attachmentc = projectInfoDto.getAttachment_c();//合同
+        Attachment attachmentp = projectInfoDto.getAttachment_p();//采购结果通知书
         CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(Long.parseLong(projectInfoDto.getCargoId()));//货物
-        SpringUtil.copyPropertiesIgnoreNull(projectInfoDto, projectInfo);
-        if (projectInfo != null && attachmentn == null && attachmentc == null && cargoInfo == null) {
+        ProjectInfo model=new ProjectInfo();
+        model.setProjectId(projectInfo.getProjectId());
+        model.setCreator(projectInfo.getCreator());
+        model.setPurchaser(projectInfoDto.getPurchaser());
+        model.setProjectCode(projectInfo.getProjectCode());
+        model.setProjectSubject(projectInfoDto.getCargoName()+"的采购");
+        model.setDeliveryDate(projectInfoDto.getDeliveryDate());
+        model.setDeliveryDateStatus(projectInfoDto.getDeliveryDateStatus());
+        model.setPaymentMethod(projectInfoDto.getPaymentMethod());
+        model.setPriceTerm(projectInfoDto.getPriceTerm());
+        model.setGuaranteeDate(projectInfoDto.getGuaranteeDate());
+        model.setGuaranteeFee(projectInfoDto.getGuaranteeFee());
+        model.setStatus(projectInfoDto.getStatus());
+        model.setCargoTotal(projectInfoDto.getCargoTotal());
+        model.setAmount(projectInfoDto.getAmount());
+        model.setCurrency(projectInfoDto.getCurrency());
+        model.setIsDelete(projectInfo.getIsDelete());
+        model.setInquiryInfo(projectInfo.getInquiryInfo());//询价
+        //SpringUtil.copyPropertiesIgnoreNull(projectInfoDto, projectInfo);
+        if (projectInfo != null && attachmentn == null && attachmentc == null && attachmentp ==null && cargoInfo == null ) {
             projectInfoRepository.save(projectInfo);
         }
         if (attachmentn != null) {
             Optional<Attachment> optional = attachmentRepository.findById(attachmentn.getAttachId());
             if (optional.isPresent()) {
-                projectInfo.setAttachment_n(optional.get());
+                model.setAttachment_n(optional.get());
             }
         }
         if (attachmentc != null) {
             Optional<Attachment> optional = attachmentRepository.findById(attachmentc.getAttachId());
             if (optional.isPresent()) {
-                projectInfo.setAttachment_c(optional.get());
+                model.setAttachment_c(optional.get());
+            }
+        }
+        if (attachmentp != null) {
+            Optional<Attachment> optional = attachmentRepository.findById(attachmentp.getAttachId());
+            if (optional.isPresent()) {
+                model.setAttachment_p(optional.get());
             }
         }
 
-        //agentInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
+        ProjectInfo projectInfo1=projectInfoRepository.save(model);
+
+       // agentInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
         //供应商
         AgentInfoExp agentInfoExp=projectInfoDto.getAgentInfoExp();
         if (agentInfoExp != null ) {
@@ -257,22 +283,21 @@ public class ProjectInfoService {
                 agentInfoExp.setIsDelete(Constant.DELETE_NO);
                 agentInfoExp.setCreateDate(new Date());
                 agentInfoExp.setCreator(username);
-                agentInfoExp.setProjectInfo(projectInfo);
+                agentInfoExp.setProjectInfo(projectInfo1);
                 agentInfoExpRepository.save(agentInfoExp);
 
         }
-//       // partInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
+       // partInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
         //货物配件
         Set<PartInfoExp>partInfoExps=projectInfoDto.getPartInfoExps();
         if (partInfoExps != null && !partInfoExps.isEmpty()) {
             for (PartInfoExp partInfoExp : partInfoExps) {
                 partInfoExp.setIsDelete(Constant.DELETE_NO);
-                partInfoExp.setProjectInfo(projectInfo);
+                partInfoExp.setProjectInfo(projectInfo1);
                 partInfoExpRepository.save(partInfoExp);
             }
         }
 
-        projectInfoRepository.save(projectInfo);
         return projectInfo;
     }
 
@@ -287,7 +312,7 @@ public class ProjectInfoService {
         AgentInfoExp agentInfoExp=agentInfoExpRepository.findByProjectId2(projectId);
         projectInfoDto.setAgentInfoExp(agentInfoExp);
         projectInfoDto.getInquiryInfo().getCargoInfo().setPartInfos(null);
-        projectInfoDto.getInquiryInfo().getPartnerInfo().setContacts(null);
+        //projectInfoDto.getInquiryInfo().getPartnerInfo().setContacts(null);
         return projectInfoDto;
     }
 

@@ -146,17 +146,20 @@ public class CargoInfoController extends GenericController {
     public ResponseValue updateCargo(@PathVariable("cargoId") String cargoId,
                                      @RequestBody CargoInfo cargoInfo) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-
         CargoInfo model = cargoInfoService.findOne(Long.parseLong(cargoId));
         cargoInfo.setCargoId(Long.parseLong(cargoId));
         cargoInfo.setCreator(model.getCreator());
         cargoInfo.setCreateDate(model.getCreateDate());
         cargoInfo.setCargoSerial(model.getCargoSerial());
         cargoInfo.setCargoCode(model.getCargoCode());
+        cargoInfo.setCargoCode(model.getCargoCode());
+        cargoInfo.setIsDelete(model.getIsDelete());
+        cargoInfo.setItemCode(model.getItemCode());
         cargoInfo = cargoInfoService.update(cargoInfo, this.getUser());
         responseBuilder.data(cargoInfo);
         return responseBuilder.build();
     }
+
 
     /**
      * 货物导出

@@ -144,7 +144,7 @@ public class PartInfoService {
             BeanUtils.copyProperties(partInfoExp, partInfoExpDto);
             partInfoExpDto.getCargoInfo().setPartInfos(null);
             partExpCollectionDto.add(partInfoExpDto);
-            partInfoExpDto.getProjectInfo().getInquiryInfo().getPartnerInfo().setContacts(null);
+            //partInfoExpDto.getProjectInfo().getInquiryInfo().getPartnerInfo().setContacts(null);
         }
 
         return partExpCollectionDto;
@@ -419,7 +419,7 @@ public class PartInfoService {
 
     public static List<String> readPartInfoKey() {
         List<String> list = new ArrayList<>();
-        list.add("配件编号");
+        //list.add("配件编号");
         list.add("设备或配件名称");
         list.add("型号/规格");
         list.add("产地/厂家");

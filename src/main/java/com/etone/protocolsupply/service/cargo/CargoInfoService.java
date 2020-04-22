@@ -150,11 +150,9 @@ public class CargoInfoService {
     public CargoInfo update(CargoInfo cargoInfo, JwtUser jwtUser) throws GlobalServiceException {
         Date date = new Date();
         String userName = jwtUser.getUsername();
-
         cargoInfo.setMaintenanceMan(userName);
         cargoInfo.setMaintenanceDate(date);
         Optional<Attachment> attachment = attachmentRepository.findById(cargoInfo.getAttachment().getAttachId());
-
         if (cargoInfo != null && attachment == null) {
             cargoInfoRepository.save(cargoInfo);
         }
@@ -163,7 +161,30 @@ public class CargoInfoService {
             if (optional.isPresent()) {
                 cargoInfo.setAttachment(optional.get());
             }
-            cargoInfoRepository.save(cargoInfo);
+            partInfoRepository.deleteByCargoId(cargoInfo.getCargoId());
+            Set<PartInfo> partInfos =cargoInfo.getPartInfos();
+            if (partInfos != null && !partInfos.isEmpty()) {
+                String partSerial = partInfoService.findLastPartSerial(cargoInfo.getCargoSerial());
+                int step = 0;
+                for (PartInfo partInfo : partInfos) {
+                    if (step == 0) {
+                        partInfo.setPartSerial(Common.convertSerial(partSerial, 0));
+                    } else {
+                        partInfo.setPartSerial(Common.convertSerial(partSerial, 1));
+                    }
+                    partInfo.setPartCode(cargoInfo.getCargoCode() + partInfo.getPartSerial());
+                    partInfo.setIsDelete(Constant.DELETE_NO);
+                    step++;
+                }
+            }
+            cargoInfo=cargoInfoRepository.save(cargoInfo);
+            List<Long> partIds = new ArrayList<>();
+            if(partInfos.size()>0){
+                for (PartInfo partInfo : cargoInfo.getPartInfos()) {
+                    partIds.add(partInfo.getPartId());
+                }
+                partInfoRepository.setCargoId(cargoInfo.getCargoId(), partIds);
+            }
         }
         return cargoInfo;
     }
@@ -288,8 +309,6 @@ public class CargoInfoService {
             String jsonStr = maps.get(i).toString();
             JSONObject jsonObject = new JSONObject(jsonStr);
             CargoInfo cargoInfo = new CargoInfo();
-//            cargoInfo.setCargoSerial(this.findLastCargoSerial());//序号
-//            cargoInfo.setCargoCode(cargoInfo.getItemCode() + cargoInfo.getCargoSerial());//编号
             BrandItem brandItem=brandItemRepository.findByItemName(jsonObject.get("货物品目").toString());
             if(brandItem==null){
                 cargoInfo.setItemCode(null);//品目code
