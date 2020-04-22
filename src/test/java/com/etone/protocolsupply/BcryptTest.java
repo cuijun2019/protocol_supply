@@ -30,5 +30,6 @@ public class BcryptTest {
         System.out.println(bcrypt2.get("CIPHER_KEY")); //null
 
         System.out.println(BCrypt.hashpw("123456", "$2a$12$2f4hHmvpiRjdxYYEnPjluOpdBnpKfJPI0NFlQlSx50zJG53hpMQPS"));
+        System.out.println(BCrypt.checkpw("123456", "$2a$12$2f4hHmvpiRjdxYYEnPjluOpdBnpKfJPI0NFlQlSx50zJG53hpMQPS"));
     }
 }
