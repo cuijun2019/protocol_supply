@@ -76,7 +76,7 @@ public class BusiJbpmFlowService {
         for (BusiJbpmFlow busiJbpmFlow : source) {
             busiJbpmFlowDto = new BusiJbpmFlowDto();
             BeanUtils.copyProperties(busiJbpmFlow, busiJbpmFlowDto);
-            busiJbpmFlowDto.setParentActor(jwtUser.getUsername());
+           // busiJbpmFlowDto.setParentActor(jwtUser.getUsername());
             busiJbpmFlowCollectionDto.add(busiJbpmFlowDto);
         }
         return busiJbpmFlowCollectionDto;
@@ -87,8 +87,12 @@ public class BusiJbpmFlowService {
             String str1=null;
             if(type==0){
                 str1="待办";
-            } else {
+            } else if(type==1) {
                 str1="已办";
+            } else if(type==2) {
+                str1="待阅";
+            } else if(type==3) {
+                str1="已阅";
             }
             String[] header = {str1+"类型", str1+"主题", "状态", "当前处理人", "创建人", "创建时间"};
             HSSFWorkbook workbook = new HSSFWorkbook();
@@ -128,8 +132,12 @@ public class BusiJbpmFlowService {
             }
             if(type==0){
                 response.setHeader("Content-disposition", "attachment;filename=busiJbpmFlow.xls");
-            }else {
+            }else if(type==1) {
                 response.setHeader("Content-disposition", "attachment;filename=busiApproveResult.xls");
+            }else if(type==2) {
+                response.setHeader("Content-disposition", "attachment;filename=toBeRead.xls");
+            }else if(type==3) {
+                response.setHeader("Content-disposition", "attachment;filename=alreadyRead.xls");
             }
             response.setContentType("application/vnd.ms-excel;charset=utf-8");
             response.flushBuffer();
