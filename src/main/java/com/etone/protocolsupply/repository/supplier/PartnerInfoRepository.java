@@ -5,7 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 public interface PartnerInfoRepository extends JpaRepository<PartnerInfo, Long>, JpaSpecificationExecutor<PartnerInfo> {
 
@@ -13,4 +16,8 @@ public interface PartnerInfoRepository extends JpaRepository<PartnerInfo, Long>,
     @Modifying
     @Query(value = "update partner_info set is_delete=1 where partner_id=?1", nativeQuery = true)
     void updateIsDelete(Long partnerId);
+
+    @Query(value = "select * from partner_info where partner_id in (:supplierIds)",
+            nativeQuery = true)
+    List<PartnerInfo> findAll(@Param("supplierIds") List<Long> supplierIds);
 }

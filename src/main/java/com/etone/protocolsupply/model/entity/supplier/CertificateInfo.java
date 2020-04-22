@@ -1,6 +1,7 @@
 package com.etone.protocolsupply.model.entity.supplier;
 
 import com.etone.protocolsupply.model.entity.Attachment;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
@@ -33,6 +34,7 @@ public class CertificateInfo implements Serializable {
     /**
      * 银行开户许可证附件
      */
+    @JsonIgnoreProperties({ "handler","hibernateLazyInitializer" })
     @OneToOne(fetch = FetchType.LAZY)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "BANK_ATTACH", referencedColumnName = "ATTACH_ID")
@@ -41,6 +43,7 @@ public class CertificateInfo implements Serializable {
     /**
      * 营业执照副本附件
      */
+    @JsonIgnoreProperties({ "handler","hibernateLazyInitializer" })
     @OneToOne(fetch = FetchType.LAZY)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "LICENSE", referencedColumnName = "ATTACH_ID")
@@ -61,4 +64,8 @@ public class CertificateInfo implements Serializable {
      */
     @Column(name = "MODIFY_STATUS", length = 4)
     private Integer modifyStatus;
+
+    //@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    //@JoinColumn(name = "PARTNER_ID", referencedColumnName = "PARTNER_ID", nullable = false)
+    //private PartnerInfo partnerInfo;
 }

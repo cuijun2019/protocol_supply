@@ -52,7 +52,7 @@ public class PartnerAccount implements Serializable {
     @Column(name = "FAX", length = 100)
     private String fax;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "PARTNER_ID", referencedColumnName = "PARTNER_ID", nullable = false)
-    private PartnerInfo partnerInfo;
+    //@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    //@JoinColumn(name = "PARTNER_ID", referencedColumnName = "PARTNER_ID", nullable = false)
+    //private PartnerInfo partnerInfo;
 }

@@ -39,4 +39,8 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     @Query(value = "update users set company=?1,create_time=?2,email=?3,enabled=?4,sex=?5,telephone=?6,update_time=?7,password=?8,fullname=?9 where id=?10", nativeQuery = true)
     void updateUser(String company, Date createTime, String email, Boolean enabled, String sex, String telephone, Date date, String password,String fullname, Long id);
 
+    @Transactional(rollbackFor = Exception.class)
+    @Modifying
+    @Query(value = "update users set password=?1 where username=?2", nativeQuery = true)
+    void updatePassword(String encode, String username);
 }

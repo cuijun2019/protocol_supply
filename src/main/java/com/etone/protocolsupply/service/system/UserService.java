@@ -2,12 +2,14 @@ package com.etone.protocolsupply.service.system;
 
 import com.etone.protocolsupply.exception.GlobalExceptionCode;
 import com.etone.protocolsupply.exception.GlobalServiceException;
+import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.systemControl.UserCollectionDto;
 import com.etone.protocolsupply.model.dto.systemControl.UserDto;
 import com.etone.protocolsupply.model.entity.user.Role;
 import com.etone.protocolsupply.model.entity.user.User;
 import com.etone.protocolsupply.repository.user.RoleRepository;
 import com.etone.protocolsupply.repository.user.UserRepository;
+import com.etone.protocolsupply.utils.BcryptCipher;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.BeanUtils;
@@ -16,6 +18,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,10 +29,7 @@ import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Transactional(rollbackFor = Exception.class)
 @Service
@@ -89,7 +92,7 @@ public class UserService {
         if(check!=null){
             return "该用户已经存在";
         }
-        //TODO 密码加密
+
         User user = new User();
         user.setCompany(userDto.getCompany());
         user.setCreateTime(date);
@@ -97,7 +100,7 @@ public class UserService {
         user.setEnabled(userDto.getEnabled());
         user.setFullname(userDto.getFullname());
         user.setIsDelete(2);
-        user.setPassword(userDto.getPassword());
+        user.setPassword(BcryptCipher.Bcrypt(userDto.getPassword()).get("cipher"));
         user.setSex(userDto.getSex());
         user.setTelephone(userDto.getTelephone());
         user.setUpdateTime(date);
@@ -183,5 +186,22 @@ public class UserService {
 
     public User findUserByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    public Boolean updatePassword(String oldPassword, String newPassword, JwtUser user) {
+        //当前登录用户名密码
+        String username = user.getUsername();
+        String userPassword = user.getPassword();
+        //校验
+        boolean matches = BCrypt.checkpw(oldPassword, userPassword);
+
+        //更新密码
+        Map<String, String> pwd = BcryptCipher.Bcrypt(newPassword);
+        if(matches){
+            userRepository.updatePassword(pwd.get("cipher"),username);
+        }else {
+            return false;
+        }
+        return true;
     }
 }

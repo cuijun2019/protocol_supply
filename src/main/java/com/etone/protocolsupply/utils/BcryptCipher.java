@@ -1,4 +1,4 @@
-package com.etone.protocolsupply;
+package com.etone.protocolsupply.utils;
 
 import org.springframework.security.crypto.bcrypt.BCrypt;
 

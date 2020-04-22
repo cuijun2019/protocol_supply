@@ -1,5 +1,7 @@
 package com.etone.protocolsupply.model.entity.supplier;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
@@ -55,8 +57,10 @@ public class ContactInfo implements Serializable {
     @Column(name = "FAX", length = 32)
     private String fax;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JoinColumn(name = "PARTNER_ID")
-    private PartnerInfo partnerInfo;
+   // @JsonIgnoreProperties({ "handler","hibernateLazyInitializer" })
+    //@JsonBackReference
+    //@ManyToOne(cascade = CascadeType.REFRESH, optional = false)
+    //@JsonInclude(JsonInclude.Include.NON_NULL)
+    //@JoinColumn(name = "PARTNER_ID")
+    //private PartnerInfo partnerInfo;
 }

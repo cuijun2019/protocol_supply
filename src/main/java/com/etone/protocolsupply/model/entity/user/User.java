@@ -1,6 +1,8 @@
 package com.etone.protocolsupply.model.entity.user;
 
 import com.etone.protocolsupply.model.entity.Attachment;
+import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -104,4 +106,9 @@ public class User {
 
     @Column(name = "IS_DELETE", length = 4)
     private Integer isDelete;
+
+    @JsonIgnoreProperties({ "handler","hibernateLazyInitializer" })
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "PARTNER_ID", referencedColumnName = "PARTNER_ID", nullable = false)
+    private PartnerInfo partnerInfo;
 }

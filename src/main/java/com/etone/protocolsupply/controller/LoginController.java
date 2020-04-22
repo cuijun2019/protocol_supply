@@ -5,6 +5,9 @@ import com.etone.protocolsupply.exception.GlobalExceptionCode;
 import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.LoginRequest;
 import com.etone.protocolsupply.model.dto.systemControl.UserDto;
+import com.etone.protocolsupply.model.entity.user.PermissionComparator;
+import com.etone.protocolsupply.model.entity.user.Permissions;
+import com.etone.protocolsupply.model.entity.user.Role;
 import com.etone.protocolsupply.model.entity.user.User;
 import com.etone.protocolsupply.repository.user.UserRepository;
 import com.etone.protocolsupply.service.security.JwtTokenUtil;
@@ -30,7 +33,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @Description jwt token的生成与刷新
@@ -76,6 +79,14 @@ public class LoginController {
 
         UserDto userDto = new UserDto();
         User user = userService.findUserByUsername(username);
+        List<Role> roles = user.getRoles();
+        for (int i = 0; i < roles.size(); i++) {
+            Role role = roles.get(i);
+            Set<Permissions> permissions = role.getPermissions();
+            TreeSet<Permissions> tree = new TreeSet<>(new PermissionComparator());
+            tree.addAll(permissions);
+            roles.get(i).setPermissions(tree);
+        }
         BeanUtils.copyProperties(user, userDto);
         userDto.setToken(token);
 

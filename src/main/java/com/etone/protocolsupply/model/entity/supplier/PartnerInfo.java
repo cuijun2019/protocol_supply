@@ -1,5 +1,7 @@
 package com.etone.protocolsupply.model.entity.supplier;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -134,7 +136,7 @@ public class PartnerInfo implements Serializable {
     private String introduce;
 
     /**
-     * 认证状态
+     * 认证状态 1已认证   2未认证
      */
     @Column(name = "AUTH_STATUS", length = 4)
     private Integer authStatus;
@@ -155,8 +157,4 @@ public class PartnerInfo implements Serializable {
     @Column(name = "IS_DELETE", length = 4)
     private Integer isDelete;
 
-    @OneToMany(mappedBy = "partnerInfo",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
-    private Set<ContactInfo> contacts = new HashSet();
 }
