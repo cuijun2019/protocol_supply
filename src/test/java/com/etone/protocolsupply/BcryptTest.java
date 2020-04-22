@@ -8,7 +8,7 @@ import java.util.Map;
 public class BcryptTest {
 
     @Test
-    public void main(String[] args) {
+    public void test() {
         String string = "123456";
 
         Map<String, String> bcrypt = BcryptCipher.Bcrypt(string);
