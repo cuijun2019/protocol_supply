@@ -61,6 +61,6 @@ public class ContactInfo implements Serializable {
     //@JsonBackReference
     //@ManyToOne(cascade = CascadeType.REFRESH, optional = false)
     //@JsonInclude(JsonInclude.Include.NON_NULL)
-    //@JoinColumn(name = "PARTNER_ID")
-    //private PartnerInfo partnerInfo;
+    @Column(name = "PARTNER_ID")
+    private Long partnerId;
 }

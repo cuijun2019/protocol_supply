@@ -43,4 +43,7 @@ public class BankInfo implements Serializable {
     //@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     //@JoinColumn(name = "PARTNER_ID", referencedColumnName = "PARTNER_ID", nullable = false)
     //private PartnerInfo partnerInfo;
+
+    @Column(name = "PARTNER_ID")
+    private Long partnerId;
 }
