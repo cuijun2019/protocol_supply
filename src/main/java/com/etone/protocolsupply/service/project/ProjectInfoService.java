@@ -231,6 +231,9 @@ public class ProjectInfoService {
         Attachment attachmentn = projectInfoDto.getAttachment_n();//中标通知书
         Attachment attachmentc = projectInfoDto.getAttachment_c();//合同
         Attachment attachmentp = projectInfoDto.getAttachment_p();//采购结果通知书
+        Long attachmentnId =null;
+        Long attachmentcId =null;
+        Long attachmentpId =null;
         CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(Long.parseLong(projectInfoDto.getCargoId()));//货物
         ProjectInfo model=new ProjectInfo();
         model.setProjectId(projectInfo.getProjectId());
@@ -252,30 +255,42 @@ public class ProjectInfoService {
         model.setInquiryInfo(projectInfo.getInquiryInfo());//询价
         //SpringUtil.copyPropertiesIgnoreNull(projectInfoDto, projectInfo);
         if (projectInfo != null && attachmentn == null && attachmentc == null && attachmentp ==null && cargoInfo == null ) {
-            projectInfoRepository.save(projectInfo);
+            projectInfoRepository.save(model);
         }
         if (attachmentn != null) {
             Optional<Attachment> optional = attachmentRepository.findById(attachmentn.getAttachId());
             if (optional.isPresent()) {
                 model.setAttachment_n(optional.get());
+                attachmentnId=model.getAttachment_n().getAttachId();
+            }else {
+                attachmentnId=null;
             }
         }
         if (attachmentc != null) {
             Optional<Attachment> optional = attachmentRepository.findById(attachmentc.getAttachId());
             if (optional.isPresent()) {
                 model.setAttachment_c(optional.get());
+                attachmentnId=model.getAttachment_c().getAttachId();
+            }else {
+                attachmentcId=null;
             }
         }
         if (attachmentp != null) {
             Optional<Attachment> optional = attachmentRepository.findById(attachmentp.getAttachId());
             if (optional.isPresent()) {
                 model.setAttachment_p(optional.get());
+                attachmentnId=model.getAttachment_p().getAttachId();
+            }else {
+                attachmentpId=null;
             }
         }
 
-        ProjectInfo projectInfo1=projectInfoRepository.save(model);
+        projectInfoRepository.update(model.getProjectId(),model.getProjectSubject(),model.getPurchaser(),
+                model.getCurrency(),model.getDeliveryDate(),model.getDeliveryDateStatus(),model.getGuaranteeDate(),model.getGuaranteeFee(),
+                model.getPaymentMethod(),model.getPriceTerm(),model.getCargoTotal(),model.getAmount(),model.getStatus(), attachmentnId,
+                attachmentcId,attachmentpId, model.getInquiryInfo().getInquiryId(),model.getCreator(),model.getProjectCode(),model.getIsDelete());
 
-       // agentInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
+        agentInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
         //供应商
         AgentInfoExp agentInfoExp=projectInfoDto.getAgentInfoExp();
         if (agentInfoExp != null ) {
@@ -283,22 +298,22 @@ public class ProjectInfoService {
                 agentInfoExp.setIsDelete(Constant.DELETE_NO);
                 agentInfoExp.setCreateDate(new Date());
                 agentInfoExp.setCreator(username);
-                agentInfoExp.setProjectInfo(projectInfo1);
+                agentInfoExp.setProjectInfo(model);
                 agentInfoExpRepository.save(agentInfoExp);
-
         }
-       // partInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
+        partInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
         //货物配件
         Set<PartInfoExp>partInfoExps=projectInfoDto.getPartInfoExps();
         if (partInfoExps != null && !partInfoExps.isEmpty()) {
             for (PartInfoExp partInfoExp : partInfoExps) {
                 partInfoExp.setIsDelete(Constant.DELETE_NO);
-                partInfoExp.setProjectInfo(projectInfo1);
+                partInfoExp.setProjectInfo(model);
+                partInfoExp.setCargoInfo(cargoInfo);
                 partInfoExpRepository.save(partInfoExp);
             }
         }
 
-        return projectInfo;
+        return model;
     }
 
     public ProjectInfoDto findOne(Long projectId) {
