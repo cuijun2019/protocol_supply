@@ -32,15 +32,6 @@ public class CertificateInfo implements Serializable {
     private String creditCode;
 
     /**
-     * 银行开户许可证附件
-     */
-    @JsonIgnoreProperties({ "handler","hibernateLazyInitializer" })
-    @OneToOne(fetch = FetchType.LAZY)
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JoinColumn(name = "BANK_ATTACH", referencedColumnName = "ATTACH_ID")
-    private Attachment bankAttach;
-
-    /**
      * 营业执照副本附件
      */
     @JsonIgnoreProperties({ "handler","hibernateLazyInitializer" })
@@ -50,8 +41,23 @@ public class CertificateInfo implements Serializable {
     private Attachment license;
 
     /**
-     * 法人身份证附件
+     * 法人身份证附件正面
      */
+    @JsonIgnoreProperties({ "handler","hibernateLazyInitializer" })
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JoinColumn(name = "IDENTITYCARD_FRONT", referencedColumnName = "ATTACH_ID")
+    private Attachment identityCardFront;
+
+    /**
+     * 法人身份证附件反面
+     */
+    @JsonIgnoreProperties({ "handler","hibernateLazyInitializer" })
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JoinColumn(name = "IDENTITYCARD_BACK", referencedColumnName = "ATTACH_ID")
+    private Attachment identityCardBack;
+
 
     /**
      * 注册审核状态
