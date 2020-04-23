@@ -52,9 +52,6 @@ public class InquiryInfoController extends GenericController {
                                        @RequestBody InquiryInfoDto inquiryInfoDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         InquiryInfo inquiryInfo = inquiryInfoService.save(inquiryInfoDto, this.getUser());
-        //inquiryInfo.getCargoInfo().setPartInfos(null);
-        //inquiryInfo.setCargoInfo(null);
-        //inquiryInfo.setPartnerInfo(null);
         responseBuilder.data(inquiryInfo);
         return responseBuilder.build();
     }
@@ -128,6 +125,28 @@ public class InquiryInfoController extends GenericController {
     public ResponseValue deleteCargo(@PathVariable("inquiryId") String inquiryId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         inquiryInfoService.delete(Long.parseLong(inquiryId));
+        return responseBuilder.build();
+    }
+
+    /**
+     * 修改询价status
+     *
+     * @param inquiryId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/{inquiryId}",
+            method = RequestMethod.PUT,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseValue updateInquiryStatus(@Validated
+                                             @PathVariable("inquiryId") String inquiryId,
+                                             @RequestBody InquiryInfo inquiryInfo) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        InquiryInfo info=inquiryInfoService.updateStatus(Long.parseLong(inquiryId),inquiryInfo);
+        info.getCargoInfo().setPartInfos(null);
+        responseBuilder.data(info);
         return responseBuilder.build();
     }
 

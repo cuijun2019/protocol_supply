@@ -119,6 +119,13 @@ public class InquiryInfoService {
         inquiryInfoRepository.updateIsDelete(inquiryId);
     }
 
+    public InquiryInfo updateStatus(Long inquiryId,InquiryInfo inquiryInfo) {
+        InquiryInfo inquiryInfo1=inquiryInfoRepository.findAllByInquiryId(inquiryId);
+        inquiryInfo1.setStatus(inquiryInfo.getStatus());
+        inquiryInfoRepository.save(inquiryInfo1);
+        return inquiryInfo1;
+       // inquiryInfoRepository.updateStatus(inquiryId,status);
+    }
 
     //货物导出
     public void export(HttpServletResponse response, List<Long> inquiryIds) {
