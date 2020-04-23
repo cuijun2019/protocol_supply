@@ -157,4 +157,10 @@ public class PartnerInfo implements Serializable {
     @Column(name = "IS_DELETE", length = 4)
     private Integer isDelete;
 
+    /**
+     * 审核状态 审核通过1，审核未通过2
+     */
+    @Column(name = "IS_AUDITING",length = 4)
+    private Integer isAuditing;
+
 }
