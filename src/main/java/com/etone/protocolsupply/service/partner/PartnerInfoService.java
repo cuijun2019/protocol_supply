@@ -4,8 +4,10 @@ import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.exception.GlobalServiceException;
 import com.etone.protocolsupply.model.dto.partner.PartnerInfoCollectionDto;
 import com.etone.protocolsupply.model.dto.partner.PartnerInfoDto;
-import com.etone.protocolsupply.model.entity.notice.BidNotice;
-import com.etone.protocolsupply.model.entity.supplier.*;
+import com.etone.protocolsupply.model.entity.supplier.BankInfo;
+import com.etone.protocolsupply.model.entity.supplier.CertificateInfo;
+import com.etone.protocolsupply.model.entity.supplier.ContactInfo;
+import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
 import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.repository.supplier.*;
@@ -124,9 +126,11 @@ public class PartnerInfoService {
         //更新三证信息
         CertificateInfo certificateInfo = certificateInfoRepository.save(partnerInfoDto.getCertificateInfo());
 
-        //更新三证中两个证件的附件信息
-        certificateInfoRepository.updateAttachmentIds(partnerInfoDto.getCertificateInfo().getBankAttach().getAttachId(),
-                partnerInfoDto.getCertificateInfo().getLicense().getAttachId(),certificateInfo.getCertificateId());
+        //更新三证中三个证件的附件信息
+        certificateInfoRepository.updateAttachmentIds(partnerInfoDto.getCertificateInfo().getLicense().getAttachId(),
+                partnerInfoDto.getCertificateInfo().getIdentityCardFront().getAttachId(),
+                partnerInfoDto.getCertificateInfo().getIdentityCardBack().getAttachId(),
+                certificateInfo.getCertificateId());
 
     }
 

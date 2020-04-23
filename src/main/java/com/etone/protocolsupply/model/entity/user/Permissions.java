@@ -40,4 +40,7 @@ public class Permissions implements Serializable {
 
     @Column(name = "IS_DELETE", length = 4)
     private Integer isDelete;
+
+    @Column(name = "ICON" ,length = 500)
+    private String icon;
 }

@@ -15,6 +15,6 @@ public interface CertificateInfoRepository extends JpaRepository<CertificateInfo
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying
-    @Query(value = "update certificate_info set bank_attach=?1,license=?2 where certificate_id=?3", nativeQuery = true)
-    void updateAttachmentIds(Long bankAttachId, Long licenseAttachId, Long certificateId);
+    @Query(value = "update certificate_info set license=?1,identitycard_front=?2,identitycard_back=?3 where certificate_id=?4", nativeQuery = true)
+    void updateAttachmentIds(Long licenseAttachId, Long identityCardFrontId,Long identityCardBackId, Long certificateId);
 }

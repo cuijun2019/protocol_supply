@@ -93,6 +93,7 @@ public class SupplierController extends GenericController {
         if(result){
             responseBuilder.message("密码修改成功");
         }else {
+            responseBuilder.code(404);
             responseBuilder.message("密码修改失败");
         }
         return responseBuilder.build();
