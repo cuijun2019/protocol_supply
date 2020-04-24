@@ -86,6 +86,7 @@ public class InquiryInfoService {
             inquiryInfo.setPartnerInfo(null);
         }
           inquiryInfoRepository.save(inquiryInfo);
+        inquiryInfo.getCargoInfo().setPartInfos(null);
         return inquiryInfo;
     }
 
