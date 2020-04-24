@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long>, JpaSpecificationExecutor<BusiJbpmFlow> {
 
@@ -27,4 +28,9 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
     @Query(value = "select * from busi_jbpm_flow where 1=1 and " +
             "if((:businessType is not null), (business_type =:agentName), (1=1)) and if((:businessSubject is not null), (business_subject like %:businessSubject%), (1=1)) ", nativeQuery = true)
     List<BusiJbpmFlow> findAll(@Param("businessType") String businessType, @Param("businessSubject") String businessSubject);
+
+    @Transactional(rollbackFor = Exception.class)
+    @Modifying
+    @Query(value = "update busi_jbpm_flow set type=1 where id=?1", nativeQuery = true)
+    void updateType(Long id);
 }

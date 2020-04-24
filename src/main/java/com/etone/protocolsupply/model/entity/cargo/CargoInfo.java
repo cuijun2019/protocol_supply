@@ -108,22 +108,40 @@ public class CargoInfo implements Serializable {
     @Column(name = "STATUS", length = 4)
     private Integer status;
 
+    /**
+     * 创建人
+     */
     @Column(name = "CREATOR", length = 32)
     private String creator;
 
+    /**
+     * 创建时间
+     */
     @Column(name = "CREATE_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
 
+    /**
+     * 维护人员
+     */
     @Column(name = "MAINTENANCE_MAN", length = 32)
     private String maintenanceMan;
 
+    /**
+     * 维护时间
+     */
     @Column(name = "MAINTENANCE_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date maintenanceDate;
 
     @Column(name = "IS_DELETE", length = 4)
     private Integer isDelete;
+
+    /**
+     * 参考价格
+     */
+    @Column(name = "REPRICE")
+    private Double reprice;
 
     /**
      * 证明文件

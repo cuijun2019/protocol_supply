@@ -107,4 +107,37 @@ public class BusiJbpmFlowController extends GenericController {
     }
 
 
+    /**
+     * 根据业务表id，待办类型，当前处理人 修改type=1
+     * @param busiJbpmFlowDto
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.PUT,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseValue updateBusiJbpmFlows(@Validated
+                                                 @RequestBody BusiJbpmFlowDto busiJbpmFlowDto) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereThreeClause(busiJbpmFlowDto.getBusinessId(),busiJbpmFlowDto.getBusinessType(),busiJbpmFlowDto.getParentActor());
+        List<BusiJbpmFlow> list=busiJbpmFlowService.getModel(specification);
+        BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
+        if(list.size()!=0){
+             busiJbpmFlow=list.get(0);
+            busiJbpmFlowService.updateType(busiJbpmFlow.getId());
+            busiJbpmFlow.setType(1);
+        }else {
+            busiJbpmFlow=null;
+            responseBuilder.message("查询不到数据，操作失败！");
+        }
+        responseBuilder.data(busiJbpmFlow);
+        return responseBuilder.build();
+    }
+
+
+
+
+
+
 }
