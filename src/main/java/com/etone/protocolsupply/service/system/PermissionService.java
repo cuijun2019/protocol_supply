@@ -71,6 +71,8 @@ public class PermissionService {
         ArrayList<Object> supplierListInfo = new ArrayList<>();
         HashMap<String, Object> supplierMapUpdate = new HashMap<>();
         ArrayList<Object> supplierListUpdate = new ArrayList<>();
+        HashMap<String, Object> supplierMapResetPWD = new HashMap<>();
+        ArrayList<Object> supplierListResetPWD  = new ArrayList<>();
 
         //代理商管理
         HashMap<String, Object> agentMap = new HashMap<>();
@@ -160,6 +162,8 @@ public class PermissionService {
                 supplierMapInfo.put("permission",permissionsList.get(i));
             }else if(40==permissionsList.get(i).getPermId()){
                 supplierMapUpdate.put("permission",permissionsList.get(i));
+            }else if(41==permissionsList.get(i).getPermId()){
+                supplierMapResetPWD.put("permission",permissionsList.get(i));
             }else if(48==permissionsList.get(i).getPermId()){
                 agentMapMyAgent.put("permission",permissionsList.get(i));
             }else if(54==permissionsList.get(i).getPermId()){
@@ -258,6 +262,10 @@ public class PermissionService {
                 supplierListUpdate.add(permissionsList.get(i));
                 supplierMapUpdate.put("list",supplierListUpdate);
             }
+            if(41==permissionsList.get(i).getParentPermId()){
+                supplierListResetPWD.add(permissionsList.get(i));
+                supplierMapResetPWD.put("list",supplierListResetPWD);
+            }
             if(48==permissionsList.get(i).getParentPermId()){
                 agentListMyAgent.add(permissionsList.get(i));
                 agentMapMyAgent.put("list",agentListMyAgent);
@@ -324,6 +332,9 @@ public class PermissionService {
         }
         if(agentMapMyAgent.size()>0){
             agentList.add(agentMapMyAgent);
+        }
+        if(supplierMapResetPWD.size()>0){
+            supplierList.add(supplierMapResetPWD);
         }
         if(supplierMapUpdate.size()>0){
             supplierList.add(supplierMapUpdate);
