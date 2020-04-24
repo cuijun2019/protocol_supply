@@ -1,6 +1,7 @@
 package com.etone.protocolsupply.model.entity.cargo;
 
 import com.etone.protocolsupply.model.entity.Attachment;
+import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
@@ -138,5 +139,13 @@ public class CargoInfo implements Serializable {
             fetch = FetchType.LAZY)
     private Set<PartInfo> partInfos = new HashSet<>();
 
+    /**
+     * 供应商
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JoinColumn(name = "PARTNER_ID", referencedColumnName = "PARTNER_ID")
+    private PartnerInfo partnerInfo;
 
 }

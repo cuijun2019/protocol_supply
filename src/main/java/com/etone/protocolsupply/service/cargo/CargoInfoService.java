@@ -11,10 +11,12 @@ import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.BrandItem;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.cargo.PartInfo;
+import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
 import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.cargo.BrandItemRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.repository.cargo.PartInfoRepository;
+import com.etone.protocolsupply.repository.supplier.PartnerInfoRepository;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.poi.hssf.usermodel.*;
@@ -53,9 +55,10 @@ public class CargoInfoService {
     private AttachmentRepository attachmentRepository;
     @Autowired
     private PagingMapper         pagingMapper;
-
     @Autowired
     private BrandItemRepository brandItemRepository;
+    @Autowired
+    private PartnerInfoRepository partnerInfoRepository;
 
     public CargoInfo save(CargoInfoDto cargoInfoDto, JwtUser jwtUser) throws GlobalServiceException {
         Date date = new Date();
@@ -76,6 +79,15 @@ public class CargoInfoService {
             }
         }else {
             cargoInfo.setAttachment(null);
+        }
+        PartnerInfo partnerInfo= cargoInfoDto.getPartnerInfo();
+        if (partnerInfo != null && partnerInfo.getPartnerId()!=null && !partnerInfo.getPartnerId().equals("")) {
+            Optional<PartnerInfo> optional = partnerInfoRepository.findById(partnerInfo.getPartnerId());
+            if (optional.isPresent()) {
+                cargoInfo.setPartnerInfo(optional.get());
+            }
+        }else {
+            cargoInfo.setPartnerInfo(null);
         }
         cargoInfo.setCargoSerial(this.findLastCargoSerial());
         cargoInfo.setCargoCode(cargoInfo.getItemCode() + cargoInfo.getCargoSerial());
