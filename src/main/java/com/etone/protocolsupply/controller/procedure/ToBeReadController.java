@@ -1,5 +1,6 @@
 package com.etone.protocolsupply.controller.procedure;
 
+import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowCollectionDto;
@@ -52,7 +53,7 @@ public class ToBeReadController extends GenericController {
     public ResponseValue postToBeRead(@Validated
                                        @RequestBody BusiJbpmFlowDto busiJbpmFlowDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        BusiJbpmFlow busiJbpmFlow = busiJbpmFlowService.save(busiJbpmFlowDto, this.getUser());
+        BusiJbpmFlow busiJbpmFlow = busiJbpmFlowService.saveToBeRead(busiJbpmFlowDto, this.getUser());
         responseBuilder.data(busiJbpmFlow);
         return responseBuilder.build();
     }
@@ -79,7 +80,7 @@ public class ToBeReadController extends GenericController {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort = new Sort(Sort.Direction.DESC, "flowStartTime");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereClause(businessType, businessSubject,2);
+        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereClause(businessType, businessSubject, Constant.BUSINESS_TYPE_DAIYUE);
         Page<BusiJbpmFlow> page = busiJbpmFlowService.findAgents(specification, pageable);
         BusiJbpmFlowCollectionDto busiJbpmFlowDto = busiJbpmFlowService.to(page, request,this.getUser());
         responseBuilder.data(busiJbpmFlowDto);
@@ -102,7 +103,7 @@ public class ToBeReadController extends GenericController {
                             @RequestParam(value = "businessSubject", required = false) String businessSubject,
                             @RequestBody(required = false) List<Long> ids,
                             @Context HttpServletResponse response) {
-        busiJbpmFlowService.export(response, businessType, businessSubject, ids,2);
+        busiJbpmFlowService.export(response, businessType, businessSubject, ids,Constant.BUSINESS_TYPE_DAIYUE);
     }
 
 

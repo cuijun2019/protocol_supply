@@ -37,7 +37,7 @@ public class BusiJbpmFlowService {
     @Autowired
     private PagingMapper         pagingMapper;
 
-
+    //待办新增
     public BusiJbpmFlow save(BusiJbpmFlowDto busiJbpmFlowDto, JwtUser jwtUser) throws GlobalServiceException {
         Date date = new Date();
         String userName = jwtUser.getUsername();
@@ -45,9 +45,47 @@ public class BusiJbpmFlowService {
         BeanUtils.copyProperties(busiJbpmFlowDto, busiJbpmFlow);
         busiJbpmFlow.setFlowStartTime(date);//询价时间
         busiJbpmFlow.setFlowInitorId(userName);
+        busiJbpmFlow.setType(Constant.BUSINESS_TYPE_DAIBAN);
         busiJbpmFlow = busiJbpmFlowRepository.save(busiJbpmFlow);
         return busiJbpmFlow;
     }
+    //已办新增
+    public BusiJbpmFlow saveBusiApproveResult(BusiJbpmFlowDto busiJbpmFlowDto, JwtUser jwtUser) throws GlobalServiceException {
+        Date date = new Date();
+        String userName = jwtUser.getUsername();
+        BusiJbpmFlow busiJbpmFlow = new BusiJbpmFlow();
+        BeanUtils.copyProperties(busiJbpmFlowDto, busiJbpmFlow);
+        busiJbpmFlow.setFlowStartTime(date);//询价时间
+        busiJbpmFlow.setFlowInitorId(userName);
+        busiJbpmFlow.setType(Constant.BUSINESS_TYPE_YIBAN);
+        busiJbpmFlow = busiJbpmFlowRepository.save(busiJbpmFlow);
+        return busiJbpmFlow;
+    }
+    //待阅新增
+    public BusiJbpmFlow saveToBeRead(BusiJbpmFlowDto busiJbpmFlowDto, JwtUser jwtUser) throws GlobalServiceException {
+        Date date = new Date();
+        String userName = jwtUser.getUsername();
+        BusiJbpmFlow busiJbpmFlow = new BusiJbpmFlow();
+        BeanUtils.copyProperties(busiJbpmFlowDto, busiJbpmFlow);
+        busiJbpmFlow.setFlowStartTime(date);//询价时间
+        busiJbpmFlow.setFlowInitorId(userName);
+        busiJbpmFlow.setType(Constant.BUSINESS_TYPE_DAIYUE);
+        busiJbpmFlow = busiJbpmFlowRepository.save(busiJbpmFlow);
+        return busiJbpmFlow;
+    }
+    //已阅新增
+    public BusiJbpmFlow saveAlreadyRead(BusiJbpmFlowDto busiJbpmFlowDto, JwtUser jwtUser) throws GlobalServiceException {
+        Date date = new Date();
+        String userName = jwtUser.getUsername();
+        BusiJbpmFlow busiJbpmFlow = new BusiJbpmFlow();
+        BeanUtils.copyProperties(busiJbpmFlowDto, busiJbpmFlow);
+        busiJbpmFlow.setFlowStartTime(date);//询价时间
+        busiJbpmFlow.setFlowInitorId(userName);
+        busiJbpmFlow.setType(Constant.BUSINESS_TYPE_YIYUE);
+        busiJbpmFlow = busiJbpmFlowRepository.save(busiJbpmFlow);
+        return busiJbpmFlow;
+    }
+
 
     public Specification<BusiJbpmFlow> getWhereClause(String businessType, String businessSubject,Integer type ) {
         return (Specification<BusiJbpmFlow>) (root, criteriaQuery, criteriaBuilder) -> {
@@ -94,7 +132,7 @@ public class BusiJbpmFlowService {
             } else if(type==3) {
                 str1="已阅";
             }
-            String[] header = {str1+"类型", str1+"主题", "状态", "当前处理人", "创建人", "创建时间"};
+            String[] header = {str1+"类型", str1+"主题", "状态", "当前处理人", "创建人", "创建时间","审核意见","审核结果"};
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet("待办信息表");
             sheet.setDefaultColumnWidth(10);
@@ -129,6 +167,8 @@ public class BusiJbpmFlowService {
                 row.createCell(3).setCellValue(new HSSFRichTextString(busiJbpmFlow.getParentActor()));
                 row.createCell(4).setCellValue(new HSSFRichTextString(busiJbpmFlow.getFlowInitorId()));
                 row.createCell(5).setCellValue(new HSSFRichTextString(format.format(busiJbpmFlow.getFlowStartTime())));
+                row.createCell(6).setCellValue(new HSSFRichTextString(busiJbpmFlow.getOpinion()));
+                row.createCell(7).setCellValue(new HSSFRichTextString(busiJbpmFlow.getAction()));
             }
             if(type==0){
                 response.setHeader("Content-disposition", "attachment;filename=busiJbpmFlow.xls");
