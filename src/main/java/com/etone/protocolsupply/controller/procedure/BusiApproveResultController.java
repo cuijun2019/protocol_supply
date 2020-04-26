@@ -51,53 +51,53 @@ public class BusiApproveResultController extends GenericController {
         return responseBuilder.build();
     }
 
-    /**
-     * 已办列表
-     * @param currentPage
-     * @param pageSize
-     * @param businessType
-     * @param businessSubject
-     * @param request
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(method = RequestMethod.GET,
-            consumes = {"application/json"},
-            produces = {"application/json"})
-    public ResponseValue getBusiJbpmFlows(@Validated
-                                          @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
-                                          @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
-                                          @RequestParam(value = "businessType", required = false) String businessType,
-                                          @RequestParam(value = "businessSubject", required = false) String businessSubject,
-                                          @RequestParam(value = "businessId", required = false) String businessId,
-                                          HttpServletRequest request) {
-        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        Sort sort = new Sort(Sort.Direction.DESC, "flowStartTime");
-        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereClause(businessType, businessSubject, Constant.BUSINESS_TYPE_YIBAN,businessId);
-        Page<BusiJbpmFlow> page = busiJbpmFlowService.findAgents(specification, pageable);
-        BusiJbpmFlowCollectionDto busiJbpmFlowDto = busiJbpmFlowService.to(page, request,this.getUser());
-        responseBuilder.data(busiJbpmFlowDto);
-        return responseBuilder.build();
-    }
-
-    /**
-     * 导出已办
-     * @param businessType
-     * @param businessSubject
-     * @param ids
-     * @param response
-     */
-    @ResponseBody
-    @RequestMapping(value = "/export",
-            method = RequestMethod.POST,
-            consumes = {"application/json"},
-            produces = {"application/json"})
-    public void exportAgent(@RequestParam(value = "businessType", required = false) String businessType,
-                            @RequestParam(value = "businessSubject", required = false) String businessSubject,
-                            @RequestBody(required = false) List<Long> ids,
-                            @Context HttpServletResponse response) {
-        busiJbpmFlowService.export(response, businessType, businessSubject, ids,Constant.BUSINESS_TYPE_YIBAN);
-    }
+//    /**
+//     * 已办列表
+//     * @param currentPage
+//     * @param pageSize
+//     * @param businessType
+//     * @param businessSubject
+//     * @param request
+//     * @return
+//     */
+//    @ResponseBody
+//    @RequestMapping(method = RequestMethod.GET,
+//            consumes = {"application/json"},
+//            produces = {"application/json"})
+//    public ResponseValue getBusiJbpmFlows(@Validated
+//                                          @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
+//                                          @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+//                                          @RequestParam(value = "businessType", required = false) String businessType,
+//                                          @RequestParam(value = "businessSubject", required = false) String businessSubject,
+//                                          @RequestParam(value = "businessId", required = false) String businessId,
+//                                          HttpServletRequest request) {
+//        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+//        Sort sort = new Sort(Sort.Direction.DESC, "flowStartTime");
+//        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
+//        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereClause(businessType, businessSubject, Constant.BUSINESS_TYPE_YIBAN,businessId);
+//        Page<BusiJbpmFlow> page = busiJbpmFlowService.findAgents(specification, pageable);
+//        BusiJbpmFlowCollectionDto busiJbpmFlowDto = busiJbpmFlowService.to(page, request,this.getUser());
+//        responseBuilder.data(busiJbpmFlowDto);
+//        return responseBuilder.build();
+//    }
+//
+//    /**
+//     * 导出已办
+//     * @param businessType
+//     * @param businessSubject
+//     * @param ids
+//     * @param response
+//     */
+//    @ResponseBody
+//    @RequestMapping(value = "/export",
+//            method = RequestMethod.POST,
+//            consumes = {"application/json"},
+//            produces = {"application/json"})
+//    public void exportAgent(@RequestParam(value = "businessType", required = false) String businessType,
+//                            @RequestParam(value = "businessSubject", required = false) String businessSubject,
+//                            @RequestBody(required = false) List<Long> ids,
+//                            @Context HttpServletResponse response) {
+//        busiJbpmFlowService.export(response, businessType, businessSubject, ids,Constant.BUSINESS_TYPE_YIBAN);
+//    }
 
 }
