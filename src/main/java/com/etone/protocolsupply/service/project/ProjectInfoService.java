@@ -196,8 +196,8 @@ public class ProjectInfoService {
 
     }
 
-    public Page<ProjectInfo> findProjectInfos(String isDelete, String projectSubject, String projectCode,String status,String inquiryId, Pageable pageable) {
-        return Common.listConvertToPage(projectInfoRepository.findAll(isDelete, projectSubject, projectCode,status,inquiryId), pageable);
+    public Page<ProjectInfo> findProjectInfos(String isDelete, String projectSubject, String projectCode,String status,String inquiryId,String creator, Pageable pageable) {
+        return Common.listConvertToPage(projectInfoRepository.findAll(isDelete, projectSubject, projectCode,status,inquiryId,creator), pageable);
     }
 
 

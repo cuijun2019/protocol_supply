@@ -87,7 +87,7 @@ public class BusiJbpmFlowService {
     }
 
 
-    public Specification<BusiJbpmFlow> getWhereClause(String businessType, String businessSubject,Integer type ) {
+    public Specification<BusiJbpmFlow> getWhereClause(String businessType, String businessSubject,Integer type, String businessId) {
         return (Specification<BusiJbpmFlow>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (Strings.isNotBlank(businessType)) {
@@ -96,7 +96,9 @@ public class BusiJbpmFlowService {
             if (Strings.isNotBlank(businessSubject)) {
                 predicates.add(criteriaBuilder.like(root.get("businessSubject").as(String.class), '%'+businessSubject+'%'));
             }
-
+            if (Strings.isNotBlank(businessId)) {
+                predicates.add(criteriaBuilder.like(root.get("businessId").as(String.class), businessId));
+            }
                 predicates.add(criteriaBuilder.equal(root.get("type").as(String.class), type));
             Predicate[] pre = new Predicate[predicates.size()];
             return criteriaQuery.where(predicates.toArray(pre)).getRestriction();

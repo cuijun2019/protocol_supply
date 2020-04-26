@@ -76,11 +76,12 @@ public class BusiJbpmFlowController extends GenericController {
                                        @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
                                        @RequestParam(value = "businessType", required = false) String businessType,
                                        @RequestParam(value = "businessSubject", required = false) String businessSubject,
+                                       @RequestParam(value = "businessId", required = false) String businessId,
                                        HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort = new Sort(Sort.Direction.DESC, "flowStartTime");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereClause(businessType, businessSubject, Constant.BUSINESS_TYPE_DAIBAN);
+        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereClause(businessType, businessSubject, Constant.BUSINESS_TYPE_DAIBAN,businessId);
         Page<BusiJbpmFlow> page = busiJbpmFlowService.findAgents(specification, pageable);
         BusiJbpmFlowCollectionDto busiJbpmFlowDto = busiJbpmFlowService.to(page, request,this.getUser());
         responseBuilder.data(busiJbpmFlowDto);
