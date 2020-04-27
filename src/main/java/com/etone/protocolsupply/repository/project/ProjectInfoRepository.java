@@ -61,7 +61,7 @@ public interface ProjectInfoRepository extends JpaRepository<ProjectInfo, Long>,
             "and if((:status is not null), (status=:status), (1=1)) and if((:projectCode is not null), (project_code=:projectCode), (1=1)) " +
             "and if((:inquiryId is not null), (inquiry_id=:inquiryId), (1=1)) and if((:creator is not null), (creator=:creator), (1=1))",  nativeQuery = true)
     List<ProjectInfo> findAll(@Param("isDelete") String isDelete,@Param("projectSubject") String projectSubject,@Param("projectCode") String projectCode
-            ,@Param("status") String status,@Param("inquiryId") String inquiryId ,@Param("creator") String creator );
+            ,@Param("status") String status,@Param("inquiryId") String inquiryId  );
 
 
     @Transactional(rollbackFor = Exception.class)
@@ -72,5 +72,12 @@ public interface ProjectInfoRepository extends JpaRepository<ProjectInfo, Long>,
     void update(Long projectId,String projectSubject,String purchaser,String currency,Double deliveryDate,Long deliveryDateStatus,
                        String guaranteeDate,String guaranteeFee,String paymentMethod,String priceTerm,Double cargoTotal,String amount,Integer status
                         ,Long cattachId,Long nattachId,Long pattachId,Long inquiryId,String creator,String projectCode,Integer isDelete);
+
+
+    @Query(value = "select p.* from project_info p " +
+            "where exists (SELECT 1 FROM busi_jbpm_flow b WHERE p.project_id = b.business_id and b.business_type=:businessType and b.parent_actor=:parentActor) " +
+            "and p.status=:status and p.is_delete=:isDelete", nativeQuery = true)
+    List<ProjectInfo> findAllByBusiJbpmFlow(@Param("isDelete") String isDelete,@Param("businessType") String businessType,@Param("parentActor") String parentActor
+    ,@Param("status") String status);
 
 }

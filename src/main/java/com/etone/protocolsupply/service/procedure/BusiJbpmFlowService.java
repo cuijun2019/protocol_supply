@@ -6,7 +6,10 @@ import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowCollectionDto;
 import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowDto;
 import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
+import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.repository.procedure.BusiJbpmFlowRepository;
+import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
+import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
@@ -34,6 +37,8 @@ public class BusiJbpmFlowService {
 
     @Autowired
     private BusiJbpmFlowRepository busiJbpmFlowRepository;
+    @Autowired
+    private ProjectInfoRepository projectInfoRepository;
     @Autowired
     private PagingMapper         pagingMapper;
 
@@ -105,6 +110,7 @@ public class BusiJbpmFlowService {
         };
     }
 
+
     public Page<BusiJbpmFlow> findAgents(Specification<BusiJbpmFlow> specification, Pageable pageable) {
         return busiJbpmFlowRepository.findAll(specification, pageable);
     }
@@ -122,7 +128,9 @@ public class BusiJbpmFlowService {
         return busiJbpmFlowCollectionDto;
     }
 
-    public void export(HttpServletResponse response, String businessType, String businessSubject, List<Long> ids,Integer type) {
+
+
+    public void export(HttpServletResponse response, List<Long> ids,Integer type) {
         try {
             String str1=null;
             if(type==0){
@@ -153,10 +161,10 @@ public class BusiJbpmFlowService {
             }
 
             List<BusiJbpmFlow> list;
-            if (ids != null && !ids.isEmpty()) {
-                list = busiJbpmFlowRepository.findAll(businessType, businessSubject, ids,type);
+            if (ids != null && ids.size()!=0) {
+                list = busiJbpmFlowRepository.findAll(ids,type);
             } else {
-                list = busiJbpmFlowRepository.findAll(businessType, businessSubject);
+                list = busiJbpmFlowRepository.findAll();
             }
             BusiJbpmFlow busiJbpmFlow;
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

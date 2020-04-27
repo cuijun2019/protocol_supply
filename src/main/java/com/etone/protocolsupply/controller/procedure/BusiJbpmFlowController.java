@@ -5,11 +5,15 @@ import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowCollectionDto;
 import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowDto;
+import com.etone.protocolsupply.model.dto.project.ProjectCollectionDto;
+import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
 import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
+import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.service.AttachmentService;
 import com.etone.protocolsupply.service.cargo.CargoInfoService;
 import com.etone.protocolsupply.service.inquiry.InquiryInfoService;
 import com.etone.protocolsupply.service.procedure.BusiJbpmFlowService;
+import com.etone.protocolsupply.service.project.ProjectInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,7 +40,7 @@ public class BusiJbpmFlowController extends GenericController {
     @Autowired
     private BusiJbpmFlowService busiJbpmFlowService;
     @Autowired
-    private AttachmentService attachmentService;
+    private ProjectInfoService projectInfoService;
 
     /**
      * 新增代办
@@ -89,10 +93,43 @@ public class BusiJbpmFlowController extends GenericController {
         return responseBuilder.build();
     }
 
+    /** 待办页面
+     * 根据待办类型、状态，当前登录人查询我的项目
+     * @param currentPage
+     * @param pageSize
+     * @param isDelete
+     * @param businessType
+     * @param parentActor
+     * @param status
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/myProjectList"
+            ,method = RequestMethod.GET,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    public ResponseValue getCargoInfos(@Validated
+                                       @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
+                                       @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+                                       @RequestParam(value = "isDelete", required = false) String isDelete,
+                                       @RequestParam(value = "businessType", required = false) String businessType,
+                                       @RequestParam(value = "parentActor", required = false) String parentActor,
+                                       @RequestParam(value = "status", required = false) String status,
+                                       HttpServletRequest request) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        Sort sort = new Sort(Sort.Direction.DESC, "projectId");
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
+        Page<ProjectInfo> page = projectInfoService.findAllByBusiJbpmFlow(isDelete, businessType, parentActor,status, pageable);
+        ProjectCollectionDto projectCollectionDto = projectInfoService.to(page, request);
+
+        responseBuilder.data(projectCollectionDto);
+        return responseBuilder.build();
+    }
+
     /**
      * 导出待办
-     * @param businessType
-     * @param businessSubject
+
      * @param ids
      * @param response
      */
@@ -101,12 +138,10 @@ public class BusiJbpmFlowController extends GenericController {
             method = RequestMethod.POST,
             consumes = {"application/json"},
             produces = {"application/json"})
-    public void exportAgent(@RequestParam(value = "businessType", required = false) String businessType,
-                            @RequestParam(value = "businessSubject", required = false) String businessSubject,
-                            @RequestParam(value = "type", required = false) Integer type,
+    public void exportAgent(@RequestParam(value = "type", required = false) Integer type,
                             @RequestBody(required = false) List<Long> ids,
                             @Context HttpServletResponse response) {
-        busiJbpmFlowService.export(response, businessType, businessSubject, ids,type);
+        busiJbpmFlowService.export(response,ids,type);
     }
 
 

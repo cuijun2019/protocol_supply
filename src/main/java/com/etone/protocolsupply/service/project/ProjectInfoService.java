@@ -196,10 +196,13 @@ public class ProjectInfoService {
 
     }
 
-    public Page<ProjectInfo> findProjectInfos(String isDelete, String projectSubject, String projectCode,String status,String inquiryId,String creator, Pageable pageable) {
-        return Common.listConvertToPage(projectInfoRepository.findAll(isDelete, projectSubject, projectCode,status,inquiryId,creator), pageable);
+    public Page<ProjectInfo> findProjectInfos(String isDelete, String projectSubject, String projectCode,String status,String inquiryId, Pageable pageable) {
+        return Common.listConvertToPage(projectInfoRepository.findAll(isDelete, projectSubject, projectCode,status,inquiryId), pageable);
     }
 
+    public Page<ProjectInfo> findAllByBusiJbpmFlow(String isDelete, String businessType, String parentActor, String status, Pageable pageable) {
+        return Common.listConvertToPage(projectInfoRepository.findAllByBusiJbpmFlow(isDelete, businessType, parentActor,status), pageable);
+    }
 
     public Page<ProjectInfo> findAgents(Specification<ProjectInfo> specification, Pageable pageable) {
         return projectInfoRepository.findAll(specification, pageable);

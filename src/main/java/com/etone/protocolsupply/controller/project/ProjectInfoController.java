@@ -81,12 +81,11 @@ public class ProjectInfoController extends GenericController {
                                        @RequestParam(value = "projectCode", required = false) String projectCode,
                                        @RequestParam(value = "status", required = false) String status,
                                        @RequestParam(value = "inquiryId", required = false) String inquiryId,
-                                       @RequestParam(value = "creator", required = false) String creator,
                                        HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort = new Sort(Sort.Direction.DESC, "projectId");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Page<ProjectInfo> page = projectInfoService.findProjectInfos(isDelete, projectSubject, projectCode, status,inquiryId,creator,pageable);
+        Page<ProjectInfo> page = projectInfoService.findProjectInfos(isDelete, projectSubject, projectCode, status,inquiryId,pageable);
         ProjectCollectionDto projectCollectionDto = projectInfoService.to(page, request);
         responseBuilder.data(projectCollectionDto);
         return responseBuilder.build();
