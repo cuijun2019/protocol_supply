@@ -37,7 +37,7 @@ public class Role {
     private String description;
 
     /**
-     * 角色描述
+     * 角色创建人
      */
     @Column(name = "CREATOR", length = 80)
     private String creator;

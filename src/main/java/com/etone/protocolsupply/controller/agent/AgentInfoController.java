@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "${jwt.route.path}/agentInfo")
@@ -28,20 +29,55 @@ public class AgentInfoController extends GenericController {
     @Autowired
     private AgentInfoService agentInfoService;
 
+    /**
+     * 供应商代理商注册
+     * @param registerData
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/register",
+            method = RequestMethod.POST,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseValue postAgent( @Validated
+                                    @RequestBody Map<String,String> registerData) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        agentInfoService.save(registerData, this.getUser());
+        responseBuilder.message("注册成功");
+        return responseBuilder.build();
+    }
+
+
+    /**
+     * 新建代理商
+     * @param agentInfo
+     * @return
+     */
     @ResponseBody
     @RequestMapping(
             method = RequestMethod.POST,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseValue postAgent(@Validated
-                                   @RequestBody AgentInfoDto agentInfoDto) {
+    public ResponseValue saveAgent( @Validated
+                                    @RequestBody AgentInfo agentInfo) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        AgentInfo agentInfo = agentInfoService.save(agentInfoDto, this.getUser());
-        responseBuilder.data(agentInfo);
+        agentInfoService.saveAgent(agentInfo, this.getUser());
+        responseBuilder.message("保存成功");
         return responseBuilder.build();
     }
 
+    /**
+     * 分页查询代理商列表
+     * @param agentName
+     * @param status
+     * @param isDelete
+     * @param currentPage
+     * @param pageSize
+     * @param request
+     * @return
+     */
     @ResponseBody
     @RequestMapping(method = RequestMethod.GET,
             consumes = {"application/json"},
@@ -64,6 +100,30 @@ public class AgentInfoController extends GenericController {
         return responseBuilder.build();
     }
 
+
+    /**
+     * 查询符合条件的代理商，筛选条件为代理商名称
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getAgentsList",
+            method = RequestMethod.GET,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    public ResponseValue getAgentsList(@Validated
+                                       @RequestParam(value = "agentName", required = false) String agentName) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+
+        List<String> agentlist = agentInfoService.findAgentsList(agentName);
+        responseBuilder.data(agentlist);
+        return responseBuilder.build();
+    }
+
+    /**
+     * 根据id查询代理商信息
+     * @param agentId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/{agentId}",
             method = RequestMethod.GET,
@@ -79,22 +139,30 @@ public class AgentInfoController extends GenericController {
         return responseBuilder.build();
     }
 
+    /**
+     * 更新代理商状态
+     * @param agentInfoDto
+     * @return
+     */
     @ResponseBody
-    @RequestMapping(value = "/{agentId}",
+    @RequestMapping(value = "/updateAgent",
             method = RequestMethod.PUT,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
-    public ResponseValue updateAgent(@PathVariable("agentId") String agentId,
-                                     @RequestBody AgentInfoDto agentInfoDto) {
+    public ResponseValue updateAgent(@RequestBody AgentInfoDto agentInfoDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
 
-        agentInfoDto.setAgentId(Long.parseLong(agentId));
-        AgentInfo agentInfo = agentInfoService.update(agentInfoDto);
-        responseBuilder.data(agentInfo);
+        agentInfoService.update(agentInfoDto);
+        responseBuilder.message("更新状态成功");
         return responseBuilder.build();
     }
 
+    /**
+     * 根据id删除代理商
+     * @param agentId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/{agentId}",
             method = RequestMethod.DELETE,
@@ -107,6 +175,14 @@ public class AgentInfoController extends GenericController {
         return responseBuilder.build();
     }
 
+    /**
+     * 代理商导出
+     * @param agentName
+     * @param status
+     * @param isDelete
+     * @param agentIds
+     * @param response
+     */
     @ResponseBody
     @RequestMapping(value = "/export",
             method = RequestMethod.POST,

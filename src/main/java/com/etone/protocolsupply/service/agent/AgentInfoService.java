@@ -9,11 +9,23 @@ import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.agent.AgentCollectionDto;
 import com.etone.protocolsupply.model.dto.agent.AgentInfoDto;
 import com.etone.protocolsupply.model.entity.AgentInfo;
-import com.etone.protocolsupply.model.entity.project.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.Attachment;
+import com.etone.protocolsupply.model.entity.project.AgentInfoExp;
+import com.etone.protocolsupply.model.entity.supplier.BankInfo;
+import com.etone.protocolsupply.model.entity.supplier.CertificateInfo;
+import com.etone.protocolsupply.model.entity.supplier.ContactInfo;
+import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
+import com.etone.protocolsupply.model.entity.user.User;
 import com.etone.protocolsupply.repository.AgentInfoRepository;
 import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.project.AgentInfoExpRepository;
+import com.etone.protocolsupply.repository.supplier.BankInfoRepository;
+import com.etone.protocolsupply.repository.supplier.CertificateInfoRepository;
+import com.etone.protocolsupply.repository.supplier.ContactInfoRepository;
+import com.etone.protocolsupply.repository.supplier.PartnerInfoRepository;
+import com.etone.protocolsupply.repository.user.RoleRepository;
+import com.etone.protocolsupply.repository.user.UserRepository;
+import com.etone.protocolsupply.utils.BcryptCipher;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import com.etone.protocolsupply.utils.SpringUtil;
@@ -33,10 +45,7 @@ import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Transactional(rollbackFor = Exception.class)
 @Service
@@ -44,30 +53,88 @@ public class AgentInfoService {
 
     @Autowired
     private AgentInfoRepository    agentInfoRepository;
+
     @Autowired
     private AgentInfoExpRepository agentInfoExpRepository;
+
     @Autowired
     private AttachmentRepository   attachmentRepository;
+
     @Autowired
     private PagingMapper           pagingMapper;
 
-    public AgentInfo save(AgentInfoDto agentInfoDto, JwtUser jwtUser) throws GlobalServiceException {
-        Date date = new Date();
-        String userName = jwtUser.getUsername();
-        Attachment attachment = agentInfoDto.getAttachment();
-        AgentInfo agentInfo = new AgentInfo();
-        BeanUtils.copyProperties(agentInfoDto, agentInfo);
-        agentInfo.setReviewStatus(Constant.STATE_DRAFT);
-        agentInfo.setCreator(userName);
-        agentInfo.setCreateDate(date);
-        agentInfo.setIsDelete(Constant.DELETE_NO);
-        if (attachment != null) {
-            Optional<Attachment> optional = attachmentRepository.findById(attachment.getAttachId());
-            if (optional.isPresent()) {
-                agentInfo.setAttachment(optional.get());
-            }
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PartnerInfoRepository partnerInfoRepository;
+
+    @Autowired
+    private BankInfoRepository bankInfoRepository;
+
+    @Autowired
+    private CertificateInfoRepository certificateInfoRepository;
+
+    @Autowired
+    private ContactInfoRepository contactInfoRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    public void save(Map<String,String> registerData, JwtUser jwtUser){
+        //新增代理商记录
+        PartnerInfo partnerInfo = new PartnerInfo();
+        partnerInfo.setSupType(Integer.parseInt(registerData.get("supType")));
+        partnerInfo.setCompanyNo(registerData.get("company"));
+        partnerInfo.setIdentification(registerData.get("creditCode"));
+        partnerInfo.setIsDelete(2);
+        partnerInfo.setIsAuditing(2);
+        partnerInfo = partnerInfoRepository.save(partnerInfo);
+
+        //新增关联银行账户信息
+        BankInfo bankInfo = new BankInfo();
+        bankInfo.setPartnerId(partnerInfo.getPartnerId());
+        bankInfoRepository.save(bankInfo);
+
+        //新增关联三证信息
+        CertificateInfo certificateInfo = new CertificateInfo();
+        certificateInfo.setCreditCode(registerData.get("creditCode"));
+        certificateInfo.setIsCertificate(2);
+        certificateInfo.setModifyStatus(2);
+        certificateInfo.setPartnerId(partnerInfo.getPartnerId());
+        certificateInfoRepository.save(certificateInfo);
+
+        //新增关联联系人信息
+        ContactInfo contactInfo = new ContactInfo();
+        contactInfo.setFullname(registerData.get("realName"));
+        contactInfo.setEmail(registerData.get("email"));
+        contactInfo.setTelephone(registerData.get("telephone"));
+        contactInfoRepository.save(contactInfo);
+
+
+        //新增用户
+        User user = new User();
+        user.setCreateTime(new Date());
+        user.setEnabled(true);
+        user.setIsDelete(2);
+        user.setSex("");
+        user.setUpdateTime(new Date());
+        user.setUsername(registerData.get("creditCode"));
+        user.setCompany(registerData.get("company"));
+        user.setPassword(BcryptCipher.Bcrypt(registerData.get("passwordChecked")).get("cipher"));
+        user.setFullname(registerData.get("realName"));
+        user.setTelephone(registerData.get("telephone"));
+        user.setEmail(registerData.get("email"));
+        user.setPartnerInfo(partnerInfo);
+        user = userRepository.save(user);
+
+        //分配角色,交易主体类型（1：供应商；2：代理商）
+        if("1".equals(registerData.get("supType")+"")){
+            roleRepository.addUserRole(user.getId(),Long.parseLong("1"));
+        }else {
+            roleRepository.addUserRole(user.getId(),Long.parseLong("2"));
         }
-        return agentInfoRepository.save(agentInfo);
+
     }
 
     public Specification<AgentInfo> getWhereClause(String agentName, String status, String isDelete) {
@@ -128,21 +195,8 @@ public class AgentInfoService {
         }
     }
 
-    public AgentInfo update(AgentInfoDto agentInfoDto) throws GlobalServiceException {
-        AgentInfo agentInfo = this.findOne(agentInfoDto.getAgentId());
-        Attachment attachment = agentInfoDto.getAttachment();
-        SpringUtil.copyPropertiesIgnoreNull(agentInfoDto, agentInfo);
-        if (agentInfo != null && attachment == null) {
-            agentInfoRepository.save(agentInfo);
-        }
-        if (attachment != null) {
-            Optional<Attachment> optional = attachmentRepository.findById(attachment.getAttachId());
-            if (optional.isPresent()) {
-                agentInfo.setAttachment(optional.get());
-            }
-            agentInfoRepository.save(agentInfo);
-        }
-        return agentInfo;
+    public void update(AgentInfoDto agentInfoDto)  {
+        agentInfoRepository.updateStatus(agentInfoDto.getStatus(),agentInfoDto.getAgentId());
     }
 
     public void delete(Long agentId) {
@@ -195,5 +249,29 @@ public class AgentInfoService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public List<String> findAgentsList(String agentName) {
+        //是否有搜索条件
+        List<String> partnerInfoList = new ArrayList<>();
+        if (Strings.isNotBlank(agentName)){
+             partnerInfoList = partnerInfoRepository.findVerifiedSuppliersByagentName(agentName);
+        }else {
+            partnerInfoList = partnerInfoRepository.findVerifiedSuppliers();
+        }
+        return partnerInfoList;
+    }
+
+    public void saveAgent(AgentInfo agentInfo, JwtUser user) {
+        AgentInfo info = new AgentInfo();
+        info.setAgentName(agentInfo.getAgentName());
+        info.setAgentPoint(agentInfo.getAgentPoint());
+        info.setStatus(agentInfo.getStatus());
+        info.setReviewStatus(1);
+        info.setCreator(user.getUsername());
+        info.setCreateDate(new Date());
+        info.setIsDelete(2);
+        info.setAttachment(agentInfo.getAttachment());
+        agentInfoRepository.save(info);
     }
 }
