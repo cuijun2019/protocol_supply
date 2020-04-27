@@ -60,4 +60,7 @@ public class AgentInfo implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "ATTACH_ID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment;
+
+    @Column(name = "PARTNER_ID")
+    private Long partnerId;
 }

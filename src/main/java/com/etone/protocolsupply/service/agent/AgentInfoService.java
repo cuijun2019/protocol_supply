@@ -109,6 +109,7 @@ public class AgentInfoService {
         contactInfo.setFullname(registerData.get("realName"));
         contactInfo.setEmail(registerData.get("email"));
         contactInfo.setTelephone(registerData.get("telephone"));
+        contactInfo.setPartnerId(partnerInfo.getPartnerId());
         contactInfoRepository.save(contactInfo);
 
 
@@ -251,9 +252,9 @@ public class AgentInfoService {
         }
     }
 
-    public List<String> findAgentsList(String agentName) {
+    public List<PartnerInfo> findAgentsList(String agentName) {
         //是否有搜索条件
-        List<String> partnerInfoList = new ArrayList<>();
+        List<PartnerInfo> partnerInfoList = new ArrayList<>();
         if (Strings.isNotBlank(agentName)){
              partnerInfoList = partnerInfoRepository.findVerifiedSuppliersByagentName(agentName);
         }else {
@@ -262,9 +263,9 @@ public class AgentInfoService {
         return partnerInfoList;
     }
 
-    public void saveAgent(AgentInfo agentInfo, JwtUser user) {
+    public void saveAgent(AgentInfoDto agentInfo, JwtUser user) {
         AgentInfo info = new AgentInfo();
-        info.setAgentName(agentInfo.getAgentName());
+        info.setAgentName(agentInfo.getPartnerInfo().getCompanyNo());
         info.setAgentPoint(agentInfo.getAgentPoint());
         info.setStatus(agentInfo.getStatus());
         info.setReviewStatus(1);
@@ -272,6 +273,7 @@ public class AgentInfoService {
         info.setCreateDate(new Date());
         info.setIsDelete(2);
         info.setAttachment(agentInfo.getAttachment());
+        info.setPartnerId(agentInfo.getPartnerInfo().getPartnerId());
         agentInfoRepository.save(info);
     }
 }
