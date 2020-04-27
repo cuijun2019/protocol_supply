@@ -89,13 +89,12 @@ public class AgentInfoController extends GenericController {
                                    @RequestParam(value = "isDelete", required = false) String isDelete,
                                    @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
                                    @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+                                   @RequestParam(value = "actor", required = false) String actor,
                                    HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-
         Sort sort = new Sort(Sort.Direction.DESC, "createDate");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Specification<AgentInfo> specification = agentInfoService.getWhereClause(agentName, status, isDelete);
-        Page<AgentInfo> page = agentInfoService.findAgents(specification, pageable);
+        Page<AgentInfo> page = agentInfoService.findAgentInfos(agentName, status, isDelete, actor,pageable);
         AgentCollectionDto agentCollectionDto = agentInfoService.to(page, request);
         responseBuilder.data(agentCollectionDto);
         return responseBuilder.build();

@@ -26,6 +26,11 @@ public interface InquiryInfoRepository extends JpaRepository<InquiryInfo, Long>,
             "if((?2 is not null), (exists (select 1 from cargo_info c where c.cargo_id = i.cargo_id and c.cargo_name like %?2%)), (1=1))", nativeQuery = true)
     List<InquiryInfo> findAll(String isDelete, String cargoName, String inquiryCode);
 
+    @Query(value = "select i.* from inquiry_info i where exists(select 1 from busi_jbpm_flow b where i.inquiry_id = b.business_id and b.business_type='enquiryAudit' " +
+            " and if((?4 is not null), (b.parent_actor=?4 or b.next_actor=?4), (1=1)))" +
+            " and i.is_delete=?1 and if((?3 is not null), (i.inquiry_code like %?3%), (1=1)) and \n" +
+            "if((?2 is not null), (exists (select 1 from cargo_info c where c.cargo_id = i.cargo_id and c.cargo_name like %?2%)), (1=1))", nativeQuery = true)
+    List<InquiryInfo> findMyInquiry(String isDelete, String cargoName, String inquiryCode,String actor);
 
     @Query(value = "select * from inquiry_info where is_delete=2 and inquiry_id in ?1  ", nativeQuery = true)
     List<InquiryInfo> findByInquiryIds(List<Long> inquiryIds);

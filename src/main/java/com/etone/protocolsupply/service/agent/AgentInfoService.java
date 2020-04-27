@@ -9,7 +9,6 @@ import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.agent.AgentCollectionDto;
 import com.etone.protocolsupply.model.dto.agent.AgentInfoDto;
 import com.etone.protocolsupply.model.entity.AgentInfo;
-import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.project.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.supplier.BankInfo;
 import com.etone.protocolsupply.model.entity.supplier.CertificateInfo;
@@ -28,7 +27,6 @@ import com.etone.protocolsupply.repository.user.UserRepository;
 import com.etone.protocolsupply.utils.BcryptCipher;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
-import com.etone.protocolsupply.utils.SpringUtil;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -153,6 +151,15 @@ public class AgentInfoService {
         };
     }
 
+    public Page<AgentInfo> findAgentInfos(String agentName, String status, String isDelete,String actor, Pageable pageable) {
+        if(actor.equals("admin")){
+            return Common.listConvertToPage(agentInfoRepository.findAll(agentName, status, isDelete), pageable);
+        }else {
+            return Common.listConvertToPage(agentInfoRepository.findMyAgent(agentName, status, isDelete,actor), pageable);
+        }
+    }
+
+
     public Page<AgentInfo> findAgents(Specification<AgentInfo> specification, Pageable pageable) {
         return agentInfoRepository.findAll(specification, pageable);
     }
@@ -228,7 +235,7 @@ public class AgentInfoService {
             if (agentIds != null && !agentIds.isEmpty()) {
                 list = agentInfoRepository.findAll(agentName, status, agentIds);
             } else {
-                list = agentInfoRepository.findAll(agentName, status);
+                list = agentInfoRepository.findAll(agentName, status,isDelete);
             }
             AgentInfo agentInfo;
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

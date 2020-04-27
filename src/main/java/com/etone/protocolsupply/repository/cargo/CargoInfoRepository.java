@@ -40,6 +40,12 @@ public interface CargoInfoRepository extends JpaRepository<CargoInfo, Long>, Jpa
             "if((?3 is not null), (exists (select 1 from part_info p where p.cargo_id = c.cargo_id and p.part_name like %?3%)), (1=1))", nativeQuery = true)
     List<CargoInfo> findAll(String isDelete, String cargoName, String partName);
 
+    @Query(value = "select c.* from cargo_info c WHERE exists(select 1 from busi_jbpm_flow b where c.cargo_id = b.business_id and b.business_type='cargoAudit' " +
+            "and if((?4 is not null), (b.parent_actor=?4 or b.next_actor=?4), (1=1)))" +
+            " and  c.is_delete=?1 and if((?2 is not null), (c.cargo_name like %?2%), (1=1)) and " +
+            "if((?3 is not null), (exists (select 1 from part_info p where p.cargo_id = c.cargo_id and p.part_name like %?3%)), (1=1))", nativeQuery = true)
+    List<CargoInfo> findAllMyCargo(String isDelete, String cargoName, String partName,String actor);
+
     @Query(value = "select * from cargo_info where is_delete=2 and cargo_id=(select cargo_id from part_info_exp where project_id=?1 limit 1) ", nativeQuery = true)
     List<CargoInfo> findByProjectId(long projectId);
 }

@@ -128,8 +128,13 @@ public class CargoInfoService {
         };
     }
 
-    public Page<CargoInfo> findCargoInfos(String isDelete, String cargoName, String partName, Pageable pageable) {
-        return Common.listConvertToPage(cargoInfoRepository.findAll(isDelete, cargoName, partName), pageable);
+    public Page<CargoInfo> findCargoInfos(String isDelete, String cargoName, String partName,String actor, Pageable pageable) {
+        if(actor.equals("admin")){
+            return Common.listConvertToPage(cargoInfoRepository.findAll(isDelete, cargoName, partName), pageable);
+        }else {
+            return Common.listConvertToPage(cargoInfoRepository.findAllMyCargo(isDelete, cargoName, partName,actor), pageable);
+        }
+
     }
 
     public CargoCollectionDto to(Page<CargoInfo> source, HttpServletRequest request) {

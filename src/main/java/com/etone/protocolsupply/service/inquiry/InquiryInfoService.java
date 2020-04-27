@@ -91,8 +91,12 @@ public class InquiryInfoService {
     }
 
 
-    public Page<InquiryInfo> findInquiryInfos(String isDelete, String cargoName, String inquiryCode, Pageable pageable) {
-        return Common.listConvertToPage(inquiryInfoRepository.findAll(isDelete, cargoName, inquiryCode), pageable);
+    public Page<InquiryInfo> findInquiryInfos(String isDelete, String cargoName, String inquiryCode,String actor, Pageable pageable) {
+        if(actor.equals("admin")){
+            return Common.listConvertToPage(inquiryInfoRepository.findAll(isDelete, cargoName, inquiryCode), pageable);
+        }else {
+            return Common.listConvertToPage(inquiryInfoRepository.findMyInquiry(isDelete, cargoName, inquiryCode,actor), pageable);
+        }
     }
 
     public InquiryCollectionDto to(Page<InquiryInfo> source, HttpServletRequest request) {

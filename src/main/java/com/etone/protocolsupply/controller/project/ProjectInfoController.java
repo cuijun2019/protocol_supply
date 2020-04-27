@@ -58,39 +58,78 @@ public class ProjectInfoController extends GenericController {
         responseBuilder.data(projectInfo);
         return responseBuilder.build();
     }
+//
+//    /**
+//     * 项目列表
+//     *
+//     * @param isDelete
+//     * @param currentPage
+//     * @param pageSize
+//     * @param projectSubject 项目主题
+//     * @param status         项目状态
+//     * @param request
+//     * @return
+//     */
+//    @ResponseBody
+//    @RequestMapping(method = RequestMethod.GET,
+//            consumes = {"application/json"},
+//            produces = {"application/json"})
+//    public ResponseValue getCargoInfos(@Validated
+//                                           @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+//                                       @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
+//                                       @RequestParam(value = "isDelete", required = false) String isDelete,
+//                                       @RequestParam(value = "projectSubject", required = false) String projectSubject,
+//                                       @RequestParam(value = "projectCode", required = false) String projectCode,
+//                                       @RequestParam(value = "status", required = false) String status,
+//                                       @RequestParam(value = "inquiryId", required = false) String inquiryId,
+//                                       HttpServletRequest request) {
+//        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+//        Sort sort = new Sort(Sort.Direction.DESC, "projectId");
+//        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
+//        Page<ProjectInfo> page = projectInfoService.findProjectInfos(isDelete, projectSubject, projectCode, status,inquiryId,pageable);
+//        ProjectCollectionDto projectCollectionDto = projectInfoService.to(page, request);
+//        responseBuilder.data(projectCollectionDto);
+//        return responseBuilder.build();
+//    }
 
     /**
-     * 项目列表
-     *
-     * @param isDelete
-     * @param currentPage
+     * 我的项目
      * @param pageSize
-     * @param projectSubject 项目主题
-     * @param status         项目状态
+     * @param currentPage
+     * @param isDelete
+     * @param projectSubject
+     * @param projectCode
+     * @param status
+     * @param inquiryId
+     * @param actor
      * @param request
      * @return
      */
     @ResponseBody
-    @RequestMapping(method = RequestMethod.GET,
+    @RequestMapping(
+            method = RequestMethod.GET,
             consumes = {"application/json"},
             produces = {"application/json"})
-    public ResponseValue getCargoInfos(@Validated
-                                           @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+    public ResponseValue getMyProject(@Validated
+                                       @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
                                        @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
                                        @RequestParam(value = "isDelete", required = false) String isDelete,
                                        @RequestParam(value = "projectSubject", required = false) String projectSubject,
                                        @RequestParam(value = "projectCode", required = false) String projectCode,
                                        @RequestParam(value = "status", required = false) String status,
                                        @RequestParam(value = "inquiryId", required = false) String inquiryId,
+                                       @RequestParam(value = "actor", required = false) String actor,
                                        HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort = new Sort(Sort.Direction.DESC, "projectId");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Page<ProjectInfo> page = projectInfoService.findProjectInfos(isDelete, projectSubject, projectCode, status,inquiryId,pageable);
+        Page<ProjectInfo> page = projectInfoService.findMyProjectInfos(isDelete, projectSubject, projectCode, status,inquiryId,actor,pageable);
         ProjectCollectionDto projectCollectionDto = projectInfoService.to(page, request);
         responseBuilder.data(projectCollectionDto);
         return responseBuilder.build();
     }
+
+
 
     /**
      * 项目-配件列表

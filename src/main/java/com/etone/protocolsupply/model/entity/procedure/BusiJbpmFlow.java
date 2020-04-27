@@ -56,6 +56,12 @@ public class BusiJbpmFlow implements Serializable {
     private String parentActor;
 
     /**
+     * 提交给的人员
+     */
+    @Column(name = "NEXT_ACTOR", length = 100)
+    private String nextActor;
+
+    /**
      * 创建人ID
      */
     @Column(name = "FLOW_INITOR_ID", length = 100)
