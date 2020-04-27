@@ -104,7 +104,7 @@ public class ProjectInfoService {
         InquiryInfo inquiryInfo = projectInfoDto.getInquiryInfo();//关联询价
         if (inquiryInfo != null && inquiryInfo.getInquiryId() != null && !inquiryInfo.getInquiryId().equals("")) {
             Optional<InquiryInfo> optional = inquiryInfoRepository.findById(inquiryInfo.getInquiryId());
-            projectInfo.getInquiryInfo().getCargoInfo().setPartInfos(null);
+            //projectInfo.getInquiryInfo().getCargoInfo().setPartInfos(null);
 
             if (optional.isPresent()) {
                 projectInfo.setInquiryInfo(optional.get());
