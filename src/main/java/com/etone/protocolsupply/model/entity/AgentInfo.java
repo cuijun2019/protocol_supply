@@ -31,13 +31,13 @@ public class AgentInfo implements Serializable {
     private String agentPoint;
 
     /**
-     * 状态
+     * 状态 激活1，不激活2
      */
     @Column(name = "STATUS", length = 4)
     private Integer status;
 
     /**
-     * 审核状态
+     * 审核状态 审核通过1，审核未通过2
      */
     @Column(name = "REVIEW_STATUS", length = 4)
     private Integer reviewStatus;
@@ -60,4 +60,7 @@ public class AgentInfo implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "ATTACH_ID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment;
+
+    @Column(name = "PARTNER_ID")
+    private Long partnerId;
 }

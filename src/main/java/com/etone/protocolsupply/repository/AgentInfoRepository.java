@@ -29,4 +29,9 @@ public interface AgentInfoRepository extends JpaRepository<AgentInfo, Long>, Jpa
     @Query(value = "update agent_info set project_id=:projectId where agent_id in (:agentIds)", nativeQuery = true)
     @Modifying
     void setProjectId(@Param("projectId") Long projectId, @Param("agentIds") List<Long> agentIds);
+
+    @Transactional(rollbackFor = Exception.class)
+    @Modifying
+    @Query(value = "update agent_info set status=?1 where agent_id=?2", nativeQuery = true)
+    void updateStatus(Integer status, Long agentId);
 }
