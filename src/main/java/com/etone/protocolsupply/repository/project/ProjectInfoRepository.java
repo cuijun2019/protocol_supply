@@ -59,7 +59,7 @@ public interface ProjectInfoRepository extends JpaRepository<ProjectInfo, Long>,
 
     @Query(value = "select * from project_info where is_delete=:isDelete and  if((:projectSubject is not null), (project_subject like %:projectSubject%), (1=1)) " +
             "and if((:status is not null), (status=:status), (1=1)) and if((:projectCode is not null), (project_code=:projectCode), (1=1)) " +
-            "and if((:inquiryId is not null), (inquiry_id=:inquiryId), (1=1)) and if((:creator is not null), (creator=:creator), (1=1))",  nativeQuery = true)
+            "and if((:inquiryId is not null), (inquiry_id=:inquiryId), (1=1))",  nativeQuery = true)
     List<ProjectInfo> findAll(@Param("isDelete") String isDelete,@Param("projectSubject") String projectSubject,@Param("projectCode") String projectCode
             ,@Param("status") String status,@Param("inquiryId") String inquiryId  );
 
