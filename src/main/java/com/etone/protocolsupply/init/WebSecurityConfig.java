@@ -104,6 +104,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .ignoring()
                 .antMatchers(
+                        HttpMethod.POST,
+                        "/api/agentInfo/register"
+                )
+
+                .and()
+                .ignoring()
+                .antMatchers(
                         HttpMethod.GET,
                         "/",
                         "/*.html",
