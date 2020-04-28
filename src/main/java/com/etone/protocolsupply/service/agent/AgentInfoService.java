@@ -152,7 +152,7 @@ public class AgentInfoService {
     }
 
     public Page<AgentInfo> findAgentInfos(String agentName, String status, String isDelete,String actor, Pageable pageable) {
-        if(actor.equals("admin")){
+        if(null == actor ||actor.equals("admin")){
             return Common.listConvertToPage(agentInfoRepository.findAll(agentName, status, isDelete), pageable);
         }else {
             return Common.listConvertToPage(agentInfoRepository.findMyAgent(agentName, status, isDelete,actor), pageable);

@@ -201,7 +201,7 @@ public class ProjectInfoService {
     }
 
     public Page<ProjectInfo> findMyProjectInfos(String isDelete, String projectSubject, String projectCode,String status,String inquiryId,String actor, Pageable pageable) {
-        if(actor.equals("admin")){
+        if(null == actor ||actor.equals("admin")){
             return Common.listConvertToPage(projectInfoRepository.findAll(isDelete, projectSubject, projectCode,status,inquiryId), pageable);
         }else {
             return Common.listConvertToPage(projectInfoRepository.findAlltoMyProject(isDelete, projectSubject, projectCode,status,inquiryId,actor), pageable);
