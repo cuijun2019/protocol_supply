@@ -44,8 +44,13 @@ public class AgentInfoController extends GenericController {
     public ResponseValue postAgent( @Validated
                                     @RequestBody Map<String,String> registerData) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        agentInfoService.save(registerData, this.getUser());
-        responseBuilder.message("注册成功");
+        String save = agentInfoService.save(registerData);
+        if(save.equals("该用户已经存在")){
+            responseBuilder.message("该用户名已被注册");
+            responseBuilder.code(233);
+        }else {
+            responseBuilder.message("注册成功");
+        }
         return responseBuilder.build();
     }
 

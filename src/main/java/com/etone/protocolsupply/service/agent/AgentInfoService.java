@@ -79,7 +79,13 @@ public class AgentInfoService {
     @Autowired
     private RoleRepository roleRepository;
 
-    public void save(Map<String,String> registerData, JwtUser jwtUser){
+    public String save(Map<String,String> registerData){
+        //先根据用户名查询是否已存在该用户
+        User check = userRepository.findByUsername(registerData.get("creditCode"));
+        if(check!=null){
+            return "该用户已经存在";
+        }
+
         //新增代理商记录
         PartnerInfo partnerInfo = new PartnerInfo();
         partnerInfo.setSupType(Integer.parseInt(registerData.get("supType")));
@@ -133,7 +139,7 @@ public class AgentInfoService {
         }else {
             roleRepository.addUserRole(user.getId(),Long.parseLong("2"));
         }
-
+        return "注册成功";
     }
 
     public Specification<AgentInfo> getWhereClause(String agentName, String status, String isDelete) {
