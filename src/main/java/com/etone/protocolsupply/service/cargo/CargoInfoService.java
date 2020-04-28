@@ -169,15 +169,18 @@ public class CargoInfoService {
         String userName = jwtUser.getUsername();
         cargoInfo.setMaintenanceMan(userName);
         cargoInfo.setMaintenanceDate(date);
-        Optional<Attachment> attachment = attachmentRepository.findById(cargoInfo.getAttachment().getAttachId());
-        if (cargoInfo != null && attachment == null) {
+       // Optional<Attachment> attachment = attachmentRepository.findById(cargoInfo.getAttachment().getAttachId());
+        if (cargoInfo != null && cargoInfo.getAttachment()== null) {
             cargoInfoRepository.save(cargoInfo);
         }
-        if (attachment != null) {
+        if (cargoInfo.getAttachment().getAttachId() != null) {
             Optional<Attachment> optional = attachmentRepository.findById(cargoInfo.getAttachment().getAttachId());
             if (optional.isPresent()) {
                 cargoInfo.setAttachment(optional.get());
             }
+        }else {
+            cargoInfo.setAttachment(null);
+        }
             partInfoRepository.deleteByCargoId(cargoInfo.getCargoId());
             Set<PartInfo> partInfos =cargoInfo.getPartInfos();
             if (partInfos != null && !partInfos.isEmpty()) {
@@ -202,7 +205,7 @@ public class CargoInfoService {
                 }
                 partInfoRepository.setCargoId(cargoInfo.getCargoId(), partIds);
             }
-        }
+
         return cargoInfo;
     }
 
