@@ -77,11 +77,12 @@ public class InquiryInfoController extends GenericController {
                                        @RequestParam(value = "cargoName", required = false) String cargoName,
                                        @RequestParam(value = "inquiryCode", required = false) String inquiryCode,
                                        @RequestParam(value = "actor", required = false) String actor,
+                                       @RequestParam(value = "status", required = false) Integer status,
                                        HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort = new Sort(Sort.Direction.DESC, "inquiryId");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Page<InquiryInfo> page = inquiryInfoService.findInquiryInfos(isDelete, cargoName, inquiryCode, actor,pageable);
+        Page<InquiryInfo> page = inquiryInfoService.findInquiryInfos(isDelete, cargoName, inquiryCode, actor,status,pageable);
         InquiryCollectionDto inquiryCollectionDto = inquiryInfoService.to(page, request);
         for (InquiryInfoDto inquiryInfoDto : inquiryCollectionDto.getInquiryInfoDtos()) {
             inquiryInfoDto.getCargoInfo().setPartInfos(null);
