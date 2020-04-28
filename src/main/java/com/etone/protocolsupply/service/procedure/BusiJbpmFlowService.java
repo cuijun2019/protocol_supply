@@ -198,7 +198,7 @@ public class BusiJbpmFlowService {
     }
 
     //根据业务表id，待办类型，当前处理人 修改type=1
-    public Specification<BusiJbpmFlow> getWhereThreeClause(String businessId, String businessType,String parentActor ) {
+    public Specification<BusiJbpmFlow> getWhereThreeClause(String businessId, String businessType,String nextActor ) {
         return (Specification<BusiJbpmFlow>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (Strings.isNotBlank(businessType)) {
@@ -207,8 +207,8 @@ public class BusiJbpmFlowService {
             if (Strings.isNotBlank(businessId)) {
                 predicates.add(criteriaBuilder.equal(root.get("businessId").as(String.class), businessId));
             }
-            if (Strings.isNotBlank(parentActor)) {
-                predicates.add(criteriaBuilder.equal(root.get("parentActor").as(String.class), parentActor));
+            if (Strings.isNotBlank(nextActor)) {
+                predicates.add(criteriaBuilder.equal(root.get("nextActor").as(String.class), nextActor));
             }
             Predicate[] pre = new Predicate[predicates.size()];
             return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
