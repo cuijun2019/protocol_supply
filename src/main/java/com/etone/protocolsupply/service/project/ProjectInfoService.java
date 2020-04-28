@@ -346,7 +346,7 @@ public class ProjectInfoService {
         projectInfoRepository.updateIsDelete(projectId);
     }
 
-    public void export(HttpServletResponse response, List<Long> projectIds) {
+    public void export(HttpServletResponse response, List<Long> projectIds,String actor) {
         try {
             String[] header = {"项目主题", "项目编号", "货物名称", "货物金额", "项目总金额", "币种", "状态",
                     "采购结果通知书", "中标通知书", "合同"};
@@ -370,7 +370,9 @@ public class ProjectInfoService {
             List<ProjectInfo> list;
             if (projectIds != null && !projectIds.isEmpty()) {
                 list = projectInfoRepository.findAllp(projectIds);
-            } else {
+            } else if(null!=actor && projectIds.size()==0 ){
+                list = projectInfoRepository.findAlltoExpert(Constant.DELETE_NO,actor);
+            }else {
                 list = projectInfoRepository.findAll();
             }
             ProjectInfo projectInfo;

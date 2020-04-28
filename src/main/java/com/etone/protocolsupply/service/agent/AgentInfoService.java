@@ -217,7 +217,7 @@ public class AgentInfoService {
         agentInfoRepository.updateIsDelete(agentId);
     }
 
-    public void export(HttpServletResponse response, String agentName, String status, String isDelete, List<Long> agentIds) {
+    public void export(HttpServletResponse response, String agentName, String status, String isDelete, List<Long> agentIds,String actor) {
         try {
             String[] header = {"代理商名称", "代理费用扣点（百分比）", "状态", "厂家授权函", "审核状态", "创建人", "创建时间"};
             HSSFWorkbook workbook = new HSSFWorkbook();
@@ -240,8 +240,10 @@ public class AgentInfoService {
             List<AgentInfo> list;
             if (agentIds != null && !agentIds.isEmpty()) {
                 list = agentInfoRepository.findAll(agentName, status, agentIds);
-            } else {
-                list = agentInfoRepository.findAll(agentName, status,isDelete);
+            } else if(null!=actor && agentIds.isEmpty()) {
+                list = agentInfoRepository.findExpert(Constant.DELETE_NO,actor );
+            }else {
+                list = agentInfoRepository.findAll();
             }
             AgentInfo agentInfo;
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

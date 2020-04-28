@@ -176,9 +176,10 @@ public class CargoInfoController extends GenericController {
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseValue exportPart(@RequestBody(required = false) List<Long> cargoIds,
+                                    @RequestParam(value = "actor", required = false) String actor,
                                     @Context HttpServletResponse response) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        cargoInfoService.export(response, cargoIds);
+        cargoInfoService.export(response, cargoIds,actor);
         return responseBuilder.build();
     }
 

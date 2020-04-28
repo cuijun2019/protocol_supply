@@ -197,7 +197,8 @@ public class AgentInfoController extends GenericController {
                             @RequestParam(value = "status", required = false) String status,
                             @RequestParam(value = "isDelete", required = false) String isDelete,
                             @RequestBody(required = false) List<Long> agentIds,
+                            @RequestParam(value = "actor", required = false) String actor,
                             @Context HttpServletResponse response) {
-        agentInfoService.export(response, agentName, status, isDelete, agentIds);
+        agentInfoService.export(response, agentName, status, isDelete, agentIds,actor);
     }
 }

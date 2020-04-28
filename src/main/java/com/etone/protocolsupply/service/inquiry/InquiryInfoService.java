@@ -133,7 +133,7 @@ public class InquiryInfoService {
     }
 
     //货物导出
-    public void export(HttpServletResponse response, List<Long> inquiryIds) {
+    public void export(HttpServletResponse response, List<Long> inquiryIds,String actor) {
         try {
             String[] header = {"询价单号", "采购人", "采购单位", "供应商名称","货物基本参数", "货物名称", "参考价格", "询价时间",
                     "备注"};
@@ -154,9 +154,11 @@ public class InquiryInfoService {
                 cell.setCellStyle(headerStyle);
             }
             List<InquiryInfo> list = null;
-            if (inquiryIds != null && !inquiryIds.equals("")) {
+            if (inquiryIds != null && !inquiryIds.isEmpty()) {
                 list = inquiryInfoRepository.findByInquiryIds(inquiryIds);
-            } else {
+            } else if(null != actor && inquiryIds.isEmpty()){
+                list = inquiryInfoRepository.findExpert(Constant.DELETE_NO,actor);
+            }else {
                 list = inquiryInfoRepository.findAll();
             }
             InquiryInfo inquiryInfo;

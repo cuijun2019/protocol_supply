@@ -165,9 +165,10 @@ public class InquiryInfoController extends GenericController {
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseValue exportPart( @RequestBody(required = false) List<Long> inquiryIds,
+                                     @RequestParam(value = "actor", required = false) String actor,
                                     @Context HttpServletResponse response) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        inquiryInfoService.export(response, inquiryIds);
+        inquiryInfoService.export(response, inquiryIds,actor);
         return responseBuilder.build();
     }
 

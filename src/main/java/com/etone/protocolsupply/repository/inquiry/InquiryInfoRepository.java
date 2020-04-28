@@ -44,4 +44,9 @@ public interface InquiryInfoRepository extends JpaRepository<InquiryInfo, Long>,
     @Transactional(rollbackFor = Exception.class)
     @Query(value = "select * from inquiry_info where is_delete=2 and inquiry_id=?1", nativeQuery = true)
     InquiryInfo findAllByInquiryId(Long inquiryId);
+
+    @Query(value = "select i.* from inquiry_info i where exists(select 1 from busi_jbpm_flow b where i.inquiry_id = b.business_id and b.business_type='enquiryAudit' " +
+            " and if((?2 is not null), (b.parent_actor=?2 or b.next_actor=?2), (1=1)))" +
+            " and i.is_delete=?1 ", nativeQuery = true)
+    List<InquiryInfo> findExpert(Integer isDelete,String actor);
 }

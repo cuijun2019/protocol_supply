@@ -50,4 +50,10 @@ public interface CargoInfoRepository extends JpaRepository<CargoInfo, Long>, Jpa
 
     @Query(value = "select * from cargo_info where is_delete=2 and cargo_id=(select cargo_id from part_info_exp where project_id=?1 limit 1) ", nativeQuery = true)
     List<CargoInfo> findByProjectId(long projectId);
+
+
+    @Query(value = "select c.* from cargo_info c WHERE exists(select 1 from busi_jbpm_flow b where c.cargo_id = b.business_id and b.business_type='cargoAudit' " +
+            "and if((?2 is not null), (b.parent_actor=?2 or b.next_actor=?2), (1=1)))" +
+            " and  c.is_delete=?1 ", nativeQuery = true)
+    List<CargoInfo> findAllExpert(Integer isDelete,String actor );
 }

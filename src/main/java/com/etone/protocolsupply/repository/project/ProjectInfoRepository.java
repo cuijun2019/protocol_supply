@@ -88,4 +88,9 @@ public interface ProjectInfoRepository extends JpaRepository<ProjectInfo, Long>,
     List<ProjectInfo> findAllByBusiJbpmFlow(@Param("isDelete") String isDelete,@Param("businessType") String businessType,@Param("parentActor") String parentActor
     ,@Param("status") String status);
 
+    @Query(value = "select * from project_info WHERE exists(select 1 from busi_jbpm_flow b " +
+            "where project_id = b.business_id  and if((:actor is not null), (parent_actor=:actor or next_actor=:actor ), (1=1)) " +
+            "and business_type='projectAudit') and is_delete=:isDelete",  nativeQuery = true)
+    List<ProjectInfo> findAlltoExpert(@Param("isDelete") Integer isDelete ,@Param("actor") String actor  );
+
 }

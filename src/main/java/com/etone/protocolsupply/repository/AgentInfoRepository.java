@@ -41,4 +41,9 @@ public interface AgentInfoRepository extends JpaRepository<AgentInfo, Long>, Jpa
     @Modifying
     @Query(value = "update agent_info set status=?1 where agent_id=?2", nativeQuery = true)
     void updateStatus(Integer status, Long agentId);
+
+    @Query(value = "select * from agent_info where exists(select 1 from busi_jbpm_flow b where agent_id = b.business_id and b.business_type='agentAudit' " +
+            " and if((:actor is not null), (b.parent_actor=:actor or b.next_actor=:actor), (1=1))) " +
+            " and  is_delete=:isDelete ", nativeQuery = true)
+    List<AgentInfo> findExpert(@Param("isDelete") Integer isDelete,@Param("actor") String actor);
 }

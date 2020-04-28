@@ -289,11 +289,9 @@ public class ProjectInfoController extends GenericController {
             consumes = {"application/json"},
             produces = {"application/json"})
     public void exportAgent(
-//            @RequestParam(value = "projectSubject", required = false) String projectSubject,
-//                            @RequestParam(value = "status", required = false) String status,
-//                            @RequestParam(value = "isDelete", required = false, defaultValue = "2") String isDelete,
                             @RequestBody(required = false) List<Long> projectIds,
+                            @RequestParam(value = "actor", required = false) String actor,
                             @Context HttpServletResponse response) {
-        projectInfoService.export(response, projectIds);
+        projectInfoService.export(response, projectIds,actor);
     }
 }
