@@ -191,7 +191,7 @@ public class UserController extends GenericController {
             produces = {"application/json"})
     public ResponseValue getUserByRoleId(@PathVariable("roleId") String roleId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        List<User> userList = userService.getUserByRoleId(roleId);
+        List<String> userList = userService.getUserByRoleId(roleId);
         responseBuilder.data(userList);
         return responseBuilder.build();
     }

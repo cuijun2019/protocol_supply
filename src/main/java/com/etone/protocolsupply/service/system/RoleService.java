@@ -113,11 +113,7 @@ public class RoleService {
     }
 
     public List<Role> getAllRoles() {
-        List<Role> roleList = roleRepository.findAll();
-        for (int i = 0; i < roleList.size(); i++) {
-            roleList.get(i).setPermissions(null);
-        }
-        return roleList;
+        return roleRepository.findAll();
     }
 
 }
