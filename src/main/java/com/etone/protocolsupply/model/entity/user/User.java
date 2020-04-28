@@ -100,6 +100,7 @@ public class User {
     )
     private List<Role> roles;
 
+    @JsonIgnoreProperties({ "handler","hibernateLazyInitializer" })
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ATTACH_ID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment;

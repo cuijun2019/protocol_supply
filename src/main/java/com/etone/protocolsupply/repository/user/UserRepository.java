@@ -43,4 +43,7 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     @Modifying
     @Query(value = "update users set password=?1 where username=?2", nativeQuery = true)
     void updatePassword(String encode, String username);
+
+    @Query(value = "select u.* from roles r inner join user_role ur on ur.role_id=r.role_id inner join users u on ur.user_id=u.id where r.role_id=?1", nativeQuery = true)
+    List<User> getUserByRoleId(long parseLong);
 }

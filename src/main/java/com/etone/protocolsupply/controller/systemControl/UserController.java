@@ -177,4 +177,22 @@ public class UserController extends GenericController {
         responseBuilder.message("更新用户信息成功");
         return responseBuilder.build();
     }
+
+
+    /**
+     * 根据角色id查询对应的所有用户
+     * @param roleId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getUserByRoleId/{roleId}",
+            method = RequestMethod.GET,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    public ResponseValue getUserByRoleId(@PathVariable("roleId") String roleId) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        List<User> userList = userService.getUserByRoleId(roleId);
+        responseBuilder.data(userList);
+        return responseBuilder.build();
+    }
 }

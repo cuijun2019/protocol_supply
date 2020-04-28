@@ -204,4 +204,16 @@ public class UserService {
         }
         return true;
     }
+
+    public List<User> getUserByRoleId(String roleId) {
+        List<User> userList = userRepository.getUserByRoleId(Long.parseLong(roleId));
+        if(userList!=null && userList.size()>0){
+            for (int i = 0; i < userList.size(); i++) {
+                userList.get(i).setRoles(null);
+                userList.get(i).setPartnerInfo(null);
+                userList.get(i).setAttachment(null);
+            }
+        }
+        return userList;
+    }
 }
