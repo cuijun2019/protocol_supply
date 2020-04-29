@@ -193,28 +193,28 @@ public class BusiJbpmFlowService {
     }
 
     //根据业务表id，待办类型，当前处理人 修改type=1
-    public Specification<BusiJbpmFlow> getWhereThreeClause(String businessId, String businessType,String parentActor,String nextActor, Integer type) {
-        return (Specification<BusiJbpmFlow>) (root, criteriaQuery, criteriaBuilder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-            if (Strings.isNotBlank(businessType)) {
-                predicates.add(criteriaBuilder.equal(root.get("businessType").as(String.class), businessType));
-            }
-            if (Strings.isNotBlank(businessId)) {
-                predicates.add(criteriaBuilder.equal(root.get("businessId").as(String.class), businessId));
-            }
-            if (Strings.isNotBlank(parentActor)) {
-                predicates.add(criteriaBuilder.equal(root.get("parentActor").as(String.class), parentActor));
-            }
-            if (Strings.isNotBlank(nextActor)) {
-                predicates.add(criteriaBuilder.equal(root.get("nextActor").as(String.class), nextActor));
-            }
-            if (null!=type) {
-                predicates.add(criteriaBuilder.equal(root.get("type").as(Integer.class), type));
-            }
-            Predicate[] pre = new Predicate[predicates.size()];
-            return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
-        };
+//    public Specification<BusiJbpmFlow> getWhereThreeClause(String businessId, String businessType,String nextActor) {
+//        return (Specification<BusiJbpmFlow>) (root, criteriaQuery, criteriaBuilder) -> {
+//            List<Predicate> predicates = new ArrayList<>();
+//            if (Strings.isNotBlank(businessType)) {
+//                predicates.add(criteriaBuilder.equal(root.get("businessType").as(String.class), businessType));
+//            }
+//            if (Strings.isNotBlank(businessId)) {
+//                predicates.add(criteriaBuilder.equal(root.get("businessId").as(String.class), businessId));
+//            }
+//            if (Strings.isNotBlank(nextActor)) {
+//                predicates.add(criteriaBuilder.equal(root.get("nextActor").as(String.class), nextActor));
+//            }
+//
+//            Predicate[] pre = new Predicate[predicates.size()];
+//            return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
+//        };
+//    }
+
+    public List<BusiJbpmFlow> getWhereThreeClause(String businessId, String businessType,String nextActor){
+        return busiJbpmFlowRepository.isExistBusiJbpmFlows(businessId,businessType,nextActor,null);
     }
+
 
     public List<BusiJbpmFlow> isBusiJbpmFlows(String businessId, String businessType,String parentActor){
         return busiJbpmFlowRepository.isBusiJbpmFlows(businessId,businessType,parentActor);

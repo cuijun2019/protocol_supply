@@ -150,9 +150,8 @@ public class BusiJbpmFlowController extends GenericController {
     public ResponseValue updateBusiJbpmFlows(@Validated
                                              @RequestBody BusiJbpmFlowDto busiJbpmFlowDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereThreeClause(
-                busiJbpmFlowDto.getBusinessId(),busiJbpmFlowDto.getBusinessType(),busiJbpmFlowDto.getParentActor(),busiJbpmFlowDto.getNextActor(),null);
-        List<BusiJbpmFlow> list=busiJbpmFlowService.getModel(specification);
+        List<BusiJbpmFlow> list = busiJbpmFlowService.getWhereThreeClause(
+                busiJbpmFlowDto.getBusinessId(),busiJbpmFlowDto.getBusinessType(),busiJbpmFlowDto.getNextActor());
         BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
         if(list.size()!=0){
             busiJbpmFlow=list.get(0);
