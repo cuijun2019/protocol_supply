@@ -191,11 +191,11 @@ public class BusiJbpmFlowController extends GenericController {
         Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereThreeClause(
                 busiJbpmFlowDto.getBusinessId(),busiJbpmFlowDto.getBusinessType(),busiJbpmFlowDto.getParentActor(),busiJbpmFlowDto.getNextActor(),busiJbpmFlowDto.getType());
         List<BusiJbpmFlow> list=busiJbpmFlowService.getModel(specification);
+        BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
         if(list.size()!=0){
-            responseBuilder.data(1);
-        }else {
-            responseBuilder.data(0);
+            busiJbpmFlow=list.get(0);
         }
+        responseBuilder.data(busiJbpmFlow);
         return responseBuilder.build();
     }
 
