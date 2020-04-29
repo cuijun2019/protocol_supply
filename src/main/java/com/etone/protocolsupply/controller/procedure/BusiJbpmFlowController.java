@@ -168,7 +168,6 @@ public class BusiJbpmFlowController extends GenericController {
             busiJbpmFlowService.updateType(busiJbpmFlow.getId());
             busiJbpmFlow.setType(1);
         }else {
-            busiJbpmFlow=null;
             responseBuilder.message("查询不到数据，操作失败！");
         }
         responseBuilder.data(busiJbpmFlow);
@@ -193,9 +192,9 @@ public class BusiJbpmFlowController extends GenericController {
                 busiJbpmFlowDto.getBusinessId(),busiJbpmFlowDto.getBusinessType(),busiJbpmFlowDto.getParentActor(),busiJbpmFlowDto.getNextActor(),busiJbpmFlowDto.getType());
         List<BusiJbpmFlow> list=busiJbpmFlowService.getModel(specification);
         if(list.size()!=0){
-            responseBuilder.message("1");//存在
+            responseBuilder.data(1);
         }else {
-            responseBuilder.message("0");//不存在
+            responseBuilder.data(0);
         }
         return responseBuilder.build();
     }
