@@ -92,7 +92,7 @@ public class BusiJbpmFlowService {
     }
 
 
-    public Specification<BusiJbpmFlow> getWhereClause(String businessType, String businessSubject,Integer type, String businessId) {
+    public Specification<BusiJbpmFlow> getWhereClause(String businessType, String businessSubject,Integer type, String businessId,String parentActor) {
         return (Specification<BusiJbpmFlow>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (Strings.isNotBlank(businessType)) {
@@ -102,9 +102,14 @@ public class BusiJbpmFlowService {
                 predicates.add(criteriaBuilder.like(root.get("businessSubject").as(String.class), '%'+businessSubject+'%'));
             }
             if (Strings.isNotBlank(businessId)) {
-                predicates.add(criteriaBuilder.like(root.get("businessId").as(String.class), businessId));
+                predicates.add(criteriaBuilder.equal(root.get("businessId").as(String.class), businessId));
             }
-                predicates.add(criteriaBuilder.equal(root.get("type").as(String.class), type));
+            if (Strings.isNotBlank(parentActor)) {
+                predicates.add(criteriaBuilder.equal(root.get("parentActor").as(String.class), parentActor));
+            }
+            if (type!=null) {
+                predicates.add(criteriaBuilder.equal(root.get("type").as(Integer.class), type));
+            }
             Predicate[] pre = new Predicate[predicates.size()];
             return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
         };
@@ -130,7 +135,7 @@ public class BusiJbpmFlowService {
 
 
 
-    public void export(HttpServletResponse response, List<Long> ids,Integer type) {
+    public void export(HttpServletResponse response, List<Long> ids,Integer type,String parentActor) {
         try {
             String str1=null;
             if(type==0){
@@ -163,7 +168,9 @@ public class BusiJbpmFlowService {
             List<BusiJbpmFlow> list;
             if (ids != null && ids.size()!=0) {
                 list = busiJbpmFlowRepository.findAll(ids,type);
-            } else {
+            } else if(null !=parentActor && ids.size()==0){
+                list = busiJbpmFlowRepository.findAllToExpert(type,parentActor);
+            }else {
                 list = busiJbpmFlowRepository.findAll();
             }
             BusiJbpmFlow busiJbpmFlow;

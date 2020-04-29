@@ -34,4 +34,8 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
     void updateType(Long id);
 
 
+    @Query(value = "select * from busi_jbpm_flow where  " +
+            " parent_actor=:parentActor  and type=:type", nativeQuery = true)
+    List<BusiJbpmFlow> findAllToExpert(@Param("type") Integer type,@Param("parentActor") String parentActor);
+
 }
