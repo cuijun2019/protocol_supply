@@ -40,10 +40,17 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
     @Query(value = "select * from busi_jbpm_flow where 1=1 " +
             " and if((:businessId is not null), (business_id =:businessId), (1=1))  " +
             " and if((:businessType is not null), (business_type =:businessType), (1=1)) " +
-            " and if((:parentActor is not null), (parent_actor =:parentActor or next_actor=:parentActor), (1=1)) " +
-            " and if((:nextActor is not null), (parent_actor =:nextActor or next_actor=:nextActor), (1=1)) " +
+            " and if((:parentActor is not null), (parent_actor =:parentActor or next_actor=:parentActor), (1=1))  ", nativeQuery = true)
+    List<BusiJbpmFlow> isBusiJbpmFlows(@Param("businessId") String businessId,@Param("businessType") String businessType
+    ,@Param("parentActor") String parentActor);
+
+
+    @Query(value = "select * from busi_jbpm_flow where 1=1 " +
+            " and if((:businessId is not null), (business_id =:businessId), (1=1))  " +
+            " and if((:businessType is not null), (business_type =:businessType), (1=1)) " +
+            " and if((:nextActor is not null), (next_actor=:nextActor), (1=1)) " +
             " and if((:type is not null), (type =:type), (1=1)) ", nativeQuery = true)
     List<BusiJbpmFlow> isExistBusiJbpmFlows(@Param("businessId") String businessId,@Param("businessType") String businessType
-    ,@Param("parentActor") String parentActor,@Param("nextActor") String nextActor,@Param("type") Integer type);
+            ,@Param("nextActor") String nextActor,@Param("type") Integer type);
 
 }

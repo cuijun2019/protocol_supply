@@ -167,7 +167,32 @@ public class BusiJbpmFlowController extends GenericController {
 
 
     /**
-     * 根据businessId、businessType、type、nextActor查询审核表是否存在
+     * 判断当前登录人是否存在审核流程
+     * @param businessId
+     * @param businessType
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/isExistFlow",method = RequestMethod.GET,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseValue isExistFlow(@Validated
+                                              @RequestParam(value = "businessId", required = false) String businessId,
+                                              @RequestParam(value = "businessType", required = false) String businessType,
+                                              @RequestParam(value = "parentActor", required = false) String parentActor) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        List<BusiJbpmFlow> list = busiJbpmFlowService.isBusiJbpmFlows(businessId,businessType,parentActor);
+        BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
+        if(list.size()!=0){
+            busiJbpmFlow=list.get(0);
+        }
+        responseBuilder.data(busiJbpmFlow);
+        return responseBuilder.build();
+    }
+
+    /**
+     * 根据businessId、businessType、type、parentActor判断是否存在数据
      * @param businessId
      * @param businessType
      * @param type
@@ -175,18 +200,17 @@ public class BusiJbpmFlowController extends GenericController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/isExist",method = RequestMethod.GET,
+    @RequestMapping(value = "/isExistData",method = RequestMethod.GET,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
-    public ResponseValue isExistBusiJbpmFlows(@Validated
+    public ResponseValue isExistData(@Validated
                                               @RequestParam(value = "businessId", required = false) String businessId,
                                               @RequestParam(value = "businessType", required = false) String businessType,
                                               @RequestParam(value = "type", required = false) Integer type,
-                                              @RequestParam(value = "parentActor", required = false) String parentActor,
                                               @RequestParam(value = "nextActor", required = false) String nextActor) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        List<BusiJbpmFlow> list = busiJbpmFlowService.isExistBusiJbpmFlows(businessId,businessType,parentActor,nextActor,type);
+        List<BusiJbpmFlow> list = busiJbpmFlowService.isExistBusiJbpmFlows(businessId,businessType,nextActor,type);
         BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
         if(list.size()!=0){
             busiJbpmFlow=list.get(0);

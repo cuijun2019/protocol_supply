@@ -216,8 +216,13 @@ public class BusiJbpmFlowService {
         };
     }
 
-    public List<BusiJbpmFlow> isExistBusiJbpmFlows(String businessId, String businessType,String parentActor,String nextActor, Integer type){
-        return busiJbpmFlowRepository.isExistBusiJbpmFlows(businessId,businessType,parentActor,nextActor,type);
+    public List<BusiJbpmFlow> isBusiJbpmFlows(String businessId, String businessType,String parentActor){
+        return busiJbpmFlowRepository.isBusiJbpmFlows(businessId,businessType,parentActor);
+    }
+
+
+    public List<BusiJbpmFlow> isExistBusiJbpmFlows(String businessId, String businessType,String nextActor, Integer type){
+        return busiJbpmFlowRepository.isExistBusiJbpmFlows(businessId,businessType,nextActor,type);
     }
 
     public List<BusiJbpmFlow> getModel(Specification<BusiJbpmFlow> specification){
