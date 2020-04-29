@@ -9,10 +9,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description //TODO
@@ -44,6 +46,6 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     @Query(value = "update users set password=?1 where username=?2", nativeQuery = true)
     void updatePassword(String encode, String username);
 
-    @Query(value = "select u.* from roles r inner join user_role ur on ur.role_id=r.role_id inner join users u on ur.user_id=u.id where r.role_id=?1", nativeQuery = true)
-    List<User> getUserByRoleId(long parseLong);
+    @Query(value = "select u.*,r.role_id from roles r inner join user_role ur on ur.role_id=r.role_id inner join users u on ur.user_id=u.id where r.role_id in (:roleIds)", nativeQuery = true)
+    List<Map> getUserByRoleId(@Param("roleIds") List<Long> roleIds);
 }

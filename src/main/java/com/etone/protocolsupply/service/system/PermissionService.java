@@ -79,6 +79,12 @@ public class PermissionService {
         ArrayList<Object> agentList = new ArrayList<>();
         HashMap<String, Object> agentMapMyAgent = new HashMap<>();
         ArrayList<Object> agentListMyAgent = new ArrayList<>();
+        HashMap<String, Object> agentMapInfo = new HashMap<>();
+        ArrayList<Object> agentListInfo = new ArrayList<>();
+        HashMap<String, Object> agentMapUpdate = new HashMap<>();
+        ArrayList<Object> agentListUpdate = new ArrayList<>();
+        HashMap<String, Object> agentMapResetPWD = new HashMap<>();
+        ArrayList<Object> agentListResetPWD  = new ArrayList<>();
 
         //采购结果通知书
         HashMap<String, Object> purchaseResultsMap = new HashMap<>();
@@ -166,6 +172,12 @@ public class PermissionService {
                 supplierMapResetPWD.put("permission",permissionsList.get(i));
             }else if(48==permissionsList.get(i).getPermId()){
                 agentMapMyAgent.put("permission",permissionsList.get(i));
+            }else if(92==permissionsList.get(i).getPermId()){
+                agentMapInfo.put("permission",permissionsList.get(i));
+            }else if(93==permissionsList.get(i).getPermId()){
+                agentMapUpdate.put("permission",permissionsList.get(i));
+            }else if(94==permissionsList.get(i).getPermId()){
+                agentMapResetPWD.put("permission",permissionsList.get(i));
             }else if(54==permissionsList.get(i).getPermId()){
                 purchaseResultsMapMy.put("permission",permissionsList.get(i));
             }else if(58==permissionsList.get(i).getPermId()){
@@ -270,6 +282,18 @@ public class PermissionService {
                 agentListMyAgent.add(permissionsList.get(i));
                 agentMapMyAgent.put("list",agentListMyAgent);
             }
+            if(92==permissionsList.get(i).getParentPermId()){
+                agentListInfo.add(permissionsList.get(i));
+                agentMapMyAgent.put("list",agentListInfo);
+            }
+            if(93==permissionsList.get(i).getParentPermId()){
+                agentListUpdate.add(permissionsList.get(i));
+                agentMapUpdate.put("list",agentListUpdate);
+            }
+            if(94==permissionsList.get(i).getParentPermId()){
+                agentListResetPWD.add(permissionsList.get(i));
+                agentMapResetPWD.put("list",agentListResetPWD);
+            }
             if(54==permissionsList.get(i).getParentPermId()){
                 purchaseResultsListMy.add(permissionsList.get(i));
                 purchaseResultsMapMy.put("list",purchaseResultsListMy);
@@ -329,6 +353,15 @@ public class PermissionService {
         }
         if(purchaseResultsMapMy.size()>0){
             purchaseResultsList.add(purchaseResultsMapMy);
+        }
+        if(agentMapResetPWD.size()>0){
+            agentList.add(agentMapResetPWD);
+        }
+        if(agentMapUpdate.size()>0){
+            agentList.add(agentMapUpdate);
+        }
+        if(agentMapInfo.size()>0){
+            agentList.add(agentMapInfo);
         }
         if(agentMapMyAgent.size()>0){
             agentList.add(agentMapMyAgent);

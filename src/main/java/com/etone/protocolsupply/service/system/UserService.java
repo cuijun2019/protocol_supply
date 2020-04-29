@@ -205,14 +205,14 @@ public class UserService {
         return true;
     }
 
-    public List<String> getUserByRoleId(String roleId) {
-        ArrayList<String> nameList = new ArrayList<>();
-        List<User> userList = userRepository.getUserByRoleId(Long.parseLong(roleId));
+    public Map<String,String> getUserByRoleId(List<Long> roleId) {
+        Map<String,String> nameMap = new HashMap<>();
+        List<Map> userList = userRepository.getUserByRoleId(roleId);
         if(userList!=null && userList.size()>0){
             for (int i = 0; i < userList.size(); i++) {
-                nameList.add(userList.get(i).getUsername());
+                nameMap.put(userList.get(i).get("role_id").toString(),userList.get(i).get("username").toString());
             }
         }
-        return nameList;
+        return nameMap;
     }
 }
