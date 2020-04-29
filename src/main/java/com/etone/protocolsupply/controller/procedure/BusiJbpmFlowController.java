@@ -186,8 +186,7 @@ public class BusiJbpmFlowController extends GenericController {
                                               @RequestParam(value = "parentActor", required = false) String parentActor,
                                               @RequestParam(value = "nextActor", required = false) String nextActor) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereThreeClause(businessId,businessType,parentActor,nextActor,type);
-        List<BusiJbpmFlow> list=busiJbpmFlowService.getModel(specification);
+        List<BusiJbpmFlow> list = busiJbpmFlowService.isExistBusiJbpmFlows(businessId,businessType,parentActor,nextActor,type);
         BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
         if(list.size()!=0){
             busiJbpmFlow=list.get(0);

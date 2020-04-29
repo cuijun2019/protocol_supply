@@ -216,6 +216,10 @@ public class BusiJbpmFlowService {
         };
     }
 
+    public List<BusiJbpmFlow> isExistBusiJbpmFlows(String businessId, String businessType,String parentActor,String nextActor, Integer type){
+        return busiJbpmFlowRepository.isExistBusiJbpmFlows(businessId,businessType,parentActor,nextActor,type);
+    }
+
     public List<BusiJbpmFlow> getModel(Specification<BusiJbpmFlow> specification){
         return busiJbpmFlowRepository.findAll(specification);
     }
