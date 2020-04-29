@@ -182,7 +182,7 @@ public class BusiJbpmFlowController extends GenericController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/isExist",method = RequestMethod.PUT,
+    @RequestMapping(value = "/isExist",method = RequestMethod.GET,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
@@ -193,9 +193,9 @@ public class BusiJbpmFlowController extends GenericController {
                 busiJbpmFlowDto.getBusinessId(),busiJbpmFlowDto.getBusinessType(),busiJbpmFlowDto.getParentActor(),busiJbpmFlowDto.getNextActor(),busiJbpmFlowDto.getType());
         List<BusiJbpmFlow> list=busiJbpmFlowService.getModel(specification);
         if(list.size()!=0){
-            responseBuilder.message("审核表存在该数据！");
+            responseBuilder.message("1");//存在
         }else {
-            responseBuilder.message("审核表不存在该数据！");
+            responseBuilder.message("0");//不存在
         }
         return responseBuilder.build();
     }
