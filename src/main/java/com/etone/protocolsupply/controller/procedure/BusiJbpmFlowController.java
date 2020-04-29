@@ -186,8 +186,10 @@ public class BusiJbpmFlowController extends GenericController {
         BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
         if(list.size()!=0){
             busiJbpmFlow=list.get(0);
+            responseBuilder.data(busiJbpmFlow);
+        }else {
+            responseBuilder.data(null);
         }
-        responseBuilder.data(busiJbpmFlow);
         return responseBuilder.build();
     }
 
@@ -214,8 +216,10 @@ public class BusiJbpmFlowController extends GenericController {
         BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
         if(list.size()!=0){
             busiJbpmFlow=list.get(0);
+            responseBuilder.data(busiJbpmFlow);
+        }else {
+            responseBuilder.data(null);
         }
-        responseBuilder.data(busiJbpmFlow);
         return responseBuilder.build();
     }
 
