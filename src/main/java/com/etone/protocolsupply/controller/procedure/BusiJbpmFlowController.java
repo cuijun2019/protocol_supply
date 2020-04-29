@@ -160,7 +160,7 @@ public class BusiJbpmFlowController extends GenericController {
                                                  @RequestBody BusiJbpmFlowDto busiJbpmFlowDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereThreeClause(
-                busiJbpmFlowDto.getBusinessId(),busiJbpmFlowDto.getBusinessType(),busiJbpmFlowDto.getParentActor(),busiJbpmFlowDto.getNextActor(),null);
+                busiJbpmFlowDto.getBusinessId(),busiJbpmFlowDto.getBusinessType(),busiJbpmFlowDto.getNextActor(),null);
         List<BusiJbpmFlow> list=busiJbpmFlowService.getModel(specification);
         BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
         if(list.size()!=0){
@@ -177,19 +177,21 @@ public class BusiJbpmFlowController extends GenericController {
 
     /**
      * 根据businessId、businessType、type、nextActor查询审核表是否存在
-     * @param busiJbpmFlowDto
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/isExist",method = RequestMethod.POST,
+    @RequestMapping(value = "/isExist",method = RequestMethod.GET,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
     public ResponseValue isExistBusiJbpmFlows(@Validated
-                                             @RequestBody BusiJbpmFlowDto busiJbpmFlowDto) {
+                                                  @RequestParam(value = "businessId", required = false) String businessId,
+                                              @RequestParam(value = "businessType", required = false) String businessType,
+                                              @RequestParam(value = "type", required = false) Integer type,
+                                              @RequestParam(value = "nextActor", required = false) String nextActor,
+                                              HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereThreeClause(
-                busiJbpmFlowDto.getBusinessId(),busiJbpmFlowDto.getBusinessType(),busiJbpmFlowDto.getParentActor(),busiJbpmFlowDto.getNextActor(),busiJbpmFlowDto.getType());
+        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereThreeClause(businessId,businessType,nextActor,type);
         List<BusiJbpmFlow> list=busiJbpmFlowService.getModel(specification);
         BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
         if(list.size()!=0){
