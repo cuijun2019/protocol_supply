@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "${jwt.route.path}/user")
@@ -185,13 +186,13 @@ public class UserController extends GenericController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/getUserByRoleId/{roleId}",
-            method = RequestMethod.GET,
+    @RequestMapping(value = "/getUserByRoleId",
+            method = RequestMethod.POST,
             consumes = {"application/json"},
             produces = {"application/json"})
-    public ResponseValue getUserByRoleId(@PathVariable("roleId") String roleId) {
+    public ResponseValue getUserByRoleId(@RequestBody(required = false) List<Long> roleId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        List<String> userList = userService.getUserByRoleId(roleId);
+        Map<String,String> userList = userService.getUserByRoleId(roleId);
         responseBuilder.data(userList);
         return responseBuilder.build();
     }
