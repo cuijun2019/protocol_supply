@@ -164,7 +164,7 @@ public class BusiJbpmFlowController extends GenericController {
         List<BusiJbpmFlow> list=busiJbpmFlowService.getModel(specification);
         BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
         if(list.size()!=0){
-             busiJbpmFlow=list.get(0);
+            busiJbpmFlow=list.get(0);
             busiJbpmFlowService.updateType(busiJbpmFlow.getId());
             busiJbpmFlow.setType(1);
         }else {
@@ -181,7 +181,7 @@ public class BusiJbpmFlowController extends GenericController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/isExist",method = RequestMethod.GET,
+    @RequestMapping(value = "/isExist",method = RequestMethod.POST,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
