@@ -123,7 +123,6 @@ public class BusiJbpmFlowController extends GenericController {
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
         Page<ProjectInfo> page = projectInfoService.findAllByBusiJbpmFlow(isDelete, businessType, parentActor,status, pageable);
         ProjectCollectionDto projectCollectionDto = projectInfoService.to(page, request);
-
         responseBuilder.data(projectCollectionDto);
         return responseBuilder.build();
     }
@@ -160,7 +159,8 @@ public class BusiJbpmFlowController extends GenericController {
     public ResponseValue updateBusiJbpmFlows(@Validated
                                                  @RequestBody BusiJbpmFlowDto busiJbpmFlowDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereThreeClause(busiJbpmFlowDto.getBusinessId(),busiJbpmFlowDto.getBusinessType(),busiJbpmFlowDto.getNextActor());
+        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereThreeClause(
+                busiJbpmFlowDto.getBusinessId(),busiJbpmFlowDto.getBusinessType(),busiJbpmFlowDto.getParentActor(),busiJbpmFlowDto.getNextActor(),null);
         List<BusiJbpmFlow> list=busiJbpmFlowService.getModel(specification);
         BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
         if(list.size()!=0){
@@ -176,8 +176,28 @@ public class BusiJbpmFlowController extends GenericController {
     }
 
 
-
-
-
+    /**
+     * 根据businessId、businessType、type、nextActor查询审核表是否存在
+     * @param busiJbpmFlowDto
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/isExist",method = RequestMethod.PUT,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseValue isExistBusiJbpmFlows(@Validated
+                                             @RequestBody BusiJbpmFlowDto busiJbpmFlowDto) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereThreeClause(
+                busiJbpmFlowDto.getBusinessId(),busiJbpmFlowDto.getBusinessType(),busiJbpmFlowDto.getParentActor(),busiJbpmFlowDto.getNextActor(),busiJbpmFlowDto.getType());
+        List<BusiJbpmFlow> list=busiJbpmFlowService.getModel(specification);
+        if(list.size()!=0){
+            responseBuilder.message("审核表存在该数据！");
+        }else {
+            responseBuilder.message("审核表不存在该数据！");
+        }
+        return responseBuilder.build();
+    }
 
 }
