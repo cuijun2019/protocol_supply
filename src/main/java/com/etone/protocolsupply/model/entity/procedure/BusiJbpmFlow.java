@@ -92,5 +92,11 @@ public class BusiJbpmFlow implements Serializable {
     @Column(name = "OPINION", length = 2000)
     private String opinion;
 
+    /**
+     * 是否退回
+     */
+    @Column(name = "IS_BACK", length = 4)
+    private Integer isBack;
+
 
 }
