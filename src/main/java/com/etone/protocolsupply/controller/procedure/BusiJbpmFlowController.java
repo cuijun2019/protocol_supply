@@ -1,17 +1,12 @@
 package com.etone.protocolsupply.controller.procedure;
 
-import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowCollectionDto;
 import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowDto;
 import com.etone.protocolsupply.model.dto.project.ProjectCollectionDto;
-import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
 import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
-import com.etone.protocolsupply.service.AttachmentService;
-import com.etone.protocolsupply.service.cargo.CargoInfoService;
-import com.etone.protocolsupply.service.inquiry.InquiryInfoService;
 import com.etone.protocolsupply.service.procedure.BusiJbpmFlowService;
 import com.etone.protocolsupply.service.project.ProjectInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +28,6 @@ import java.util.List;
 @RequestMapping(value = "${jwt.route.path}/busiJbpmFlow")
 public class BusiJbpmFlowController extends GenericController {
 
-    @Autowired
-    private CargoInfoService  cargoInfoService;
-    @Autowired
-    private InquiryInfoService inquiryInfoService;
     @Autowired
     private BusiJbpmFlowService busiJbpmFlowService;
     @Autowired
@@ -157,10 +148,10 @@ public class BusiJbpmFlowController extends GenericController {
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
     public ResponseValue updateBusiJbpmFlows(@Validated
-                                                 @RequestBody BusiJbpmFlowDto busiJbpmFlowDto) {
+                                             @RequestBody BusiJbpmFlowDto busiJbpmFlowDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereThreeClause(
-                busiJbpmFlowDto.getBusinessId(),busiJbpmFlowDto.getBusinessType(),busiJbpmFlowDto.getNextActor(),null);
+                busiJbpmFlowDto.getBusinessId(),busiJbpmFlowDto.getBusinessType(),busiJbpmFlowDto.getParentActor(),busiJbpmFlowDto.getNextActor(),null);
         List<BusiJbpmFlow> list=busiJbpmFlowService.getModel(specification);
         BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
         if(list.size()!=0){
@@ -177,6 +168,10 @@ public class BusiJbpmFlowController extends GenericController {
 
     /**
      * 根据businessId、businessType、type、nextActor查询审核表是否存在
+     * @param businessId
+     * @param businessType
+     * @param type
+     * @param nextActor
      * @return
      */
     @ResponseBody
@@ -185,13 +180,13 @@ public class BusiJbpmFlowController extends GenericController {
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
     public ResponseValue isExistBusiJbpmFlows(@Validated
-                                                  @RequestParam(value = "businessId", required = false) String businessId,
+                                              @RequestParam(value = "businessId", required = false) String businessId,
                                               @RequestParam(value = "businessType", required = false) String businessType,
                                               @RequestParam(value = "type", required = false) Integer type,
-                                              @RequestParam(value = "nextActor", required = false) String nextActor,
-                                              HttpServletRequest request) {
+                                              @RequestParam(value = "parentActor", required = false) String parentActor,
+                                              @RequestParam(value = "nextActor", required = false) String nextActor) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereThreeClause(businessId,businessType,nextActor,type);
+        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereThreeClause(businessId,businessType,parentActor,nextActor,type);
         List<BusiJbpmFlow> list=busiJbpmFlowService.getModel(specification);
         BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
         if(list.size()!=0){

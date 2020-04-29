@@ -4,7 +4,6 @@ import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.part.PartCollectionDto;
 import com.etone.protocolsupply.model.dto.part.PartInfoDto;
-import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.PartInfo;
 import com.etone.protocolsupply.service.AttachmentService;

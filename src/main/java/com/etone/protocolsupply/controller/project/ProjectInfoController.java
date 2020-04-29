@@ -7,7 +7,6 @@ import com.etone.protocolsupply.model.dto.project.ProjectCollectionDto;
 import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
 import com.etone.protocolsupply.model.entity.project.PartInfoExp;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
-import com.etone.protocolsupply.service.agent.AgentInfoService;
 import com.etone.protocolsupply.service.cargo.PartInfoService;
 import com.etone.protocolsupply.service.project.ProjectInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +33,6 @@ public class ProjectInfoController extends GenericController {
 
     @Autowired
     private PartInfoService  partInfoService;
-    @Autowired
-    private AgentInfoService agentInfoService;
-
 
     /**
      * 新增项目

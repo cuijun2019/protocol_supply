@@ -1,6 +1,5 @@
 package com.etone.protocolsupply.repository.procedure;
 
-import com.etone.protocolsupply.model.entity.inquiry.InquiryInfo;
 import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -10,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
 
 public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long>, JpaSpecificationExecutor<BusiJbpmFlow> {
 

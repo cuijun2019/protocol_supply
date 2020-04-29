@@ -1,6 +1,5 @@
 package com.etone.protocolsupply.repository.project;
 
-import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -80,7 +79,6 @@ public interface ProjectInfoRepository extends JpaRepository<ProjectInfo, Long>,
     void update(Long projectId,String projectSubject,String purchaser,String currency,Double deliveryDate,Long deliveryDateStatus,
                        String guaranteeDate,String guaranteeFee,String paymentMethod,String priceTerm,Double cargoTotal,String amount,Integer status
                         ,Long cattachId,Long nattachId,Long pattachId,Long inquiryId,String creator,String projectCode,Integer isDelete);
-
 
     @Query(value = "select p.* from project_info p " +
             "where exists (SELECT 1 FROM busi_jbpm_flow b WHERE p.project_id = b.business_id and b.business_type=:businessType and b.parent_actor=:parentActor) " +

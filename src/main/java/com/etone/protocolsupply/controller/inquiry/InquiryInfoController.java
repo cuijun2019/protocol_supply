@@ -28,13 +28,7 @@ import java.util.List;
 public class InquiryInfoController extends GenericController {
 
     @Autowired
-    private CargoInfoService  cargoInfoService;
-    @Autowired
     private InquiryInfoService inquiryInfoService;
-    @Autowired
-    private AttachmentService attachmentService;
-    @Autowired
-    private ProjectInfoService projectInfoService;
 
     /**
      * 新增询价

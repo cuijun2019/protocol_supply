@@ -1,27 +1,14 @@
 package com.etone.protocolsupply.controller.procedure;
 
-import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
-import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowCollectionDto;
 import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowDto;
 import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
-
 import com.etone.protocolsupply.service.procedure.BusiJbpmFlowService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Context;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "${jwt.route.path}/busiApproveResult")

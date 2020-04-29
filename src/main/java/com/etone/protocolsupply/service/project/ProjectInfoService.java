@@ -1,7 +1,6 @@
 package com.etone.protocolsupply.service.project;
 
 import com.etone.protocolsupply.constant.Constant;
-import com.etone.protocolsupply.exception.GlobalExceptionCode;
 import com.etone.protocolsupply.exception.GlobalServiceException;
 import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.project.ProjectCollectionDto;
@@ -20,7 +19,6 @@ import com.etone.protocolsupply.repository.project.PartInfoExpRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
-import com.etone.protocolsupply.utils.SpringUtil;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -73,7 +71,7 @@ public class ProjectInfoService {
         }
         projectInfo.setIsDelete(Constant.DELETE_NO);
         projectInfo.setCreator(userName);
-       // projectInfo.setStatus(1);//审核状态：草稿、审核中、已完成、退回
+        // projectInfo.setStatus(1);//审核状态：草稿、审核中、已完成、退回
         Attachment attachment = projectInfoDto.getAttachment_n();//中标通知书
         if (attachment != null && attachment.getAttachId() != null && !attachment.getAttachId().equals("")) {
             Optional<Attachment> optional = attachmentRepository.findById(attachment.getAttachId());
@@ -104,8 +102,6 @@ public class ProjectInfoService {
         InquiryInfo inquiryInfo = projectInfoDto.getInquiryInfo();//关联询价
         if (inquiryInfo != null && inquiryInfo.getInquiryId() != null && !inquiryInfo.getInquiryId().equals("")) {
             Optional<InquiryInfo> optional = inquiryInfoRepository.findById(inquiryInfo.getInquiryId());
-            //projectInfo.getInquiryInfo().getCargoInfo().setPartInfos(null);
-
             if (optional.isPresent()) {
                 projectInfo.setInquiryInfo(optional.get());
             }
@@ -127,7 +123,7 @@ public class ProjectInfoService {
                 partInfoExpRepository.save(partInfoExp);
             }
         }
-         projectInfoRepository.save(projectInfo);
+        projectInfoRepository.save(projectInfo);
         List<Long> partIds = new ArrayList<>();
         if (partInfoExps.size() > 0) {
             for (PartInfoExp partInfoExp : projectInfoDto.getPartInfoExps()) {
@@ -140,7 +136,6 @@ public class ProjectInfoService {
         if (agentInfoExp != null ) {
             agentInfoExp.setCreator(userName);
             agentInfoExp.setCreateDate(date);
-           // agentInfoExp.setStatus(1);//状态
             agentInfoExp.setReviewStatus(1);//审核状态
             agentInfoExp.setIsDelete(Constant.DELETE_NO);
             agentInfoExp.setProjectInfo(projectInfo);
@@ -166,7 +161,6 @@ public class ProjectInfoService {
                 partInfoExpRepository.save(partInfoExp);
                 partInfoExp.getCargoInfo().setPartInfos(null);
                 partInfoExp.setCargoInfo(null);
-                //partInfoExp.getProjectInfo().getInquiryInfo().getPartnerInfo().setContacts(null);
             }
         }
 
@@ -422,7 +416,5 @@ public class ProjectInfoService {
             e.printStackTrace();
         }
     }
-
-
 
 }

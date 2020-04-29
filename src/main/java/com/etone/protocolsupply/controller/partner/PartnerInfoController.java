@@ -3,7 +3,6 @@ package com.etone.protocolsupply.controller.partner;
 import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.partner.PartnerInfoDto;
-import com.etone.protocolsupply.service.AttachmentService;
 import com.etone.protocolsupply.service.partner.PartnerInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,9 +15,6 @@ public class PartnerInfoController extends GenericController {
 
     @Autowired
     private PartnerInfoService partnerInfoService;
-
-    @Autowired
-    private AttachmentService attachmentService;
 
     @ResponseBody
     @RequestMapping(
@@ -33,12 +29,5 @@ public class PartnerInfoController extends GenericController {
         responseBuilder.data(partnerInfoDto);
         return responseBuilder.build();
     }
-
-
-
-
-
-
-
 
 }

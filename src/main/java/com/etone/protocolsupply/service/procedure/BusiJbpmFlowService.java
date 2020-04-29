@@ -6,10 +6,7 @@ import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowCollectionDto;
 import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowDto;
 import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
-import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.repository.procedure.BusiJbpmFlowRepository;
-import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
-import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
@@ -37,8 +34,6 @@ public class BusiJbpmFlowService {
 
     @Autowired
     private BusiJbpmFlowRepository busiJbpmFlowRepository;
-    @Autowired
-    private ProjectInfoRepository projectInfoRepository;
     @Autowired
     private PagingMapper         pagingMapper;
 
@@ -91,7 +86,6 @@ public class BusiJbpmFlowService {
         return busiJbpmFlow;
     }
 
-
     public Specification<BusiJbpmFlow> getWhereClause(String businessType, String businessSubject,Integer type, String businessId,String parentActor) {
         return (Specification<BusiJbpmFlow>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -115,7 +109,6 @@ public class BusiJbpmFlowService {
         };
     }
 
-
     public Page<BusiJbpmFlow> findAgents(Specification<BusiJbpmFlow> specification, Pageable pageable) {
         return busiJbpmFlowRepository.findAll(specification, pageable);
     }
@@ -127,13 +120,10 @@ public class BusiJbpmFlowService {
         for (BusiJbpmFlow busiJbpmFlow : source) {
             busiJbpmFlowDto = new BusiJbpmFlowDto();
             BeanUtils.copyProperties(busiJbpmFlow, busiJbpmFlowDto);
-           // busiJbpmFlowDto.setParentActor(jwtUser.getUsername());
             busiJbpmFlowCollectionDto.add(busiJbpmFlowDto);
         }
         return busiJbpmFlowCollectionDto;
     }
-
-
 
     public void export(HttpServletResponse response, List<Long> ids,Integer type,String parentActor) {
         try {
@@ -149,7 +139,7 @@ public class BusiJbpmFlowService {
             }
             String[] header = {str1+"类型", str1+"主题", "状态", "当前处理人", "创建人", "创建时间","审核意见","审核结果"};
             HSSFWorkbook workbook = new HSSFWorkbook();
-            HSSFSheet sheet = workbook.createSheet("待办信息表");
+            HSSFSheet sheet = workbook.createSheet(str1+"信息表");
             sheet.setDefaultColumnWidth(10);
             //        创建标题的显示样式
             HSSFCellStyle headerStyle = workbook.createCellStyle();
@@ -157,14 +147,12 @@ public class BusiJbpmFlowService {
             headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
             //        创建第一行表头
             HSSFRow headrow = sheet.createRow(0);
-
             for (int i = 0; i < header.length; i++) {
                 HSSFCell cell = headrow.createCell(i);
                 HSSFRichTextString text = new HSSFRichTextString(header[i]);
                 cell.setCellValue(text);
                 cell.setCellStyle(headerStyle);
             }
-
             List<BusiJbpmFlow> list;
             if (ids != null && ids.size()!=0) {
                 list = busiJbpmFlowRepository.findAll(ids,type);
@@ -205,7 +193,7 @@ public class BusiJbpmFlowService {
     }
 
     //根据业务表id，待办类型，当前处理人 修改type=1
-    public Specification<BusiJbpmFlow> getWhereThreeClause(String businessId, String businessType,String nextActor, Integer type) {
+    public Specification<BusiJbpmFlow> getWhereThreeClause(String businessId, String businessType,String parentActor,String nextActor, Integer type) {
         return (Specification<BusiJbpmFlow>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (Strings.isNotBlank(businessType)) {
@@ -214,7 +202,9 @@ public class BusiJbpmFlowService {
             if (Strings.isNotBlank(businessId)) {
                 predicates.add(criteriaBuilder.equal(root.get("businessId").as(String.class), businessId));
             }
-
+            if (Strings.isNotBlank(parentActor)) {
+                predicates.add(criteriaBuilder.equal(root.get("parentActor").as(String.class), parentActor));
+            }
             if (Strings.isNotBlank(nextActor)) {
                 predicates.add(criteriaBuilder.equal(root.get("nextActor").as(String.class), nextActor));
             }
