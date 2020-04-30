@@ -179,9 +179,10 @@ public class BusiJbpmFlowController extends GenericController {
     public ResponseValue isExistFlow(@Validated
                                               @RequestParam(value = "businessId", required = false) String businessId,
                                               @RequestParam(value = "businessType", required = false) String businessType,
-                                              @RequestParam(value = "parentActor", required = false) String parentActor) {
+                                              @RequestParam(value = "parentActor", required = false) String parentActor,
+                                              @RequestParam(value = "nextActor", required = false) String nextActor) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        List<BusiJbpmFlow> list = busiJbpmFlowService.isBusiJbpmFlows(businessId,businessType,parentActor);
+        List<BusiJbpmFlow> list = busiJbpmFlowService.isBusiJbpmFlows(businessId,businessType,parentActor,nextActor);
         BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
         if(list.size()!=0){
             busiJbpmFlow=list.get(0);
@@ -209,9 +210,10 @@ public class BusiJbpmFlowController extends GenericController {
                                               @RequestParam(value = "businessId", required = false) String businessId,
                                               @RequestParam(value = "businessType", required = false) String businessType,
                                               @RequestParam(value = "type", required = false) Integer type,
+                                              @RequestParam(value = "parentActor", required = false) String parentActor,
                                               @RequestParam(value = "nextActor", required = false) String nextActor) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        List<BusiJbpmFlow> list = busiJbpmFlowService.isExistBusiJbpmFlows(businessId,businessType,nextActor,type);
+        List<BusiJbpmFlow> list = busiJbpmFlowService.isExistBusiJbpmFlows(businessId,businessType,parentActor,nextActor,type);
         BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
         if(list.size()!=0){
             busiJbpmFlow=list.get(0);

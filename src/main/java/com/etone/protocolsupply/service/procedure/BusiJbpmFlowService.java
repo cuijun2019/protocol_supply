@@ -212,17 +212,17 @@ public class BusiJbpmFlowService {
 //    }
 
     public List<BusiJbpmFlow> getWhereThreeClause(String businessId, String businessType,String nextActor){
-        return busiJbpmFlowRepository.isExistBusiJbpmFlows(businessId,businessType,nextActor,null);
+        return busiJbpmFlowRepository.isBusiJbpmFlows(businessId,businessType,nextActor);
     }
 
 
-    public List<BusiJbpmFlow> isBusiJbpmFlows(String businessId, String businessType,String parentActor){
-        return busiJbpmFlowRepository.isBusiJbpmFlows(businessId,businessType,parentActor);
+    public List<BusiJbpmFlow> isBusiJbpmFlows(String businessId, String businessType,String parentActor,String nextActor){
+        return busiJbpmFlowRepository.isCover(businessId,businessType,parentActor,nextActor);
     }
 
 
-    public List<BusiJbpmFlow> isExistBusiJbpmFlows(String businessId, String businessType,String nextActor, Integer type){
-        return busiJbpmFlowRepository.isExistBusiJbpmFlows(businessId,businessType,nextActor,type);
+    public List<BusiJbpmFlow> isExistBusiJbpmFlows(String businessId, String businessType,String parentActor,String nextActor, Integer type){
+        return busiJbpmFlowRepository.isExistBusiJbpmFlows(businessId,businessType,parentActor,nextActor,type);
     }
 
     public List<BusiJbpmFlow> getModel(Specification<BusiJbpmFlow> specification){
