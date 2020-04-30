@@ -86,7 +86,7 @@ public class BusiJbpmFlowService {
         return busiJbpmFlow;
     }
 
-    public Specification<BusiJbpmFlow> getWhereClause(String businessType, String businessSubject,Integer type, String businessId,String parentActor) {
+    public Specification<BusiJbpmFlow> getWhereClause(String businessType, String businessSubject,Integer type, String businessId,String parentActor,String nextActor) {
         return (Specification<BusiJbpmFlow>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (Strings.isNotBlank(businessType)) {
@@ -100,6 +100,9 @@ public class BusiJbpmFlowService {
             }
             if (Strings.isNotBlank(parentActor)) {
                 predicates.add(criteriaBuilder.equal(root.get("parentActor").as(String.class), parentActor));
+            }
+            if (Strings.isNotBlank(nextActor)) {
+                predicates.add(criteriaBuilder.equal(root.get("nextActor").as(String.class), nextActor));
             }
             if (type!=null) {
                 predicates.add(criteriaBuilder.equal(root.get("type").as(Integer.class), type));
@@ -220,6 +223,10 @@ public class BusiJbpmFlowService {
         return busiJbpmFlowRepository.isCover(businessId,businessType,parentActor,nextActor);
     }
 
+    public List<BusiJbpmFlow> updateNextActor(String businessId, String businessType,Integer type){
+        return busiJbpmFlowRepository.updateNextActor(businessId,businessType,type);
+    }
+
 
     public List<BusiJbpmFlow> isExistBusiJbpmFlows(String businessId, String businessType,String parentActor,String nextActor, Integer type){
         return busiJbpmFlowRepository.isExistBusiJbpmFlows(businessId,businessType,parentActor,nextActor,type);
@@ -231,6 +238,10 @@ public class BusiJbpmFlowService {
 
     public void updateType(Long id){
          busiJbpmFlowRepository.updateType(id);
+    }
+
+    public void upnextActor(Long id,String nextActor){
+        busiJbpmFlowRepository.upNextActor(id,nextActor);
     }
 
 }

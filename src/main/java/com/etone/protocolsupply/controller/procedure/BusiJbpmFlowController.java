@@ -74,11 +74,12 @@ public class BusiJbpmFlowController extends GenericController {
                                        @RequestParam(value = "businessId", required = false) String businessId,
                                        @RequestParam(value = "type", required = false) Integer type,
                                        @RequestParam(value = "parentActor", required = false) String parentActor,
+                                       @RequestParam(value = "nextActor", required = false) String nextActor,
                                        HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort = new Sort(Sort.Direction.DESC, "flowStartTime");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereClause(businessType, businessSubject, type,businessId,parentActor);
+        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereClause(businessType, businessSubject, type,businessId,parentActor,nextActor);
         Page<BusiJbpmFlow> page = busiJbpmFlowService.findAgents(specification, pageable);
         BusiJbpmFlowCollectionDto busiJbpmFlowDto = busiJbpmFlowService.to(page, request,this.getUser());
         responseBuilder.data(busiJbpmFlowDto);
@@ -165,6 +166,35 @@ public class BusiJbpmFlowController extends GenericController {
     }
 
 
+
+    /**
+     * 根据业务表id，待办类型，type=0 修改nextActor
+     * @param busiJbpmFlowDto
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/updateNextActor",method = RequestMethod.PUT,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseValue updateNextActor(@Validated
+                                             @RequestBody BusiJbpmFlowDto busiJbpmFlowDto) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        List<BusiJbpmFlow> list = busiJbpmFlowService.updateNextActor(busiJbpmFlowDto.getBusinessId(),busiJbpmFlowDto.getBusinessType(),busiJbpmFlowDto.getType());
+        BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
+        if(list.size()!=0){
+            busiJbpmFlow=list.get(0);
+            busiJbpmFlowService.upnextActor(busiJbpmFlow.getId(),busiJbpmFlowDto.getNextActor());
+            busiJbpmFlow.setNextActor(busiJbpmFlowDto.getNextActor());
+            responseBuilder.data(busiJbpmFlow);
+        }else {
+            responseBuilder.message("查询不到数据，操作失败！");
+            responseBuilder.data(null);
+        }
+        return responseBuilder.build();
+    }
+
+
     /**
      * 判断当前登录人是否存在审核流程
      * @param businessId
@@ -194,7 +224,7 @@ public class BusiJbpmFlowController extends GenericController {
     }
 
     /**
-     * 根据businessId、businessType、type、parentActor判断是否存在数据
+     * 根据businessId、businessType、type、nextActor判断是否存在数据
      * @param businessId
      * @param businessType
      * @param type
