@@ -105,7 +105,7 @@ public class BusiJbpmFlowController extends GenericController {
     public ResponseValue getCargoInfos(@Validated
                                        @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
                                        @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
-                                       @RequestParam(value = "isDelete", required = false) String isDelete,
+                                       @RequestParam(value = "isDelete", required = false, defaultValue = "2") String isDelete,
                                        @RequestParam(value = "businessType", required = false) String businessType,
                                        @RequestParam(value = "parentActor", required = false) String parentActor,
                                        @RequestParam(value = "status", required = false) String status,
