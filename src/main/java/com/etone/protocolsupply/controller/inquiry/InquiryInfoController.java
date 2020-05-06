@@ -5,6 +5,7 @@ import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryCollectionDto;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoDto;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfo;
+import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
 import com.etone.protocolsupply.service.AttachmentService;
 import com.etone.protocolsupply.service.cargo.CargoInfoService;
 import com.etone.protocolsupply.service.inquiry.InquiryInfoService;
@@ -101,6 +102,10 @@ public class InquiryInfoController extends GenericController {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         InquiryInfo inquiryInfo = inquiryInfoService.findOne(Long.parseLong(inquiryId));
         inquiryInfo.getCargoInfo().setPartInfos(null);
+        if(inquiryInfo.getPartnerInfo()==null){
+            PartnerInfo partnerInfo=new PartnerInfo();
+            inquiryInfo.setPartnerInfo(partnerInfo);
+        }
         responseBuilder.data(inquiryInfo);
         return responseBuilder.build();
     }

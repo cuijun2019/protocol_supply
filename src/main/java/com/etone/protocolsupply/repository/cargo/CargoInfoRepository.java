@@ -27,7 +27,7 @@ public interface CargoInfoRepository extends JpaRepository<CargoInfo, Long>, Jpa
     CargoInfo findAllByCargoId(Long cargoId);
 
     @Query(value = "select * from cargo_info c where c.is_delete=2 " +
-            "and exists (select 1 from part_info_exp e, part_info pi, project_info p where e.PROJECT_ID = p.project_id and e.part_code = pi.part_code and pi.cargo_id = c.cargo_id and p.project_id=?1) " +
+            "and exists (select 1 from part_info_exp e where e.cargo_id=c.cargo_id  and e.project_id=?1) " +
             "limit 1", nativeQuery = true)
     CargoInfo findAllByProjectId(Long projectId);
 
