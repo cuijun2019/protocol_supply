@@ -26,10 +26,10 @@ public class BusiJbpmFlow implements Serializable {
     private String businessId;
 
     /**
-     * 流程节点编号
+     * 审核流程
      */
-    @Column(name = "FLOW_NODE_CODE", length = 100)
-    private String flowNodeCode;
+    @Column(name = "FLOW_NODE_NAME", length = 100)
+    private String flowNodeName;
 
     /**
      * 待办类型
