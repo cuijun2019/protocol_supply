@@ -48,4 +48,7 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     @Query(value = "select u.*,r.role_id from roles r inner join user_role ur on ur.role_id=r.role_id inner join users u on ur.user_id=u.id where r.role_id in (:roleIds)", nativeQuery = true)
     List<Map> getUserByRoleId(@Param("roleIds") List<Long> roleIds);
+
+    @Query(value = "select ur.role_id from users u LEFT join user_role ur on u.id=ur.user_id where u.username=?1", nativeQuery = true)
+    Long findRoleIdByUsername(String username);
 }

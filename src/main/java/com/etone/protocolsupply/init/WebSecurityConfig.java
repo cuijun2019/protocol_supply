@@ -111,6 +111,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .ignoring()
                 .antMatchers(
+                        HttpMethod.POST,
+                        "/api/mail/**"
+                )
+
+                .and()
+                .ignoring()
+                .antMatchers(
                         HttpMethod.GET,
                         "/",
                         "/*.html",

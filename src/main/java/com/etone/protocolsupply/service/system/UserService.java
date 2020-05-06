@@ -215,4 +215,15 @@ public class UserService {
         }
         return nameMap;
     }
+
+    public Boolean updatePasswordByMail(String newPassword, String username) {
+        try {
+            Map<String, String> pwd = BcryptCipher.Bcrypt(newPassword);
+            userRepository.updatePassword(pwd.get("cipher"),username);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
 }
