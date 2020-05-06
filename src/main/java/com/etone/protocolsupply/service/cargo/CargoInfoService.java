@@ -143,7 +143,12 @@ public class CargoInfoService {
         CargoInfoDto cargoInfoDto;
         for (CargoInfo cargoInfo : source) {
             cargoInfoDto = new CargoInfoDto();
+
             BeanUtils.copyProperties(cargoInfo, cargoInfoDto);
+            if(cargoInfoDto.getPartnerInfo()==null){
+                PartnerInfo partnerInfo=new PartnerInfo();
+                cargoInfoDto.setPartnerInfo(partnerInfo);
+            }
             cargoCollectionDto.add(cargoInfoDto);
         }
         return cargoCollectionDto;
