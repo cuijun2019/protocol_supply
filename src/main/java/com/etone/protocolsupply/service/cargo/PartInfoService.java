@@ -144,7 +144,7 @@ public class PartInfoService {
             BeanUtils.copyProperties(partInfoExp, partInfoExpDto);
             partInfoExpDto.getCargoInfo().setPartInfos(null);
             partExpCollectionDto.add(partInfoExpDto);
-            //partInfoExpDto.getProjectInfo().getInquiryInfo().getPartnerInfo().setContacts(null);
+            partInfoExpDto.getProjectInfo().getInquiryInfo().getCargoInfo().setPartInfos(null);
         }
 
         return partExpCollectionDto;

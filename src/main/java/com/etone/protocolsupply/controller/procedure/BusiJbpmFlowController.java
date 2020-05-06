@@ -73,7 +73,7 @@ public class BusiJbpmFlowController extends GenericController {
                                        @RequestParam(value = "businessSubject", required = false) String businessSubject,
                                        @RequestParam(value = "businessId", required = false) String businessId,
                                        @RequestParam(value = "type", required = false) Integer type,
-                                          @RequestParam(value = "readType", required = false) Integer readType,
+                                       @RequestParam(value = "readType", required = false) Integer readType,
                                        @RequestParam(value = "parentActor", required = false) String parentActor,
                                        @RequestParam(value = "nextActor", required = false) String nextActor,
                                        HttpServletRequest request) {
