@@ -144,7 +144,7 @@ public class BusiJbpmFlowService {
         return busiJbpmFlowCollectionDto;
     }
 
-    public void export(HttpServletResponse response, List<Long> ids,Integer type,Integer readType,String parentActor) {
+    public void export(HttpServletResponse response, List<Long> ids,Integer type,Integer readType,String nextActor) {
         try {
             String str1=null;
             if(null!=type){
@@ -182,7 +182,7 @@ public class BusiJbpmFlowService {
             if (ids != null && ids.size()!=0 ) {
                 list = busiJbpmFlowRepository.findAll(ids);
             }else if(ids.isEmpty()){
-                list = busiJbpmFlowRepository.findAllToExpert(type,readType,parentActor);
+                list = busiJbpmFlowRepository.findAllToExpert(type,readType,nextActor);
             }else {
                 list=busiJbpmFlowRepository.findAll();
             }

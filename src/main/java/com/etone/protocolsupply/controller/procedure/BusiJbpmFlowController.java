@@ -134,10 +134,10 @@ public class BusiJbpmFlowController extends GenericController {
             produces = {"application/json"})
     public void exportAgent(@RequestParam(value = "type", required = false) Integer type,
                             @RequestParam(value = "readType", required = false) Integer readType,
-                            @RequestParam(value = "parentActor", required = false) String parentActor,
+                            @RequestParam(value = "nextActor", required = false) String nextActor,
                             @RequestBody(required = false) List<Long> ids,
                             @Context HttpServletResponse response) {
-        busiJbpmFlowService.export(response,ids,type,readType,parentActor);
+        busiJbpmFlowService.export(response,ids,type,readType,nextActor);
     }
 
 

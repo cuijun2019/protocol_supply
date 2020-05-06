@@ -42,9 +42,9 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
 
 
     @Query(value = "select * from busi_jbpm_flow where  " +
-            " if((:parentActor is not null),(parent_actor=:parentActor),(1=1))  and if((type is not null),(type=:type),(1=1)) " +
+            " if((:nextActor is not null),(next_actor=:nextActor),(1=1))  and if((type is not null),(type=:type),(1=1)) " +
             " and if((:readType is not null),(read_type=:readType),(1=1)) ", nativeQuery = true)
-    List<BusiJbpmFlow> findAllToExpert(@Param("type") Integer type,@Param("readType") Integer readType,@Param("parentActor") String parentActor);
+    List<BusiJbpmFlow> findAllToExpert(@Param("type") Integer type,@Param("readType") Integer readType,@Param("nextActor") String nextActor);
 
 
     @Query(value = "select * from busi_jbpm_flow where  read_type=:readType", nativeQuery = true)
