@@ -17,10 +17,14 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
     @Query(value = "update busi_jbpm_flow set is_delete=1 where id=?1", nativeQuery = true)
     void updateIsDelete(Long id);
 
+    @Transactional(rollbackFor = Exception.class)
+    @Modifying
+    @Query(value = "update busi_jbpm_flow set read_type=1,business_subject=?2 where id=?1  ", nativeQuery = true)
+    void updateIsReadType(Long id,String businessSubject);
 
-    @Query(value = "select * from busi_jbpm_flow where 1=1 and " +
-            "id in (:ids) and type=:type", nativeQuery = true)
-    List<BusiJbpmFlow> findAll( @Param("ids") List<Long> ids,@Param("type") Integer type);
+
+    @Query(value = "select * from busi_jbpm_flow where id in (:ids) ", nativeQuery = true)
+    List<BusiJbpmFlow> findAll( @Param("ids") List<Long> ids);
 
     @Query(value = "select * from busi_jbpm_flow where 1=1 and " +
             "if((:businessType is not null), (business_type =:agentName), (1=1)) and if((:businessSubject is not null), (business_subject like %:businessSubject%), (1=1)) ", nativeQuery = true)
@@ -38,9 +42,13 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
 
 
     @Query(value = "select * from busi_jbpm_flow where  " +
-            " parent_actor=:parentActor  and type=:type", nativeQuery = true)
-    List<BusiJbpmFlow> findAllToExpert(@Param("type") Integer type,@Param("parentActor") String parentActor);
+            " if((:parentActor is not null),(parent_actor=:parentActor),(1=1))  and if((type is not null),(type=:type),(1=1)) " +
+            " and if((:readType is not null),(read_type=:readType),(1=1)) ", nativeQuery = true)
+    List<BusiJbpmFlow> findAllToExpert(@Param("type") Integer type,@Param("readType") Integer readType,@Param("parentActor") String parentActor);
 
+
+    @Query(value = "select * from busi_jbpm_flow where  read_type=:readType", nativeQuery = true)
+    List<BusiJbpmFlow> findAllToExpertByReadType(@Param("readType") Integer readType);
 
     @Query(value = "select * from busi_jbpm_flow where 1=1 " +
             " and if((:businessId is not null), (business_id =:businessId), (1=1))  " +

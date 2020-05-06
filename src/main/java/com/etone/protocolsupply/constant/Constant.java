@@ -122,15 +122,24 @@ public class Constant {
     public static final Integer    BUSINESS_TYPE_YIBAN        = 1;
     public static final String BUSINESS_TYPE_YIBAN_STRING  = "已办";
 
-    public static final Integer    BUSINESS_TYPE_DAIYUE        = 2;
-    public static final String BUSINESS_TYPE_DAIYUE_STRING  = "待阅";
-
-    public static final Integer    BUSINESS_TYPE_YIYUE       = 3;
-    public static final String BUSINESS_TYPE_YIYUE_STRING  = "已阅";
     public static final Map<Integer, String> BUSINESS_TYPE_T_STATUS_MAP = new HashMap<>();
     static {
         BUSINESS_TYPE_T_STATUS_MAP.put(BUSINESS_TYPE_DAIBAN, BUSINESS_TYPE_DAIBAN_STRING);
         BUSINESS_TYPE_T_STATUS_MAP.put(BUSINESS_TYPE_YIBAN, BUSINESS_TYPE_YIBAN_STRING);
+    }
+
+    /**
+     * 待阅、已阅
+     */
+    public static final Integer    BUSINESS_TYPE_DAIYUE        = 0;
+    public static final String BUSINESS_TYPE_DAIYUE_STRING  = "待阅";
+
+    public static final Integer    BUSINESS_TYPE_YIYUE       = 1;
+    public static final String BUSINESS_TYPE_YIYUE_STRING  = "已阅";
+
+
+    public static final Map<Integer, String> BUSINESS_READ_TYPE_T_STATUS_MAP = new HashMap<>();
+    static {
         BUSINESS_TYPE_T_STATUS_MAP.put(BUSINESS_TYPE_DAIYUE, BUSINESS_TYPE_DAIYUE_STRING);
         BUSINESS_TYPE_T_STATUS_MAP.put(BUSINESS_TYPE_YIYUE, BUSINESS_TYPE_YIYUE_STRING);
     }

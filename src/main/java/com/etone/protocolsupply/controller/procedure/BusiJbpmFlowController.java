@@ -73,13 +73,15 @@ public class BusiJbpmFlowController extends GenericController {
                                        @RequestParam(value = "businessSubject", required = false) String businessSubject,
                                        @RequestParam(value = "businessId", required = false) String businessId,
                                        @RequestParam(value = "type", required = false) Integer type,
+                                          @RequestParam(value = "readType", required = false) Integer readType,
                                        @RequestParam(value = "parentActor", required = false) String parentActor,
                                        @RequestParam(value = "nextActor", required = false) String nextActor,
                                        HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort = new Sort(Sort.Direction.DESC, "flowStartTime");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereClause(businessType, businessSubject, type,businessId,parentActor,nextActor);
+        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereClause(businessType, businessSubject,
+                type,readType,businessId,parentActor,nextActor);
         Page<BusiJbpmFlow> page = busiJbpmFlowService.findAgents(specification, pageable);
         BusiJbpmFlowCollectionDto busiJbpmFlowDto = busiJbpmFlowService.to(page, request,this.getUser());
         responseBuilder.data(busiJbpmFlowDto);
@@ -131,10 +133,11 @@ public class BusiJbpmFlowController extends GenericController {
             consumes = {"application/json"},
             produces = {"application/json"})
     public void exportAgent(@RequestParam(value = "type", required = false) Integer type,
+                            @RequestParam(value = "readType", required = false) Integer readType,
                             @RequestParam(value = "parentActor", required = false) String parentActor,
                             @RequestBody(required = false) List<Long> ids,
                             @Context HttpServletResponse response) {
-        busiJbpmFlowService.export(response,ids,type,parentActor);
+        busiJbpmFlowService.export(response,ids,type,readType,parentActor);
     }
 
 

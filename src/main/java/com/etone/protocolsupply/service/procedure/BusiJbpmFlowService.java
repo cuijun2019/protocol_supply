@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Transactional(rollbackFor = Exception.class)
 @Service
@@ -69,7 +70,8 @@ public class BusiJbpmFlowService {
         BeanUtils.copyProperties(busiJbpmFlowDto, busiJbpmFlow);
         busiJbpmFlow.setFlowStartTime(date);//询价时间
         busiJbpmFlow.setFlowInitorId(userName);
-        busiJbpmFlow.setType(Constant.BUSINESS_TYPE_DAIYUE);
+        //busiJbpmFlow.setType(Constant.BUSINESS_TYPE_DAIYUE);
+        busiJbpmFlow.setReadType(Constant.BUSINESS_TYPE_DAIYUE);//待阅
         busiJbpmFlow = busiJbpmFlowRepository.save(busiJbpmFlow);
         return busiJbpmFlow;
     }
@@ -79,14 +81,25 @@ public class BusiJbpmFlowService {
         String userName = jwtUser.getUsername();
         BusiJbpmFlow busiJbpmFlow = new BusiJbpmFlow();
         BeanUtils.copyProperties(busiJbpmFlowDto, busiJbpmFlow);
-        busiJbpmFlow.setFlowStartTime(date);//询价时间
+        busiJbpmFlow.setFlowStartTime(date);
         busiJbpmFlow.setFlowInitorId(userName);
         busiJbpmFlow.setType(Constant.BUSINESS_TYPE_YIYUE);
         busiJbpmFlow = busiJbpmFlowRepository.save(busiJbpmFlow);
         return busiJbpmFlow;
     }
+    public BusiJbpmFlow updateAlreadyRead(BusiJbpmFlowDto busiJbpmFlowDto)throws GlobalServiceException{
+        busiJbpmFlowRepository.updateIsReadType(busiJbpmFlowDto.getId(),busiJbpmFlowDto.getBusinessSubject());
+        Optional<BusiJbpmFlow> optional=busiJbpmFlowRepository.findById(busiJbpmFlowDto.getId());
+        BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
+        if (optional.isPresent()) {
+             busiJbpmFlow=optional.get();
+        }
+        return busiJbpmFlow;
+    }
 
-    public Specification<BusiJbpmFlow> getWhereClause(String businessType, String businessSubject,Integer type, String businessId,String parentActor,String nextActor) {
+
+
+    public Specification<BusiJbpmFlow> getWhereClause(String businessType, String businessSubject,Integer type,Integer readType, String businessId,String parentActor,String nextActor) {
         return (Specification<BusiJbpmFlow>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (Strings.isNotBlank(businessType)) {
@@ -106,6 +119,9 @@ public class BusiJbpmFlowService {
             }
             if (type!=null) {
                 predicates.add(criteriaBuilder.equal(root.get("type").as(Integer.class), type));
+            }
+            if (readType!=null) {
+                predicates.add(criteriaBuilder.equal(root.get("readType").as(Integer.class), readType));
             }
             Predicate[] pre = new Predicate[predicates.size()];
             return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
@@ -128,18 +144,24 @@ public class BusiJbpmFlowService {
         return busiJbpmFlowCollectionDto;
     }
 
-    public void export(HttpServletResponse response, List<Long> ids,Integer type,String parentActor) {
+    public void export(HttpServletResponse response, List<Long> ids,Integer type,Integer readType,String parentActor) {
         try {
             String str1=null;
-            if(type==0){
-                str1="待办";
-            } else if(type==1) {
-                str1="已办";
-            } else if(type==2) {
-                str1="待阅";
-            } else if(type==3) {
-                str1="已阅";
+            if(null!=type){
+                if(type==0){
+                    str1="待办";
+                } else if(type==1) {
+                    str1="已办";
+                }
             }
+            if(null !=readType){
+                if(readType==0) {
+                    str1="待阅";
+                } else if(readType==1) {
+                    str1="已阅";
+                }
+            }
+
             String[] header = {str1+"类型", str1+"主题", "状态", "当前处理人", "创建人", "创建时间","审核意见","审核结果"};
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet(str1+"信息表");
@@ -157,12 +179,12 @@ public class BusiJbpmFlowService {
                 cell.setCellStyle(headerStyle);
             }
             List<BusiJbpmFlow> list;
-            if (ids != null && ids.size()!=0) {
-                list = busiJbpmFlowRepository.findAll(ids,type);
-            } else if(null !=parentActor && ids.size()==0){
-                list = busiJbpmFlowRepository.findAllToExpert(type,parentActor);
+            if (ids != null && ids.size()!=0 ) {
+                list = busiJbpmFlowRepository.findAll(ids);
+            }else if(ids.isEmpty()){
+                list = busiJbpmFlowRepository.findAllToExpert(type,readType,parentActor);
             }else {
-                list = busiJbpmFlowRepository.findAll();
+                list=busiJbpmFlowRepository.findAll();
             }
             BusiJbpmFlow busiJbpmFlow;
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -178,14 +200,19 @@ public class BusiJbpmFlowService {
                 row.createCell(6).setCellValue(new HSSFRichTextString(busiJbpmFlow.getOpinion()));
                 row.createCell(7).setCellValue(new HSSFRichTextString(busiJbpmFlow.getAction()));
             }
-            if(type==0){
-                response.setHeader("Content-disposition", "attachment;filename=busiJbpmFlow.xls");
-            }else if(type==1) {
-                response.setHeader("Content-disposition", "attachment;filename=busiApproveResult.xls");
-            }else if(type==2) {
-                response.setHeader("Content-disposition", "attachment;filename=toBeRead.xls");
-            }else if(type==3) {
-                response.setHeader("Content-disposition", "attachment;filename=alreadyRead.xls");
+            if(type!=null){
+                if(type==0){
+                    response.setHeader("Content-disposition", "attachment;filename=busiJbpmFlow.xls");
+                }else if(type==1) {
+                    response.setHeader("Content-disposition", "attachment;filename=busiApproveResult.xls");
+                }
+            }
+            if(readType!=null){
+                if(readType==0) {
+                    response.setHeader("Content-disposition", "attachment;filename=toBeRead.xls");
+                }else if(readType==1) {
+                    response.setHeader("Content-disposition", "attachment;filename=alreadyRead.xls");
+                }
             }
             response.setContentType("application/vnd.ms-excel;charset=utf-8");
             response.flushBuffer();

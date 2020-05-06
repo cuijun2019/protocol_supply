@@ -81,10 +81,16 @@ public class BusiJbpmFlow implements Serializable {
     private String action;
 
     /**
-     * 类型：0：待办 1：已办 2:已阅 3：待阅
+     * 类型：0：待办 1：已办
      */
     @Column(name = "TYPE", length = 4)
     private Integer type;
+
+    /**
+     * 0：待阅  1：已阅
+     */
+    @Column(name = "READ_TYPE", length = 4)
+    private Integer readType;
 
     /**
      * 审批意见
