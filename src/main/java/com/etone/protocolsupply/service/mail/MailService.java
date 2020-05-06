@@ -51,7 +51,7 @@ public class MailService {
         //随机验证码
         String code = (int)((Math.random()*9+1)*100000)+"";
 
-        message.setText("【短信签名】忘记密码提示:邮箱动态验证码为【"+code+"】,请在2分钟内正确输入");
+        message.setText("【"+code+"】,有效期2分钟");
         //存入redis设置过期时间
         redisUtil.set(jsonData.get("username"),code,120);
 
