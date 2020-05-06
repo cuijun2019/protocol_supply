@@ -108,18 +108,18 @@ public class InquiryInfoController extends GenericController {
     /**
      * 删除询价
      *
-     * @param inquiryId
+     * @param inquiryIds
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{inquiryId}",
+    @RequestMapping(
             method = RequestMethod.DELETE,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseValue deleteCargo(@PathVariable("inquiryId") String inquiryId) {
+    public ResponseValue deleteCargo( @RequestBody(required = false) List<Long> inquiryIds) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        inquiryInfoService.delete(Long.parseLong(inquiryId));
+        inquiryInfoService.delete(inquiryIds);
         return responseBuilder.build();
     }
 

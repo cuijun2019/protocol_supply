@@ -116,18 +116,18 @@ public class CargoInfoController extends GenericController {
     /**
      * 删除货物
      *
-     * @param cargoId
+     * @param cargoIds
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{cargoId}",
+    @RequestMapping(
             method = RequestMethod.DELETE,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseValue deleteCargo(@PathVariable("cargoId") String cargoId) {
+    public ResponseValue deleteCargo(@RequestBody(required = false) List<Long> cargoIds) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        cargoInfoService.delete(Long.parseLong(cargoId));
+        cargoInfoService.delete(cargoIds);
         return responseBuilder.build();
     }
 

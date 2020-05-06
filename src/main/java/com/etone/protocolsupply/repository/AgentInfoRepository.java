@@ -14,8 +14,8 @@ public interface AgentInfoRepository extends JpaRepository<AgentInfo, Long>, Jpa
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying
-    @Query(value = "update agent_info set is_delete=1 where agent_id=?1", nativeQuery = true)
-    void updateIsDelete(Long agentId);
+    @Query(value = "update agent_info set is_delete=1 where agent_id in ?1", nativeQuery = true)
+    void updateIsDelete(List<Long> agentIds);
 
     @Query(value = "select * from agent_info where is_delete=2 and " +
             "if((:agentName is not null), (agent_name like %:agentName%), (1=1)) and if((:status is not null), (status=:status), (1=1)) and " +

@@ -120,8 +120,8 @@ public class InquiryInfoService {
         }
     }
 
-    public void delete(Long inquiryId) {
-        inquiryInfoRepository.updateIsDelete(inquiryId);
+    public void delete(List<Long> inquiryIds) {
+        inquiryInfoRepository.updateIsDelete(inquiryIds);
     }
 
     public InquiryInfo updateStatus(Long inquiryId,InquiryInfo inquiryInfo) {

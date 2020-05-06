@@ -147,18 +147,18 @@ public class ProjectInfoController extends GenericController {
     /**
      * 删除-配件列表
      *
-     * @param partExpId
+     * @param partExpIds
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/partInfoExp/{partExpId}",
+    @RequestMapping(value = "/partInfoExp",
             method = RequestMethod.DELETE,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseValue deletepartInfoExp(@PathVariable("partExpId") String partExpId) {
+    public ResponseValue deletepartInfoExp(@RequestBody(required = false) List<Long> partExpIds) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        partInfoService.deleteExp(Long.parseLong(partExpId));
+        partInfoService.deleteExp(partExpIds);
         return responseBuilder.build();
     }
 
@@ -225,18 +225,18 @@ public class ProjectInfoController extends GenericController {
     /**
      * 删除项目
      *
-     * @param projectId
+     * @param projectIds
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{projectId}",
+    @RequestMapping(
             method = RequestMethod.DELETE,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseValue deleteAgent(@PathVariable("projectId") String projectId) {
+    public ResponseValue deleteAgent(@RequestBody(required = false) List<Long> projectIds) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        projectInfoService.delete(Long.parseLong(projectId));
+        projectInfoService.delete(projectIds);
         return responseBuilder.build();
     }
 

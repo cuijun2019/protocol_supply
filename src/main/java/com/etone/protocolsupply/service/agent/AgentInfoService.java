@@ -213,8 +213,8 @@ public class AgentInfoService {
         agentInfoRepository.updateStatus(agentInfoDto.getStatus(),agentInfoDto.getAgentId());
     }
 
-    public void delete(Long agentId) {
-        agentInfoRepository.updateIsDelete(agentId);
+    public void delete(List<Long> agentIds) {
+        agentInfoRepository.updateIsDelete(agentIds);
     }
 
     public void export(HttpServletResponse response, String agentName, String status, String isDelete, List<Long> agentIds,String actor) {

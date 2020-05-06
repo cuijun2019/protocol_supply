@@ -149,8 +149,9 @@ public class CargoInfoService {
         return cargoCollectionDto;
     }
 
-    public void delete(Long cargoId) {
-        cargoInfoRepository.updateIsDelete(cargoId);
+    public void delete(List<Long> cargoIds) {
+        cargoInfoRepository.updateIsDeleteBath(cargoIds);
+
     }
 
     public CargoInfo findOne(Long cargoId) {

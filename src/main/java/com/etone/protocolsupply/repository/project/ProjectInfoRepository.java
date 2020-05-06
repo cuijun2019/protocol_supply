@@ -14,8 +14,8 @@ public interface ProjectInfoRepository extends JpaRepository<ProjectInfo, Long>,
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying
-    @Query(value = "update project_info set is_delete=1 where project_id=?1", nativeQuery = true)
-    void updateIsDelete(Long projectId);
+    @Query(value = "update project_info set is_delete=1 where project_id in ?1", nativeQuery = true)
+    void updateIsDelete(List<Long> projectIds);
 
     @Transactional(rollbackFor = Exception.class)
     @Query(value = "select * from project_info where is_delete=2 and project_id=?1", nativeQuery = true)
@@ -60,7 +60,7 @@ public interface ProjectInfoRepository extends JpaRepository<ProjectInfo, Long>,
             "and if((:status is not null), (status=:status), (1=1)) and if((:projectCode is not null), (project_code=:projectCode), (1=1)) " +
             "and if((:inquiryId is not null), (inquiry_id=:inquiryId), (1=1))",  nativeQuery = true)
     List<ProjectInfo> findAll(@Param("isDelete") String isDelete,@Param("projectSubject") String projectSubject,@Param("projectCode") String projectCode
-            ,@Param("status") String status,@Param("inquiryId") String inquiryId  );
+            ,@Param("status") String status,@Param("inquiryId") String inquiryId );
 
 
     @Query(value = "select * from project_info WHERE exists(select 1 from busi_jbpm_flow b where project_id = b.business_id and b.business_type='projectAudit' " +

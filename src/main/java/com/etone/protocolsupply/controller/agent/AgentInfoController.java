@@ -163,19 +163,19 @@ public class AgentInfoController extends GenericController {
     }
 
     /**
-     * 根据id删除代理商
-     * @param agentId
+     * 根据ids批量删除代理商
+     * @param agentIds
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{agentId}",
+    @RequestMapping(
             method = RequestMethod.DELETE,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseValue deleteAgent(@PathVariable("agentId") String agentId) {
+    public ResponseValue deleteAgent(@RequestBody(required = false) List<Long> agentIds) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        agentInfoService.delete(Long.parseLong(agentId));
+        agentInfoService.delete(agentIds);
         return responseBuilder.build();
     }
 

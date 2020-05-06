@@ -225,7 +225,7 @@ public class ProjectInfoService {
             projectInfoDto.setGuaranteeRate(cargoInfo.getGuaranteeRate());//维保率
             projectInfoDto.setCargoTotal(0.00);//货物总金额
             projectCollectionDto.add(projectInfoDto);
-            //projectInfoDto.getInquiryInfo().getPartnerInfo().setContacts(null);
+            projectInfoDto.getInquiryInfo().getCargoInfo().setPartInfos(null);
         }
         return projectCollectionDto;
     }
@@ -336,8 +336,8 @@ public class ProjectInfoService {
         return projectInfoDto;
     }
 
-    public void delete(Long projectId) {
-        projectInfoRepository.updateIsDelete(projectId);
+    public void delete(List<Long> projectIds) {
+        projectInfoRepository.updateIsDelete(projectIds);
     }
 
     public void export(HttpServletResponse response, List<Long> projectIds,String actor) {
