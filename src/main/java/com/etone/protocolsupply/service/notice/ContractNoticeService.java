@@ -305,4 +305,27 @@ public class ContractNoticeService {
         projectInfoRepository.updateContractId(attachment.getAttachId(),Long.parseLong(projectId));
         return contractNotice;
     }
+
+    public List<ContractNotice> getContractByCondition(Integer currentPage, Integer pageSize, String projectCode, String projectSubject, JwtUser user) {
+        //返回数据
+        List<ContractNotice> contractNoticeList =new ArrayList<>();
+
+        //当前登录人名称
+        String username = user.getUsername();
+
+        //判断当前用户是什么角色，如果是招标中心经办人或者招标科长则查询全部合同
+        Long roleId = userRepository.findRoleIdByUsername(username);
+
+        if("5".equals(roleId+"") || "6".equals(roleId+"")){
+            contractNoticeList = ContractNoticeRepository.findByCondition((currentPage-1)*pageSize,pageSize,projectCode,projectSubject);
+        }
+
+        //如果是供应商或者代理商则查询跟其有关的合同
+        if("1".equals(roleId+"")){//供应商
+            contractNoticeList = ContractNoticeRepository.findBySupplierCondition((currentPage-1)*pageSize,pageSize,projectCode,projectSubject,username);
+        }else if("2".equals(roleId+"")){//代理商
+            contractNoticeList = ContractNoticeRepository.findByAgentCondition((currentPage-1)*pageSize,pageSize,projectCode,projectSubject,username);
+        }
+        return contractNoticeList;
+    }
 }
