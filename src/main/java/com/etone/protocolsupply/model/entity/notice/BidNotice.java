@@ -2,6 +2,7 @@ package com.etone.protocolsupply.model.entity.notice;
 
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
@@ -88,6 +89,8 @@ public class BidNotice implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date signDate;
 
+
+    @JsonBackReference
     @OneToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
     @JsonInclude(JsonInclude.Include.NON_NULL)

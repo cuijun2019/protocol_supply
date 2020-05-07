@@ -2,8 +2,8 @@ package com.etone.protocolsupply.model.entity.notice;
 
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -70,7 +70,7 @@ public class ResultNotice implements Serializable {
      */
     @OneToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    //@JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "ATTACH_ID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment;
 
@@ -88,8 +88,10 @@ public class ResultNotice implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date signDate;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+
+    @JsonBackReference
+    @OneToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
-    @JoinColumn(name = "PROJECT_ID", referencedColumnName = "PROJECT_ID", nullable = false)
+    @JoinColumn(name = "PROJECT_ID", referencedColumnName = "PROJECT_ID")
     private ProjectInfo projectInfo;
 }
