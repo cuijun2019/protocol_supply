@@ -147,6 +147,7 @@ public class PartInfoService {
             partInfoExpDto.setCargoName(partInfoExp.getCargoInfo().getCargoName());//货物名称
             partInfoExpDto.setCurrency(partInfoExp.getCargoInfo().getCurrency());//币种
             partInfoExpDto.setGuaranteeRate(partInfoExp.getCargoInfo().getGuaranteeRate());//维保率
+            partInfoExpDto.setCargoTotal(partInfoExp.getTotal());
             partExpCollectionDto.add(partInfoExpDto);
             partInfoExpDto.getProjectInfo().getInquiryInfo().getCargoInfo().setPartInfos(null);
         }
