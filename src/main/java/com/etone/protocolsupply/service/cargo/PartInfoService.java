@@ -143,6 +143,10 @@ public class PartInfoService {
             partInfoExpDto = new PartInfoExpDto();
             BeanUtils.copyProperties(partInfoExp, partInfoExpDto);
             partInfoExpDto.getCargoInfo().setPartInfos(null);
+            partInfoExpDto.setCargoId(partInfoExp.getCargoInfo().getCargoId().toString());//货物id
+            partInfoExpDto.setCargoName(partInfoExp.getCargoInfo().getCargoName());//货物名称
+            partInfoExpDto.setCurrency(partInfoExp.getCargoInfo().getCurrency());//币种
+            partInfoExpDto.setGuaranteeRate(partInfoExp.getCargoInfo().getGuaranteeRate());//维保率
             partExpCollectionDto.add(partInfoExpDto);
             partInfoExpDto.getProjectInfo().getInquiryInfo().getCargoInfo().setPartInfos(null);
         }

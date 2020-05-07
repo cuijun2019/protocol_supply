@@ -75,7 +75,7 @@ public class InquiryInfoController extends GenericController {
                                        @RequestParam(value = "status", required = false) Integer status,
                                        HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        Sort sort = new Sort(Sort.Direction.DESC, "inquiryId");
+        Sort sort = new Sort(Sort.Direction.DESC, "inquiryDate");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
         Page<InquiryInfo> page = inquiryInfoService.findInquiryInfos(isDelete, cargoName, inquiryCode, actor,status,pageable);
         InquiryCollectionDto inquiryCollectionDto = inquiryInfoService.to(page, request);
