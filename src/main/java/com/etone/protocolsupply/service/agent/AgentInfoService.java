@@ -280,7 +280,7 @@ public class AgentInfoService {
 
     public void saveAgent(AgentInfoDto agentInfo, JwtUser user) {
         AgentInfo info = new AgentInfo();
-        info.setAgentName(agentInfo.getPartnerInfo().getCompanyNo());
+        info.setAgentName(agentInfo.getAgentName());
         info.setAgentPoint(agentInfo.getAgentPoint());
         info.setStatus(agentInfo.getStatus());
         info.setReviewStatus(1);
@@ -288,7 +288,7 @@ public class AgentInfoService {
         info.setCreateDate(new Date());
         info.setIsDelete(2);
         info.setAttachment(agentInfo.getAttachment());
-        info.setPartnerId(agentInfo.getPartnerInfo().getPartnerId());
+        info.setPartnerId(agentInfo.getPartnerId());
         agentInfoRepository.save(info);
     }
 }
