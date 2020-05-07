@@ -209,8 +209,10 @@ public class AgentInfoService {
         }
     }
 
-    public void update(AgentInfoDto agentInfoDto)  {
-        agentInfoRepository.updateStatus(agentInfoDto.getStatus(),agentInfoDto.getAgentId());
+    public AgentInfo update(AgentInfoDto agentInfoDto)  {
+        agentInfoRepository.updateStatus(agentInfoDto.getStatus(), agentInfoDto.getReviewStatus(), agentInfoDto.getAgentId());
+
+        return agentInfoRepository.findById(agentInfoDto.getAgentId()).get();
     }
 
     public void delete(List<Long> agentIds) {
@@ -278,17 +280,17 @@ public class AgentInfoService {
         return partnerInfoList;
     }
 
-    public void saveAgent(AgentInfoDto agentInfo, JwtUser user) {
+    public AgentInfo saveAgent(AgentInfoDto agentInfo, JwtUser user) {
         AgentInfo info = new AgentInfo();
         info.setAgentName(agentInfo.getAgentName());
         info.setAgentPoint(agentInfo.getAgentPoint());
         info.setStatus(agentInfo.getStatus());
-        info.setReviewStatus(1);
+        info.setReviewStatus(agentInfo.getReviewStatus());
         info.setCreator(user.getUsername());
         info.setCreateDate(new Date());
         info.setIsDelete(2);
         info.setAttachment(agentInfo.getAttachment());
         info.setPartnerId(agentInfo.getPartnerId());
-        agentInfoRepository.save(info);
+        return agentInfoRepository.save(info);
     }
 }

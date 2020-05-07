@@ -68,7 +68,8 @@ public class AgentInfoController extends GenericController {
     public ResponseValue saveAgent( @Validated
                                     @RequestBody AgentInfoDto agentInfoDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        agentInfoService.saveAgent(agentInfoDto, this.getUser());
+        AgentInfo agentInfo = agentInfoService.saveAgent(agentInfoDto, this.getUser());
+        responseBuilder.data(agentInfo);
         responseBuilder.message("保存成功");
         return responseBuilder.build();
     }
@@ -150,15 +151,16 @@ public class AgentInfoController extends GenericController {
      */
     @ResponseBody
     @RequestMapping(value = "/updateAgent",
-            method = RequestMethod.PUT,
+            method = RequestMethod.POST,
             consumes = {"application/json"},
             produces = {"application/json"})
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseValue updateAgent(@RequestBody AgentInfoDto agentInfoDto) {
+    public ResponseValue updateAgent(@Validated
+                                     @RequestBody AgentInfoDto agentInfoDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
 
-        agentInfoService.update(agentInfoDto);
-        responseBuilder.message("更新状态成功");
+        AgentInfo agentInfo = agentInfoService.update(agentInfoDto);
+        responseBuilder.data(agentInfo);
+        responseBuilder.message("状态更新成功");
         return responseBuilder.build();
     }
 

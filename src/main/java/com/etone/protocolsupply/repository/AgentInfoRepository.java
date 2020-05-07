@@ -39,8 +39,8 @@ public interface AgentInfoRepository extends JpaRepository<AgentInfo, Long>, Jpa
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying
-    @Query(value = "update agent_info set status=?1 where agent_id=?2", nativeQuery = true)
-    void updateStatus(Integer status, Long agentId);
+    @Query(value = "update agent_info set status=?1,review_status=?2 where agent_id=?3", nativeQuery = true)
+    int updateStatus(Integer status, Integer reviewStatus, Long agentId);
 
     @Query(value = "select * from agent_info where exists(select 1 from busi_jbpm_flow b where agent_id = b.business_id and b.business_type='agentAudit' " +
             " and if((:actor is not null), (b.parent_actor=:actor or b.next_actor=:actor), (1=1))) " +
