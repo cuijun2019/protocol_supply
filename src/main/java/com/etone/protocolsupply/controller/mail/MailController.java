@@ -38,7 +38,7 @@ public class MailController extends GenericController {
         if(send){
             responseBuilder.message("验证码已发送");
         }else {
-            responseBuilder.message("用户名不存在");
+            responseBuilder.message("用户名不存在或注册时的邮箱填写错误");
         }
         return responseBuilder.build();
     }

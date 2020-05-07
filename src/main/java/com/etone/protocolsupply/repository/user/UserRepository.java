@@ -51,4 +51,7 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     @Query(value = "select ur.role_id from users u LEFT join user_role ur on u.id=ur.user_id where u.username=?1", nativeQuery = true)
     Long findRoleIdByUsername(String username);
+
+    @Query(value = "select * from users  where username=?1 and email=?2", nativeQuery = true)
+    User findUserByCondition(String username, String email);
 }
