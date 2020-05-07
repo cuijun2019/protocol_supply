@@ -90,6 +90,33 @@ public class InquiryInfoService {
         return inquiryInfo;
     }
 
+    public InquiryInfo update(InquiryInfoDto inquiryInfoDto) throws GlobalServiceException{
+        InquiryInfo inquiryInfo = new InquiryInfo();
+        BeanUtils.copyProperties(inquiryInfoDto, inquiryInfo);
+        CargoInfo cargoInfo = inquiryInfoDto.getCargoInfo();
+        if (cargoInfo != null && cargoInfo.getCargoId()!=null && !cargoInfo.getCargoId().equals("")) {
+            Optional<CargoInfo> optional = cargoInfoRepository.findById(cargoInfo.getCargoId());
+            if (optional.isPresent()) {
+                inquiryInfo.setCargoInfo(optional.get());
+            }
+        }else {
+            inquiryInfo.setCargoInfo(null);
+        }
+        PartnerInfo partnerInfo = inquiryInfoDto.getPartnerInfo();
+        if (partnerInfo != null && partnerInfo.getPartnerId()!=null && !partnerInfo.getPartnerId().equals("")) {
+            Optional<PartnerInfo> optional = partnerInfoRepository.findById(partnerInfo.getPartnerId());
+            if (optional.isPresent()) {
+                inquiryInfo.setPartnerInfo(optional.get());
+            }
+        }else {
+            inquiryInfo.setPartnerInfo(null);
+        }
+        inquiryInfoRepository.save(inquiryInfo);
+        inquiryInfo.getCargoInfo().setPartInfos(null);
+        return inquiryInfo;
+    }
+
+
 
     public Page<InquiryInfo> findInquiryInfos(String isDelete, String cargoName, String inquiryCode,String actor,Integer status, Pageable pageable) {
         if(null == actor ||actor.equals("admin")){
