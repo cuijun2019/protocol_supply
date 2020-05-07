@@ -331,10 +331,15 @@ public class ProjectInfoService {
         }
         AgentInfoExp agentInfoExp=agentInfoExpRepository.findByProjectId2(projectId);
         CargoInfo cargoInfo=cargoInfoRepository.findAllByProjectId(projectId);
-        agentInfoExp.setProjectInfo(null);
+        if(agentInfoExp !=null){
+            //agentInfoExp.setProjectInfo(null);
+            projectInfoDto.setAgentInfoExp(agentInfoExp);
+        }else {
+            projectInfoDto.setAgentInfoExp(null);
+        }
         projectInfoDto.setCargoId(cargoInfo.getCargoId().toString());
         projectInfoDto.setCargoName(cargoInfo.getCargoName());
-        projectInfoDto.setAgentInfoExp(agentInfoExp);
+
         projectInfoDto.getInquiryInfo().getCargoInfo().setPartInfos(null);
         //projectInfoDto.getInquiryInfo().getPartnerInfo().setContacts(null);
         return projectInfoDto;
