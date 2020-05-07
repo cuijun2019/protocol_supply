@@ -35,7 +35,7 @@ public class MailService {
     private RedisUtil redisUtil;
 
     public Boolean sendMail(Map<String, String> jsonData) {
-        User user = userRepository.findByUsername(jsonData.get("username"));
+        User user = userRepository.findUserByCondition(jsonData.get("username"),jsonData.get("email"));
         if(user == null){
             return false;
         }
