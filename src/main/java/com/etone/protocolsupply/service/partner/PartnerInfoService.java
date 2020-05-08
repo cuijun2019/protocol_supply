@@ -8,9 +8,11 @@ import com.etone.protocolsupply.model.entity.supplier.BankInfo;
 import com.etone.protocolsupply.model.entity.supplier.CertificateInfo;
 import com.etone.protocolsupply.model.entity.supplier.ContactInfo;
 import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
+import com.etone.protocolsupply.model.entity.user.User;
 import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.repository.supplier.*;
+import com.etone.protocolsupply.repository.user.UserRepository;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
@@ -59,6 +61,9 @@ public class PartnerInfoService {
     @Autowired
     private AttachmentRepository attachmentRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
 
 
     public void save(PartnerInfoDto partnerInfoDto) throws GlobalServiceException {
@@ -92,46 +97,58 @@ public class PartnerInfoService {
 
         BankInfo bankInfo = bankInfoRepository.findByPartnerId(partnerId);
 
+        User user = userRepository.findByPartnerId(partnerId);
+
         partnerInfoDto.setBankInfo(bankInfo);
         partnerInfoDto.setCertificateInfo(certificateInfo);
         partnerInfoDto.setContactInfoList(contactInfoList);
+        partnerInfoDto.setCreditCode(user.getUsername());
+        partnerInfoDto.setEmail(user.getEmail());
+        partnerInfoDto.setTelephone(user.getTelephone());
+        partnerInfoDto.setRealName(user.getFullname());
         return partnerInfoDto;
     }
 
-    public void updatePartnerInfo(PartnerInfoDto partnerInfoDto) {
+    public boolean updatePartnerInfo(PartnerInfoDto partnerInfoDto) {
 
         PartnerInfo partnerInfo = new PartnerInfo();
-        BeanUtils.copyProperties(partnerInfoDto,partnerInfo);
 
-        //更新供应商基本信息
-        partnerInfo = partnerInfoRepository.save(partnerInfo);
+        try {
+            BeanUtils.copyProperties(partnerInfoDto,partnerInfo);
 
-        //更新联系人,先删除相关表记录
-        contactInfoRepository.deleteByPartnerId(partnerInfo.getPartnerId());
+            //更新供应商基本信息
+            partnerInfo = partnerInfoRepository.save(partnerInfo);
 
-        if(partnerInfoDto.getContactInfoList()!=null && partnerInfoDto.getContactInfoList().size()>0){
-            for (int i = 0; i < partnerInfoDto.getContactInfoList().size(); i++) {
-                ContactInfo save = contactInfoRepository.save(partnerInfoDto.getContactInfoList().get(i));
-                //更新partnerId
-                contactInfoRepository.updatePartnerId(partnerInfo.getPartnerId(),save.getContactId());
+            //更新联系人,先删除相关表记录
+            contactInfoRepository.deleteByPartnerId(partnerInfo.getPartnerId());
+
+            if(partnerInfoDto.getContactInfoList()!=null && partnerInfoDto.getContactInfoList().size()>0){
+                for (int i = 0; i < partnerInfoDto.getContactInfoList().size(); i++) {
+                    ContactInfo save = contactInfoRepository.save(partnerInfoDto.getContactInfoList().get(i));
+                    //更新partnerId
+                    contactInfoRepository.updatePartnerId(partnerInfo.getPartnerId(),save.getContactId());
+                }
             }
+
+            //更新银行账户信息
+            BankInfo bankInfo = bankInfoRepository.save(partnerInfoDto.getBankInfo());
+            //更新银行附件信息
+            bankInfoRepository.updateAttachId(partnerInfoDto.getBankInfo().getAttachment().getAttachId(),bankInfo.getBankId());
+
+
+            //更新三证信息
+            CertificateInfo certificateInfo = certificateInfoRepository.save(partnerInfoDto.getCertificateInfo());
+
+            //更新三证中三个证件的附件信息
+            certificateInfoRepository.updateAttachmentIds(partnerInfoDto.getCertificateInfo().getLicense().getAttachId(),
+                    partnerInfoDto.getCertificateInfo().getIdentityCardFront().getAttachId(),
+                    partnerInfoDto.getCertificateInfo().getIdentityCardBack().getAttachId(),
+                    certificateInfo.getCertificateId());
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
-
-        //更新银行账户信息
-        BankInfo bankInfo = bankInfoRepository.save(partnerInfoDto.getBankInfo());
-        //更新银行附件信息
-        bankInfoRepository.updateAttachId(partnerInfoDto.getBankInfo().getAttachment().getAttachId(),bankInfo.getBankId());
-
-
-        //更新三证信息
-        CertificateInfo certificateInfo = certificateInfoRepository.save(partnerInfoDto.getCertificateInfo());
-
-        //更新三证中三个证件的附件信息
-        certificateInfoRepository.updateAttachmentIds(partnerInfoDto.getCertificateInfo().getLicense().getAttachId(),
-                partnerInfoDto.getCertificateInfo().getIdentityCardFront().getAttachId(),
-                partnerInfoDto.getCertificateInfo().getIdentityCardBack().getAttachId(),
-                certificateInfo.getCertificateId());
-
     }
 
     public Page<PartnerInfo> findPartnerInfoList(Specification<PartnerInfo> specification, Pageable pageable) {

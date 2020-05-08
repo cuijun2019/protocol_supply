@@ -36,7 +36,7 @@ public class CertificateInfo implements Serializable {
      */
     @JsonIgnoreProperties({ "handler","hibernateLazyInitializer" })
     @OneToOne(fetch = FetchType.LAZY)
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    //@JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "LICENSE", referencedColumnName = "ATTACH_ID")
     private Attachment license;
 
@@ -45,7 +45,7 @@ public class CertificateInfo implements Serializable {
      */
     @JsonIgnoreProperties({ "handler","hibernateLazyInitializer" })
     @OneToOne(fetch = FetchType.LAZY)
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    //@JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "IDENTITYCARD_FRONT", referencedColumnName = "ATTACH_ID")
     private Attachment identityCardFront;
 
@@ -54,7 +54,7 @@ public class CertificateInfo implements Serializable {
      */
     @JsonIgnoreProperties({ "handler","hibernateLazyInitializer" })
     @OneToOne(fetch = FetchType.LAZY)
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    //@JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "IDENTITYCARD_BACK", referencedColumnName = "ATTACH_ID")
     private Attachment identityCardBack;
 

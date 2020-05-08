@@ -4,6 +4,7 @@ import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.notice.ResultNoticeCollectionDto;
 import com.etone.protocolsupply.model.dto.notice.ResultNoticeDto;
+import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.notice.ResultNotice;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
@@ -33,10 +34,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Transactional(rollbackFor = Exception.class)
 @Service
@@ -159,9 +157,13 @@ public class ResultNoticeService {
     public ResultNotice save(String projectId, JwtUser user, String templatePath) {
         Attachment attachment = new Attachment();
 
-        //查询项目详情
-        ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(Long.valueOf(projectId));
-
+        Optional<ProjectInfo> optional = projectInfoRepository.findById(Long.valueOf(projectId));
+        ProjectInfoDto projectInfoDto=new ProjectInfoDto();
+        ProjectInfo projectInfo=new ProjectInfo();
+        if (optional.isPresent()) {
+            projectInfo=optional.get();
+            BeanUtils.copyProperties(projectInfo, projectInfoDto);
+        }
         try{
 
             //查询创建人所在公司

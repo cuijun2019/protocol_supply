@@ -1,5 +1,6 @@
 package com.etone.protocolsupply.repository.user;
 
+import com.etone.protocolsupply.model.entity.supplier.ContactInfo;
 import com.etone.protocolsupply.model.entity.user.Role;
 import com.etone.protocolsupply.model.entity.user.User;
 import org.springframework.data.domain.Page;
@@ -54,4 +55,7 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     @Query(value = "select * from users  where username=?1 and email=?2", nativeQuery = true)
     User findUserByCondition(String username, String email);
+
+    @Query(value = "select * from users  where partner_id=?1", nativeQuery = true)
+    User findByPartnerId(long partnerId);
 }

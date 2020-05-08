@@ -10,16 +10,16 @@ import org.springframework.transaction.annotation.Transactional;
 public interface AttachmentRepository extends JpaRepository<Attachment, Long>, JpaSpecificationExecutor<Attachment> {
 
 
-    @Query(value = "select * from attachment where attach_id=(select attach_id from result_template r where r.status=1)",
+    @Query(value = "select * from attachment where attach_id=(select attach_id from result_template r where r.status=1 and r.is_delete=2)",
             nativeQuery = true)
     Attachment findByResultTemplate();
 
 
-    @Query(value = "select * from attachment where attach_id=(select attach_id from bid_template b where b.status=1)",
+    @Query(value = "select * from attachment where attach_id=(select attach_id from bid_template b where b.status=1 and b.is_delete=2)",
             nativeQuery = true)
     Attachment findBidTemplate();
 
-    @Query(value = "select * from attachment where attach_id=(select attach_id from contract_template c where c.status=1)",
+    @Query(value = "select * from attachment where attach_id=(select attach_id from contract_template c where c.status=1 and c.is_delete=2)",
             nativeQuery = true)
     Attachment findContractTemplate();
 

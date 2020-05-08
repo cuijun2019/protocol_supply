@@ -70,7 +70,6 @@ public class AgentInfoController extends GenericController {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         AgentInfo agentInfo = agentInfoService.saveAgent(agentInfoDto, this.getUser());
         responseBuilder.data(agentInfo);
-        responseBuilder.message("保存成功");
         return responseBuilder.build();
     }
 

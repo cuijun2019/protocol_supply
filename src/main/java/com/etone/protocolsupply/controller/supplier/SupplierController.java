@@ -70,8 +70,13 @@ public class SupplierController extends GenericController {
     public ResponseValue updatePartnerInfo(@Validated
                                     @RequestBody PartnerInfoDto partnerInfoDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        partnerInfoService.updatePartnerInfo(partnerInfoDto);
-        responseBuilder.message("信息更新成功");
+        boolean info = partnerInfoService.updatePartnerInfo(partnerInfoDto);
+        if(info){
+            responseBuilder.data(partnerInfoDto);
+            responseBuilder.message("信息更新成功");
+        }else {
+            responseBuilder.message("信息更新失败");
+        }
         return responseBuilder.build();
     }
 
