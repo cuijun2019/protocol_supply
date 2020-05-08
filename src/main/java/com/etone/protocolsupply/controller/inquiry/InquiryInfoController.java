@@ -141,12 +141,12 @@ public class InquiryInfoController extends GenericController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(
-            method = RequestMethod.DELETE,
+    @RequestMapping(value = "/delete",
+            method = RequestMethod.PUT,
             consumes = {"application/json"},
             produces = {"application/json"})
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseValue deleteCargo( @RequestBody(required = false) List<Long> inquiryIds) {
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseValue deleteInquiry( @RequestBody(required = false) List<Long> inquiryIds) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         inquiryInfoService.delete(inquiryIds);
         return responseBuilder.build();

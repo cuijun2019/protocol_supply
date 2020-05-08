@@ -230,10 +230,10 @@ public class ProjectInfoController extends GenericController {
      */
     @ResponseBody
     @RequestMapping(
-            method = RequestMethod.DELETE,
+            method = RequestMethod.PUT,
             consumes = {"application/json"},
             produces = {"application/json"})
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public ResponseValue deleteAgent(@RequestBody(required = false) List<Long> projectIds) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         projectInfoService.delete(projectIds);

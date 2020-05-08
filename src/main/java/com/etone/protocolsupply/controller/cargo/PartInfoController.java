@@ -122,10 +122,10 @@ public class PartInfoController extends GenericController {
      */
     @ResponseBody
     @RequestMapping(
-            method = RequestMethod.DELETE,
+            method = RequestMethod.PUT,
             consumes = {"application/json"},
             produces = {"application/json"})
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public ResponseValue deletePartInfo(@RequestBody(required = false) List<Long> partIds) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         partInfoService.delete(partIds);

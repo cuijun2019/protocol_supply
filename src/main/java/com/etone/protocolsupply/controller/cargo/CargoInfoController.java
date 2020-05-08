@@ -121,11 +121,11 @@ public class CargoInfoController extends GenericController {
      */
     @ResponseBody
     @RequestMapping(
-            method = RequestMethod.DELETE,
+            method = RequestMethod.PUT,
             consumes = {"application/json"},
             produces = {"application/json"})
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseValue deleteCargo(@RequestBody(required = false) List<Long> cargoIds) {
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseValue deleteCargo( @RequestBody(required = false) List<Long> cargoIds) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         cargoInfoService.delete(cargoIds);
         return responseBuilder.build();
