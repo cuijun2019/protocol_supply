@@ -165,7 +165,7 @@ public class CargoInfo implements Serializable {
 //    @JsonInclude(JsonInclude.Include.NON_NULL)
 //    @JoinColumn(name = "PARTNER_ID", referencedColumnName = "PARTNER_ID")
 //    private PartnerInfo partnerInfo;
-
+    @Column(name = "PARTNER_ID", length = 20)
     private Long partnerId;
 
 }
