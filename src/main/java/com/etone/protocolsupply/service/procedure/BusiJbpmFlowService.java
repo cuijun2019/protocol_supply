@@ -6,7 +6,9 @@ import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowCollectionDto;
 import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowDto;
 import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
+import com.etone.protocolsupply.model.entity.user.Role;
 import com.etone.protocolsupply.repository.procedure.BusiJbpmFlowRepository;
+import com.etone.protocolsupply.repository.user.RoleRepository;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
@@ -37,6 +39,8 @@ public class BusiJbpmFlowService {
     private BusiJbpmFlowRepository busiJbpmFlowRepository;
     @Autowired
     private PagingMapper         pagingMapper;
+    @Autowired
+    private RoleRepository roleRepository;
 
     //待办新增
     public BusiJbpmFlow save(BusiJbpmFlowDto busiJbpmFlowDto, JwtUser jwtUser) throws GlobalServiceException {
@@ -139,6 +143,9 @@ public class BusiJbpmFlowService {
         for (BusiJbpmFlow busiJbpmFlow : source) {
             busiJbpmFlowDto = new BusiJbpmFlowDto();
             BeanUtils.copyProperties(busiJbpmFlow, busiJbpmFlowDto);
+            List<Role> list=roleRepository.findRoleByNextActor(busiJbpmFlow.getNextActor());
+            list.get(0).setPermissions(null);
+            busiJbpmFlowDto.setRole(list.get(0));
             busiJbpmFlowCollectionDto.add(busiJbpmFlowDto);
         }
         return busiJbpmFlowCollectionDto;

@@ -44,4 +44,7 @@ public interface RoleRepository extends JpaRepository<Role, Long>, JpaSpecificat
     @Modifying
     @Query(value = "update roles set description=?1,status=?2 where role_id=?3", nativeQuery = true)
     void updateRole(String description, Integer status, Long id);
+
+    @Query(value = "select * from roles where role_id=(select role_id from user_role ur where EXISTS(select 1 from users u where ur.user_id= u.id and u.username=?1))", nativeQuery = true)
+    List<Role> findRoleByNextActor(String nextActor);
 }
