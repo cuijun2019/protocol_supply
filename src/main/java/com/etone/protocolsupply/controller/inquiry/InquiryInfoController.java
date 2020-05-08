@@ -146,7 +146,7 @@ public class InquiryInfoController extends GenericController {
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
-    public ResponseValue deleteInquiry( @RequestBody(required = false) List<Long> inquiryIds) {
+    public ResponseValue deleteInquiry(@RequestBody(required = false) List<Long> inquiryIds) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         inquiryInfoService.delete(inquiryIds);
         return responseBuilder.build();
