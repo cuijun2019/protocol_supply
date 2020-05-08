@@ -4,6 +4,7 @@ import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryCollectionDto;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoDto;
+import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfo;
 import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
 import com.etone.protocolsupply.service.AttachmentService;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +32,9 @@ public class InquiryInfoController extends GenericController {
 
     @Autowired
     private InquiryInfoService inquiryInfoService;
+
+    @Autowired
+    private AttachmentService attachmentService;
 
     /**
      * 新增询价

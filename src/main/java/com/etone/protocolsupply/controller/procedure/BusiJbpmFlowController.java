@@ -257,4 +257,28 @@ public class BusiJbpmFlowController extends GenericController {
         return responseBuilder.build();
     }
 
+
+//    @ResponseBody
+//    @RequestMapping(value = "/returnTips",method = RequestMethod.GET,
+//            consumes = {"application/json"},
+//            produces = {"application/json"})
+//    @ResponseStatus(HttpStatus.OK)
+//    public ResponseValue returnTips(@Validated
+//                                     @RequestParam(value = "businessId", required = false) String businessId,
+//                                     @RequestParam(value = "businessType", required = false) String businessType,
+//                                     @RequestParam(value = "type", required = false) Integer type) {
+//        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+//        List<BusiJbpmFlow> list = busiJbpmFlowService.isExistBusiJbpmFlows(businessId,businessType,parentActor,nextActor,type);
+//        BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
+//        if(list.size()!=0){
+//            busiJbpmFlow=list.get(0);
+//            responseBuilder.data(busiJbpmFlow);
+//        }else {
+//            responseBuilder.data(null);
+//        }
+//        return responseBuilder.build();
+//    }
+
+
+
 }

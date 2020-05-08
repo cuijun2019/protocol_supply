@@ -67,7 +67,7 @@ public interface ProjectInfoRepository extends JpaRepository<ProjectInfo, Long>,
             "and if((:actor is not null), (b.parent_actor=:actor or b.next_actor=:actor), (1=1)))" +
             "and  is_delete=:isDelete and  if((:projectSubject is not null), (project_subject like %:projectSubject%), (1=1)) " +
             "and if((:status is not null), (status=:status), (1=1)) and if((:projectCode is not null), (project_code=:projectCode), (1=1)) " +
-            "and if((:inquiryId is not null), (inquiry_id=:inquiryId), (1=1))",  nativeQuery = true)
+            "and if((:inquiryId is not null), (inquiry_id=:inquiryId), (1=1)) order by project_id desc",  nativeQuery = true)
     List<ProjectInfo> findAlltoMyProject(@Param("isDelete") String isDelete,@Param("projectSubject") String projectSubject,@Param("projectCode") String projectCode
             ,@Param("status") String status,@Param("inquiryId") String inquiryId,@Param("actor") String actor);
 

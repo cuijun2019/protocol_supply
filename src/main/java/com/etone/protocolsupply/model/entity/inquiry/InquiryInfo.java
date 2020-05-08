@@ -1,6 +1,7 @@
 package com.etone.protocolsupply.model.entity.inquiry;
 
 import com.etone.protocolsupply.model.entity.AgentInfo;
+import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -73,6 +74,22 @@ public class InquiryInfo implements Serializable {
      */
     @Column(name = "REMARK", length = 200)
     private String remark;
+
+    /**
+     * 供应商信息
+     */
+    @Column(name = "PARTNERMESSAGE", length = 2000)
+    private String partnerMessage;
+
+    /**
+     * 证明文件
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JoinColumn(name = "ATTACH_ID", referencedColumnName = "ATTACH_ID")
+    private Attachment attachment;
+
 
     /**
      * 供应商

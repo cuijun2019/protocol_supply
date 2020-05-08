@@ -157,13 +157,15 @@ public class CargoInfo implements Serializable {
             fetch = FetchType.LAZY)
     private Set<PartInfo> partInfos = new HashSet<>();
 
-    /**
-     * 供应商
-     */
-    @OneToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JoinColumn(name = "PARTNER_ID", referencedColumnName = "PARTNER_ID")
-    private PartnerInfo partnerInfo;
+//    /**
+//     * 供应商
+//     */
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
+//    @JsonInclude(JsonInclude.Include.NON_NULL)
+//    @JoinColumn(name = "PARTNER_ID", referencedColumnName = "PARTNER_ID")
+//    private PartnerInfo partnerInfo;
+
+    private Long partnerId;
 
 }

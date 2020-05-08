@@ -80,14 +80,12 @@ public class CargoInfoService {
         }else {
             cargoInfo.setAttachment(null);
         }
-        PartnerInfo partnerInfo= cargoInfoDto.getPartnerInfo();
-        if (partnerInfo != null && partnerInfo.getPartnerId()!=null && !partnerInfo.getPartnerId().equals("")) {
-            Optional<PartnerInfo> optional = partnerInfoRepository.findById(partnerInfo.getPartnerId());
-            if (optional.isPresent()) {
-                cargoInfo.setPartnerInfo(optional.get());
-            }
+        //PartnerInfo partnerInfo= cargoInfoDto.getPartnerInfo();
+        if ( cargoInfoDto.getPartnerId()!=null && !cargoInfoDto.getPartnerId().equals("")) {
+            Optional<PartnerInfo> optional = partnerInfoRepository.findById(cargoInfoDto.getPartnerId());
+                cargoInfo.setPartnerId(cargoInfoDto.getPartnerId());
         }else {
-            cargoInfo.setPartnerInfo(null);
+            cargoInfo.setPartnerId(null);
         }
         cargoInfo.setCargoSerial(this.findLastCargoSerial());
         cargoInfo.setCargoCode(cargoInfo.getItemCode() + cargoInfo.getCargoSerial());
@@ -145,9 +143,12 @@ public class CargoInfoService {
             cargoInfoDto = new CargoInfoDto();
 
             BeanUtils.copyProperties(cargoInfo, cargoInfoDto);
-            if(cargoInfoDto.getPartnerInfo()==null){
-                PartnerInfo partnerInfo=new PartnerInfo();
-                cargoInfoDto.setPartnerInfo(partnerInfo);
+            if(null!=cargoInfo.getPartnerId()){
+                Optional<PartnerInfo> optional=partnerInfoRepository.findById(cargoInfo.getPartnerId());
+                if(optional.isPresent()){
+                    cargoInfoDto.setPartnerInfo(optional.get());
+                }
+                //PartnerInfo partnerInfo=new PartnerInfo();
             }
             cargoCollectionDto.add(cargoInfoDto);
         }

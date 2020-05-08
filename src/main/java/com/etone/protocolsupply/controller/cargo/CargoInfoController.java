@@ -80,7 +80,7 @@ public class CargoInfoController extends GenericController {
                                        @RequestParam(value = "status", required = false) Integer status,
                                        HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        Sort sort = new Sort(Sort.Direction.DESC, "cargoId");
+        Sort sort = new Sort(Sort.Direction.DESC, "createDate");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
         Page<CargoInfo> page = cargoInfoService.findCargoInfos(isDelete, cargoName, partName,actor,status, pageable);
         CargoCollectionDto cargoCollectionDto = cargoInfoService.to(page, request);
@@ -242,7 +242,7 @@ public class CargoInfoController extends GenericController {
             consumes = {"multipart/form-data"})
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseValue upLoadPart(@Validated @RequestParam("file") MultipartFile uploadFile) {
-        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+            ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Attachment attachment = attachmentService.upload(uploadFile, this.getUser());
         cargoInfoService.upLoad(attachment, this.getUser());
         return responseBuilder.build();
