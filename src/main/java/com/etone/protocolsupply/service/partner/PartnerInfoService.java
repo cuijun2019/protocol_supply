@@ -65,14 +65,6 @@ public class PartnerInfoService {
     private UserRepository userRepository;
 
 
-
-    public void save(PartnerInfoDto partnerInfoDto) throws GlobalServiceException {
-        PartnerInfo partnerInfo = new PartnerInfo();
-        BeanUtils.copyProperties(partnerInfoDto, partnerInfo);
-        partnerInfo.setIsDelete(Constant.DELETE_NO);
-        partnerInfoRepository.save(partnerInfo);
-    }
-
     public Specification<PartnerInfo> getWhereClause(String isDelete, String supplierName) {
         return (Specification<PartnerInfo>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
