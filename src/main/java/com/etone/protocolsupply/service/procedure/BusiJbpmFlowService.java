@@ -144,10 +144,12 @@ public class BusiJbpmFlowService {
             busiJbpmFlowDto = new BusiJbpmFlowDto();
             BeanUtils.copyProperties(busiJbpmFlow, busiJbpmFlowDto);
             List<Role> list=roleRepository.findRoleByNextActor(busiJbpmFlow.getNextActor());
-            busiJbpmFlowDto.setNextActor_roleId(list.get(0).getId());
-            busiJbpmFlowDto.setNextActor_roleName(list.get(0).getName());
-            busiJbpmFlowDto.setNextActor_roleDescription(list.get(0).getDescription());
-            busiJbpmFlowDto.setNextActor_roleStatus(list.get(0).getStatus());
+            if(!list.isEmpty()){
+                busiJbpmFlowDto.setNextActor_roleId(list.get(0).getId());
+                busiJbpmFlowDto.setNextActor_roleName(list.get(0).getName());
+                busiJbpmFlowDto.setNextActor_roleDescription(list.get(0).getDescription());
+                busiJbpmFlowDto.setNextActor_roleStatus(list.get(0).getStatus());
+            }
             busiJbpmFlowCollectionDto.add(busiJbpmFlowDto);
         }
         return busiJbpmFlowCollectionDto;

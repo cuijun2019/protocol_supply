@@ -99,15 +99,10 @@ public class ProjectInfoService {
         } else {
             projectInfo.setAttachment_p(null);
         }
-        InquiryInfo inquiryInfo = projectInfoDto.getInquiryInfo();//关联询价
-        if (inquiryInfo != null && inquiryInfo.getInquiryId() != null && !inquiryInfo.getInquiryId().equals("")) {
-            Optional<InquiryInfo> optional = inquiryInfoRepository.findById(inquiryInfo.getInquiryId());
-            if (optional.isPresent()) {
-                projectInfo.setInquiryInfo(optional.get());
+
+            if (null!=projectInfoDto.getInquiryId()) {
+                projectInfo.setInquiryId(projectInfoDto.getInquiryId());
             }
-        } else {
-            projectInfo.setInquiryInfo(null);
-        }
 
         projectInfo.setProjectSubject(projectInfoDto.getCargoName() + "的采购");
         Optional<CargoInfo> optional = cargoInfoRepository.findById(Long.parseLong(projectInfoDto.getCargoId()));
@@ -225,7 +220,7 @@ public class ProjectInfoService {
             projectInfoDto.setGuaranteeRate(cargoInfo.getGuaranteeRate());//维保率
             projectInfoDto.setCargoTotal(0.00);//货物总金额
             projectCollectionDto.add(projectInfoDto);
-            projectInfoDto.getInquiryInfo().getCargoInfo().setPartInfos(null);
+            //projectInfoDto.getInquiryInfo().getCargoInfo().setPartInfos(null);
         }
         return projectCollectionDto;
     }
@@ -257,7 +252,10 @@ public class ProjectInfoService {
         model.setAmount(projectInfoDto.getAmount());
         model.setCurrency(projectInfoDto.getCurrency());
         model.setIsDelete(projectInfo.getIsDelete());
-        model.setInquiryInfo(projectInfo.getInquiryInfo());//询价
+        if(null!=projectInfoDto.getInquiryId()){
+            model.setInquiryId(projectInfo.getInquiryId());//询价
+        }
+
         //SpringUtil.copyPropertiesIgnoreNull(projectInfoDto, projectInfo);
         if (projectInfo != null && attachmentn == null && attachmentc == null && attachmentp ==null && cargoInfo == null ) {
             projectInfoRepository.save(model);
@@ -293,7 +291,7 @@ public class ProjectInfoService {
         projectInfoRepository.update(model.getProjectId(),model.getProjectSubject(),model.getPurchaser(),
                 model.getCurrency(),model.getDeliveryDate(),model.getDeliveryDateStatus(),model.getGuaranteeDate(),model.getGuaranteeFee(),
                 model.getPaymentMethod(),model.getPriceTerm(),model.getCargoTotal(),model.getAmount(),model.getStatus(), attachmentnId,
-                attachmentcId,attachmentpId, model.getInquiryInfo().getInquiryId(),model.getCreator(),model.getProjectCode(),model.getIsDelete());
+                attachmentcId,attachmentpId, model.getInquiryId(),model.getCreator(),model.getProjectCode(),model.getIsDelete());
 
         agentInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
         //供应商
@@ -340,7 +338,7 @@ public class ProjectInfoService {
         projectInfoDto.setCargoId(cargoInfo.getCargoId().toString());
         projectInfoDto.setCargoName(cargoInfo.getCargoName());
 
-        projectInfoDto.getInquiryInfo().getCargoInfo().setPartInfos(null);
+        //projectInfoDto.getInquiryInfo().getCargoInfo().setPartInfos(null);
         //projectInfoDto.getInquiryInfo().getPartnerInfo().setContacts(null);
         return projectInfoDto;
     }

@@ -149,7 +149,7 @@ public class PartInfoService {
             partInfoExpDto.setGuaranteeRate(partInfoExp.getCargoInfo().getGuaranteeRate());//维保率
             partInfoExpDto.setCargoTotal(partInfoExp.getTotal());
             partExpCollectionDto.add(partInfoExpDto);
-            partInfoExpDto.getProjectInfo().getInquiryInfo().getCargoInfo().setPartInfos(null);
+           // partInfoExpDto.getProjectInfo().getInquiryInfo().getCargoInfo().setPartInfos(null);
         }
 
         return partExpCollectionDto;

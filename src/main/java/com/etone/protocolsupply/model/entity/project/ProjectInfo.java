@@ -133,14 +133,17 @@ public class ProjectInfo implements Serializable {
     @JoinColumn(name = "PURCHASE_ID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment_p;
 
-    /**
-     * 询价记录
-     */
-    @OneToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
-    //@JsonInclude(JsonInclude.Include.NON_NULL)
-    @JoinColumn(name = "INQUIRY_ID", referencedColumnName = "INQUIRY_ID")
-    private InquiryInfo inquiryInfo;
+//    /**
+//     * 询价记录
+//     */
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
+//    //@JsonInclude(JsonInclude.Include.NON_NULL)
+//    @JoinColumn(name = "INQUIRY_ID", referencedColumnName = "INQUIRY_ID")
+//    private InquiryInfo inquiryInfo;
+
+    @Column(name = "INQUIRY_ID", length = 20)
+    private Long inquiryId;
 
 //    /**
 //     * 配件拓展表
