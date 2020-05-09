@@ -144,7 +144,7 @@ public class BusiJbpmFlowService {
             busiJbpmFlowDto = new BusiJbpmFlowDto();
             BeanUtils.copyProperties(busiJbpmFlow, busiJbpmFlowDto);
             List<Role> list=roleRepository.findRoleByNextActor(busiJbpmFlow.getNextActor());
-            list.get(0).setPermissions(null);
+            //list.get(0).setPermissions(null);
             busiJbpmFlowDto.setRole(list.get(0));
             busiJbpmFlowCollectionDto.add(busiJbpmFlowDto);
         }
