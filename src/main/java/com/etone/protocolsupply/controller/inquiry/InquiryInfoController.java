@@ -106,6 +106,10 @@ public class InquiryInfoController extends GenericController {
     public ResponseValue getCargo(@PathVariable("inquiryId") String inquiryId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         InquiryInfo inquiryInfo = inquiryInfoService.findOne(Long.parseLong(inquiryId));
+        if(null==inquiryInfo.getAttachment()){
+            Attachment attachment=new Attachment();
+            inquiryInfo.setAttachment(attachment);
+        }
         inquiryInfo.getCargoInfo().setPartInfos(null);
         if(inquiryInfo.getPartnerInfo()==null){
             PartnerInfo partnerInfo=new PartnerInfo();
