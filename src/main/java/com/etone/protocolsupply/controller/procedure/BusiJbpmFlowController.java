@@ -76,9 +76,15 @@ public class BusiJbpmFlowController extends GenericController {
                                        @RequestParam(value = "readType", required = false) Integer readType,
                                        @RequestParam(value = "parentActor", required = false) String parentActor,
                                        @RequestParam(value = "nextActor", required = false) String nextActor,
+                                       @RequestParam(value = "timeOrder", required = false, defaultValue = "DESC") String timeOrder,
                                        HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        Sort sort = new Sort(Sort.Direction.DESC, "flowStartTime");
+        Sort sort=null;
+        if(timeOrder.equals("ASC")){
+            sort = new Sort(Sort.Direction.ASC, "flowStartTime");
+        }else{
+            sort = new Sort(Sort.Direction.DESC, "flowStartTime");
+        }
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
         Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereClause(businessType, businessSubject,
                 type,readType,businessId,parentActor,nextActor);
