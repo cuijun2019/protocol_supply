@@ -16,6 +16,7 @@ import com.etone.protocolsupply.repository.notice.ContractNoticeRepository;
 import com.etone.protocolsupply.repository.project.PartInfoExpRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.repository.user.UserRepository;
+import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.ConvertUpMoney;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
@@ -193,7 +194,7 @@ public class ContractNoticeService {
         contentMap.put("${NAME}",creator.getCompany());
         contentMap.put("${GOODS}",projectInfo.getProjectSubject());
         contentMap.put("${EQUIPMENT}",cargoInfoList.get(0).getCargoName());
-        contentMap.put("${AMOUNT}","test-1000");
+        contentMap.put("${AMOUNT}",projectInfo.getQuantity());
         contentMap.put("${DONETIME}",projectInfo.getDeliveryDate()+"");
         contentMap.put("${CHMONEY}", ConvertUpMoney.toChinese(projectInfo.getAmount()));
         contentMap.put("${MONEY}",projectInfo.getAmount());
@@ -306,7 +307,7 @@ public class ContractNoticeService {
         return contractNotice;
     }
 
-    public List<ContractNotice> getContractByCondition(Integer currentPage, Integer pageSize, String projectCode, String projectSubject, JwtUser user) {
+    public Page<ContractNotice> getContractByCondition(String projectCode, String projectSubject, JwtUser user, Pageable pageable) {
         //返回数据
         List<ContractNotice> contractNoticeList =new ArrayList<>();
 
@@ -317,15 +318,15 @@ public class ContractNoticeService {
         Long roleId = userRepository.findRoleIdByUsername(username);
 
         if("5".equals(roleId+"") || "6".equals(roleId+"")){
-            contractNoticeList = ContractNoticeRepository.findByCondition((currentPage-1)*pageSize,pageSize,projectCode,projectSubject);
+            contractNoticeList = ContractNoticeRepository.findByCondition(projectCode,projectSubject);
         }
 
         //如果是供应商或者代理商则查询跟其有关的合同
         if("1".equals(roleId+"")){//供应商
-            contractNoticeList = ContractNoticeRepository.findBySupplierCondition((currentPage-1)*pageSize,pageSize,projectCode,projectSubject,username);
+            contractNoticeList = ContractNoticeRepository.findBySupplierCondition(projectCode,projectSubject,username);
         }else if("2".equals(roleId+"")){//代理商
-            contractNoticeList = ContractNoticeRepository.findByAgentCondition((currentPage-1)*pageSize,pageSize,projectCode,projectSubject,username);
+            contractNoticeList = ContractNoticeRepository.findByAgentCondition(projectCode,projectSubject,username);
         }
-        return contractNoticeList;
+        return Common.listConvertToPage(contractNoticeList,pageable);
     }
 }

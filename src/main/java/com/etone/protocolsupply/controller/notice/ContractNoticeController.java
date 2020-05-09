@@ -74,9 +74,11 @@ public class ContractNoticeController extends GenericController {
                                        @RequestParam(value = "projectSubject", required = false) String projectSubject,
                                        HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-
-        List<ContractNotice> contractNoticeList = ContractNoticeService.getContractByCondition(currentPage,pageSize,projectCode,projectSubject,this.getUser());
-        responseBuilder.data(contractNoticeList);
+        Sort sort = new Sort(Sort.Direction.DESC, "contractId");
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
+        Page<ContractNotice> page = ContractNoticeService.getContractByCondition(projectCode,projectSubject,this.getUser(),pageable);
+        ContractNoticeCollectionDto contractNoticeCollectionDto = ContractNoticeService.to(page, request);
+        responseBuilder.data(contractNoticeCollectionDto);
 
         return responseBuilder.build();
     }

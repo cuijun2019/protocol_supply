@@ -158,9 +158,15 @@ public class PartnerInfo implements Serializable {
     private Integer isDelete;
 
     /**
-     * 审核状态 审核通过1，审核未通过2
+     * 审核状态 1 草稿 2 审核中 3同意 4退回 5 完成
      */
     @Column(name = "IS_AUDITING",length = 4)
     private Integer isAuditing;
 
+    /**
+     * 注册时间
+     */
+    @Column(name = "REGISTER_TIME")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date registerTime;
 }

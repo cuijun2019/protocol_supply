@@ -172,11 +172,11 @@ public class PermissionService {
                 supplierMapResetPWD.put("permission",permissionsList.get(i));
             }else if(48==permissionsList.get(i).getPermId()){
                 agentMapMyAgent.put("permission",permissionsList.get(i));
-            }else if(92==permissionsList.get(i).getPermId()){
+            }else if(98==permissionsList.get(i).getPermId()){
                 agentMapInfo.put("permission",permissionsList.get(i));
-            }else if(93==permissionsList.get(i).getPermId()){
+            }else if(99==permissionsList.get(i).getPermId()){
                 agentMapUpdate.put("permission",permissionsList.get(i));
-            }else if(94==permissionsList.get(i).getPermId()){
+            }else if(100==permissionsList.get(i).getPermId()){
                 agentMapResetPWD.put("permission",permissionsList.get(i));
             }else if(54==permissionsList.get(i).getPermId()){
                 purchaseResultsMapMy.put("permission",permissionsList.get(i));
@@ -278,19 +278,19 @@ public class PermissionService {
                 supplierListResetPWD.add(permissionsList.get(i));
                 supplierMapResetPWD.put("list",supplierListResetPWD);
             }
-            if(48==permissionsList.get(i).getParentPermId()){
+            if(47==permissionsList.get(i).getParentPermId()){
                 agentListMyAgent.add(permissionsList.get(i));
                 agentMapMyAgent.put("list",agentListMyAgent);
             }
-            if(92==permissionsList.get(i).getParentPermId()){
+            if(98==permissionsList.get(i).getParentPermId()){
                 agentListInfo.add(permissionsList.get(i));
                 agentMapMyAgent.put("list",agentListInfo);
             }
-            if(93==permissionsList.get(i).getParentPermId()){
+            if(99==permissionsList.get(i).getParentPermId()){
                 agentListUpdate.add(permissionsList.get(i));
                 agentMapUpdate.put("list",agentListUpdate);
             }
-            if(94==permissionsList.get(i).getParentPermId()){
+            if(100==permissionsList.get(i).getParentPermId()){
                 agentListResetPWD.add(permissionsList.get(i));
                 agentMapResetPWD.put("list",agentListResetPWD);
             }

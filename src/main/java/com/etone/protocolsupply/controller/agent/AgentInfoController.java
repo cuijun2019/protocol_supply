@@ -169,11 +169,11 @@ public class AgentInfoController extends GenericController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(
-            method = RequestMethod.DELETE,
+    @RequestMapping(value = "/deleteAgents",
+            method = RequestMethod.POST,
             consumes = {"application/json"},
             produces = {"application/json"})
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public ResponseValue deleteAgent(@RequestBody(required = false) List<Long> agentIds) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         agentInfoService.delete(agentIds);

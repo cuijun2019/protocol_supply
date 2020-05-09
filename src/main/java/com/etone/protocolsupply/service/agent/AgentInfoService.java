@@ -90,9 +90,10 @@ public class AgentInfoService {
         PartnerInfo partnerInfo = new PartnerInfo();
         partnerInfo.setSupType(Integer.parseInt(registerData.get("supType")));
         partnerInfo.setCompanyNo(registerData.get("company"));
-        partnerInfo.setIdentification(registerData.get("creditCode"));
+        partnerInfo.setAuthStatus(2);//认证状态 1已认证   2未认证
         partnerInfo.setIsDelete(2);
-        partnerInfo.setIsAuditing(2);
+        partnerInfo.setRegisterTime(new Date());
+        partnerInfo.setIsAuditing(1);//1 草稿 2 审核中 3同意 4退回 5 完成
         partnerInfo = partnerInfoRepository.save(partnerInfo);
 
         //新增关联银行账户信息
