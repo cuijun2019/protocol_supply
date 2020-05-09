@@ -7,5 +7,12 @@ import lombok.Data;
 
 @Data
 public class BusiJbpmFlowDto extends BusiJbpmFlow {
-    private Role role;
+    private Long NextActor_roleId;//角色id
+    /**
+     * 角色名称
+     * 将枚举的字符串写入
+     */
+    private String NextActor_roleName;
+    private String NextActor_roleDescription;//角色描述
+    private Integer NextActor_roleStatus;//状态
 }
