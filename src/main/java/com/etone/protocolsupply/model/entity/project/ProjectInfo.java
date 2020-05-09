@@ -107,6 +107,12 @@ public class ProjectInfo implements Serializable {
     private Integer isDelete;
 
     /**
+     * 数量
+     */
+    @Column(name = "QUANTITY", length = 100)
+    private String quantity;
+
+    /**
      * 中标通知书
      */
     @OneToOne(fetch = FetchType.LAZY)
