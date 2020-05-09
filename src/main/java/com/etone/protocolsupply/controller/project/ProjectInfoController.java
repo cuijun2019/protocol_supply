@@ -147,18 +147,18 @@ public class ProjectInfoController extends GenericController {
     /**
      * 删除-配件列表
      *
-     * @param partExpIds
+     * @param partExpId
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/partInfoExp",
+    @RequestMapping(value = "/partInfoExp/{partExpId}",
             method = RequestMethod.DELETE,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseValue deletepartInfoExp(@RequestBody(required = false) List<Long> partExpIds) {
+    public ResponseValue deletepartInfoExp(@PathVariable("partExpId") String partExpId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        partInfoService.deleteExp(partExpIds);
+        partInfoService.deleteExp(partExpId);
         return responseBuilder.build();
     }
 

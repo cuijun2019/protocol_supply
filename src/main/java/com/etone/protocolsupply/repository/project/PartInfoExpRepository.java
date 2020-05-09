@@ -15,8 +15,8 @@ public interface PartInfoExpRepository extends JpaRepository<PartInfoExp, Long>,
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying
-    @Query(value = "update part_info_exp set is_delete=1 where part_id in ?1", nativeQuery = true)
-    void updateIsDelete(List<Long> partIds);
+    @Query(value = "update part_info_exp set is_delete=1 where part_id = ?1", nativeQuery = true)
+    void updateIsDelete(String partId);
 
     @Query(value = "update part_info_exp set project_id=:projectId where part_id in (:partIds)", nativeQuery = true)
     @Modifying

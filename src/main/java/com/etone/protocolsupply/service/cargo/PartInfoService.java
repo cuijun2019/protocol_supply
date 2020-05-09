@@ -172,8 +172,8 @@ public class PartInfoService {
         partInfoRepository.updateIsDelete(partId);
     }
     //删除货物项目-配件列表
-    public void deleteExp(List<Long> partIds) {
-        partInfoExpRepository.updateIsDelete(partIds);
+    public void deleteExp(String partId) {
+        partInfoExpRepository.updateIsDelete(partId);
     }
 
     //配件导入
