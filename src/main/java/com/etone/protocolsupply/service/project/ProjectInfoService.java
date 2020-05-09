@@ -99,11 +99,10 @@ public class ProjectInfoService {
         } else {
             projectInfo.setAttachment_p(null);
         }
-
-            if (null!=projectInfoDto.getInquiryId()) {
-                projectInfo.setInquiryId(projectInfoDto.getInquiryId());
+        InquiryInfo inquiryInfo=projectInfoDto.getInquiryInfo();
+            if (null!=inquiryInfo.getInquiryId()) {
+                projectInfo.setInquiryId(projectInfoDto.getInquiryInfo().getInquiryId());
             }
-
         projectInfo.setProjectSubject(projectInfoDto.getCargoName() + "的采购");
         Optional<CargoInfo> optional = cargoInfoRepository.findById(Long.parseLong(projectInfoDto.getCargoId()));
         if (optional.isPresent()) {
@@ -211,8 +210,13 @@ public class ProjectInfoService {
         ProjectInfoDto projectInfoDto;
         for (ProjectInfo projectInfo : source) {
             CargoInfo cargoInfo = cargoInfoRepository.findAllByProjectId(projectInfo.getProjectId());
+            InquiryInfo inquiryInfo = inquiryInfoRepository.findAllByProjectId(projectInfo.getProjectId());
             cargoInfo.setPartInfos(null);
             projectInfoDto = new ProjectInfoDto();
+            if(null!=inquiryInfo){
+                inquiryInfo.getCargoInfo().setPartInfos(null);
+                projectInfoDto.setInquiryInfo(inquiryInfo);
+            }
             BeanUtils.copyProperties(projectInfo, projectInfoDto);
             projectInfoDto.setCargoId(cargoInfo.getCargoId().toString());//货物id
             projectInfoDto.setCargoName(cargoInfo.getCargoName());//货物名称
