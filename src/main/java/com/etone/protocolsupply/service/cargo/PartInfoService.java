@@ -168,8 +168,8 @@ public class PartInfoService {
     }
 
 
-    public void delete(List<Long> partIds) {
-        partInfoRepository.updateIsDelete(partIds);
+    public void delete(String partId) {
+        partInfoRepository.updateIsDelete(partId);
     }
     //删除货物项目-配件列表
     public void deleteExp(List<Long> partIds) {

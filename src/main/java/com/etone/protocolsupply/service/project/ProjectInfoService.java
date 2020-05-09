@@ -256,8 +256,9 @@ public class ProjectInfoService {
         model.setAmount(projectInfoDto.getAmount());
         model.setCurrency(projectInfoDto.getCurrency());
         model.setIsDelete(projectInfo.getIsDelete());
+        model.setQuantity(projectInfoDto.getQuantity());//数量
         if(null!=projectInfoDto.getInquiryId()){
-            model.setInquiryId(projectInfo.getInquiryId());//询价
+            model.setInquiryId(projectInfoDto.getInquiryId());//询价
         }
 
         //SpringUtil.copyPropertiesIgnoreNull(projectInfoDto, projectInfo);
@@ -295,7 +296,7 @@ public class ProjectInfoService {
         projectInfoRepository.update(model.getProjectId(),model.getProjectSubject(),model.getPurchaser(),
                 model.getCurrency(),model.getDeliveryDate(),model.getDeliveryDateStatus(),model.getGuaranteeDate(),model.getGuaranteeFee(),
                 model.getPaymentMethod(),model.getPriceTerm(),model.getCargoTotal(),model.getAmount(),model.getStatus(), attachmentnId,
-                attachmentcId,attachmentpId, model.getInquiryId(),model.getCreator(),model.getProjectCode(),model.getIsDelete());
+                attachmentcId,attachmentpId, projectInfoDto.getInquiryInfo().getInquiryId(),model.getCreator(),model.getProjectCode(),model.getIsDelete(),model.getQuantity());
 
         agentInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
         //供应商

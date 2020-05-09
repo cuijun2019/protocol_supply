@@ -75,10 +75,10 @@ public interface ProjectInfoRepository extends JpaRepository<ProjectInfo, Long>,
     @Modifying
     @Query(value = "update project_info set project_subject=?2,purchaser=?3,currency=?4,delivery_date=?5,delivery_date_status=?6," +
             "guarantee_date=?7,guarantee_fee=?8,payment_method=?9,price_term=?10,cargoTotal=?11,amount=?12,status=?13,contract_id=?14,notice_id=?15,purchase_id=?16,inquiry_id=?17," +
-            "creator=?18,project_code=?19,is_delete=?20 where project_id=?1", nativeQuery = true)
+            "creator=?18,project_code=?19,is_delete=?20,quantity=?21 where project_id=?1", nativeQuery = true)
     void update(Long projectId,String projectSubject,String purchaser,String currency,Double deliveryDate,Long deliveryDateStatus,
                        String guaranteeDate,String guaranteeFee,String paymentMethod,String priceTerm,Double cargoTotal,String amount,Integer status
-                        ,Long cattachId,Long nattachId,Long pattachId,Long inquiryId,String creator,String projectCode,Integer isDelete);
+                        ,Long cattachId,Long nattachId,Long pattachId,Long inquiryId,String creator,String projectCode,Integer isDelete,String quantity);
 
     @Query(value = "select p.* from project_info p " +
             "where exists (SELECT 1 FROM busi_jbpm_flow b WHERE p.project_id = b.business_id and b.business_type=:businessType and b.parent_actor=:parentActor) " +

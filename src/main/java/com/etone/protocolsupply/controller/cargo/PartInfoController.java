@@ -117,18 +117,18 @@ public class PartInfoController extends GenericController {
     /**
      * 删除配件
      *
-     * @param partIds
+     * @param partId
      * @return
      */
     @ResponseBody
-    @RequestMapping(
-            method = RequestMethod.PUT,
+    @RequestMapping(value = "/{partId}",
+            method = RequestMethod.DELETE,
             consumes = {"application/json"},
             produces = {"application/json"})
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseValue deletePartInfo(@RequestBody(required = false) List<Long> partIds) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseValue deletePartInfo(@PathVariable("partId") String partId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        partInfoService.delete(partIds);
+        partInfoService.delete(partId);
         return responseBuilder.build();
     }
 
