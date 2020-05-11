@@ -32,6 +32,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -68,7 +70,7 @@ public class LoginController {
     private UserDetailsService userDetailsService;
 
     @RequestMapping(value = "${jwt.route.authentication.path}", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(@Validated @RequestBody LoginRequest authenticationRequest,HttpServletRequest request) {
+    public ResponseEntity<?> createAuthenticationToken(@Validated @RequestBody LoginRequest authenticationRequest) {
 
         String username = authenticationRequest.getUsername();
         String password = authenticationRequest.getPassword();
@@ -77,6 +79,7 @@ public class LoginController {
         Objects.requireNonNull(password);
 
         //check code
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         HttpSession session = request.getSession();
         String code_session = (String) session.getAttribute("_code");
         if(!code_session.equalsIgnoreCase(code)){
