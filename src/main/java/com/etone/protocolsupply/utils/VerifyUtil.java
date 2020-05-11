@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import java.util.Calendar;
 import java.util.Date;
 
 @Configuration      //1.主要用于标记配置类，兼备Component的效果。
@@ -18,7 +19,12 @@ public class VerifyUtil {
     @Scheduled(cron = "0 0 9 * * ?")//每天早上9点触发审核任务
     public void verifySupplier(){
         //每天去查询注册时间满24小时的供应商和代理商，将审核状态改成已审核
-        partnerInfoRepository.updateByRegisterTime(new Date());
+        Calendar calendar = Calendar.getInstance();
+        Date date = new Date();
+        calendar.setTime(date);
+        calendar.add(Calendar.DATE,-1);
+        Date time = calendar.getTime();
+        partnerInfoRepository.updateByRegisterTime(time);
 
     }
 }
