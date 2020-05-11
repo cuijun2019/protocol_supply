@@ -68,7 +68,7 @@ public class BusiJbpmFlowController extends GenericController {
             produces = {"application/json"})
     public ResponseValue getBusiJbpmFlows(@Validated
                                        @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
-                                       @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+                                       @RequestParam(value = "pageSize", required = false, defaultValue = "100") Integer pageSize,
                                        @RequestParam(value = "businessType", required = false) String businessType,
                                        @RequestParam(value = "businessSubject", required = false) String businessSubject,
                                        @RequestParam(value = "businessId", required = false) String businessId,
