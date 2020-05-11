@@ -4,15 +4,15 @@ import com.etone.protocolsupply.exception.AuthenticationException;
 import com.etone.protocolsupply.exception.GlobalExceptionCode;
 import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.LoginRequest;
+import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.systemControl.UserDto;
 import com.etone.protocolsupply.model.entity.user.PermissionComparator;
 import com.etone.protocolsupply.model.entity.user.Permissions;
 import com.etone.protocolsupply.model.entity.user.Role;
 import com.etone.protocolsupply.model.entity.user.User;
-import com.etone.protocolsupply.repository.user.UserRepository;
 import com.etone.protocolsupply.service.security.JwtTokenUtil;
-import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.service.system.UserService;
+import com.etone.protocolsupply.utils.RedisUtil;
 import com.etone.protocolsupply.utils.VerifyCodeUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
@@ -32,13 +32,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @Description jwt token的生成与刷新
@@ -69,6 +70,9 @@ public class LoginController {
     @Qualifier("cachingUserDetailsService")
     private UserDetailsService userDetailsService;
 
+    @Resource
+    private RedisUtil redisUtil;
+
     @RequestMapping(value = "${jwt.route.authentication.path}", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@Validated @RequestBody LoginRequest authenticationRequest) {
 
@@ -79,9 +83,7 @@ public class LoginController {
         Objects.requireNonNull(password);
 
         //check code
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        HttpSession session = request.getSession();
-        String code_session = (String) session.getAttribute("_code");
+        String code_session = (String) redisUtil.get("verifyCode");
         if(!code_session.equalsIgnoreCase(code)){
             return ResponseEntity.ok(ResponseValue.createBuilder().data("验证码错误").build());
         }
@@ -186,8 +188,10 @@ public class LoginController {
             String verifyCode = VerifyCodeUtils.generateVerifyCode(4);
             log.info("verifyCode:{}", verifyCode);
             //存入会话session
-            HttpSession session = request.getSession(true);
-            session.setAttribute("_code", verifyCode.toLowerCase());
+            //HttpSession session = request.getSession(true);
+            //session.setAttribute("_code", verifyCode.toLowerCase());
+            //存入redis
+            redisUtil.set("verifyCode",verifyCode,120);
             //生成图片
             int w = 146, h = 33;
             VerifyCodeUtils.outputImage(w, h, response.getOutputStream(), verifyCode);
