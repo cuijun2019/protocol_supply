@@ -40,12 +40,12 @@ public class BidNoticeController extends GenericController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{projectId}",
-            method = RequestMethod.POST,
+    @RequestMapping(value = "/getBidNotice/{projectId}",
+            method = RequestMethod.GET,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseValue postBidNotice(@Validated
+    public ResponseValue getBidNotice(@Validated
                                        @PathVariable("projectId") String projectId) {
 
         //查看成交通知书模板路径

@@ -41,12 +41,12 @@ public class ResultNoticeController extends GenericController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{projectId}",
-            method = RequestMethod.POST,
+    @RequestMapping(value = "/getResultNotice/{projectId}",
+            method = RequestMethod.GET,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseValue postResultNotice(@Validated
+    public ResponseValue getResultNotice(@Validated
                                        @PathVariable("projectId") String projectId) {
         //查询结果通知书模板的路径
         Attachment attachment = attachmentService.findByResultTemplate();

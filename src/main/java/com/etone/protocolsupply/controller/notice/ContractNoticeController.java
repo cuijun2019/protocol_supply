@@ -39,12 +39,12 @@ public class ContractNoticeController extends GenericController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{projectId}",
-            method = RequestMethod.POST,
+    @RequestMapping(value = "/getContractNotice/{projectId}",
+            method = RequestMethod.GET,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseValue postContractNotice(@Validated
+    public ResponseValue getContractNotice(@Validated
                                           @PathVariable("projectId") String projectId) {
         //查询合同模板所在路径
         Attachment attachment = attachmentService.findContractTemplate();
