@@ -13,6 +13,7 @@ import com.etone.protocolsupply.repository.user.UserRepository;
 import com.etone.protocolsupply.service.security.JwtTokenUtil;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.service.system.UserService;
+import com.etone.protocolsupply.utils.VerifyCodeUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -33,6 +34,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.*;
 
 /**
@@ -65,12 +68,20 @@ public class LoginController {
     private UserDetailsService userDetailsService;
 
     @RequestMapping(value = "${jwt.route.authentication.path}", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(@Validated @RequestBody LoginRequest authenticationRequest) {
+    public ResponseEntity<?> createAuthenticationToken(@Validated @RequestBody LoginRequest authenticationRequest,HttpServletRequest request) {
 
         String username = authenticationRequest.getUsername();
         String password = authenticationRequest.getPassword();
+        String code = authenticationRequest.getCode();
         Objects.requireNonNull(username);
         Objects.requireNonNull(password);
+
+        //check code
+        HttpSession session = request.getSession();
+        String code_session = (String) session.getAttribute("_code");
+        if(!code_session.equalsIgnoreCase(code)){
+            return ResponseEntity.ok(ResponseValue.createBuilder().data("验证码错误").build());
+        }
 
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
@@ -152,5 +163,27 @@ public class LoginController {
         }
         return ResponseValue.createBuilder().code(GlobalExceptionCode.LOGOUT_ERROR.getCode())
                 .message(GlobalExceptionCode.LOGOUT_ERROR.getCause()).build();
+    }
+
+    @GetMapping(value = "/api/getCode")
+    public void getYzm(HttpServletResponse response, HttpServletRequest request) {
+        try {
+            response.setHeader("Pragma", "No-cache");
+            response.setHeader("Cache-Control", "no-cache");
+            response.setDateHeader("Expires", 0);
+            response.setContentType("image/jpg");
+
+            //生成随机字串
+            String verifyCode = VerifyCodeUtils.generateVerifyCode(4);
+            log.info("verifyCode:{}", verifyCode);
+            //存入会话session
+            HttpSession session = request.getSession(true);
+            session.setAttribute("_code", verifyCode.toLowerCase());
+            //生成图片
+            int w = 146, h = 33;
+            VerifyCodeUtils.outputImage(w, h, response.getOutputStream(), verifyCode);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
