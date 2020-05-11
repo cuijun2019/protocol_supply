@@ -83,7 +83,13 @@ public class LoginController {
             return ResponseEntity.ok(ResponseValue.createBuilder().data("验证码错误").build());
         }
 
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        Authentication authentication = null;
+        try {
+            authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.ok(ResponseValue.createBuilder().data("用户名或密码错误").build());
+        }
 
         // Reload password post-security so we can generate the token
         final String token = jwtTokenUtil.generateToken((UserDetails) authentication.getPrincipal());
