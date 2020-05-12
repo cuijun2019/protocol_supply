@@ -8,6 +8,7 @@ import com.etone.protocolsupply.model.dto.AgentInfoExpDto;
 import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.agent.AgentCollectionDto;
 import com.etone.protocolsupply.model.dto.agent.AgentInfoDto;
+import com.etone.protocolsupply.model.dto.partner.PartnerInfoDtoUsername;
 import com.etone.protocolsupply.model.entity.AgentInfo;
 import com.etone.protocolsupply.model.entity.project.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.supplier.BankInfo;
@@ -270,13 +271,23 @@ public class AgentInfoService {
         }
     }
 
-    public List<Map<String,Object>> findAgentsList(String agentName) {
+    public List<PartnerInfoDtoUsername> findAgentsList(String agentName) {
         //是否有搜索条件
-        List<Map<String,Object>> partnerInfoList = new ArrayList<>();
+        List<PartnerInfoDtoUsername> partnerInfoList = new ArrayList<>();
+        List<Map<String,Object>> partnerInfoListObj = new ArrayList<>();
         if (Strings.isNotBlank(agentName)){
-             partnerInfoList = partnerInfoRepository.findVerifiedSuppliersByagentName(agentName);
+             partnerInfoListObj = partnerInfoRepository.findVerifiedSuppliersByagentName(agentName);
         }else {
-            partnerInfoList = partnerInfoRepository.findVerifiedSuppliers();
+             partnerInfoListObj = partnerInfoRepository.findVerifiedSuppliers();
+        }
+        if(partnerInfoListObj!=null && partnerInfoListObj.size()>0){
+            for (int i = 0; i < partnerInfoListObj.size(); i++) {
+                PartnerInfoDtoUsername partnerInfoDto = new PartnerInfoDtoUsername();
+                partnerInfoDto.setUsername(partnerInfoListObj.get(i).get("username")==null?null:partnerInfoListObj.get(i).get("username").toString());
+                partnerInfoDto.setCompanyNo(partnerInfoListObj.get(i).get("company_no")==null?null:partnerInfoListObj.get(i).get("company_no").toString());
+                partnerInfoDto.setPartnerId(Long.parseLong(partnerInfoListObj.get(i).get("partner_id")+""));
+                partnerInfoList.add(partnerInfoDto);
+            }
         }
         return partnerInfoList;
     }

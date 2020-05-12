@@ -4,8 +4,8 @@ import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.agent.AgentCollectionDto;
 import com.etone.protocolsupply.model.dto.agent.AgentInfoDto;
+import com.etone.protocolsupply.model.dto.partner.PartnerInfoDtoUsername;
 import com.etone.protocolsupply.model.entity.AgentInfo;
-import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
 import com.etone.protocolsupply.service.agent.AgentInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -118,7 +118,7 @@ public class AgentInfoController extends GenericController {
                                        @RequestParam(value = "agentName", required = false) String agentName) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
 
-        List<Map<String,Object>> agentlist = agentInfoService.findAgentsList(agentName);
+        List<PartnerInfoDtoUsername> agentlist = agentInfoService.findAgentsList(agentName);
         responseBuilder.data(agentlist);
         return responseBuilder.build();
     }
