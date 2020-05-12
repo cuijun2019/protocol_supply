@@ -232,12 +232,6 @@ public class ProjectInfoService {
     public ProjectInfo update(ProjectInfoDto projectInfoDto, JwtUser jwtUser) throws GlobalServiceException {
         String username = jwtUser.getUsername();
         ProjectInfo projectInfo = this.findOne(projectInfoDto.getProjectId());
-        Attachment attachmentn = projectInfoDto.getAttachment_n();//中标通知书
-        Attachment attachmentc = projectInfoDto.getAttachment_c();//合同
-        Attachment attachmentp = projectInfoDto.getAttachment_p();//采购结果通知书
-        Long attachmentnId =null;
-        Long attachmentcId =null;
-        Long attachmentpId =null;
         CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(Long.parseLong(projectInfoDto.getCargoId()));//货物
         ProjectInfo model=new ProjectInfo();
         model.setProjectId(projectInfo.getProjectId());
@@ -260,43 +254,10 @@ public class ProjectInfoService {
         if(null!=projectInfoDto.getInquiryId()){
             model.setInquiryId(projectInfoDto.getInquiryId());//询价
         }
-
-        //SpringUtil.copyPropertiesIgnoreNull(projectInfoDto, projectInfo);
-        if (projectInfo != null && attachmentn == null && attachmentc == null && attachmentp ==null && cargoInfo == null ) {
-            projectInfoRepository.save(model);
-        }
-        if (attachmentn != null) {
-            Optional<Attachment> optional = attachmentRepository.findById(attachmentn.getAttachId());
-            if (optional.isPresent()) {
-                model.setAttachment_n(optional.get());
-                attachmentnId=model.getAttachment_n().getAttachId();
-            }else {
-                attachmentnId=null;
-            }
-        }
-        if (attachmentc != null) {
-            Optional<Attachment> optional = attachmentRepository.findById(attachmentc.getAttachId());
-            if (optional.isPresent()) {
-                model.setAttachment_c(optional.get());
-                attachmentnId=model.getAttachment_c().getAttachId();
-            }else {
-                attachmentcId=null;
-            }
-        }
-        if (attachmentp != null) {
-            Optional<Attachment> optional = attachmentRepository.findById(attachmentp.getAttachId());
-            if (optional.isPresent()) {
-                model.setAttachment_p(optional.get());
-                attachmentnId=model.getAttachment_p().getAttachId();
-            }else {
-                attachmentpId=null;
-            }
-        }
-
         projectInfoRepository.update(model.getProjectId(),model.getProjectSubject(),model.getPurchaser(),
                 model.getCurrency(),model.getDeliveryDate(),model.getDeliveryDateStatus(),model.getGuaranteeDate(),model.getGuaranteeFee(),
-                model.getPaymentMethod(),model.getPriceTerm(),model.getCargoTotal(),model.getAmount(),model.getStatus(), attachmentnId,
-                attachmentcId,attachmentpId, projectInfoDto.getInquiryInfo().getInquiryId(),model.getCreator(),model.getProjectCode(),model.getIsDelete(),model.getQuantity());
+                model.getPaymentMethod(),model.getPriceTerm(),model.getCargoTotal(),model.getAmount(),model.getStatus(),
+                 projectInfoDto.getInquiryInfo().getInquiryId(),model.getCreator(),model.getProjectCode(),model.getIsDelete(),model.getQuantity());
 
         agentInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
         //供应商
