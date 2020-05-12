@@ -118,7 +118,7 @@ public class AgentInfoController extends GenericController {
                                        @RequestParam(value = "agentName", required = false) String agentName) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
 
-        List<PartnerInfo> agentlist = agentInfoService.findAgentsList(agentName);
+        List<Map<String,Object>> agentlist = agentInfoService.findAgentsList(agentName);
         responseBuilder.data(agentlist);
         return responseBuilder.build();
     }

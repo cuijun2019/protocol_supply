@@ -270,9 +270,9 @@ public class AgentInfoService {
         }
     }
 
-    public List<PartnerInfo> findAgentsList(String agentName) {
+    public List<Map<String,Object>> findAgentsList(String agentName) {
         //是否有搜索条件
-        List<PartnerInfo> partnerInfoList = new ArrayList<>();
+        List<Map<String,Object>> partnerInfoList = new ArrayList<>();
         if (Strings.isNotBlank(agentName)){
              partnerInfoList = partnerInfoRepository.findVerifiedSuppliersByagentName(agentName);
         }else {
