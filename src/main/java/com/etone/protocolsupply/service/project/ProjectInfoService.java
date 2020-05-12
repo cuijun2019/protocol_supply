@@ -254,6 +254,9 @@ public class ProjectInfoService {
         if(null!=projectInfoDto.getInquiryId()){
             model.setInquiryId(projectInfoDto.getInquiryId());//询价
         }
+        model.setAttachment_p(projectInfo.getAttachment_p());
+        model.setAttachment_c(projectInfo.getAttachment_c());
+        model.setAttachment_n(projectInfo.getAttachment_n());
         projectInfoRepository.update(model.getProjectId(),model.getProjectSubject(),model.getPurchaser(),
                 model.getCurrency(),model.getDeliveryDate(),model.getDeliveryDateStatus(),model.getGuaranteeDate(),model.getGuaranteeFee(),
                 model.getPaymentMethod(),model.getPriceTerm(),model.getCargoTotal(),model.getAmount(),model.getStatus(),
