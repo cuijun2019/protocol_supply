@@ -1,7 +1,5 @@
 package com.etone.protocolsupply.service.partner;
 
-import com.etone.protocolsupply.constant.Constant;
-import com.etone.protocolsupply.exception.GlobalServiceException;
 import com.etone.protocolsupply.model.dto.partner.PartnerInfoCollectionDto;
 import com.etone.protocolsupply.model.dto.partner.PartnerInfoDto;
 import com.etone.protocolsupply.model.entity.supplier.BankInfo;

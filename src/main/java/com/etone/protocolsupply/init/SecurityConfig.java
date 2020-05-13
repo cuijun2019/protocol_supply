@@ -37,7 +37,7 @@ public class SecurityConfig {
             SpringCacheBasedUserCache basedUserCache = new SpringCacheBasedUserCache(cache);
             return basedUserCache;
         } catch (Exception e){
-            log.error("create user cache failed {}.",e.getMessage());
+            log.error("create system cache failed {}.",e.getMessage());
         }
         return null;
     }

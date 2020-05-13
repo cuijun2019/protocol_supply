@@ -6,10 +6,12 @@ import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.LoginRequest;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.systemControl.UserDto;
+import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
 import com.etone.protocolsupply.model.entity.user.PermissionComparator;
 import com.etone.protocolsupply.model.entity.user.Permissions;
 import com.etone.protocolsupply.model.entity.user.Role;
 import com.etone.protocolsupply.model.entity.user.User;
+import com.etone.protocolsupply.repository.supplier.PartnerInfoRepository;
 import com.etone.protocolsupply.service.security.JwtTokenUtil;
 import com.etone.protocolsupply.service.system.UserService;
 import com.etone.protocolsupply.utils.RedisUtil;
@@ -73,6 +75,9 @@ public class LoginController {
     @Resource
     private RedisUtil redisUtil;
 
+    @Autowired
+    private PartnerInfoRepository partnerInfoRepository;
+
     @RequestMapping(value = "${jwt.route.authentication.path}", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@Validated @RequestBody LoginRequest authenticationRequest) {
 
@@ -85,7 +90,7 @@ public class LoginController {
         //check code
         String code_session = (String) redisUtil.get("verifyCode");
         if(!code_session.equalsIgnoreCase(code)){
-            return ResponseEntity.ok(ResponseValue.createBuilder().data("验证码错误").build());
+            return ResponseEntity.ok(ResponseValue.createBuilder().data("验证码错误或验证码已过期").build());
         }
 
         Authentication authentication = null;
@@ -102,8 +107,15 @@ public class LoginController {
         UserDto userDto = new UserDto();
         User user = userService.findUserByUsername(username);
         List<Role> roles = user.getRoles();
+        //判断要登录的用户身份如果是供应商或者代理商，未通过自动审核的暂时不准登录
         for (int i = 0; i < roles.size(); i++) {
             Role role = roles.get(i);
+            if(role.getId()==1 || role.getId()==2){
+                PartnerInfo partnerInfo = partnerInfoRepository.findById(user.getPartnerInfo().getPartnerId()).get();
+                if(partnerInfo.getAuthStatus()==2){
+                    return ResponseEntity.ok(ResponseValue.createBuilder().data("当前登录用户未通过审核").build());
+                }
+            }
             Set<Permissions> permissions = role.getPermissions();
             TreeSet<Permissions> tree = new TreeSet<>(new PermissionComparator());
             tree.addAll(permissions);
