@@ -109,8 +109,8 @@ public class PartInfoService {
         };
     }
 
-    public Page<PartInfo> findPartInfos(String cargoId, String isDelete, Pageable pageable) {
-        return Common.listConvertToPage(partInfoRepository.findAll(cargoId, isDelete), pageable);
+    public Page<PartInfo> findPartInfos(String cargoId, String isDelete,String cargoName, String cName,String actor,Pageable pageable) {
+        return Common.listConvertToPage(partInfoRepository.findAll(cargoId, isDelete,cargoName,cName,actor), pageable);
     }
 
     //货物项目-配件列表

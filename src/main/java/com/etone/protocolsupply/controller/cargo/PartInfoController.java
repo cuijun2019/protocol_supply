@@ -77,11 +77,14 @@ public class PartInfoController extends GenericController {
                                       @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
                                       @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
                                       @RequestParam(value = "cargoId", required = false) String cargoId,
+                                      @RequestParam(value = "cargoName", required = false) String cargoName,
+                                      @RequestParam(value = "cName", required = false) String cName,
+                                      @RequestParam(value = "actor", required = false) String actor,
                                       HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort = new Sort(Sort.Direction.DESC, "partId");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Page<PartInfo> page = partInfoService.findPartInfos(cargoId, isDelete, pageable);
+        Page<PartInfo> page = partInfoService.findPartInfos(cargoId, isDelete,cargoName,cName,actor, pageable);
         PartCollectionDto partCollectionDto = partInfoService.to(page, request);
         for (PartInfoDto partInfoDto : partCollectionDto.getPartInfoDtos()) {
             partInfoDto.getCargoInfo().setPartInfos(null);
