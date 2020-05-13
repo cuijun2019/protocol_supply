@@ -79,7 +79,7 @@ public class LoginController {
     private PartnerInfoRepository partnerInfoRepository;
 
     @RequestMapping(value = "${jwt.route.authentication.path}", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(@Validated @RequestBody LoginRequest authenticationRequest) {
+    public ResponseEntity<?> createAuthenticationToken(@Validated @RequestBody LoginRequest authenticationRequest,HttpServletRequest request) {
 
         String username = authenticationRequest.getUsername();
         String password = authenticationRequest.getPassword();
@@ -88,7 +88,7 @@ public class LoginController {
         Objects.requireNonNull(password);
 
         //check code
-        String code_session = (String) redisUtil.get("verifyCode");
+        String code_session = (String) redisUtil.get(request.getSession().getId());
         if(!code_session.equalsIgnoreCase(code)){
             return ResponseEntity.ok(ResponseValue.createBuilder().data("验证码错误或验证码已过期").build());
         }
@@ -203,7 +203,8 @@ public class LoginController {
             //HttpSession session = request.getSession(true);
             //session.setAttribute("_code", verifyCode.toLowerCase());
             //存入redis
-            redisUtil.set("verifyCode",verifyCode,120);
+
+            redisUtil.set(request.getSession().getId(),verifyCode,120);
             //生成图片
             int w = 146, h = 33;
             VerifyCodeUtils.outputImage(w, h, response.getOutputStream(), verifyCode);
