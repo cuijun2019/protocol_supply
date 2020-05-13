@@ -63,6 +63,12 @@ public class AgentInfoExp implements Serializable {
     private Integer isDelete;
 
     /**
+     * 备注
+     */
+    @Column(name = "REMARK", length = 2000)
+    private String remark;
+
+    /**
      * 厂家授权函
      */
     @OneToOne(fetch = FetchType.LAZY)
