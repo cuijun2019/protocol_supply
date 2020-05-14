@@ -262,17 +262,37 @@ public class ProjectInfoService {
                 model.getPaymentMethod(),model.getPriceTerm(),model.getCargoTotal(),model.getAmount(),model.getStatus(),
                  projectInfoDto.getInquiryInfo().getInquiryId(),model.getCreator(),model.getProjectCode(),model.getIsDelete(),model.getQuantity());
 
-        agentInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
+
         //供应商
         AgentInfoExp agentInfoExp=projectInfoDto.getAgentInfoExp();
-        if (agentInfoExp != null ) {
-                agentInfoExp.setReviewStatus(1);
-                agentInfoExp.setIsDelete(Constant.DELETE_NO);
-                agentInfoExp.setCreateDate(new Date());
-                agentInfoExp.setCreator(username);
-                agentInfoExp.setProjectInfo(model);
-                agentInfoExpRepository.save(agentInfoExp);
+        List<AgentInfoExp> list=agentInfoExpRepository.findByProjectId(projectInfoDto.getProjectId());
+        if(list.get(0).getAgentId().equals(agentInfoExp.getAgentId())){
+            AgentInfoExp agentInfoExp1=new AgentInfoExp();
+            if(agentInfoExp.getAgentId()!=null) {
+                Optional<AgentInfoExp> optional=agentInfoExpRepository.findById(agentInfoExp.getAgentId());
+                if (optional.isPresent()){
+                    agentInfoExp1=optional.get();
+                    agentInfoExp.setRemark(agentInfoExp1.getRemark());
+                    agentInfoExp.setReviewStatus(agentInfoExp1.getReviewStatus());
+                    agentInfoExp.setIsDelete(Constant.DELETE_NO);
+                    agentInfoExp.setCreateDate(new Date());
+                    agentInfoExp.setCreator(agentInfoExp1.getCreator());
+                    agentInfoExp.setAttachment(agentInfoExp1.getAttachment());
+                    agentInfoExp.setProjectInfo(model);
+                    agentInfoExpRepository.save(agentInfoExp);
+                }
+            }
+        }else {
+            agentInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
+            agentInfoExp.setAgentId(null);
+            agentInfoExp.setIsDelete(Constant.DELETE_NO);
+            agentInfoExp.setCreateDate(new Date());
+            agentInfoExp.setCreator(username);
+            agentInfoExp.setAttachment(agentInfoExp.getAttachment());
+            agentInfoExp.setProjectInfo(model);
+            agentInfoExpRepository.save(agentInfoExp);
         }
+
         partInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
         //货物配件
         Set<PartInfoExp>partInfoExps=projectInfoDto.getPartInfoExps();
