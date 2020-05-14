@@ -90,7 +90,7 @@ public class LoginController {
         //check code
         String code_session = (String) redisUtil.get(request.getSession().getId());
         if(!code_session.equalsIgnoreCase(code)){
-            return ResponseEntity.ok(ResponseValue.createBuilder().data("验证码错误或验证码已过期").build());
+            return ResponseEntity.ok(ResponseValue.createBuilder().message("验证码错误或验证码已过期").build());
         }
 
         Authentication authentication = null;
@@ -98,7 +98,7 @@ public class LoginController {
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.ok(ResponseValue.createBuilder().data("用户名或密码错误").build());
+            return ResponseEntity.ok(ResponseValue.createBuilder().message("用户名或密码错误").build());
         }
 
         // Reload password post-security so we can generate the token
@@ -113,7 +113,7 @@ public class LoginController {
             if(role.getId()==1 || role.getId()==2){
                 PartnerInfo partnerInfo = partnerInfoRepository.findById(user.getPartnerInfo().getPartnerId()).get();
                 if(partnerInfo.getAuthStatus()==2){
-                    return ResponseEntity.ok(ResponseValue.createBuilder().data("当前登录用户未通过审核").build());
+                    return ResponseEntity.ok(ResponseValue.createBuilder().message("当前登录用户未通过审核").build());
                 }
             }
             Set<Permissions> permissions = role.getPermissions();
