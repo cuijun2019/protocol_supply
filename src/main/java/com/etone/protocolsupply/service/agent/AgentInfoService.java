@@ -159,11 +159,11 @@ public class AgentInfoService {
         };
     }
 
-    public Page<AgentInfo> findAgentInfos(String agentName, String status, String isDelete,String actor, Pageable pageable) {
+    public Page<AgentInfo> findAgentInfos(String agentName, String status, String isDelete, String actor, Pageable pageable, String reviewStatus) {
         if(null == actor ||actor.equals("admin")){
-            return Common.listConvertToPage(agentInfoRepository.findAll(agentName, status, isDelete), pageable);
+            return Common.listConvertToPage(agentInfoRepository.findAll(agentName, status, isDelete,reviewStatus), pageable);
         }else {
-            return Common.listConvertToPage(agentInfoRepository.findMyAgent(agentName, status, isDelete,actor), pageable);
+            return Common.listConvertToPage(agentInfoRepository.findMyAgent(agentName, status, isDelete,actor,reviewStatus), pageable);
         }
     }
 
