@@ -265,8 +265,8 @@ public class ProjectInfoService {
 
         //供应商
         AgentInfoExp agentInfoExp=projectInfoDto.getAgentInfoExp();
-        AgentInfoExp agentInfoExpModel=agentInfoExpRepository.findByProjectId2(projectInfoDto.getProjectId());
-        if(agentInfoExpModel.getAgentId().equals(agentInfoExp.getAgentId())){
+        List<AgentInfoExp> list=agentInfoExpRepository.findByProjectId(projectInfoDto.getProjectId());
+        if(list.get(0).getAgentId().equals(agentInfoExp.getAgentId())){
             //修改推荐代理商的id和数据库存在的推荐代理商id相等（修改推荐代理商信息）
             AgentInfoExp agentInfoExp1=new AgentInfoExp();
             if(agentInfoExp.getAgentId()!=null) {
@@ -318,17 +318,15 @@ public class ProjectInfoService {
              projectInfo=optional.get();
             BeanUtils.copyProperties(projectInfo, projectInfoDto);
         }
-        AgentInfoExp agentInfoExp=agentInfoExpRepository.findByProjectId2(projectId);
+        List<AgentInfoExp> agentInfoExp=agentInfoExpRepository.findByProjectId(projectId);
         CargoInfo cargoInfo=cargoInfoRepository.findAllByProjectId(projectId);
         InquiryInfo inquiryInfo=inquiryInfoRepository.findAllByProjectId(projectId);
-        if(agentInfoExp !=null){
-            //agentInfoExp.setProjectInfo(null);
-            projectInfoDto.setAgentInfoExp(agentInfoExp);
+        if(agentInfoExp.get(0).getAgentId() !=null){
+            projectInfoDto.setAgentInfoExp(agentInfoExp.get(0));
         }else {
             projectInfoDto.setAgentInfoExp(null);
         }
         if(null!=inquiryInfo){
-            //agentInfoExp.setProjectInfo(null);
             inquiryInfo.getCargoInfo().setPartInfos(null);
             projectInfoDto.setInquiryInfo(inquiryInfo);
         }else {
@@ -336,9 +334,6 @@ public class ProjectInfoService {
         }
         projectInfoDto.setCargoId(cargoInfo.getCargoId().toString());
         projectInfoDto.setCargoName(cargoInfo.getCargoName());
-
-        //projectInfoDto.getInquiryInfo().getCargoInfo().setPartInfos(null);
-        //projectInfoDto.getInquiryInfo().getPartnerInfo().setContacts(null);
         return projectInfoDto;
     }
 

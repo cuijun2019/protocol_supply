@@ -6,16 +6,14 @@ import com.etone.protocolsupply.exception.GlobalServiceException;
 import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryCollectionDto;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoDto;
+import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfo;
 import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
 import com.etone.protocolsupply.repository.AttachmentRepository;
-import com.etone.protocolsupply.repository.cargo.BrandItemRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
-import com.etone.protocolsupply.repository.cargo.PartInfoRepository;
 import com.etone.protocolsupply.repository.inquiry.InquiryInfoRepository;
 import com.etone.protocolsupply.repository.supplier.PartnerInfoRepository;
-import com.etone.protocolsupply.service.cargo.PartInfoService;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.poi.hssf.usermodel.*;
@@ -46,6 +44,8 @@ public class InquiryInfoService {
     private InquiryInfoRepository inquiryInfoRepository;
     @Autowired
     private PartnerInfoRepository partnerInfoRepository;
+    @Autowired
+    private AttachmentRepository attachmentRepository;
     @Autowired
     private PagingMapper         pagingMapper;
 
@@ -96,6 +96,15 @@ public class InquiryInfoService {
         InquiryInfo inquiryInfo = new InquiryInfo();
         BeanUtils.copyProperties(inquiryInfoDto, inquiryInfo);
         CargoInfo cargoInfo = inquiryInfoDto.getCargoInfo();
+        Attachment attachment = inquiryInfoDto.getAttachment();
+        if (attachment != null && attachment.getAttachId()!=null && !attachment.getAttachId().equals("")) {
+            Optional<Attachment> optional = attachmentRepository.findById(attachment.getAttachId());
+            if (optional.isPresent()) {
+                inquiryInfo.setAttachment(optional.get());
+            }
+        }else {
+            inquiryInfo.setAttachment(null);
+        }
         if (cargoInfo != null && cargoInfo.getCargoId()!=null && !cargoInfo.getCargoId().equals("")) {
             Optional<CargoInfo> optional = cargoInfoRepository.findById(cargoInfo.getCargoId());
             if (optional.isPresent()) {
