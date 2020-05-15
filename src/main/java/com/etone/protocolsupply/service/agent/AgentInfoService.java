@@ -160,14 +160,13 @@ public class AgentInfoService {
     }
 
     public Page<AgentInfo> findAgentInfos(String agentName, String status, String isDelete, String actor, Pageable pageable, String reviewStatus) {
-        if(null == actor ||actor.equals("admin")){
-            return Common.listConvertToPage(agentInfoRepository.findAll(agentName, status, isDelete,reviewStatus), pageable);
-        }else {
-            return Common.listConvertToPage(agentInfoRepository.findMyAgent(agentName, status, isDelete,actor,reviewStatus), pageable);
-        }
+        return Common.listConvertToPage(agentInfoRepository.findMyAgent(agentName, status, isDelete,actor,reviewStatus), pageable);
     }
 
-
+    public Page<AgentInfo> getAgentList( String status, String isDelete, String actor, Pageable pageable, String reviewStatus) {
+        List<AgentInfo> list=agentInfoRepository.getAgentList(status,actor, isDelete,reviewStatus);
+        return Common.listConvertToPage(list, pageable);
+    }
     public Page<AgentInfo> findAgents(Specification<AgentInfo> specification, Pageable pageable) {
         return agentInfoRepository.findAll(specification, pageable);
     }
@@ -185,6 +184,34 @@ public class AgentInfoService {
             agentInfoDto = new AgentInfoDto();
             BeanUtils.copyProperties(agentInfo, agentInfoDto);
             agentCollectionDto.add(agentInfoDto);
+        }
+        return agentCollectionDto;
+    }
+
+    public AgentCollectionDto getAgentListTo(Page<AgentInfo> source, HttpServletRequest request,String projectId) {
+        AgentCollectionDto agentCollectionDto = new AgentCollectionDto();
+        pagingMapper.storeMappedInstanceBefore(source, agentCollectionDto, request);
+        AgentInfoDto agentInfoDto;
+        if(null!=projectId && !"".equals(projectId)){//修改编辑项目
+            AgentInfoExp agentInfoExp=agentInfoExpRepository.findByProjectId2(Long.parseLong(projectId));
+            for (AgentInfo agentInfo : source) {
+                agentInfoDto = new AgentInfoDto();
+                if(agentInfoExp.getOldAgentId().equals(agentInfo.getAgentId())){
+                    //如果代理商拓展表存在该代理商信息，替换原来的代理商信息，显示新建项目所推荐的代理商信息（备注字段）
+                    BeanUtils.copyProperties(agentInfoExp, agentInfoDto);
+                    agentInfoDto.setRemark(agentInfoExp.getRemark());
+                    agentCollectionDto.add(agentInfoDto);
+                }else {
+                    BeanUtils.copyProperties(agentInfo, agentInfoDto);
+                    agentCollectionDto.add(agentInfoDto);
+                }
+            }
+        }else {//新建项目
+            for (AgentInfo agentInfo : source) {
+                agentInfoDto = new AgentInfoDto();
+                    BeanUtils.copyProperties(agentInfo, agentInfoDto);
+                    agentCollectionDto.add(agentInfoDto);
+            }
         }
         return agentCollectionDto;
     }

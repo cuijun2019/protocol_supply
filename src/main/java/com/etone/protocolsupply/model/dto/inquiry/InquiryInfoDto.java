@@ -6,4 +6,5 @@ import lombok.Data;
 
 @Data
 public class InquiryInfoDto extends InquiryInfo {
+    private String id;
 }

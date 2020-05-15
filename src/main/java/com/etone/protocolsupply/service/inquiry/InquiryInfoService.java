@@ -65,7 +65,6 @@ public class InquiryInfoService {
         }
         inquiryInfo.setInquiryDate(date);//询价时间
         inquiryInfo.setIsDelete(Constant.DELETE_NO);
-        inquiryInfo.setStatus(1);//询价状态
         inquiryInfo.setRemark("配件列表");//配件导出接口连接，传参：货物id
         CargoInfo cargoInfo = inquiryInfoDto.getCargoInfo();
         if (cargoInfo != null && cargoInfo.getCargoId()!=null && !cargoInfo.getCargoId().equals("")) {
@@ -91,6 +90,9 @@ public class InquiryInfoService {
     }
 
     public InquiryInfo update(InquiryInfoDto inquiryInfoDto) throws GlobalServiceException{
+        if(null!=inquiryInfoDto.getId() && !"".equals(inquiryInfoDto.getId())){
+            inquiryInfoDto.setInquiryId(Long.parseLong(inquiryInfoDto.getId()));
+        }
         InquiryInfo inquiryInfo = new InquiryInfo();
         BeanUtils.copyProperties(inquiryInfoDto, inquiryInfo);
         CargoInfo cargoInfo = inquiryInfoDto.getCargoInfo();

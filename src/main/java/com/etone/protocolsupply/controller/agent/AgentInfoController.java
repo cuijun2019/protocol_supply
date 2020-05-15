@@ -105,6 +105,37 @@ public class AgentInfoController extends GenericController {
         return responseBuilder.build();
     }
 
+    /**
+     * 新建项目-推荐代理商列表
+     * @param status
+     * @param isDelete
+     * @param currentPage
+     * @param pageSize
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/proGetAgentList",method = RequestMethod.GET,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    public ResponseValue getAgentList(@Validated
+                                   @RequestParam(value = "projectId", required = false) String projectId,
+                                   @RequestParam(value = "status", required = false,defaultValue = "1") String status,
+                                   @RequestParam(value = "isDelete", required = false,defaultValue = "2") String isDelete,
+                                   @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
+                                   @RequestParam(value = "pageSize", required = false, defaultValue = "1000") Integer pageSize,
+                                   @RequestParam(value = "actor", required = false) String actor,
+                                   @RequestParam(value = "reviewStatus",required = false)String reviewStatus,
+                                   HttpServletRequest request) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        Sort sort = new Sort(Sort.Direction.DESC, "createDate");
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
+        Page<AgentInfo> page = agentInfoService.getAgentList(status, isDelete, actor,pageable,reviewStatus);
+        AgentCollectionDto agentCollectionDto = agentInfoService.getAgentListTo(page, request,projectId);
+        responseBuilder.data(agentCollectionDto);
+        return responseBuilder.build();
+    }
+
 
     /**
      * 查询符合条件的代理商，筛选条件为代理商名称

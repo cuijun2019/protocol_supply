@@ -17,10 +17,19 @@ import java.util.Date;
 @Table(name = "AGENT_INFO_EXP")
 public class AgentInfoExp implements Serializable {
 
+    /**
+     * 代理商拓展表id
+     */
     @Id
     @Column(name = "AGENT_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long agentId;
+
+    /**
+     * 代理商原本id
+     */
+    @Column(name = "OLD_AGENT_ID")
+    private Long oldAgentId;
 
     /**
      * 代理商名称

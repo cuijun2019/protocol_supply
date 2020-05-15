@@ -265,8 +265,9 @@ public class ProjectInfoService {
 
         //供应商
         AgentInfoExp agentInfoExp=projectInfoDto.getAgentInfoExp();
-        List<AgentInfoExp> list=agentInfoExpRepository.findByProjectId(projectInfoDto.getProjectId());
-        if(list.get(0).getAgentId().equals(agentInfoExp.getAgentId())){
+        AgentInfoExp agentInfoExpModel=agentInfoExpRepository.findByProjectId2(projectInfoDto.getProjectId());
+        if(agentInfoExpModel.getAgentId().equals(agentInfoExp.getAgentId())){
+            //修改推荐代理商的id和数据库存在的推荐代理商id相等（修改推荐代理商信息）
             AgentInfoExp agentInfoExp1=new AgentInfoExp();
             if(agentInfoExp.getAgentId()!=null) {
                 Optional<AgentInfoExp> optional=agentInfoExpRepository.findById(agentInfoExp.getAgentId());
@@ -283,13 +284,15 @@ public class ProjectInfoService {
                 }
             }
         }else {
+            //修改推荐代理商的id和数据库存在的推荐代理商id不相等（新增推荐代理商信息）
             agentInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
-            agentInfoExp.setAgentId(null);
+            agentInfoExp.setOldAgentId(agentInfoExp.getAgentId());
             agentInfoExp.setIsDelete(Constant.DELETE_NO);
             agentInfoExp.setCreateDate(new Date());
             agentInfoExp.setCreator(username);
             agentInfoExp.setAttachment(agentInfoExp.getAttachment());
             agentInfoExp.setProjectInfo(model);
+            agentInfoExp.setAgentId(null);
             agentInfoExpRepository.save(agentInfoExp);
         }
 
@@ -304,7 +307,6 @@ public class ProjectInfoService {
                 partInfoExpRepository.save(partInfoExp);
             }
         }
-
         return model;
     }
 
