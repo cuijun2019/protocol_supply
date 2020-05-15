@@ -193,13 +193,13 @@ public class AgentInfoService {
         pagingMapper.storeMappedInstanceBefore(source, agentCollectionDto, request);
         AgentInfoDto agentInfoDto;
         if(null!=projectId && !"".equals(projectId)){//修改编辑项目
-            AgentInfoExp agentInfoExp=agentInfoExpRepository.findByProjectId2(Long.parseLong(projectId));
+            List<AgentInfoExp> agentInfoExp=agentInfoExpRepository.findByProjectId(Long.parseLong(projectId));
             for (AgentInfo agentInfo : source) {
                 agentInfoDto = new AgentInfoDto();
-                if(agentInfoExp.getOldAgentId().equals(agentInfo.getAgentId())){
+                if(agentInfoExp.get(0).getOldAgentId().equals(agentInfo.getAgentId())){
                     //如果代理商拓展表存在该代理商信息，替换原来的代理商信息，显示新建项目所推荐的代理商信息（备注字段）
-                    BeanUtils.copyProperties(agentInfoExp, agentInfoDto);
-                    agentInfoDto.setRemark(agentInfoExp.getRemark());
+                    BeanUtils.copyProperties(agentInfoExp.get(0), agentInfoDto);
+                    agentInfoDto.setRemark(agentInfoExp.get(0).getRemark());
                     agentCollectionDto.add(agentInfoDto);
                 }else {
                     BeanUtils.copyProperties(agentInfo, agentInfoDto);

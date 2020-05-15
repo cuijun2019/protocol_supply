@@ -139,7 +139,6 @@ public class ProjectInfoService {
         return projectInfo;
     }
     public List<CargoInfo> getSetCargoInfo(String actor) throws GlobalServiceException {
-
         List<CargoInfo> cargoInfos= cargoInfoRepository.findAllByactor(actor,3,2);
         for(CargoInfo cargoInfo: cargoInfos){
             cargoInfo.setPartInfos(null);
