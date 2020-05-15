@@ -3,8 +3,10 @@ package com.etone.protocolsupply.controller.project;
 import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.PartExpCollectionDto;
 import com.etone.protocolsupply.model.dto.ResponseValue;
+import com.etone.protocolsupply.model.dto.cargo.CargoInfoDto;
 import com.etone.protocolsupply.model.dto.project.ProjectCollectionDto;
 import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
+import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.project.PartInfoExp;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.service.cargo.PartInfoService;
@@ -120,6 +122,25 @@ public class ProjectInfoController extends GenericController {
         Page<PartInfoExp> page = partInfoService.findPartInfoExps(projectId, isDelete, pageable);
         PartExpCollectionDto partInfoExpDtos = partInfoService.toExp(page, request);
         responseBuilder.data(partInfoExpDtos);
+        return responseBuilder.build();
+    }
+
+    /**
+     * 新增项目-查询供应商下所有审核通过的货物信息
+     *
+     * @param actor
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getSetCargoInfo/{actor}",
+            method = RequestMethod.GET,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    public ResponseValue getSetCargoInfo(@Validated
+                                             @PathVariable("actor") String actor) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        List<CargoInfo> cargoInfoDtos = projectInfoService.getSetCargoInfo(actor);
+        responseBuilder.data(cargoInfoDtos);
         return responseBuilder.build();
     }
 

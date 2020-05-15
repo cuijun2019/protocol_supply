@@ -3,6 +3,7 @@ package com.etone.protocolsupply.service.project;
 import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.exception.GlobalServiceException;
 import com.etone.protocolsupply.model.dto.JwtUser;
+import com.etone.protocolsupply.model.dto.cargo.CargoInfoDto;
 import com.etone.protocolsupply.model.dto.project.ProjectCollectionDto;
 import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
 import com.etone.protocolsupply.model.entity.Attachment;
@@ -137,6 +138,15 @@ public class ProjectInfoService {
         }
         return projectInfo;
     }
+    public List<CargoInfo> getSetCargoInfo(String actor) throws GlobalServiceException {
+
+        List<CargoInfo> cargoInfos= cargoInfoRepository.findAllByactor(actor,3,2);
+        for(CargoInfo cargoInfo: cargoInfos){
+            cargoInfo.setPartInfos(null);
+        }
+        return cargoInfos;
+    }
+
 
     public Set<PartInfoExp> savePartExp(ProjectInfoDto projectInfoDto, JwtUser jwtUser) throws GlobalServiceException {
         Optional<CargoInfo> optional = cargoInfoRepository.findById(Long.parseLong(projectInfoDto.getCargoId()));

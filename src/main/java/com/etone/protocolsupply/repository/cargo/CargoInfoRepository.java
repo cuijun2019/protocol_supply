@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 public interface CargoInfoRepository extends JpaRepository<CargoInfo, Long>, JpaSpecificationExecutor<CargoInfo> {
 
@@ -63,4 +64,8 @@ public interface CargoInfoRepository extends JpaRepository<CargoInfo, Long>, Jpa
             "and if((?2 is not null), (b.parent_actor=?2 or b.next_actor=?2), (1=1)))" +
             " and  c.is_delete=?1 ", nativeQuery = true)
     List<CargoInfo> findAllExpert(Integer isDelete,String actor );
+
+    @Query(value = "select * from cargo_info  where is_delete=?3 " +
+            "and status=?2 and creator=?1 order by create_date desc", nativeQuery = true)
+    List<CargoInfo> findAllByactor(String actor,Integer status ,Integer isDelete);
 }
