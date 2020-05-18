@@ -136,7 +136,8 @@ public class BusiJbpmFlowService {
     public Page<BusiJbpmFlow> findBusiJF(String businessType, String businessSubject,Integer type,Integer readType,
                                          String businessId,String parentActor,String nextActor, Pageable pageable) {
         Integer action =null;
-        if(type==0){
+        if( null!=type && type==0 ){
+            //待办节点没有草稿状态
             action=1;
         }
         return Common.listConvertToPage(busiJbpmFlowRepository.findAllList(businessType, businessSubject, type,readType,
