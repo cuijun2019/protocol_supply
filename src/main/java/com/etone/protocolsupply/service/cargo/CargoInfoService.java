@@ -94,7 +94,9 @@ public class CargoInfoService {
         if (partInfos != null && !partInfos.isEmpty()) {
             String partSerial = partInfoService.findLastPartSerial(cargoInfo.getCargoSerial());
             int step = 0;
+            double total = 0.00;
             for (PartInfo partInfo : partInfos) {
+                total+=partInfo.getTotal();
                 if (step == 0) {
                     partInfo.setPartSerial(Common.convertSerial(partSerial, 0));
                 } else {
@@ -104,7 +106,9 @@ public class CargoInfoService {
                 partInfo.setIsDelete(Constant.DELETE_NO);
                 step++;
             }
+            cargoInfo.setReprice(total);//货物的参考价格
         }
+
         cargoInfo = cargoInfoRepository.save(cargoInfo);
         List<Long> partIds = new ArrayList<>();
         if(partInfos.size()>0){
