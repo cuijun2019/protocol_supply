@@ -37,7 +37,7 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying
-    @Query(value = "update busi_jbpm_flow set next_actor=:nextActor where id=:id", nativeQuery = true)
+    @Query(value = "update busi_jbpm_flow set next_actor=:nextActor ,action =2 where id=:id", nativeQuery = true)
     void upNextActor(@Param("id") Long id,@Param("nextActor") String nextActor);
 
 
@@ -85,4 +85,18 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
     List<BusiJbpmFlow> updateNextActor(@Param("businessId") String businessId,@Param("businessType") String businessType
             ,@Param("type") Integer type);
 
+
+    @Query(value = "select * from busi_jbpm_flow where 1=1 " +
+            " and if((:businessType is not null), (business_type =:businessType), (1=1)) " +
+            " and if((:businessSubject is not null), (business_subject like %:businessSubject%), (1=1))  " +
+            " and if((:type is not null), (type=:type), (1=1))  " +
+            " and if((:readType is not null), (read_type=:readType), (1=1))  " +
+            " and if((:businessId is not null), (business_id=:businessId), (1=1))  " +
+            " and if((:parentActor is not null), (parent_actor=:parentActor), (1=1))  " +
+            " and if((:nextActor is not null), (next_actor=:nextActor), (1=1))  " +
+            " and if((:action is not null), (action !=:action), (1=1))  " +
+            " ", nativeQuery = true)
+    List<BusiJbpmFlow> findAllList(@Param("businessType") String businessType,@Param("businessSubject") String businessSubject
+            ,@Param("type") Integer type,@Param("readType") Integer readType,@Param("businessId") String businessId,
+                                   @Param("parentActor") String parentActor,@Param("nextActor") String nextActor,@Param("action") Integer action);
 }

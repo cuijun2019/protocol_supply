@@ -9,6 +9,7 @@ import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
 import com.etone.protocolsupply.model.entity.user.Role;
 import com.etone.protocolsupply.repository.procedure.BusiJbpmFlowRepository;
 import com.etone.protocolsupply.repository.user.RoleRepository;
+import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
@@ -132,8 +133,14 @@ public class BusiJbpmFlowService {
         };
     }
 
-    public Page<BusiJbpmFlow> findAgents(Specification<BusiJbpmFlow> specification, Pageable pageable) {
-        return busiJbpmFlowRepository.findAll(specification, pageable);
+    public Page<BusiJbpmFlow> findBusiJF(String businessType, String businessSubject,Integer type,Integer readType,
+                                         String businessId,String parentActor,String nextActor, Pageable pageable) {
+        Integer action =null;
+        if(type==0){
+            action=1;
+        }
+        return Common.listConvertToPage(busiJbpmFlowRepository.findAllList(businessType, businessSubject, type,readType,
+                businessId,parentActor,nextActor,action), pageable);
     }
 
     public BusiJbpmFlowCollectionDto to(Page<BusiJbpmFlow> source, HttpServletRequest request,JwtUser jwtUser) {

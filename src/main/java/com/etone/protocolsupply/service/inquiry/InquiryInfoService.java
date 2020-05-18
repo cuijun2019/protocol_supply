@@ -90,11 +90,16 @@ public class InquiryInfoService {
     }
 
     public InquiryInfo update(InquiryInfoDto inquiryInfoDto) throws GlobalServiceException{
-        if(null!=inquiryInfoDto.getId() && !"".equals(inquiryInfoDto.getId())){
-            inquiryInfoDto.setInquiryId(Long.parseLong(inquiryInfoDto.getId()));
-        }
         InquiryInfo inquiryInfo = new InquiryInfo();
         BeanUtils.copyProperties(inquiryInfoDto, inquiryInfo);
+        if(null!=inquiryInfoDto.getId() && !"".equals(inquiryInfoDto.getId())){
+            inquiryInfoDto.setInquiryId(Long.parseLong(inquiryInfoDto.getId()));
+            InquiryInfo inquiryInfo1=inquiryInfoRepository.findAllByInquiryId(Long.parseLong(inquiryInfoDto.getId()));
+            inquiryInfo.setIsDelete(inquiryInfo1.getIsDelete());
+            inquiryInfo.setInquiryDate(inquiryInfo1.getInquiryDate());
+            inquiryInfo.setRemark(inquiryInfo1.getRemark());
+            inquiryInfo.setRePrice(inquiryInfo1.getRePrice());
+        }
         CargoInfo cargoInfo = inquiryInfoDto.getCargoInfo();
         Attachment attachment = inquiryInfoDto.getAttachment();
         if (attachment != null && attachment.getAttachId()!=null && !attachment.getAttachId().equals("")) {
