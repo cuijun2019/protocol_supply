@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 public class CargoInfoDto extends CargoInfo {
     private PartnerInfo partnerInfo;
-
     private Long cargoId;
     private String cargoName;
 }

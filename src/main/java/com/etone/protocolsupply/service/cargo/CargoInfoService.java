@@ -141,7 +141,6 @@ public class CargoInfoService {
         CargoInfoDto cargoInfoDto;
         for (CargoInfo cargoInfo : source) {
             cargoInfoDto = new CargoInfoDto();
-
             BeanUtils.copyProperties(cargoInfo, cargoInfoDto);
             if(null!=cargoInfo.getPartnerId()){
                 Optional<PartnerInfo> optional=partnerInfoRepository.findById(cargoInfo.getPartnerId());
@@ -160,12 +159,20 @@ public class CargoInfoService {
 
     }
 
-    public CargoInfo findOne(Long cargoId) {
-//        CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(cargoId);
-//        return cargoInfo;
+    public CargoInfoDto findOne(Long cargoId) {
+        CargoInfoDto cargoInfoDto=new CargoInfoDto();
+        CargoInfo cargoInfo=new CargoInfo();
         Optional<CargoInfo> optional = cargoInfoRepository.findById(cargoId);
         if (optional.isPresent()) {
-            return optional.get();
+            cargoInfo=optional.get();
+            BeanUtils.copyProperties(cargoInfo, cargoInfoDto);
+            if(null!=cargoInfo.getPartnerId()){
+                Optional<PartnerInfo> partnerInfo =partnerInfoRepository.findById(cargoInfo.getPartnerId());
+                if(partnerInfo.isPresent()){
+                    cargoInfoDto.setPartnerInfo(partnerInfo.get());
+                }
+            }
+            return cargoInfoDto;
         } else {
             throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("通过货物id"));
         }

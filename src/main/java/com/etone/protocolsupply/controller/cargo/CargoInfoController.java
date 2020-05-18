@@ -107,7 +107,7 @@ public class CargoInfoController extends GenericController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseValue getCargo(@PathVariable("cargoId") String cargoId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        CargoInfo cargoInfo = cargoInfoService.findOne(Long.parseLong(cargoId));
+        CargoInfoDto cargoInfo = cargoInfoService.findOne(Long.parseLong(cargoId));
         //配件list
         cargoInfo.setPartInfos(null);
         responseBuilder.data(cargoInfo);
