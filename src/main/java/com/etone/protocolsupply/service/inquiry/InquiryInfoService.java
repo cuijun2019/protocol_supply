@@ -114,6 +114,7 @@ public class InquiryInfoService {
             Optional<CargoInfo> optional = cargoInfoRepository.findById(cargoInfo.getCargoId());
             if (optional.isPresent()) {
                 inquiryInfo.setCargoInfo(optional.get());
+                inquiryInfo.setRePrice(optional.get().getReprice());
             }
         }else {
             inquiryInfo.setCargoInfo(null);
