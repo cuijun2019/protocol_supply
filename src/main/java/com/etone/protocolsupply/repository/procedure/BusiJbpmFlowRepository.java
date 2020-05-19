@@ -94,9 +94,23 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
             " and if((:businessId is not null), (business_id=:businessId), (1=1))  " +
             " and if((:parentActor is not null), (parent_actor=:parentActor), (1=1))  " +
             " and if((:nextActor is not null), (next_actor=:nextActor), (1=1))  " +
-            " and if((:action is not null), (action !=:action), (1=1))  " +
+            " and if((:action is not null), (action !=:action), (1=1)) order by flow_start_time desc " +
             " ", nativeQuery = true)
     List<BusiJbpmFlow> findAllList(@Param("businessType") String businessType,@Param("businessSubject") String businessSubject
-            ,@Param("type") Integer type,@Param("readType") Integer readType,@Param("businessId") String businessId,
-                                   @Param("parentActor") String parentActor,@Param("nextActor") String nextActor,@Param("action") Integer action);
+            ,@Param("type") Integer type,@Param("readType") Integer readType,@Param("businessId") String businessId,@Param("parentActor") String parentActor
+            ,@Param("nextActor") String nextActor,@Param("action") Integer action);
+
+    @Query(value = "select * from busi_jbpm_flow where 1=1 " +
+            " and if((:businessType is not null), (business_type =:businessType), (1=1)) " +
+            " and if((:businessSubject is not null), (business_subject like %:businessSubject%), (1=1))  " +
+            " and if((:type is not null), (type=:type), (1=1))  " +
+            " and if((:readType is not null), (read_type=:readType), (1=1))  " +
+            " and if((:businessId is not null), (business_id=:businessId), (1=1))  " +
+            " and if((:parentActor is not null), (parent_actor=:parentActor), (1=1))  " +
+            " and if((:nextActor is not null), (next_actor=:nextActor), (1=1))  " +
+            " and if((:action is not null), (action !=:action), (1=1))  order by flow_start_time asc" +
+            " ", nativeQuery = true)
+    List<BusiJbpmFlow> findAllListAsc(@Param("businessType") String businessType,@Param("businessSubject") String businessSubject
+            ,@Param("type") Integer type,@Param("readType") Integer readType,@Param("businessId") String businessId,@Param("parentActor") String parentActor
+            ,@Param("nextActor") String nextActor,@Param("action") Integer action);
 }

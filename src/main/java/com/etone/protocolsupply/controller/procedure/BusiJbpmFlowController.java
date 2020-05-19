@@ -80,16 +80,10 @@ public class BusiJbpmFlowController extends GenericController {
                                        HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort=null;
-        if(timeOrder.equals("ASC")){
-            sort = new Sort(Sort.Direction.ASC, "flowStartTime");
-        }else{
-            sort = new Sort(Sort.Direction.DESC, "flowStartTime");
-        }
+        sort = new Sort(Sort.Direction.ASC, "flowStartTime");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-//        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereClause(businessType, businessSubject,
-//                type,readType,businessId,parentActor,nextActor);
         Page<BusiJbpmFlow> page = busiJbpmFlowService.findBusiJF(businessType, businessSubject,
-                type,readType,businessId,parentActor,nextActor, pageable);
+                type,readType,businessId,parentActor,nextActor,timeOrder, pageable);
         BusiJbpmFlowCollectionDto busiJbpmFlowDto = busiJbpmFlowService.to(page, request,this.getUser());
         responseBuilder.data(busiJbpmFlowDto);
         return responseBuilder.build();

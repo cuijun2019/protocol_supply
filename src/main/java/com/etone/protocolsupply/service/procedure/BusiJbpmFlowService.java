@@ -134,14 +134,20 @@ public class BusiJbpmFlowService {
     }
 
     public Page<BusiJbpmFlow> findBusiJF(String businessType, String businessSubject,Integer type,Integer readType,
-                                         String businessId,String parentActor,String nextActor, Pageable pageable) {
+                                         String businessId,String parentActor,String nextActor,String timeOrder, Pageable pageable) {
         Integer action =null;
         if( null!=type && type==0 ){
             //待办节点没有草稿状态
             action=1;
         }
-        return Common.listConvertToPage(busiJbpmFlowRepository.findAllList(businessType, businessSubject, type,readType,
-                businessId,parentActor,nextActor,action), pageable);
+        if(timeOrder.equals("ASC")){
+            return Common.listConvertToPage(busiJbpmFlowRepository.findAllListAsc(businessType, businessSubject, type,readType,
+                    businessId,parentActor,nextActor,action), pageable);
+        }else {
+            return Common.listConvertToPage(busiJbpmFlowRepository.findAllList(businessType, businessSubject, type,readType,
+                    businessId,parentActor,nextActor,action), pageable);
+        }
+
     }
 
     public BusiJbpmFlowCollectionDto to(Page<BusiJbpmFlow> source, HttpServletRequest request,JwtUser jwtUser) {
