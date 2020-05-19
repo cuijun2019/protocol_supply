@@ -71,6 +71,7 @@ public class InquiryInfoService {
             Optional<CargoInfo> optional = cargoInfoRepository.findById(cargoInfo.getCargoId());
             if (optional.isPresent()) {
                 inquiryInfo.setCargoInfo(optional.get());
+                inquiryInfo.setRePrice(optional.get().getReprice());//询价的参考价格=货物从参考价格
             }
         }else {
             inquiryInfo.setCargoInfo(null);
@@ -132,8 +133,6 @@ public class InquiryInfoService {
         inquiryInfo.getCargoInfo().setPartInfos(null);
         return inquiryInfo;
     }
-
-
 
     public Page<InquiryInfo> findInquiryInfos(String isDelete, String cargoName, String inquiryCode,String actor,Integer status, Pageable pageable) {
         if(null == actor ||actor.equals("admin")){

@@ -157,6 +157,7 @@ public class CargoInfoController extends GenericController {
         cargoInfo.setCargoCode(model.getCargoCode());
         cargoInfo.setIsDelete(model.getIsDelete());
         cargoInfo.setItemCode(model.getItemCode());
+        cargoInfo.setReprice(model.getReprice());
         cargoInfo = cargoInfoService.update(cargoInfo, this.getUser());
         responseBuilder.data(cargoInfo);
         return responseBuilder.build();

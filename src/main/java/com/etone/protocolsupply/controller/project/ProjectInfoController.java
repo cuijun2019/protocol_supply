@@ -52,7 +52,6 @@ public class ProjectInfoController extends GenericController {
                                          @RequestBody ProjectInfoDto projectInfoDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         ProjectInfo projectInfo = projectInfoService.save(projectInfoDto, this.getUser());
-        //projectInfo.getInquiryInfo().getCargoInfo().setPartInfos(null);
         responseBuilder.data(projectInfo);
         return responseBuilder.build();
     }

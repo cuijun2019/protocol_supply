@@ -139,7 +139,7 @@ public class ProjectInfoService {
         return projectInfo;
     }
     public List<CargoInfo> getSetCargoInfo(String actor) throws GlobalServiceException {
-        List<CargoInfo> cargoInfos= cargoInfoRepository.findAllByactor(actor,3,2);
+        List<CargoInfo> cargoInfos= cargoInfoRepository.findAllByactor(actor,5,2);
         for(CargoInfo cargoInfo: cargoInfos){
             cargoInfo.setPartInfos(null);
         }
@@ -171,7 +171,8 @@ public class ProjectInfoService {
     }
 
 
-    public Specification<ProjectInfo> getWhereClause(String projectSubject,String projectCode, String status,String inquiryId, String isDelete) {
+    public Specification<ProjectInfo> getWhereClause(
+            String projectSubject,String projectCode, String status,String inquiryId, String isDelete) {
         return (Specification<ProjectInfo>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (Strings.isNotBlank(projectSubject)) {
@@ -198,11 +199,9 @@ public class ProjectInfoService {
     }
 
     public Page<ProjectInfo> findMyProjectInfos(String isDelete, String projectSubject, String projectCode,String status,String inquiryId,String actor, Pageable pageable) {
-        if(null == actor ||actor.equals("admin")){
-            return Common.listConvertToPage(projectInfoRepository.findAll(isDelete, projectSubject, projectCode,status,inquiryId), pageable);
-        }else {
+
             return Common.listConvertToPage(projectInfoRepository.findAlltoMyProject(isDelete, projectSubject, projectCode,status,inquiryId,actor), pageable);
-        }
+
     }
 
     public Page<ProjectInfo> findAllByBusiJbpmFlow(String isDelete, String businessType, String parentActor, String status, Pageable pageable) {
@@ -233,7 +232,6 @@ public class ProjectInfoService {
             projectInfoDto.setGuaranteeRate(cargoInfo.getGuaranteeRate());//维保率
             projectInfoDto.setCargoTotal(projectInfo.getCargoTotal());//货物总金额
             projectCollectionDto.add(projectInfoDto);
-            //projectInfoDto.getInquiryInfo().getCargoInfo().setPartInfos(null);
         }
         return projectCollectionDto;
     }
@@ -270,7 +268,6 @@ public class ProjectInfoService {
                 model.getCurrency(),model.getDeliveryDate(),model.getDeliveryDateStatus(),model.getGuaranteeDate(),model.getGuaranteeFee(),
                 model.getPaymentMethod(),model.getPriceTerm(),model.getCargoTotal(),model.getAmount(),model.getStatus(),
                  projectInfoDto.getInquiryInfo().getInquiryId(),model.getCreator(),model.getProjectCode(),model.getIsDelete(),model.getQuantity());
-
 
         //供应商
         AgentInfoExp agentInfoExp=projectInfoDto.getAgentInfoExp();
@@ -414,9 +411,6 @@ public class ProjectInfoService {
                 row.createCell(4).setCellValue(new HSSFRichTextString("6000"));//项目总金额
                 row.createCell(5).setCellValue(new HSSFRichTextString(cargoInfo.getCurrency()));//币种
                 row.createCell(6).setCellValue(new HSSFRichTextString(Constant.REVIEW_STATUS_MAP.get(projectInfo.getStatus())));//状态
-               // row.createCell(7).setCellValue(new HSSFRichTextString(""));//采购结果通知书
-                //row.createCell(10).setCellValue(new HSSFRichTextString("6000"));//中标通知书
-                // row.createCell(11).setCellValue(new HSSFRichTextString("6000"));//合同
             }
             response.setHeader("Content-disposition", "attachment;filename=projectInfo.xls");
             response.setContentType("application/vnd.ms-excel;charset=utf-8");

@@ -187,8 +187,7 @@ public class CargoInfoService {
         String userName = jwtUser.getUsername();
         cargoInfo.setMaintenanceMan(userName);
         cargoInfo.setMaintenanceDate(date);
-       // Optional<Attachment> attachment = attachmentRepository.findById(cargoInfo.getAttachment().getAttachId());
-        if (cargoInfo != null && cargoInfo.getAttachment()== null) {
+        if (cargoInfo.getAttachment()== null) {
             cargoInfoRepository.save(cargoInfo);
         }
         if (cargoInfo.getAttachment().getAttachId() != null) {
@@ -236,7 +235,13 @@ public class CargoInfoService {
             name="审核中";
         }
         if(status==3){
-            name="待审完毕";
+            name="审核中";
+        }
+        if(status==4){
+            name="退回";
+        }
+        if(status==5){
+            name="待审通过";
         }
         return name;
     }
