@@ -39,6 +39,11 @@ public interface PartnerInfoRepository extends JpaRepository<PartnerInfo, Long>,
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying
-    @Query(value = "update partner_info set auth_date=?1,auth_method='普通认证',auth_status=1 where auth_date is null and auth_method is null and auth_status is null and is_delete=2 and register_time<?1 ", nativeQuery = true)
-    void updateByRegisterTime(Date date);
+    @Query(value = "update partner_info set auth_date=?1,auth_method='普通认证',auth_status=1 where partner_id=?2", nativeQuery = true)
+    void updateByRegisterTime(Date date, Long partnerId);
+
+    @Query(value = "select * from partner_info where auth_date is null and auth_method is null and auth_status=2  and is_delete=2",
+            nativeQuery = true)
+    List<PartnerInfo> findByAuthStatus();
+
 }
