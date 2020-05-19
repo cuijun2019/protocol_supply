@@ -9,4 +9,6 @@ public class CargoInfoDto extends CargoInfo {
     private PartnerInfo partnerInfo;
     private Long cargoId;
     private String cargoName;
+    private String fullName;//联系人
+    private String telephone;//联系人方式
 }

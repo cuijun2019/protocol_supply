@@ -12,11 +12,13 @@ import com.etone.protocolsupply.model.entity.cargo.BrandItem;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.cargo.PartInfo;
 import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
+import com.etone.protocolsupply.model.entity.user.User;
 import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.cargo.BrandItemRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.repository.cargo.PartInfoRepository;
 import com.etone.protocolsupply.repository.supplier.PartnerInfoRepository;
+import com.etone.protocolsupply.repository.user.UserRepository;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.poi.hssf.usermodel.*;
@@ -59,6 +61,9 @@ public class CargoInfoService {
     private BrandItemRepository brandItemRepository;
     @Autowired
     private PartnerInfoRepository partnerInfoRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public CargoInfo save(CargoInfoDto cargoInfoDto, JwtUser jwtUser) throws GlobalServiceException {
         Date date = new Date();
@@ -151,7 +156,11 @@ public class CargoInfoService {
                 if(optional.isPresent()){
                     cargoInfoDto.setPartnerInfo(optional.get());
                 }
-                //PartnerInfo partnerInfo=new PartnerInfo();
+                User user=userRepository.findByPartnerId(cargoInfo.getPartnerId());
+                if(null!=user){
+                    cargoInfoDto.setFullName(user.getFullname());//联系人
+                    cargoInfoDto.setTelephone(user.getTelephone());//联系人方式
+                }
             }
             cargoCollectionDto.add(cargoInfoDto);
         }
