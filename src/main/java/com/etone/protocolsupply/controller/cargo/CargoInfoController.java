@@ -249,10 +249,11 @@ public class CargoInfoController extends GenericController {
             produces = {"application/json"},
             consumes = {"multipart/form-data"})
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseValue upLoadPart(@Validated @RequestParam("file") MultipartFile uploadFile) {
+    public ResponseValue upLoadPart(@Validated @RequestParam("file") MultipartFile uploadFile
+                                    ,@RequestParam(value = "partnerId", required = false) String partnerId) {
             ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Attachment attachment = attachmentService.upload(uploadFile, this.getUser());
-        cargoInfoService.upLoad(attachment, this.getUser());
+        cargoInfoService.upLoad(attachment, this.getUser(),partnerId);
         return responseBuilder.build();
     }
 }

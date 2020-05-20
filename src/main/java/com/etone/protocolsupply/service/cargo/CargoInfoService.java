@@ -260,7 +260,7 @@ public class CargoInfoService {
     public void export(HttpServletResponse response, List<Long> cargoIds,String actor) {
         try {
             String[] header = {"货物序号", "货物品目", "货物名称", "货物编号","状态", "品牌", "型号", "主要参数",
-                    "产地", "进口/国产类别", "币种", "维保率/月", "证明文件", "备注"};
+                    "产地", "进口/国产类别","参考价格", "币种", "维保率/月", "证明文件", "备注"};
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet("货物列表");
             sheet.setDefaultColumnWidth(14);
@@ -294,9 +294,9 @@ public class CargoInfoService {
                 Attachment attachment=cargoInfo.getAttachment();
                 if(attachment!=null){
                     attachment = attachmentRepository.getOne(cargoInfo.getAttachment().getAttachId());
-                    row.createCell(12).setCellValue(new HSSFRichTextString(attachment.getAttachName()));
+                    row.createCell(13).setCellValue(new HSSFRichTextString(attachment.getAttachName()));
                 }else {
-                    row.createCell(12).setCellValue(new HSSFRichTextString(""));
+                    row.createCell(13).setCellValue(new HSSFRichTextString(""));
                 }
                 row.createCell(0).setCellValue(new HSSFRichTextString(cargoInfo.getCargoSerial()));
                 row.createCell(1).setCellValue(new HSSFRichTextString(cargoInfo.getItemName()));
@@ -308,12 +308,13 @@ public class CargoInfoService {
                 row.createCell(7).setCellValue(new HSSFRichTextString(cargoInfo.getMainParams()));
                 row.createCell(8).setCellValue(new HSSFRichTextString(cargoInfo.getManufactor()));
                 row.createCell(9).setCellValue(new HSSFRichTextString(cargoInfo.getType()));
-                row.createCell(10).setCellValue(new HSSFRichTextString(cargoInfo.getCurrency()));
-                row.createCell(11).setCellValue(new HSSFRichTextString(cargoInfo.getGuaranteeRate()));
+                row.createCell(10).setCellValue(new HSSFRichTextString(cargoInfo.getReprice()+""));
+                row.createCell(11).setCellValue(new HSSFRichTextString(cargoInfo.getCurrency()));
+                row.createCell(12).setCellValue(new HSSFRichTextString(cargoInfo.getGuaranteeRate()));
                 if(cargoInfo.getRemark()!=null && !"".equals(cargoInfo.getRemark())){
-                    row.createCell(13).setCellValue(new HSSFRichTextString(cargoInfo.getRemark()));
+                    row.createCell(14).setCellValue(new HSSFRichTextString(cargoInfo.getRemark()));
                 }else {
-                    row.createCell(13).setCellValue(new HSSFRichTextString(""));
+                    row.createCell(14).setCellValue(new HSSFRichTextString(""));
                 }
             }
             response.setContentType("application/octet-stream");
@@ -329,7 +330,7 @@ public class CargoInfoService {
     public void downloadByName(HttpServletResponse response) {
         try {
             String[] header = { "货物品目", "货物名称",  "品牌", "型号", "主要参数",
-                    "产地", "进口/国产类别", "币种", "维保率/月", "备注"};
+                    "产地", "进口/国产类别", "参考价格", "币种", "维保率/月", "备注"};
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet("货物导入模板表");
             sheet.setDefaultColumnWidth(14);
@@ -356,7 +357,7 @@ public class CargoInfoService {
             row.createCell(7).setCellValue(new HSSFRichTextString());
             row.createCell(8).setCellValue(new HSSFRichTextString());
             row.createCell(9).setCellValue(new HSSFRichTextString());
-
+            row.createCell(10).setCellValue(new HSSFRichTextString());
             response.setContentType("application/octet-stream");
             response.setHeader("Content-disposition", "attachment;filename=cargoInfoTemplate.xls");
             response.flushBuffer();
@@ -376,7 +377,7 @@ public class CargoInfoService {
         return Common.convertSerial(serial, 1+i);
     }
 
-    public void upLoad(Attachment attachment ,JwtUser jwtUser) {
+    public void upLoad(Attachment attachment ,JwtUser jwtUser,String partnerId) {
         Map<String, Object> maps = new HashMap<String, Object>();
         try {
             //文件读取并插入数据库
@@ -391,13 +392,13 @@ public class CargoInfoService {
             }
             for (int i = 0; i < num; i++) {
                 List tempList = list.subList(i * 200, (i + 1) * 200 > list.size() ? list.size() : (i + 1) * 200);
-                batchInsertCargoInfo(tempList,jwtUser);
+                batchInsertCargoInfo(tempList,jwtUser,partnerId);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public void batchInsertCargoInfo(List<Object> maps,JwtUser jwtUser) {
+    public void batchInsertCargoInfo(List<Object> maps,JwtUser jwtUser,String partnerId) {
         Date date = new Date();
         String userName = jwtUser.getUsername();
         List<CargoInfo> listSave = new ArrayList<>();
@@ -421,6 +422,7 @@ public class CargoInfoService {
             cargoInfo.setMainParams(jsonObject.get("主要参数").toString());
             cargoInfo.setManufactor(jsonObject.get("产地").toString());
             cargoInfo.setType(jsonObject.get("进口/国产类别").toString());
+            cargoInfo.setReprice(Double.valueOf("".equals(jsonObject.get("参考价格").toString())?"0.00":jsonObject.get("参考价格").toString()));
             cargoInfo.setCurrency(jsonObject.get("币种").toString());
             cargoInfo.setGuaranteeRate(jsonObject.get("维保率/月").toString());
             cargoInfo.setRemark(jsonObject.get("备注").toString()!=null?jsonObject.get("备注").toString():"");
@@ -430,10 +432,9 @@ public class CargoInfoService {
             cargoInfo.setMaintenanceDate(date);
             cargoInfo.setMaintenanceMan(userName);
             cargoInfo.setIsDelete(2);
-            //cargoInfo.getAttachment().setAttachId(null);
+            cargoInfo.setPartnerId(Long.parseLong(partnerId));//供应商id
             listSave.add(cargoInfo);
         }
-
         cargoInfoRepository.saveAll(listSave);
     }
 
@@ -566,9 +567,9 @@ public class CargoInfoService {
         list.add("主要参数");
         list.add("产地");
         list.add("进口/国产类别");
+        list.add("参考价格");
         list.add("币种");
         list.add("维保率/月");
-        list.add("证明文件");
         list.add("备注");
         return list;
     }

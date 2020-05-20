@@ -235,8 +235,8 @@ public class PartInfoService {
                 row.createCell(4).setCellValue(new HSSFRichTextString(partInfo.getTechParams()));
                 row.createCell(5).setCellValue(new HSSFRichTextString(partInfo.getUnit()));
                 row.createCell(6).setCellValue(new HSSFRichTextString(partInfo.getQuantity()));
-                row.createCell(7).setCellValue(new HSSFRichTextString(partInfo.getPrice().toString()));
-                row.createCell(8).setCellValue(new HSSFRichTextString(partInfo.getTotal().toString()));
+                row.createCell(7).setCellValue(new HSSFRichTextString(partInfo.getPrice()+""));
+                row.createCell(8).setCellValue(new HSSFRichTextString(partInfo.getTotal()+""));
                 row.createCell(9).setCellValue(new HSSFRichTextString(partInfo.getRemark()));
             }
 
