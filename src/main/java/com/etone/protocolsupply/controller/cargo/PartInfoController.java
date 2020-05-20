@@ -227,10 +227,10 @@ public class PartInfoController extends GenericController {
             value = "/downloadTemplate",
             method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseValue download( @Context HttpServletResponse response) throws UnsupportedEncodingException {
+    public ResponseValue download( @Context HttpServletResponse response) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         String attachName="partInfoTemplate.xls";
-        attachmentService.downloadByName(response,attachName);
+        partInfoService.downloadByName(response);
         return responseBuilder.build();
     }
 }

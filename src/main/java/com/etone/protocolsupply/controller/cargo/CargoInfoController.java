@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @RestController
@@ -231,10 +230,10 @@ public class CargoInfoController extends GenericController {
             value = "/downloadTemplate",
             method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseValue download( @Context HttpServletResponse response) throws UnsupportedEncodingException {
+    public ResponseValue download( @Context HttpServletResponse response) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         String attachName="cargoInfoTemplate.xls";
-        attachmentService.downloadByName(response,attachName);
+        cargoInfoService.downloadByName(response);
         return responseBuilder.build();
     }
 

@@ -255,6 +255,7 @@ public class CargoInfoService {
         return name;
     }
 
+
     //货物导出
     public void export(HttpServletResponse response, List<Long> cargoIds,String actor) {
         try {
@@ -317,6 +318,47 @@ public class CargoInfoService {
             }
             response.setContentType("application/octet-stream");
             response.setHeader("Content-disposition", "attachment;filename=cargoInfo.xls");
+            response.flushBuffer();
+            workbook.write(response.getOutputStream());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //下载货物导入模板
+    public void downloadByName(HttpServletResponse response) {
+        try {
+            String[] header = { "货物品目", "货物名称",  "品牌", "型号", "主要参数",
+                    "产地", "进口/国产类别", "币种", "维保率/月", "备注"};
+            HSSFWorkbook workbook = new HSSFWorkbook();
+            HSSFSheet sheet = workbook.createSheet("货物导入模板表");
+            sheet.setDefaultColumnWidth(14);
+            //        创建标题的显示样式
+            HSSFCellStyle headerStyle = workbook.createCellStyle();
+            headerStyle.setFillForegroundColor(IndexedColors.YELLOW.index);
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            //        创建第一行表头
+            HSSFRow headrow = sheet.createRow(0);
+            for (int i = 0; i < header.length; i++) {
+                HSSFCell cell = headrow.createCell(i);
+                HSSFRichTextString text = new HSSFRichTextString(header[i]);
+                cell.setCellValue(text);
+                cell.setCellStyle(headerStyle);
+            }
+            HSSFRow row = sheet.createRow( 1);
+            row.createCell(0).setCellValue(new HSSFRichTextString());
+            row.createCell(1).setCellValue(new HSSFRichTextString());
+            row.createCell(2).setCellValue(new HSSFRichTextString());
+            row.createCell(3).setCellValue(new HSSFRichTextString());
+            row.createCell(4).setCellValue(new HSSFRichTextString());
+            row.createCell(5).setCellValue(new HSSFRichTextString());
+            row.createCell(6).setCellValue(new HSSFRichTextString());
+            row.createCell(7).setCellValue(new HSSFRichTextString());
+            row.createCell(8).setCellValue(new HSSFRichTextString());
+            row.createCell(9).setCellValue(new HSSFRichTextString());
+
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-disposition", "attachment;filename=cargoInfoTemplate.xls");
             response.flushBuffer();
             workbook.write(response.getOutputStream());
         } catch (Exception e) {

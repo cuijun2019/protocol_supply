@@ -249,6 +249,45 @@ public class PartInfoService {
         }
     }
 
+    //下载配件导入模板
+    public void downloadByName(HttpServletResponse response) {
+        try {
+            String[] header = { "设备或配件名称", "型号/规格", "产地/厂家", "主要技术参数",
+                    "单价", "数量", "总价", "单位","备注"};
+            HSSFWorkbook workbook = new HSSFWorkbook();
+            HSSFSheet sheet = workbook.createSheet("配件导入模板表");
+            sheet.setDefaultColumnWidth(10);
+            //        创建标题的显示样式
+            HSSFCellStyle headerStyle = workbook.createCellStyle();
+            headerStyle.setFillForegroundColor(IndexedColors.YELLOW.index);
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            //        创建第一行表头
+            HSSFRow headrow = sheet.createRow(0);
+            for (int i = 0; i < header.length; i++) {
+                HSSFCell cell = headrow.createCell(i);
+                HSSFRichTextString text = new HSSFRichTextString(header[i]);
+                cell.setCellValue(text);
+                cell.setCellStyle(headerStyle);
+            }
+                HSSFRow row = sheet.createRow( 1);
+                row.createCell(0).setCellValue(new HSSFRichTextString());
+                row.createCell(1).setCellValue(new HSSFRichTextString());
+                row.createCell(2).setCellValue(new HSSFRichTextString());
+                row.createCell(3).setCellValue(new HSSFRichTextString());
+                row.createCell(4).setCellValue(new HSSFRichTextString());
+                row.createCell(5).setCellValue(new HSSFRichTextString());
+                row.createCell(6).setCellValue(new HSSFRichTextString());
+                row.createCell(7).setCellValue(new HSSFRichTextString());
+                row.createCell(8).setCellValue(new HSSFRichTextString());
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-disposition", "attachment;filename=partInfoTemplate.xls");
+            response.flushBuffer();
+            workbook.write(response.getOutputStream());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     //项目-配件导出
     public void exportExp(HttpServletResponse response, List<Long> partIds) {
         try {
