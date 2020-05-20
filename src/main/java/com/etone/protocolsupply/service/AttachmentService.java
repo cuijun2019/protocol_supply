@@ -88,6 +88,52 @@ public class AttachmentService {
         }
     }
 
+    public void downloadByName(HttpServletResponse response, String attachName) throws UnsupportedEncodingException {
+        Attachment attachment= attachmentRepository.findAttachmentByName(attachName);
+        if (null!=attachment) {
+            String path = attachment.getPath();
+            String fileName = attachment.getAttachName();
+            File file = new File(path);
+            if (file.exists()) {
+                String type = new MimetypesFileTypeMap().getContentType(fileName);
+                // 设置contenttype，即告诉客户端所发送的数据属于什么类型
+                response.setHeader("Content-type", type);
+                response.setHeader("Content-Disposition", "attachment;filename=" + fileName + ";filename*=utf-8''"
+                        + URLEncoder.encode(fileName, "utf-8"));
+                byte[] buffer = new byte[1024];
+                FileInputStream fis = null;
+                BufferedInputStream bis = null;
+                try {
+                    fis = new FileInputStream(file);
+                    bis = new BufferedInputStream(fis);
+                    OutputStream os = response.getOutputStream();
+                    int i = bis.read(buffer);
+                    while (i != -1) {
+                        os.write(buffer, 0, i);
+                        i = bis.read(buffer);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    if (bis != null) {
+                        try {
+                            bis.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if (fis != null) {
+                        try {
+                            fis.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public Attachment findByResultTemplate() {
         return attachmentRepository.findByResultTemplate();
     }

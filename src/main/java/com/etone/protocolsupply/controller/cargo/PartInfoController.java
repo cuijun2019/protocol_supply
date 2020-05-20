@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 
@@ -180,46 +181,56 @@ public class PartInfoController extends GenericController {
     /**
      * 下载配件导入模板
      *
-     * @param res
      */
+//    @ResponseBody
+//    @RequestMapping(value = "/downloadTemplate")
+//    public void downloadExcel(HttpServletResponse res) {
+//        FileInputStream inputStream = null;
+//        ServletOutputStream out = null;
+//        String fileName = "partInfoTemplate.xls";
+//        try {
+//            res.setContentType("multipart/form-data");
+//            res.setCharacterEncoding("UTF-8");
+//            String filePath = getClass().getResource("/template/" + fileName).getPath();//文件在项目中的存放路径
+//            res.setHeader("Content-Disposition", "attachment;filename=" + fileName + ";filename*=utf-8''"
+//                    + URLEncoder.encode(fileName, "utf-8"));
+//            inputStream = new FileInputStream(filePath);
+//            out = res.getOutputStream();
+//            int b;
+//            byte[] buffer = new byte[1024];
+//            while ((b = inputStream.read(buffer)) != -1) {
+//                // 4.写到输出流(out)中
+//                out.write(buffer, 0, b);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            if (inputStream != null) {
+//                try {
+//                    inputStream.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            if (out != null) {
+//                try {
+//                    out.flush();
+//                    out.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
     @ResponseBody
-    @RequestMapping(value = "/downloadTemplate")
-    public void downloadExcel(HttpServletResponse res) {
-        FileInputStream inputStream = null;
-        ServletOutputStream out = null;
-        String fileName = "partInfoTemplate.xls";
-        try {
-            res.setContentType("multipart/form-data");
-            res.setCharacterEncoding("UTF-8");
-            String filePath = getClass().getResource("/template/" + fileName).getPath();//文件在项目中的存放路径
-            res.setHeader("Content-Disposition", "attachment;filename=" + fileName + ";filename*=utf-8''"
-                    + URLEncoder.encode(fileName, "utf-8"));
-            inputStream = new FileInputStream(filePath);
-            out = res.getOutputStream();
-            int b;
-            byte[] buffer = new byte[1024];
-            while ((b = inputStream.read(buffer)) != -1) {
-                // 4.写到输出流(out)中
-                out.write(buffer, 0, b);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (out != null) {
-                try {
-                    out.flush();
-                    out.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+    @RequestMapping(
+            value = "/downloadTemplate",
+            method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseValue download( @Context HttpServletResponse response) throws UnsupportedEncodingException {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        String attachName="partInfoTemplate.xls";
+        attachmentService.downloadByName(response,attachName);
+        return responseBuilder.build();
     }
 }

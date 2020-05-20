@@ -23,4 +23,8 @@ public interface AttachmentRepository extends JpaRepository<Attachment, Long>, J
             nativeQuery = true)
     Attachment findContractTemplate();
 
+    @Query(value = "SELECT * FROM attachment where attach_name=?1 order by upload_time desc limit 1 ",
+            nativeQuery = true)
+    Attachment findAttachmentByName(String attachName);
+
 }
