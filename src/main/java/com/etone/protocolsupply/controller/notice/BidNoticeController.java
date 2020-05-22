@@ -46,11 +46,13 @@ public class BidNoticeController extends GenericController {
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseValue getBidNotice(@Validated
-                                       @PathVariable("projectId") String projectId) {
+                                       @PathVariable("projectId") String projectId,
+                                       @RequestParam(value = "status", required = false, defaultValue = "1") Integer status) {
         //查看成交通知书模板路径
         Attachment attachment =  attachmentService.findBidTemplate();
+
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        BidNotice bidNotice = bidNoticeService.save(projectId, this.getUser(),attachment.getPath());
+        BidNotice bidNotice = bidNoticeService.save(projectId, this.getUser(),attachment.getPath(),status);
         responseBuilder.data(bidNotice);
         return responseBuilder.build();
     }
