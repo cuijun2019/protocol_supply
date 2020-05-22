@@ -377,7 +377,7 @@ public class CargoInfoService {
         return Common.convertSerial(serial, 1+i);
     }
 
-    public void upLoad(Attachment attachment ,JwtUser jwtUser,String partnerId) {
+    public void upLoad(Attachment attachment ,JwtUser jwtUser,Long partnerId) {
         Map<String, Object> maps = new HashMap<String, Object>();
         try {
             //文件读取并插入数据库
@@ -398,7 +398,7 @@ public class CargoInfoService {
             e.printStackTrace();
         }
     }
-    public void batchInsertCargoInfo(List<Object> maps,JwtUser jwtUser,String partnerId) {
+    public void batchInsertCargoInfo(List<Object> maps,JwtUser jwtUser,Long partnerId) {
         Date date = new Date();
         String userName = jwtUser.getUsername();
         List<CargoInfo> listSave = new ArrayList<>();
@@ -432,7 +432,7 @@ public class CargoInfoService {
             cargoInfo.setMaintenanceDate(date);
             cargoInfo.setMaintenanceMan(userName);
             cargoInfo.setIsDelete(2);
-            cargoInfo.setPartnerId(Long.parseLong(partnerId));//供应商id
+            cargoInfo.setPartnerId(partnerId);//供应商id
             listSave.add(cargoInfo);
         }
         cargoInfoRepository.saveAll(listSave);

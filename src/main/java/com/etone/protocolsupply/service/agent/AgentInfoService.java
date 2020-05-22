@@ -189,9 +189,11 @@ public class AgentInfoService {
     }
 
     public AgentCollectionDto getAgentListTo(Page<AgentInfo> source, HttpServletRequest request,String projectId,String actor) {
+        User user=userRepository.findByUsername(actor);
         AgentCollectionDto agentCollectionDto = new AgentCollectionDto();
         AgentInfoDto agentInfoMs = new AgentInfoDto();
-        agentInfoMs.setAgentName(actor);
+        agentInfoMs.setAgentId(user.getId());
+        agentInfoMs.setAgentName(user.getUsername());
         agentInfoMs.setAgentPoint("0%");
         agentCollectionDto.add(agentInfoMs);
         pagingMapper.storeMappedInstanceBefore(source, agentCollectionDto, request);
