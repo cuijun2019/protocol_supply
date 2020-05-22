@@ -131,7 +131,7 @@ public class AgentInfoController extends GenericController {
         Sort sort = new Sort(Sort.Direction.DESC, "createDate");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
         Page<AgentInfo> page = agentInfoService.getAgentList(status, isDelete, actor,pageable,reviewStatus);
-        AgentCollectionDto agentCollectionDto = agentInfoService.getAgentListTo(page, request,projectId);
+        AgentCollectionDto agentCollectionDto = agentInfoService.getAgentListTo(page, request,projectId,actor);
         responseBuilder.data(agentCollectionDto);
         return responseBuilder.build();
     }

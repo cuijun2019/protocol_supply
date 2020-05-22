@@ -107,7 +107,7 @@ public class BidNoticeService {
                         cell.setCellValue(projectInfo.getProjectSubject());
                     }
                     if("FW010".equals(cell.getStringCellValue())){
-                        cell.setCellValue(projectInfo.getAmount());
+                        cell.setCellValue(projectInfo.getAmountRmb());
                     }
                     if("FW011".equals(cell.getStringCellValue())){
                         cell.setCellValue(creator.getCompany());
@@ -143,7 +143,7 @@ public class BidNoticeService {
         BidNotice bidNotice = new BidNotice();
         bidNotice.setProjectCode(projectInfo.getProjectCode());
         bidNotice.setProjectSubject(projectInfo.getProjectSubject());
-        bidNotice.setAmount(projectInfo.getAmount());
+        bidNotice.setAmount(projectInfo.getAmountRmb()+"");
         bidNotice.setSupplier(projectInfoRepository.getAgentName(proId));
         bidNotice.setStatus(Constant.STATE_WAIT_SIGN);
         bidNotice.setCreator(jwtUser.getFullname());

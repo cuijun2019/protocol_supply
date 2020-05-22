@@ -47,7 +47,7 @@ public class ProjectInfo implements Serializable {
      * 交货时间
      */
     @Column(name = "DELIVERY_DATE", length = 50)
-    private Double deliveryDate;
+    private Integer deliveryDate;
 
     /**
      * 交货时间
@@ -88,14 +88,20 @@ public class ProjectInfo implements Serializable {
     /**
      * 货物金额
      */
-    @Column(name = "CARGOTOTAL", length = 50)
+    @Column(name = "CARGOTOTAL")
     private Double cargoTotal;
 
     /**
      * 项目总金额
      */
-    @Column(name = "AMOUNT", length = 50)
-    private String amount;
+    @Column(name = "AMOUNT")
+    private Double amount;
+
+    /**
+     * 项目总金额-人民币
+     */
+    @Column(name = "AMOUNTRMB")
+    private Double amountRmb;
 
     /**
      * 币种

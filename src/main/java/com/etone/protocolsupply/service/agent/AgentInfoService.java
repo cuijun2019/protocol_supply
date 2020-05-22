@@ -188,8 +188,12 @@ public class AgentInfoService {
         return agentCollectionDto;
     }
 
-    public AgentCollectionDto getAgentListTo(Page<AgentInfo> source, HttpServletRequest request,String projectId) {
+    public AgentCollectionDto getAgentListTo(Page<AgentInfo> source, HttpServletRequest request,String projectId,String actor) {
         AgentCollectionDto agentCollectionDto = new AgentCollectionDto();
+        AgentInfoDto agentInfoMs = new AgentInfoDto();
+        agentInfoMs.setAgentName(actor);
+        agentInfoMs.setAgentPoint("0%");
+        agentCollectionDto.add(agentInfoMs);
         pagingMapper.storeMappedInstanceBefore(source, agentCollectionDto, request);
         AgentInfoDto agentInfoDto;
         if(null!=projectId && !"".equals(projectId)){//修改编辑项目
