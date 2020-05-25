@@ -94,6 +94,6 @@ public class BidNotice implements Serializable {
     @OneToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JoinColumn(name = "PROJECT_ID", referencedColumnName = "PROJECT_ID")
+    @JoinColumn(name = "PROJECT_ID", referencedColumnName = "PROJECT_ID",nullable = false)
     private ProjectInfo projectInfo;
 }
