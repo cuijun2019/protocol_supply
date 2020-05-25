@@ -92,6 +92,6 @@ public class ResultNotice implements Serializable {
     @JsonBackReference
     @OneToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
-    @JoinColumn(name = "PROJECT_ID", referencedColumnName = "PROJECT_ID")
+    @JoinColumn(name = "PROJECT_ID", referencedColumnName = "PROJECT_ID",nullable = false)
     private ProjectInfo projectInfo;
 }

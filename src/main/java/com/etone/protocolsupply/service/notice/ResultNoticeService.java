@@ -203,22 +203,23 @@ public class ResultNoticeService {
                 for (Cell cell : row) {
                     //根据不同类型转化成字符串
                     cell.setCellType(CellType.STRING);
-                    if("学生就业指导中心".equals(cell.getStringCellValue())){
+                    DataFormatter formatter = new DataFormatter();
+                    if("学生就业指导中心".equals(formatter.formatCellValue(cell))){
                         cell.setCellValue(creator.getCompany());
                     }
-                    if("FW008".equals(cell.getStringCellValue())){
+                    if("FW008".equals(formatter.formatCellValue(cell))){
                         cell.setCellValue(projectInfo.getProjectCode());
                     }
-                    if("毕业典礼和学位授予仪式布展".equals(cell.getStringCellValue())){
+                    if("毕业典礼和学位授予仪式布展".equals(formatter.formatCellValue(cell))){
                         cell.setCellValue(projectInfo.getProjectSubject());
                     }
-                    if("供应商成交".equals(cell.getStringCellValue())){
+                    if("供应商成交".equals(formatter.formatCellValue(cell))){
                         cell.setCellValue(projectInfo.getCreator());
                     }
-                    if("5000".equals(cell.getStringCellValue())){
+                    if("5000".equals(formatter.formatCellValue(cell))){
                         cell.setCellValue(projectInfo.getAmountRmb());
                     }
-                    if("2018年6月6日".equals(cell.getStringCellValue().trim())){
+                    if("2018年6月6日".equals(formatter.formatCellValue(cell).trim())){
                         Date date = new Date();
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日");
                         cell.setCellValue(simpleDateFormat.format(date));

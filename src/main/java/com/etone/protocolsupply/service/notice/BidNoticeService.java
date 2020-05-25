@@ -97,7 +97,8 @@ public class BidNoticeService {
                 for (Cell cell : row) {
                     //根据不同类型转化成字符串
                     cell.setCellType(CellType.STRING);
-                    if("成交供应商名称:".equals(cell.getStringCellValue())){
+                    DataFormatter formatter = new DataFormatter();
+                    /*if("成交供应商名称:".equals(cell.getStringCellValue())){
                         cell.setCellValue(agentInfoExp.get(0).getAgentName());
                     }
                     if("FW008".equals(cell.getStringCellValue())){
@@ -113,6 +114,26 @@ public class BidNoticeService {
                         cell.setCellValue(creator.getCompany());
                     }
                     if("2018年6月6日".equals(cell.getStringCellValue().trim())){
+                        Date date = new Date();
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日");
+                        cell.setCellValue(simpleDateFormat.format(date));
+                    }*/
+                    if("成交供应商名称:".equals(formatter.formatCellValue(cell))){
+                        cell.setCellValue(agentInfoExp.get(0).getAgentName());
+                    }
+                    if("FW008".equals(formatter.formatCellValue(cell))){
+                        cell.setCellValue(projectInfo.getProjectCode());
+                    }
+                    if("FW009".equals(formatter.formatCellValue(cell))){
+                        cell.setCellValue(projectInfo.getProjectSubject());
+                    }
+                    if("FW010".equals(formatter.formatCellValue(cell))){
+                        cell.setCellValue(projectInfo.getAmountRmb());
+                    }
+                    if("FW011".equals(formatter.formatCellValue(cell))){
+                        cell.setCellValue(creator.getCompany());
+                    }
+                    if("2018年6月6日".equals(formatter.formatCellValue(cell).trim())){
                         Date date = new Date();
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日");
                         cell.setCellValue(simpleDateFormat.format(date));
