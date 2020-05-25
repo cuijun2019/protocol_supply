@@ -62,7 +62,7 @@ public class BidNoticeService {
     @Value("${file.upload.path.filePath}")
     protected String uploadFilePath;
 
-    public BidNotice save(String projectId, JwtUser jwtUser, String bidTemplatePath,Integer status) {
+    public BidNotice save(String projectId, JwtUser jwtUser, String bidTemplatePath) {
         Attachment attachment = new Attachment();
 
         //查询项目详情
@@ -145,7 +145,12 @@ public class BidNoticeService {
         bidNotice.setProjectSubject(projectInfo.getProjectSubject());
         bidNotice.setAmount(projectInfo.getAmountRmb()+"");
         bidNotice.setSupplier(projectInfoRepository.getAgentName(proId));
-        bidNotice.setStatus(status);//1:拟稿  7:待办
+        //Constant.NOTICE_MONEY=200000
+        if(projectInfo.getAmountRmb()>=Constant.NOTICE_MONEY){
+            bidNotice.setStatus(Constant.STATE_DRAFT);//1:拟稿  7:待办
+        }else if(projectInfo.getAmountRmb()<Constant.NOTICE_MONEY){
+            bidNotice.setStatus(Constant.STATE_WAIT_SIGN);//1:拟稿  7:待办
+        }
         bidNotice.setCreator(jwtUser.getFullname());
         bidNotice.setCreateDate(new Date());
         bidNotice.setPurchaser(projectInfo.getPurchaser());

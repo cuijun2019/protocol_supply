@@ -51,6 +51,10 @@ public class Constant {
     /**
      * 拟稿
      */
+    public static final int    NOTICE_MONEY            = 200000;
+    /**
+     * 拟稿
+     */
     public static final int    STATE_DRAFT            = 1;
     public static final String STATE_STRING_DRAFT     = "拟稿";
     /**
