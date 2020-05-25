@@ -100,7 +100,6 @@ public class BidNoticeController extends GenericController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseValue updateBidTemplate(@PathVariable("bidNoticeId") String bidNoticeId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-
         BidNotice bidNotice = bidNoticeService.update(bidNoticeId);
         responseBuilder.data(bidNotice);
         return responseBuilder.build();

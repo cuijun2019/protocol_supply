@@ -94,6 +94,19 @@ public class ResultNoticeService {
         return resultNoticeRepository.findById(Long.parseLong(resultNoticeId)).get();
     }
 
+    public ResultNotice update(String resultNoticeId) {
+        Long resId = Long.valueOf(resultNoticeId);
+        Optional<ResultNotice> optional = resultNoticeRepository.findById(resId);
+        ResultNotice resultNotice = new ResultNotice();
+        if (optional.isPresent()) {
+            resultNotice = optional.get();
+            resultNotice.setStatus(Constant.STATE_SIGNED); //待签收-->已签收
+            resultNotice.setSignDate(new Date());
+            resultNoticeRepository.save(resultNotice);
+        }
+        return resultNotice;
+    }
+
     public void export(HttpServletResponse response, List<Long> resultNoticeIds) {
         try {
             String[] header = {"项目主题", "项目编号", "成交供应商", "成交金额", "状态", "采购人", "创建人", "创建时间", "签收时间"};

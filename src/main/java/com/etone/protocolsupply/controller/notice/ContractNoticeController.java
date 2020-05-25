@@ -97,7 +97,6 @@ public class ContractNoticeController extends GenericController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseValue updateContractNotice(@PathVariable("contractNoticeId") String contractNoticeId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-
         ContractNotice contractNotice = ContractNoticeService.update(contractNoticeId);
         responseBuilder.data(contractNotice);
 
