@@ -47,7 +47,6 @@ public class BidNoticeController extends GenericController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseValue getBidNotice(@Validated
                                        @PathVariable("projectId") String projectId) {
-
         //查看成交通知书模板路径
         Attachment attachment =  attachmentService.findBidTemplate();
 
@@ -74,12 +73,12 @@ public class BidNoticeController extends GenericController {
                                        @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
                                        @RequestParam(value = "projectCode", required = false) String projectCode,
                                        @RequestParam(value = "projectSubject", required = false) String projectSubject,
+                                       @RequestParam(value = "status", required = false) String status,
                                        HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-
         Sort sort = new Sort(Sort.Direction.DESC, "bidId");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Specification<BidNotice> specification = bidNoticeService.getWhereClause(projectCode, projectSubject);
+        Specification<BidNotice> specification = bidNoticeService.getWhereClause(projectCode, projectSubject,status);
         Page<BidNotice> page = bidNoticeService.findBidNotices(specification, pageable);
         BidNoticeCollectionDto bidNoticeCollectionDto = bidNoticeService.to(page, request);
         responseBuilder.data(bidNoticeCollectionDto);
