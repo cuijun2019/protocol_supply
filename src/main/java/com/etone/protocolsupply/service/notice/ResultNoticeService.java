@@ -203,7 +203,7 @@ public class ResultNoticeService {
                         cell.setCellValue(projectInfo.getCreator());
                     }
                     if("5000".equals(cell.getStringCellValue())){
-                        cell.setCellValue(projectInfo.getAmount());
+                        cell.setCellValue(projectInfo.getAmountRmb());
                     }
                     if("2018年6月6日".equals(cell.getStringCellValue().trim())){
                         Date date = new Date();
@@ -236,7 +236,7 @@ public class ResultNoticeService {
         ResultNotice resultNotice = new ResultNotice();
         resultNotice.setProjectCode(projectInfo.getProjectCode());
         resultNotice.setProjectSubject(projectInfo.getProjectSubject());
-        resultNotice.setAmount(projectInfo.getAmount());
+        resultNotice.setAmount(projectInfo.getAmountRmb()+"");
         resultNotice.setSupplier(projectInfoRepository.getAgentName(proId));
         resultNotice.setStatus(Constant.STATE_WAIT_SIGN);
         resultNotice.setCreator(user.getFullname());

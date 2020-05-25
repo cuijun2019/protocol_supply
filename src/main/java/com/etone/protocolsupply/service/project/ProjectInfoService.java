@@ -254,7 +254,8 @@ public class ProjectInfoService {
         model.setGuaranteeFee(projectInfoDto.getGuaranteeFee());
         model.setStatus(projectInfoDto.getStatus());
         model.setCargoTotal(projectInfoDto.getCargoTotal());
-        model.setAmount(projectInfoDto.getAmount());
+        model.setAmount(projectInfoDto.getAmount());//项目总金额（原来的币种）
+        model.setAmountRmb(projectInfoDto.getAmountRmb());//项目总金额（人民币）
         model.setCurrency(projectInfoDto.getCurrency());
         model.setIsDelete(projectInfo.getIsDelete());
         model.setQuantity(projectInfoDto.getQuantity());//数量
@@ -267,7 +268,7 @@ public class ProjectInfoService {
         projectInfoRepository.update(model.getProjectId(),model.getProjectSubject(),model.getPurchaser(),
                 model.getCurrency(),model.getDeliveryDate(),model.getDeliveryDateStatus(),model.getGuaranteeDate(),model.getGuaranteeFee(),
                 model.getPaymentMethod(),model.getPriceTerm(),model.getCargoTotal(),model.getAmount(),model.getStatus(),
-                 projectInfoDto.getInquiryInfo().getInquiryId(),model.getCreator(),model.getProjectCode(),model.getIsDelete(),model.getQuantity());
+                 projectInfoDto.getInquiryInfo().getInquiryId(),model.getCreator(),model.getProjectCode(),model.getIsDelete(),model.getQuantity(),model.getAmountRmb());
 
         //供应商
         AgentInfoExp agentInfoExp=projectInfoDto.getAgentInfoExp();
@@ -349,7 +350,7 @@ public class ProjectInfoService {
 
     public void export(HttpServletResponse response, List<Long> projectIds,String actor) {
         try {
-            String[] header = {"项目主题", "项目编号", "货物名称", "货物金额", "项目总金额", "币种", "状态",
+            String[] header = {"项目主题", "项目编号", "货物名称", "货物金额", "项目总金额", "币种","项目总金额RMB", "状态",
                     "采购结果通知书", "中标通知书", "合同"};
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet("项目信息表");
@@ -386,31 +387,32 @@ public class ProjectInfoService {
                 Attachment attachmentc = projectInfo.getAttachment_c();//合同
                 if (attachmentp != null) {
                     attachmentp = attachmentRepository.getOne(projectInfo.getAttachment_p().getAttachId());
-                    row.createCell(7).setCellValue(new HSSFRichTextString(attachmentp.getAttachName()));
-                } else {
-                    row.createCell(7).setCellValue(new HSSFRichTextString(""));
-                }
-                if (attachmentn != null) {
-                    attachmentn = attachmentRepository.getOne(projectInfo.getAttachment_n().getAttachId());
-                    row.createCell(8).setCellValue(new HSSFRichTextString(attachmentn.getAttachName()));
+                    row.createCell(8).setCellValue(new HSSFRichTextString(attachmentp.getAttachName()));
                 } else {
                     row.createCell(8).setCellValue(new HSSFRichTextString(""));
                 }
-                if (attachmentc != null) {
-                    attachmentc = attachmentRepository.getOne(projectInfo.getAttachment_c().getAttachId());
-                    row.createCell(9).setCellValue(new HSSFRichTextString(attachmentc.getAttachName()));
+                if (attachmentn != null) {
+                    attachmentn = attachmentRepository.getOne(projectInfo.getAttachment_n().getAttachId());
+                    row.createCell(9).setCellValue(new HSSFRichTextString(attachmentn.getAttachName()));
                 } else {
                     row.createCell(9).setCellValue(new HSSFRichTextString(""));
+                }
+                if (attachmentc != null) {
+                    attachmentc = attachmentRepository.getOne(projectInfo.getAttachment_c().getAttachId());
+                    row.createCell(10).setCellValue(new HSSFRichTextString(attachmentc.getAttachName()));
+                } else {
+                    row.createCell(10).setCellValue(new HSSFRichTextString(""));
                 }
 
                 CargoInfo cargoInfo = cargoInfoRepository.findAllByProjectId(projectInfo.getProjectId());
                 row.createCell(0).setCellValue(new HSSFRichTextString(projectInfo.getProjectSubject()));
                 row.createCell(1).setCellValue(new HSSFRichTextString(projectInfo.getProjectCode()));
                 row.createCell(2).setCellValue(new HSSFRichTextString(cargoInfo.getCargoName()));
-                row.createCell(3).setCellValue(new HSSFRichTextString("5000"));//货物金额
-                row.createCell(4).setCellValue(new HSSFRichTextString("6000"));//项目总金额
+                row.createCell(3).setCellValue(new HSSFRichTextString(projectInfo.getCargoTotal()+""));//货物金额
+                row.createCell(4).setCellValue(new HSSFRichTextString(projectInfo.getAmount()+""));//项目总金额
                 row.createCell(5).setCellValue(new HSSFRichTextString(cargoInfo.getCurrency()));//币种
-                row.createCell(6).setCellValue(new HSSFRichTextString(Constant.REVIEW_STATUS_MAP.get(projectInfo.getStatus())));//状态
+                row.createCell(6).setCellValue(new HSSFRichTextString(projectInfo.getAmountRmb()+""));//项目总金额RMB
+                row.createCell(7).setCellValue(new HSSFRichTextString(Constant.REVIEW_STATUS_MAP.get(projectInfo.getStatus())));//状态
             }
             response.setHeader("Content-disposition", "attachment;filename=projectInfo.xls");
             response.setContentType("application/vnd.ms-excel;charset=utf-8");

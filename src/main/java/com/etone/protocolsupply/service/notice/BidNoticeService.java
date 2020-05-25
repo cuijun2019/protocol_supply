@@ -107,7 +107,7 @@ public class BidNoticeService {
                         cell.setCellValue(projectInfo.getProjectSubject());
                     }
                     if("FW010".equals(cell.getStringCellValue())){
-                        cell.setCellValue(projectInfo.getAmount());
+                        cell.setCellValue(projectInfo.getAmountRmb());
                     }
                     if("FW011".equals(cell.getStringCellValue())){
                         cell.setCellValue(creator.getCompany());
@@ -143,9 +143,14 @@ public class BidNoticeService {
         BidNotice bidNotice = new BidNotice();
         bidNotice.setProjectCode(projectInfo.getProjectCode());
         bidNotice.setProjectSubject(projectInfo.getProjectSubject());
-        bidNotice.setAmount(projectInfo.getAmount());
+        bidNotice.setAmount(projectInfo.getAmountRmb()+"");
         bidNotice.setSupplier(projectInfoRepository.getAgentName(proId));
-        bidNotice.setStatus(Constant.STATE_WAIT_SIGN);
+        //Constant.NOTICE_MONEY=200000
+        if(projectInfo.getAmountRmb()>=Constant.NOTICE_MONEY){
+            bidNotice.setStatus(Constant.STATE_DRAFT);//1:拟稿  7:待办
+        }else if(projectInfo.getAmountRmb()<Constant.NOTICE_MONEY){
+            bidNotice.setStatus(Constant.STATE_WAIT_SIGN);//1:拟稿  7:待办
+        }
         bidNotice.setCreator(jwtUser.getFullname());
         bidNotice.setCreateDate(new Date());
         bidNotice.setPurchaser(projectInfo.getPurchaser());
@@ -171,7 +176,7 @@ public class BidNoticeService {
         return bidNoticeCollectionDto;
     }
 
-    public Specification<BidNotice> getWhereClause(String projectCode, String projectSubject) {
+    public Specification<BidNotice> getWhereClause(String projectCode, String projectSubject,String status) {
         return (Specification<BidNotice>) (root, criteriaQuery, criteriaBuilder) -> {
 
             List<Predicate> predicates = new ArrayList<>();
@@ -180,6 +185,9 @@ public class BidNoticeService {
             }
             if (Strings.isNotBlank(projectSubject)) {
                 predicates.add(criteriaBuilder.equal(root.get("projectSubject").as(String.class), projectSubject));
+            }
+            if (Strings.isNotBlank(status)) {
+                predicates.add(criteriaBuilder.equal(root.get("status").as(String.class), status));
             }
             Predicate[] pre = new Predicate[predicates.size()];
             return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
@@ -196,7 +204,11 @@ public class BidNoticeService {
         BidNotice bidNotice = new BidNotice();
         if (optional.isPresent()) {
             bidNotice = optional.get();
-            bidNotice.setStatus(Constant.STATE_SIGNED);
+            if(bidNotice.getStatus()==1){
+                bidNotice.setStatus(Constant.STATE_WAIT_SIGN);//拟稿-->待签收
+            }else if(bidNotice.getStatus()==7){
+                bidNotice.setStatus(Constant.STATE_SIGNED); //待签收-->已签收
+            }
             bidNotice.setSignDate(new Date());
             bidNoticeRepository.save(bidNotice);
         }

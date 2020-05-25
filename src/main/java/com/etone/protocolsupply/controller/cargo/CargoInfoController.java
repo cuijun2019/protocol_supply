@@ -6,6 +6,7 @@ import com.etone.protocolsupply.model.dto.cargo.CargoCollectionDto;
 import com.etone.protocolsupply.model.dto.cargo.CargoInfoDto;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
+import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
 import com.etone.protocolsupply.service.AttachmentService;
 import com.etone.protocolsupply.service.cargo.CargoInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -250,7 +251,7 @@ public class CargoInfoController extends GenericController {
             consumes = {"multipart/form-data"})
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseValue upLoadPart(@Validated @RequestParam("file") MultipartFile uploadFile
-                                    ,@RequestParam(value = "partnerId", required = false) String partnerId) {
+                                    ,@RequestParam(value = "partnerId", required = false) Long partnerId) {
             ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Attachment attachment = attachmentService.upload(uploadFile, this.getUser());
         cargoInfoService.upLoad(attachment, this.getUser(),partnerId);

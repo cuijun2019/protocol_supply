@@ -196,8 +196,8 @@ public class ContractNoticeService {
         contentMap.put("${EQUIPMENT}",cargoInfoList.get(0).getCargoName());
         contentMap.put("${AMOUNT}",projectInfo.getQuantity());
         contentMap.put("${DONETIME}",projectInfo.getDeliveryDate()+"");
-        contentMap.put("${CHMONEY}", ConvertUpMoney.toChinese(projectInfo.getAmount()));
-        contentMap.put("${MONEY}",projectInfo.getAmount());
+        contentMap.put("${CHMONEY}", ConvertUpMoney.toChinese(projectInfo.getAmountRmb()+""));
+        contentMap.put("${MONEY}",projectInfo.getAmountRmb()+"");
         contentMap.put("${MONEYTYPE}",projectInfo.getPaymentMethod());
         contentMap.put("${CHDAY}",ConvertUpMoney.toChinese(projectInfo.getGuaranteeDate()).substring(0,ConvertUpMoney.toChinese(projectInfo.getGuaranteeDate()).length()-1));
         XWPFDocument document;
@@ -291,7 +291,7 @@ public class ContractNoticeService {
         ContractNotice contractNotice = new ContractNotice();
         contractNotice.setProjectCode(projectInfo.getProjectCode());
         contractNotice.setProjectSubject(projectInfo.getProjectSubject());
-        contractNotice.setAmount(projectInfo.getAmount());
+        contractNotice.setAmount(projectInfo.getAmountRmb()+"");
         contractNotice.setSupplier(projectInfoRepository.getAgentName(proId));
         contractNotice.setStatus(Constant.STATE_WAIT_SIGN);
         contractNotice.setCreator(user.getFullname());
