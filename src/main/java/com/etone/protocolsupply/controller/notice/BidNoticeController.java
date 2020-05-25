@@ -94,7 +94,7 @@ public class BidNoticeController extends GenericController {
      */
     @ResponseBody
     @RequestMapping(value = "/{projectId}",
-            method = RequestMethod.PUT,
+            method = RequestMethod.GET,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
