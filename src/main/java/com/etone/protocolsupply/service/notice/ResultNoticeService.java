@@ -94,12 +94,11 @@ public class ResultNoticeService {
         return resultNoticeRepository.findById(Long.parseLong(resultNoticeId)).get();
     }
 
-    public ResultNotice update(String resultNoticeId) {
-        Long resId = Long.valueOf(resultNoticeId);
-        Optional<ResultNotice> optional = resultNoticeRepository.findById(resId);
+    public ResultNotice update(String projectId) {
+        ResultNotice model= resultNoticeRepository.findInfoByProjectId(projectId);
         ResultNotice resultNotice = new ResultNotice();
-        if (optional.isPresent()) {
-            resultNotice = optional.get();
+        if (null!=model) {
+            resultNotice = model;
             resultNotice.setStatus(Constant.STATE_SIGNED); //待签收-->已签收
             resultNotice.setSignDate(new Date());
             resultNoticeRepository.save(resultNotice);

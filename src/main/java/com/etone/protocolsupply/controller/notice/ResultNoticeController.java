@@ -112,18 +112,18 @@ public class ResultNoticeController extends GenericController {
     /**
      * 处理（修改状态）
      *
-     * @param resultNoticeId
+     * @param projectId
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{resultNoticeId}",
+    @RequestMapping(value = "/{projectId}",
             method = RequestMethod.PUT,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
-    public ResponseValue updateBidTemplate(@PathVariable("resultNoticeId") String resultNoticeId) {
+    public ResponseValue updateBidTemplate(@PathVariable("projectId") String projectId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        ResultNotice resultNotice = resultNoticeService.update(resultNoticeId);
+        ResultNotice resultNotice = resultNoticeService.update(projectId);
         responseBuilder.data(resultNotice);
         return responseBuilder.build();
     }

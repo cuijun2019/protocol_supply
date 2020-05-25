@@ -14,4 +14,7 @@ public interface ResultNoticeRepository  extends JpaRepository<ResultNotice, Lon
             nativeQuery = true)
     List<ResultNotice> findAll(@Param("resultNoticeIds") List<Long> resultNoticeIds);
 
+    @Query(value = "select * from result_notice where project_id =:projectId ",
+            nativeQuery = true)
+    ResultNotice findInfoByProjectId(@Param("projectId") String projectId);
 }

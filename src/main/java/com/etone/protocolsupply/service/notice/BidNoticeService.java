@@ -220,11 +220,10 @@ public class BidNoticeService {
     }
 
     public BidNotice update(String bidNoticeId) {
-        Long bidId = Long.valueOf(bidNoticeId);
-        Optional<BidNotice> optional = bidNoticeRepository.findById(bidId);
+        BidNotice model=bidNoticeRepository.findInfoByProjectId(bidNoticeId);
         BidNotice bidNotice = new BidNotice();
-        if (optional.isPresent()) {
-            bidNotice = optional.get();
+        if (null!=model) {
+            bidNotice = model;
             if(bidNotice.getStatus()==1){
                 bidNotice.setStatus(Constant.STATE_WAIT_SIGN);//拟稿-->待签收
             }else if(bidNotice.getStatus()==7){

@@ -89,18 +89,18 @@ public class BidNoticeController extends GenericController {
     /**
      * 处理（修改状态）
      *
-     * @param bidNoticeId
+     * @param projectId
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{bidNoticeId}",
+    @RequestMapping(value = "/{projectId}",
             method = RequestMethod.PUT,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
-    public ResponseValue updateBidTemplate(@PathVariable("bidNoticeId") String bidNoticeId) {
+    public ResponseValue updateBidTemplate(@PathVariable("projectId") String projectId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        BidNotice bidNotice = bidNoticeService.update(bidNoticeId);
+        BidNotice bidNotice = bidNoticeService.update(projectId);
         responseBuilder.data(bidNotice);
         return responseBuilder.build();
     }

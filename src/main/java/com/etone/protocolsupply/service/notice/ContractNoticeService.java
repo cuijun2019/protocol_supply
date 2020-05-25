@@ -103,12 +103,11 @@ public class ContractNoticeService {
         return contractNoticeCollectionDto;
     }
 
-    public ContractNotice update(String contractNoticeId) {
-        Long contractId = Long.valueOf(contractNoticeId);
-        Optional<ContractNotice> optional = ContractNoticeRepository.findById(contractId);
+    public ContractNotice update(String projectId) {
+        ContractNotice model=ContractNoticeRepository.findInfoByProjectId(projectId);
         ContractNotice contractNotice = new ContractNotice();
-        if (optional.isPresent()) {
-            contractNotice = optional.get();
+        if (null!=model) {
+            contractNotice = model;
             contractNotice.setStatus(Constant.STATE_SIGNED);
             contractNotice.setSignDate(new Date());
             ContractNoticeRepository.save(contractNotice);

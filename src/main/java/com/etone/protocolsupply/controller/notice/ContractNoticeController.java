@@ -86,20 +86,19 @@ public class ContractNoticeController extends GenericController {
     /**
      * 处理合同信息（修改状态）
      *
-     * @param contractNoticeId
+     * @param projectId
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{contractNoticeId}",
+    @RequestMapping(value = "/{projectId}",
             method = RequestMethod.PUT,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
-    public ResponseValue updateContractNotice(@PathVariable("contractNoticeId") String contractNoticeId) {
+    public ResponseValue updateContractNotice(@PathVariable("projectId") String projectId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        ContractNotice contractNotice = ContractNoticeService.update(contractNoticeId);
+        ContractNotice contractNotice = ContractNoticeService.update(projectId);
         responseBuilder.data(contractNotice);
-
         return responseBuilder.build();
     }
 

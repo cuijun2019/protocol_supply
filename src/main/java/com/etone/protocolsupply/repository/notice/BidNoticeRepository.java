@@ -36,4 +36,8 @@ public interface BidNoticeRepository extends JpaRepository<BidNotice, Long>, Jpa
             nativeQuery = true)
     List<BidNotice> findAll(@Param("bidNoticeIds") List<Long> bidNoticeIds);
 
+
+    @Query(value = "select * from bid_notice where project_id =:projectId ",
+            nativeQuery = true)
+    BidNotice findInfoByProjectId(@Param("projectId") String projectId);
 }
