@@ -11,6 +11,7 @@ import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.repository.supplier.*;
 import com.etone.protocolsupply.repository.user.UserRepository;
+import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
@@ -69,7 +70,7 @@ public class PartnerInfoService {
             if(Strings.isNotBlank(supplierName)){
                 predicates.add(criteriaBuilder.like(root.get("companyNo").as(String.class),"%"+supplierName+"%"));
             }
-            predicates.add(criteriaBuilder.equal(root.get("isDelete").as(Long.class), isDelete));
+            predicates.add(criteriaBuilder.equal(root.get("isDelete").as(Long.class), "2"));
             Predicate[] pre = new Predicate[predicates.size()];
             return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
         };
@@ -141,8 +142,9 @@ public class PartnerInfoService {
         }
     }
 
-    public Page<PartnerInfo> findPartnerInfoList(Specification<PartnerInfo> specification, Pageable pageable) {
-        return partnerInfoRepository.findAll(specification,pageable);
+    public Page<PartnerInfo> findPartnerInfoList(String isDelete,String supplierName, Pageable pageable) {
+        List<PartnerInfo> list = partnerInfoRepository.findByCondition("2", supplierName);
+        return Common.listConvertToPage(list,pageable);
     }
 
     public PartnerInfoCollectionDto to(Page<PartnerInfo> page, HttpServletRequest request) {

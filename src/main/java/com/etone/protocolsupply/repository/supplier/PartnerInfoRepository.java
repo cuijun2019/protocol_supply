@@ -1,6 +1,8 @@
 package com.etone.protocolsupply.repository.supplier;
 
 import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -46,4 +48,8 @@ public interface PartnerInfoRepository extends JpaRepository<PartnerInfo, Long>,
             nativeQuery = true)
     List<PartnerInfo> findByAuthStatus();
 
+    @Query(value = "SELECT * FROM partner_info p inner join users u on p.partner_id=u.partner_id \n" +
+            "inner join user_role ur on u.id=ur.user_id where ur.role_id=1 and p.is_delete=?1 and if((?2 is not null), (p.company_no like %?2%), (1=1))",
+            nativeQuery = true)
+    List<PartnerInfo> findByCondition(@Param("isDelete")String isDelete,@Param("supplierName") String supplierName);
 }

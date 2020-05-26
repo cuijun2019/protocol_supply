@@ -109,7 +109,7 @@ public class SupplierController extends GenericController {
      * 分页查询供应商列表
      * @param supplierName  供应商名称
      * @param isDelete    是否删除 1删除   2未删除
-     * @param currentPage 当前页码
+     * @param Page 当前页码
      * @param pageSize    需要展示的条数
      * @param request
      * @return
@@ -121,15 +121,14 @@ public class SupplierController extends GenericController {
     public ResponseValue getSuppliers(@Validated
                                   @RequestParam(value = "supplierName", required = false) String supplierName,
                                   @RequestParam(value = "isDelete", required = false) String isDelete,
-                                  @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
+                                  @RequestParam(value = "Page", required = false, defaultValue = "1") Integer Page,
                                   @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
                                   HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
 
         Sort sort = new Sort(Sort.Direction.DESC, "partnerId");
-        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Specification<PartnerInfo> specification = partnerInfoService.getWhereClause(isDelete,supplierName);
-        Page<PartnerInfo> page = partnerInfoService.findPartnerInfoList(specification, pageable);
+        Pageable pageable = PageRequest.of(Page - 1, pageSize, sort);
+        Page<PartnerInfo> page = partnerInfoService.findPartnerInfoList(isDelete,supplierName, pageable);
 
         PartnerInfoCollectionDto partnerInfoCollectionDto = partnerInfoService.to(page, request);
         responseBuilder.data(partnerInfoCollectionDto);
