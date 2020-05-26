@@ -116,7 +116,7 @@ public class ResultNoticeController extends GenericController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{projectId}",
+    @RequestMapping(value = "/updateStaus/{projectId}",
             method = RequestMethod.GET,
             consumes = {"application/json"},
             produces = {"application/json"})
