@@ -90,7 +90,7 @@ public class ContractNoticeController extends GenericController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/updateStaus/{projectId}",
+    @RequestMapping(value = "/updateStatus/{projectId}",
             method = RequestMethod.GET,
             consumes = {"application/json"},
             produces = {"application/json"})
