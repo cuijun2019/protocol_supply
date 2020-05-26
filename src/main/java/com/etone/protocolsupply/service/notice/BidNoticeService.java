@@ -227,9 +227,9 @@ public class BidNoticeService {
             if(bidNotice.getStatus()==1){
                 bidNotice.setStatus(Constant.STATE_WAIT_SIGN);//拟稿-->待签收
             }else if(bidNotice.getStatus()==7){
+                bidNotice.setSignDate(new Date());
                 bidNotice.setStatus(Constant.STATE_SIGNED); //待签收-->已签收
             }
-            bidNotice.setSignDate(new Date());
             bidNoticeRepository.save(bidNotice);
         }
         return bidNotice;
