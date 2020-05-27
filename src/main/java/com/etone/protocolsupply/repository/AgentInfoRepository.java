@@ -22,6 +22,11 @@ public interface AgentInfoRepository extends JpaRepository<AgentInfo, Long>, Jpa
             "agent_id in (:agentIds)", nativeQuery = true)
     List<AgentInfo> findAll(@Param("agentName") String agentName, @Param("status") String status, @Param("agentIds") List<Long> agentIds);
 
+    @Query(value = "select * from agent_info where is_delete=:isDelete and " +
+            "if((:agentName is not null), (agent_name like %:agentName%), (1=1)) and if((:status is not null), (status=:status), (1=1))  " +
+            "and if((:reviewStatus is not null), (review_status=:reviewStatus), (1=1)) order by create_date desc", nativeQuery = true)
+    List<AgentInfo> findAll( @Param("agentName") String agentName,@Param("status") String status,
+                             @Param("isDelete") String isDelete,@Param("reviewStatus") String reviewStatus);
 
     @Query(value = "select * from agent_info where is_delete=:isDelete " +
             "and if((:status is not null), (status=:status), (1=1)) " +
