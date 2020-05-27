@@ -135,8 +135,8 @@ public class InquiryInfoService {
     }
 
     public Page<InquiryInfo> findInquiryInfos(String isDelete, String cargoName, String inquiryCode,String actor,Integer status, Pageable pageable) {
-        if(null == actor ||actor.equals("admin")){
-            return Common.listConvertToPage(inquiryInfoRepository.findAll(isDelete, cargoName, inquiryCode,status), pageable);
+        if(null == actor || actor.equals("admin")){
+            return Common.listConvertToPage(inquiryInfoRepository.findAll(isDelete, null==cargoName?"":cargoName, inquiryCode,status), pageable);
         }else {
             return Common.listConvertToPage(inquiryInfoRepository.findMyInquiry(isDelete, cargoName, inquiryCode,actor,status), pageable);
         }
