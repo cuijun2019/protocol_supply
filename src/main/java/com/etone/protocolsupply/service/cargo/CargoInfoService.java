@@ -135,11 +135,11 @@ public class CargoInfoService {
         };
     }
 
-    public Page<CargoInfo> findCargoInfos(String isDelete, String cargoName,String cName, String partName,String actor,Integer status, Pageable pageable) {
+    public Page<CargoInfo> findCargoInfos(String isDelete, String cargoName,String cName, String cargoCode,String actor,Integer status, Pageable pageable) {
         if(null == actor ||actor.equals("admin")){
-            return Common.listConvertToPage(cargoInfoRepository.findAll(isDelete, cargoName, partName,status), pageable);
+            return Common.listConvertToPage(cargoInfoRepository.findAll(isDelete, cargoName, cargoCode,status), pageable);
         }else {
-            return Common.listConvertToPage(cargoInfoRepository.findAllMyCargo(isDelete, cargoName,partName,actor,status,cName), pageable);
+            return Common.listConvertToPage(cargoInfoRepository.findAllMyCargo(isDelete, cargoName,cargoCode,actor,status,cName), pageable);
         }
 
     }

@@ -72,7 +72,7 @@ public class CargoInfoController extends GenericController {
                                        @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
                                        @RequestParam(value = "cargoName", required = false) String cargoName,
                                        @RequestParam(value = "cName", required = false) String cName,
-                                       @RequestParam(value = "partName", required = false) String partName,
+                                       @RequestParam(value = "cargoCode", required = false) String cargoCode,
                                        @RequestParam(value = "manufactor", required = false) String manufactor,
                                        @RequestParam(value = "actor", required = false) String actor,
                                        @RequestParam(value = "status", required = false) Integer status,
@@ -80,7 +80,7 @@ public class CargoInfoController extends GenericController {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort = new Sort(Sort.Direction.DESC, "createDate");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Page<CargoInfo> page = cargoInfoService.findCargoInfos(isDelete, cargoName,cName, partName,actor,status, pageable);
+        Page<CargoInfo> page = cargoInfoService.findCargoInfos(isDelete, cargoName,cName, cargoCode,actor,status, pageable);
         CargoCollectionDto cargoCollectionDto = cargoInfoService.to(page, request);
         for (CargoInfoDto cargoInfoDto : cargoCollectionDto.getCargoInfoDtos()) {
             cargoInfoDto.setPartInfos(null);
