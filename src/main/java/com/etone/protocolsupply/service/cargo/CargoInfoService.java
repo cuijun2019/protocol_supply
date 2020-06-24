@@ -317,7 +317,8 @@ public class CargoInfoService {
                     row.createCell(14).setCellValue(new HSSFRichTextString(""));
                 }
             }
-            response.setContentType("application/octet-stream");
+            //response.setContentType("application/octet-stream");
+            response.setContentType("application/vnd.ms-excel");
             response.setHeader("Content-disposition", "attachment;filename=cargoInfo.xls");
             response.flushBuffer();
             workbook.write(response.getOutputStream());
@@ -358,7 +359,8 @@ public class CargoInfoService {
             row.createCell(8).setCellValue(new HSSFRichTextString());
             row.createCell(9).setCellValue(new HSSFRichTextString());
             row.createCell(10).setCellValue(new HSSFRichTextString());
-            response.setContentType("application/octet-stream");
+            //response.setContentType("application/octet-stream");
+            response.setContentType("application/vnd.ms-excel");
             response.setHeader("Content-disposition", "attachment;filename=cargoInfoTemplate.xls");
             response.flushBuffer();
             workbook.write(response.getOutputStream());

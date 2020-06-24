@@ -203,7 +203,7 @@ public class PartInfoService {
     public void export(HttpServletResponse response, Long cargoId, List<Long> partIds) {
         try {
             String[] header = {"配件编号", "设备或配件名称", "型号/规格", "产地/厂家", "主要技术参数", "单位", "数量",
-                    "单价", "总价", "备注"};
+                    "单价", "备注"};
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet("配件列表");
             sheet.setDefaultColumnWidth(10);
@@ -220,8 +220,13 @@ public class PartInfoService {
                 cell.setCellValue(text);
                 cell.setCellStyle(headerStyle);
             }
+            List<PartInfo> list=null;
+            if (partIds != null && !partIds.isEmpty()){
+                 list = partInfoRepository.findAllBycargoId(cargoId,partIds);
+            }else {
+                 list = partInfoRepository.findAllBys(cargoId);
+            }
 
-            List<PartInfo> list = partInfoRepository.findAllBycargoId(cargoId,partIds);
             PartInfo partInfo;
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             for (int i = 0; i < list.size(); i++) {
@@ -236,11 +241,12 @@ public class PartInfoService {
                 row.createCell(5).setCellValue(new HSSFRichTextString(partInfo.getUnit()));
                 row.createCell(6).setCellValue(new HSSFRichTextString(partInfo.getQuantity()));
                 row.createCell(7).setCellValue(new HSSFRichTextString(partInfo.getPrice()+""));
-                row.createCell(8).setCellValue(new HSSFRichTextString(partInfo.getTotal()+""));
-                row.createCell(9).setCellValue(new HSSFRichTextString(partInfo.getRemark()));
+                //row.createCell(8).setCellValue(new HSSFRichTextString(partInfo.getTotal()+""));
+                row.createCell(8).setCellValue(new HSSFRichTextString(partInfo.getRemark()));
             }
 
-            response.setContentType("application/octet-stream");
+            //response.setContentType("application/octet-stream");
+            response.setContentType("application/vnd.ms-excel");
             response.setHeader("Content-disposition", "attachment;filename=partInfo.xls");
             response.flushBuffer();
             workbook.write(response.getOutputStream());
@@ -279,7 +285,9 @@ public class PartInfoService {
                 row.createCell(6).setCellValue(new HSSFRichTextString());
                 row.createCell(7).setCellValue(new HSSFRichTextString());
                 row.createCell(8).setCellValue(new HSSFRichTextString());
-            response.setContentType("application/octet-stream");
+
+            //response.setContentType("application/octet-stream");//mime通用类型
+            response.setContentType("application/vnd.ms-excel");
             response.setHeader("Content-disposition", "attachment;filename=partInfoTemplate.xls");
             response.flushBuffer();
             workbook.write(response.getOutputStream());
@@ -329,7 +337,8 @@ public class PartInfoService {
                 row.createCell(9).setCellValue(new HSSFRichTextString(partInfoExp.getRemark()));
             }
 
-            response.setContentType("application/octet-stream");
+            //response.setContentType("application/octet-stream");
+            response.setContentType("application/vnd.ms-excel");
             response.setHeader("Content-disposition", "attachment;filename=partInfoExp.xls");
             response.flushBuffer();
             workbook.write(response.getOutputStream());
