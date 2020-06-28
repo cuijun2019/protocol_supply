@@ -164,7 +164,7 @@ public class CargoInfoController extends GenericController {
     /**
      * 货物导出
      *
-     * @param cargoIds
+     * @param cargoInfoDto
      * @param response
      * @return
      */
@@ -174,11 +174,12 @@ public class CargoInfoController extends GenericController {
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseValue exportPart(@RequestBody(required = false) List<Long> cargoIds,
-                                    @RequestParam(value = "actor", required = false) String actor,
+    public ResponseValue exportPart(@RequestBody CargoInfoDto cargoInfoDto,
+//            @RequestBody(required = false) List<Long> cargoIds,
+//                                    @RequestParam(value = "actor", required = false) String actor,
                                     @Context HttpServletResponse response) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        cargoInfoService.export(response, cargoIds,actor);
+        cargoInfoService.export(response, cargoInfoDto.getCargoIds(),cargoInfoDto.getActor());
         return responseBuilder.build();
     }
 

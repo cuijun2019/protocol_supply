@@ -3,6 +3,8 @@ package com.etone.protocolsupply.model.dto.part;
 import com.etone.protocolsupply.model.entity.cargo.PartInfo;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class PartInfoDto extends PartInfo {
     private String cargoId;//货物id
@@ -11,4 +13,8 @@ public class PartInfoDto extends PartInfo {
     private String currency;//币种
     private String guaranteeRate;//维保率/月
     //private String projectId;
+
+    private List<Long> partIds;
+
+
 }

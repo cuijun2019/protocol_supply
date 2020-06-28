@@ -96,7 +96,7 @@ public class InquiryInfoNewController extends GenericController {
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
-    public ResponseValue getCargo(@PathVariable("inquiryId") String inquiryId) {
+    public ResponseValue getInquiryInfoNew(@PathVariable("inquiryId") String inquiryId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         InquiryInfoNew inquiryInfoNew = inquiryInfoNewService.findOne(Long.parseLong(inquiryId));
         if(null==inquiryInfoNew.getAttachment()){
@@ -130,7 +130,7 @@ public class InquiryInfoNewController extends GenericController {
     /**
      * 询价导出
      *
-     * @param inquiryIds
+     * @param inquiryInfoNewDto
      * @param response
      * @return
      */
@@ -140,11 +140,10 @@ public class InquiryInfoNewController extends GenericController {
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseValue exportPart( @RequestBody(required = false) List<Long> inquiryIds,
-                                     @RequestParam(value = "actor", required = false) String actor,
+    public ResponseValue exportPart( @RequestBody InquiryInfoNewDto inquiryInfoNewDto,
                                      @Context HttpServletResponse response) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        inquiryInfoNewService.export(response, inquiryIds,actor);
+        inquiryInfoNewService.export(response, inquiryInfoNewDto.getInquiryIds(),inquiryInfoNewDto.getActor());
         return responseBuilder.build();
     }
 

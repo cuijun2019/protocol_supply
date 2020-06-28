@@ -160,21 +160,21 @@ public class PartInfoController extends GenericController {
     /**
      * 配件导出
      *
-     * @param cargoId
+     * @param partInfoDto
      * @param response
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/export/{cargoId}",
+    @RequestMapping(value = "/export",
             method = RequestMethod.POST,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseValue exportPart(@PathVariable("cargoId") String cargoId,
-                                    @RequestBody(required = false) List<Long> partIds,
+    public ResponseValue exportPart(
+                                    @RequestBody PartInfoDto partInfoDto,
                                     @Context HttpServletResponse response) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        partInfoService.export(response, Long.parseLong(cargoId),partIds);
+        partInfoService.export(response, Long.parseLong(partInfoDto.getCargoId()),partInfoDto.getPartIds());
         return responseBuilder.build();
     }
 
