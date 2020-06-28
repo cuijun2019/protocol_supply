@@ -13,6 +13,9 @@ import com.etone.protocolsupply.repository.inquiry.InquiryInfoNewRepository;
 import com.etone.protocolsupply.repository.supplier.PartnerInfoRepository;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,7 +24,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Transactional(rollbackFor = Exception.class)
@@ -32,10 +39,7 @@ public class InquiryInfoNewService {
     private CargoInfoRepository  cargoInfoRepository;
     @Autowired
     private InquiryInfoNewRepository inquiryInfoNewRepository;
-    @Autowired
-    private PartnerInfoRepository partnerInfoRepository;
-    @Autowired
-    private AttachmentRepository attachmentRepository;
+
     @Autowired
     private PagingMapper         pagingMapper;
 
@@ -46,6 +50,14 @@ public class InquiryInfoNewService {
         String userName = jwtUser.getUsername();
         InquiryInfoNew inquiryInfoNew = new InquiryInfoNew();
         BeanUtils.copyProperties(inquiryInfoNewDto, inquiryInfoNew);
+        String maxOne = inquiryInfoNewRepository.findMaxOne();
+        if (maxOne == null) {
+            inquiryInfoNew.setInquiryCode("XJD-" + Common.getYYYYMMDDDate(date) + "-001");
+        } else {
+            InquiryInfoNew inquiryInfoNew1 = inquiryInfoNewRepository.findAllByInquiryId(Long.parseLong(maxOne));
+            inquiryInfoNew.setInquiryCode("XJD-" + Common.getYYYYMMDDDate(date) + "-" + Common.convertSerialProject(inquiryInfoNew1.getInquiryCode().substring(13), 1));
+
+        }
 
         inquiryInfoNew.setCreator(userName);//创建人
         inquiryInfoNew.setCreateDate(date);//创建时间
@@ -56,7 +68,6 @@ public class InquiryInfoNewService {
             Optional<CargoInfo> optional = cargoInfoRepository.findById(cargoInfo.getCargoId());
             if (optional.isPresent()) {
                 inquiryInfoNew.setCargoInfo(optional.get());
-                inquiryInfoNew.setInquiryTheme(cargoInfo.getCargoName()+"的询价");//询价主题暂定=货物名称+“的询价”
             }
         }else {
             inquiryInfoNew.setCargoInfo(null);
@@ -68,13 +79,13 @@ public class InquiryInfoNewService {
     }
 
     //查询list
-    public Page<InquiryInfoNew> findInquiryInfoNewList(String isDelete, String inquiryTheme,String actor,Integer status, Pageable pageable) {
+    public Page<InquiryInfoNew> findInquiryInfoNewList(String isDelete, String inquiryCode,String cargoName,String actor,Integer status, Pageable pageable) {
         //查询全部询价
         if(null == actor || actor.equals("admin")){
-            return Common.listConvertToPage(inquiryInfoNewRepository.findAllList(isDelete,inquiryTheme,status), pageable);
+            return Common.listConvertToPage(inquiryInfoNewRepository.findAllList(isDelete,inquiryCode,cargoName,status), pageable);
         }else {
             //根据不同的创建人查询询价
-            return Common.listConvertToPage(inquiryInfoNewRepository.findAllListWithCreator(isDelete, inquiryTheme,status,actor), pageable);
+            return Common.listConvertToPage(inquiryInfoNewRepository.findAllListWithCreator(isDelete, inquiryCode,cargoName,status,actor), pageable);
         }
     }
 
@@ -85,10 +96,83 @@ public class InquiryInfoNewService {
         InquiryInfoNewDto inquiryInfoNewDto;
         for (InquiryInfoNew inquiryInfoNew : source) {
             inquiryInfoNewDto = new InquiryInfoNewDto();
+            //必须要setnull，不然会error，Could not write JSON
+            inquiryInfoNew.getCargoInfo().setPartInfos(null);
             BeanUtils.copyProperties(inquiryInfoNew, inquiryInfoNewDto);
             inquiryInfoNewCollectionDto.add(inquiryInfoNewDto);
         }
         return inquiryInfoNewCollectionDto;
+    }
+
+    //根据询价id查询询价详情
+    public InquiryInfoNew findOne(Long inquiryId) {
+        Optional<InquiryInfoNew> optional = inquiryInfoNewRepository.findById(inquiryId);
+        if (optional.isPresent()) {
+            return optional.get();
+        } else {
+            return null;
+        }
+    }
+
+    //批量删除
+    public void delete(List<Long> inquiryIds) {
+        inquiryInfoNewRepository.updateIsDelete(inquiryIds);
+    }
+
+    //询价导出
+    public void export(HttpServletResponse response, List<Long> inquiryIds, String actor) {
+        try {
+            String[] header = {"询价单号", "采购人", "厂家名称", "货物名称", "项目预算"};
+            HSSFWorkbook workbook = new HSSFWorkbook();
+            HSSFSheet sheet = workbook.createSheet("询价列表");
+            sheet.setDefaultColumnWidth(10);
+            //        创建标题的显示样式
+            HSSFCellStyle headerStyle = workbook.createCellStyle();
+            headerStyle.setFillForegroundColor(IndexedColors.YELLOW.index);
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            //        创建第一行表头
+            HSSFRow headrow = sheet.createRow(0);
+
+            for (int i = 0; i < header.length; i++) {
+                HSSFCell cell = headrow.createCell(i);
+                HSSFRichTextString text = new HSSFRichTextString(header[i]);
+                cell.setCellValue(text);
+                cell.setCellStyle(headerStyle);
+            }
+            List<InquiryInfoNew> list = null;
+            if (inquiryIds != null && !inquiryIds.isEmpty()) {
+                list = inquiryInfoNewRepository.findByInquiryIds(inquiryIds);
+            } else if(null != actor && inquiryIds.isEmpty()){
+                list = inquiryInfoNewRepository.findExpert(Constant.DELETE_NO,actor);
+            }else {
+                list = inquiryInfoNewRepository.findAll();
+            }
+            InquiryInfoNew inquiryInfoNew;
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            for (int i = 0; i < list.size(); i++) {
+                DecimalFormat df = new DecimalFormat("0.00");
+                inquiryInfoNew = list.get(i);
+                HSSFRow row = sheet.createRow(i + 1);
+
+                CargoInfo cargoInfo=inquiryInfoNew.getCargoInfo();//货物
+                if(cargoInfo!=null){
+                    cargoInfo = cargoInfoRepository.getOne(inquiryInfoNew.getCargoInfo().getCargoId());
+                    row.createCell(3).setCellValue(new HSSFRichTextString(cargoInfo.getCargoName()));//货物名称
+                }else {
+                    row.createCell(3).setCellValue(new HSSFRichTextString(""));
+                }
+                row.createCell(0).setCellValue(new HSSFRichTextString(inquiryInfoNew.getInquiryCode()));
+                row.createCell(1).setCellValue(new HSSFRichTextString(inquiryInfoNew.getPurchaser()));
+                row.createCell(2).setCellValue(new HSSFRichTextString(inquiryInfoNew.getManufactor()));
+                row.createCell(4).setCellValue(new HSSFRichTextString(inquiryInfoNew.getProjectBudget()+""));
+            }
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-disposition", "attachment;filename=inquiryInfo.xls");
+            response.flushBuffer();
+            workbook.write(response.getOutputStream());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
