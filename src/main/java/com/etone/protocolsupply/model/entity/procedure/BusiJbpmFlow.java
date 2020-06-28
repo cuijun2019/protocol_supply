@@ -1,5 +1,8 @@
 package com.etone.protocolsupply.model.entity.procedure;
 
+import com.etone.protocolsupply.model.entity.Attachment;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -103,6 +106,15 @@ public class BusiJbpmFlow implements Serializable {
      */
     @Column(name = "IS_BACK", length = 4)
     private Integer isBack;
+
+    /**
+     * 附件
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JoinColumn(name = "ATTACH_ID", referencedColumnName = "ATTACH_ID")
+    private Attachment attachment;
 
 
 }

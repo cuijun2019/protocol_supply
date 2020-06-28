@@ -5,6 +5,7 @@ import com.etone.protocolsupply.exception.GlobalServiceException;
 import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowCollectionDto;
 import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowDto;
+import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
 import com.etone.protocolsupply.model.entity.user.Role;
 import com.etone.protocolsupply.repository.procedure.BusiJbpmFlowRepository;
@@ -49,6 +50,9 @@ public class BusiJbpmFlowService {
         String userName = jwtUser.getUsername();
         BusiJbpmFlow busiJbpmFlow = new BusiJbpmFlow();
         BeanUtils.copyProperties(busiJbpmFlowDto, busiJbpmFlow);
+
+
+
         busiJbpmFlow.setFlowStartTime(date);//询价时间
         busiJbpmFlow.setFlowInitorId(userName);
         busiJbpmFlow.setType(Constant.BUSINESS_TYPE_DAIBAN);
@@ -163,6 +167,10 @@ public class BusiJbpmFlowService {
                 busiJbpmFlowDto.setNextActor_roleName(list.get(0).getName());
                 busiJbpmFlowDto.setNextActor_roleDescription(list.get(0).getDescription());
                 busiJbpmFlowDto.setNextActor_roleStatus(list.get(0).getStatus());
+            }
+            if(busiJbpmFlowDto.getAttachment()==null){
+                Attachment attachment=new Attachment();
+                busiJbpmFlowDto.setAttachment(attachment);
             }
             busiJbpmFlowCollectionDto.add(busiJbpmFlowDto);
         }
