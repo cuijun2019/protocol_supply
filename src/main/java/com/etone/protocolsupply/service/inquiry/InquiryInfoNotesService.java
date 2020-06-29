@@ -5,8 +5,10 @@ import com.etone.protocolsupply.exception.GlobalServiceException;
 import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoNotesCollectionDto;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoNotesDto;
+import com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNotes;
 import com.etone.protocolsupply.repository.AttachmentRepository;
+import com.etone.protocolsupply.repository.inquiry.InquiryInfoNewRepository;
 import com.etone.protocolsupply.repository.inquiry.InquiryInfoNotesRepository;
 import com.etone.protocolsupply.repository.procedure.BusiJbpmFlowRepository;
 import com.etone.protocolsupply.utils.Common;
@@ -29,6 +31,8 @@ public class InquiryInfoNotesService {
     @Autowired
     private InquiryInfoNotesRepository inquiryInfoNotesRepository;
     @Autowired
+    private InquiryInfoNewRepository inquiryInfoNewRepository;
+    @Autowired
     private AttachmentRepository attachmentRepository;
     @Autowired
     private BusiJbpmFlowRepository busiJbpmFlowRepository;
@@ -44,10 +48,14 @@ public class InquiryInfoNotesService {
         InquiryInfoNotes inquiryInfoNotes = new InquiryInfoNotes();
         BeanUtils.copyProperties(inquiryInfoNotesDto, inquiryInfoNotes);
 
+        InquiryInfoNew inquiryInfoNew=inquiryInfoNewRepository.findAllByInquiryId(inquiryInfoNotesDto.getInquiryId());
+        inquiryInfoNotes.setInquiryInfoNew(inquiryInfoNew);
+        inquiryInfoNotes.setStatus(1);
         inquiryInfoNotes.setCreator(userName);//创建人
         inquiryInfoNotes.setCreateDate(date);//创建时间
         inquiryInfoNotes.setIsDelete(Constant.DELETE_NO);
         inquiryInfoNotesRepository.save(inquiryInfoNotes);
+        inquiryInfoNotes.getInquiryInfoNew().getCargoInfo().setPartInfos(null);
         return inquiryInfoNotes;
     }
 

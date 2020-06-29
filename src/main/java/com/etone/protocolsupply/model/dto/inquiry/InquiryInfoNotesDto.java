@@ -5,5 +5,6 @@ import lombok.Data;
 
 @Data
 public class InquiryInfoNotesDto extends InquiryInfoNotes {
+    private Long inquiryId;
 
 }
