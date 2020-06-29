@@ -128,25 +128,25 @@ public class PermissionService {
         for (int i = 0; i < permissionsList.size(); i++) {
             if(1==permissionsList.get(i).getPermId()){
                 firstPageMap.put("permission",permissionsList.get(i));
-            }else if(14==permissionsList.get(i).getPermId()){
+            }else if(41==permissionsList.get(i).getPermId()){
                 projectMap.put("permission",permissionsList.get(i));
-            }else if(22==permissionsList.get(i).getPermId()){
+            }else if(14==permissionsList.get(i).getPermId()){
                 goodsMap.put("permission",permissionsList.get(i));
-            }else if(31==permissionsList.get(i).getPermId()){
+            }else if(35==permissionsList.get(i).getPermId()){
                 pricesMap.put("permission",permissionsList.get(i));
-            }else if(37==permissionsList.get(i).getPermId()){
+            }else if(61==permissionsList.get(i).getPermId()){
                 supplierMap.put("permission",permissionsList.get(i));
-            }else if(47==permissionsList.get(i).getPermId()){
+            }else if(23==permissionsList.get(i).getPermId()){
                 agentMap.put("permission",permissionsList.get(i));
             }else if(53==permissionsList.get(i).getPermId()){
                 purchaseResultsMap.put("permission",permissionsList.get(i));
-            } else if(57==permissionsList.get(i).getPermId()){
+            }else if(49==permissionsList.get(i).getPermId()){
                 bidsMap.put("permission",permissionsList.get(i));
-            }else if(61==permissionsList.get(i).getPermId()){
+            }else if(57==permissionsList.get(i).getPermId()){
                 contractMap.put("permission",permissionsList.get(i));
-            }else if(65==permissionsList.get(i).getPermId()){
+            }else if(71==permissionsList.get(i).getPermId()){
                 templateMap.put("permission",permissionsList.get(i));
-            }else if(81==permissionsList.get(i).getPermId()){
+            }else if(87==permissionsList.get(i).getPermId()){
                 systemMap.put("permission",permissionsList.get(i));
             }else if(2==permissionsList.get(i).getPermId()){
                 firstPageMaptodo.put("permission",permissionsList.get(i));
@@ -156,80 +156,69 @@ public class PermissionService {
                 firstPageMappending.put("permission",permissionsList.get(i));
             }else if(5==permissionsList.get(i).getPermId()){
                 firstPageMapread.put("permission",permissionsList.get(i));
-            }else if(15==permissionsList.get(i).getPermId()){
+            }else if(42==permissionsList.get(i).getPermId()){
                 projectMapMyProject.put("permission",permissionsList.get(i));
-            }else if(23==permissionsList.get(i).getPermId()){
+            }else if(15==permissionsList.get(i).getPermId()){
                 goodsMapMyGoods.put("permission",permissionsList.get(i));
-            }else if(32==permissionsList.get(i).getPermId()){
+            }else if(36==permissionsList.get(i).getPermId()){
                 pricesMapMyPrice.put("permission",permissionsList.get(i));
-            }else if(38==permissionsList.get(i).getPermId()){
+            }else if(62==permissionsList.get(i).getPermId()){
                 supplierMapMySupplier.put("permission",permissionsList.get(i));
-            }else if(39==permissionsList.get(i).getPermId()){
+            }else if(63==permissionsList.get(i).getPermId()){
                 supplierMapInfo.put("permission",permissionsList.get(i));
-            }else if(40==permissionsList.get(i).getPermId()){
+            }else if(64==permissionsList.get(i).getPermId()){
                 supplierMapUpdate.put("permission",permissionsList.get(i));
-            }else if(41==permissionsList.get(i).getPermId()){
+            }else if(65==permissionsList.get(i).getPermId()){
                 supplierMapResetPWD.put("permission",permissionsList.get(i));
-            }else if(48==permissionsList.get(i).getPermId()){
+            }else if(24==permissionsList.get(i).getPermId()){
                 agentMapMyAgent.put("permission",permissionsList.get(i));
-            }else if(98==permissionsList.get(i).getPermId()){
+            }else if(25==permissionsList.get(i).getPermId()){
                 agentMapInfo.put("permission",permissionsList.get(i));
-            }else if(99==permissionsList.get(i).getPermId()){
+            }else if(26==permissionsList.get(i).getPermId()){
                 agentMapUpdate.put("permission",permissionsList.get(i));
-            }else if(100==permissionsList.get(i).getPermId()){
+            }else if(27==permissionsList.get(i).getPermId()){
                 agentMapResetPWD.put("permission",permissionsList.get(i));
             }else if(54==permissionsList.get(i).getPermId()){
                 purchaseResultsMapMy.put("permission",permissionsList.get(i));
-            }else if(58==permissionsList.get(i).getPermId()){
+            }else if(50==permissionsList.get(i).getPermId()){
                 bidsMapMyBids.put("permission",permissionsList.get(i));
-            }else if(62==permissionsList.get(i).getPermId()){
+            }else if(58==permissionsList.get(i).getPermId()){
                 contractMapMy.put("permission",permissionsList.get(i));
-            }else if(66==permissionsList.get(i).getPermId()){
+            }else if(72==permissionsList.get(i).getPermId()){
                 templateMapPurchase.put("permission",permissionsList.get(i));
-            }else if(67==permissionsList.get(i).getPermId()){
+            }else if(73==permissionsList.get(i).getPermId()){
                 templateMapBids.put("permission",permissionsList.get(i));
-            }else if(68==permissionsList.get(i).getPermId()){
+            }else if(74==permissionsList.get(i).getPermId()){
                 templateMapContract.put("permission",permissionsList.get(i));
-            }else if(82==permissionsList.get(i).getPermId()){
+            }else if(88==permissionsList.get(i).getPermId()){
                 systemMapUser.put("permission",permissionsList.get(i));
-            }else if(83==permissionsList.get(i).getPermId()){
+            }else if(89==permissionsList.get(i).getPermId()){
                 systemMapRole.put("permission",permissionsList.get(i));
             }
 
 
 
             if(1==permissionsList.get(i).getParentPermId()){
-                //firstPageList.add(permissionsList.get(i));
                 firstPageMap.put("list",firstPageList);
-            }else if(14==permissionsList.get(i).getParentPermId()){
-                //projectList.add(permissionsList.get(i));
+            }else if(41==permissionsList.get(i).getParentPermId()){
                 projectMap.put("list",projectList);
-            }else if(22==permissionsList.get(i).getParentPermId()){
-                //goodsList.add(permissionsList.get(i));
+            }else if(14==permissionsList.get(i).getParentPermId()){
                 goodsMap.put("list",goodsList);
-            }else if(31==permissionsList.get(i).getParentPermId()){
-                //pricesList.add(permissionsList.get(i));
+            }else if(35==permissionsList.get(i).getParentPermId()){
                 pricesMap.put("list",pricesList);
-            }else if(37==permissionsList.get(i).getParentPermId()){
-                //supplierList.add(permissionsList.get(i));
+            }else if(61==permissionsList.get(i).getParentPermId()){
                 supplierMap.put("list",supplierList);
-            }else if(47==permissionsList.get(i).getParentPermId()){
-                //agentList.add(permissionsList.get(i));
+            }else if(23==permissionsList.get(i).getParentPermId()){
                 agentMap.put("list",agentList);
             }else if(53==permissionsList.get(i).getParentPermId()){
-                //agentList.add(permissionsList.get(i));
                 purchaseResultsMap.put("list",purchaseResultsList);
-            }else if(57==permissionsList.get(i).getParentPermId()){
-                //bidsList.add(permissionsList.get(i));
+            }else if(49==permissionsList.get(i).getParentPermId()){
                 bidsMap.put("list",bidsList);
-            }else if(61==permissionsList.get(i).getParentPermId()){
-                //contractList.add(permissionsList.get(i));
+            }else if(57==permissionsList.get(i).getParentPermId()){
                 contractMap.put("list",contractList);
-            }else if(65==permissionsList.get(i).getParentPermId()){
-                //templateList.add(permissionsList.get(i));
+            }else if(71==permissionsList.get(i).getParentPermId()){
                 templateMap.put("list",templateList);
-            }else if(81==permissionsList.get(i).getParentPermId()){
-                //systemList.add(permissionsList.get(i));
+            }else if(87==permissionsList.get(i).getParentPermId()){
                 systemMap.put("list",systemList);
             }
 
@@ -250,47 +239,47 @@ public class PermissionService {
                 firstPageListread.add(permissionsList.get(i));
                 firstPageMapread.put("list",firstPageListread);
             }
-            if(15==permissionsList.get(i).getParentPermId()){
+            if(42==permissionsList.get(i).getParentPermId()){
                 projectListMyProject.add(permissionsList.get(i));
                 projectMapMyProject.put("list",projectListMyProject);
             }
-            if(23==permissionsList.get(i).getParentPermId()){
+            if(15==permissionsList.get(i).getParentPermId()){
                 goodsListMyGoods.add(permissionsList.get(i));
                 goodsMapMyGoods.put("list",goodsListMyGoods);
             }
-            if(32==permissionsList.get(i).getParentPermId()){
+            if(36==permissionsList.get(i).getParentPermId()){
                 pricesListMyPrice.add(permissionsList.get(i));
                 pricesMapMyPrice.put("list",pricesListMyPrice);
             }
-            if(38==permissionsList.get(i).getParentPermId()){
+            if(62==permissionsList.get(i).getParentPermId()){
                 supplierListMySupplier.add(permissionsList.get(i));
                 supplierMapMySupplier.put("list",supplierListMySupplier);
             }
-            if(39==permissionsList.get(i).getParentPermId()){
+            if(63==permissionsList.get(i).getParentPermId()){
                 supplierListInfo.add(permissionsList.get(i));
                 supplierMapInfo.put("list",supplierListInfo);
             }
-            if(40==permissionsList.get(i).getParentPermId()){
+            if(64==permissionsList.get(i).getParentPermId()){
                 supplierListUpdate.add(permissionsList.get(i));
                 supplierMapUpdate.put("list",supplierListUpdate);
             }
-            if(41==permissionsList.get(i).getParentPermId()){
+            if(65==permissionsList.get(i).getParentPermId()){
                 supplierListResetPWD.add(permissionsList.get(i));
                 supplierMapResetPWD.put("list",supplierListResetPWD);
             }
-            if(47==permissionsList.get(i).getParentPermId()){
+            if(24==permissionsList.get(i).getParentPermId()){
                 agentListMyAgent.add(permissionsList.get(i));
                 agentMapMyAgent.put("list",agentListMyAgent);
             }
-            if(98==permissionsList.get(i).getParentPermId()){
+            if(25==permissionsList.get(i).getParentPermId()){
                 agentListInfo.add(permissionsList.get(i));
                 agentMapMyAgent.put("list",agentListInfo);
             }
-            if(99==permissionsList.get(i).getParentPermId()){
+            if(26==permissionsList.get(i).getParentPermId()){
                 agentListUpdate.add(permissionsList.get(i));
                 agentMapUpdate.put("list",agentListUpdate);
             }
-            if(100==permissionsList.get(i).getParentPermId()){
+            if(27==permissionsList.get(i).getParentPermId()){
                 agentListResetPWD.add(permissionsList.get(i));
                 agentMapResetPWD.put("list",agentListResetPWD);
             }
@@ -298,31 +287,31 @@ public class PermissionService {
                 purchaseResultsListMy.add(permissionsList.get(i));
                 purchaseResultsMapMy.put("list",purchaseResultsListMy);
             }
-            if(58==permissionsList.get(i).getParentPermId()){
+            if(50==permissionsList.get(i).getParentPermId()){
                 bidsListMyBids.add(permissionsList.get(i));
                 bidsMapMyBids.put("list",bidsListMyBids);
             }
-            if(62==permissionsList.get(i).getParentPermId()){
+            if(58==permissionsList.get(i).getParentPermId()){
                 contractListMy.add(permissionsList.get(i));
                 contractMapMy.put("list",contractListMy);
             }
-            if(66==permissionsList.get(i).getParentPermId()){
+            if(72==permissionsList.get(i).getParentPermId()){
                 templateListPurchase.add(permissionsList.get(i));
                 templateMapPurchase.put("list",templateListPurchase);
             }
-            if(67==permissionsList.get(i).getParentPermId()){
+            if(73==permissionsList.get(i).getParentPermId()){
                 templateListBids.add(permissionsList.get(i));
                 templateMapBids.put("list",templateListBids);
             }
-            if(68==permissionsList.get(i).getParentPermId()){
+            if(74==permissionsList.get(i).getParentPermId()){
                 templateListContract.add(permissionsList.get(i));
                 templateMapContract.put("list",templateListContract);
             }
-            if(82==permissionsList.get(i).getParentPermId()){
+            if(88==permissionsList.get(i).getParentPermId()){
                 systemListUser.add(permissionsList.get(i));
                 systemMapUser.put("list",systemListUser);
             }
-            if(83==permissionsList.get(i).getParentPermId()){
+            if(89==permissionsList.get(i).getParentPermId()){
                 systemListRole.add(permissionsList.get(i));
                 systemMapRole.put("list",systemListRole);
             }
