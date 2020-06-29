@@ -82,7 +82,6 @@ public class InquiryInfoNotes implements Serializable {
      */
     @OneToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "INQUIRY_ID", referencedColumnName = "INQUIRY_ID")
     private InquiryInfoNew inquiryInfoNew;
 
