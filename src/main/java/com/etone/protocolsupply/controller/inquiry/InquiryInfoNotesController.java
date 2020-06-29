@@ -5,6 +5,7 @@ import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoNotesCollectionDto;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoNotesDto;
 import com.etone.protocolsupply.model.entity.Attachment;
+import com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNotes;
 import com.etone.protocolsupply.service.inquiry.InquiryInfoNotesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,20 +85,30 @@ public class InquiryInfoNotesController extends GenericController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{inquiryId}",
+    @RequestMapping(value = "/details",
             method = RequestMethod.GET,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
-    public ResponseValue getInquiryInfoNew(@PathVariable("inquiryId") String inquiryId) {
+    public ResponseValue getInquiryInfoNew(@RequestParam(value = "inquiryId", required = false) String inquiryId,
+                                           @RequestParam(value = "actor", required = false) String actor) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        InquiryInfoNotes inquiryInfoNotes = inquiryInfoNotesService.findNotesByInquiryId(inquiryId);
-        if(null==inquiryInfoNotes.getAttachment()){
+        InquiryInfoNotes inquiryInfoNotes = inquiryInfoNotesService.findNotesByInquiryId(inquiryId,actor);
+        if(inquiryInfoNotes!=null){
+            if(null==inquiryInfoNotes.getAttachment()){
+                Attachment attachment=new Attachment();
+                inquiryInfoNotes.setAttachment(attachment);
+            }
+            inquiryInfoNotes.getInquiryInfoNew().getCargoInfo().setPartInfos(null);
+            responseBuilder.data(inquiryInfoNotes);
+        }else {
+            InquiryInfoNotes model=new InquiryInfoNotes();
+            InquiryInfoNew inquiryInfoNew=new InquiryInfoNew();
             Attachment attachment=new Attachment();
-            inquiryInfoNotes.setAttachment(attachment);
+            model.setInquiryInfoNew(inquiryInfoNew);
+            model.setAttachment(attachment);
+            responseBuilder.data(model);
         }
-        inquiryInfoNotes.getInquiryInfoNew().getCargoInfo().setPartInfos(null);
-        responseBuilder.data(inquiryInfoNotes);
         return responseBuilder.build();
     }
 

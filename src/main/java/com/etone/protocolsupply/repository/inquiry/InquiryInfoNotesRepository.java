@@ -24,7 +24,8 @@ public interface InquiryInfoNotesRepository extends JpaRepository<InquiryInfoNot
 
     @Query(value = "select * from inquiry_notes " +
             "where is_delete=?1 " +
+            "and if((?3 is not null),(creator=?3),(1=1)) "+
             "and if((?2 is not null), (inquiry_id = ?2), (1=1) ) order by create_date desc limit 1 " , nativeQuery = true)
-    InquiryInfoNotes findNotesByInquiryId(Integer isDelete ,String inquiryId);
+    InquiryInfoNotes findNotesByInquiryId(Integer isDelete ,String inquiryId,String actor);
 
 }
