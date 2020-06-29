@@ -113,4 +113,10 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
     List<BusiJbpmFlow> findAllListAsc(@Param("businessType") String businessType,@Param("businessSubject") String businessSubject
             ,@Param("type") Integer type,@Param("readType") Integer readType,@Param("businessId") String businessId,@Param("parentActor") String parentActor
             ,@Param("nextActor") String nextActor,@Param("action") Integer action);
+
+
+
+
+    @Query(value = "select * from busi_jbpm_flow where business_id=?1 and business_type=?2 and type=?3 and next_actor=?4", nativeQuery = true)
+    BusiJbpmFlow  findsffsxjjl( String businessId,String businessType,String type,String actor);
 }

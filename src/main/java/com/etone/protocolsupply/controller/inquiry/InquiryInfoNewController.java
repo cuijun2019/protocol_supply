@@ -6,8 +6,8 @@ import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoNewCollectionDto;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoNewDto;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew;
-import com.etone.protocolsupply.service.AttachmentService;
 import com.etone.protocolsupply.service.inquiry.InquiryInfoNewService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -104,7 +104,24 @@ public class InquiryInfoNewController extends GenericController {
             inquiryInfoNew.setAttachment(attachment);
         }
         inquiryInfoNew.getCargoInfo().setPartInfos(null);
-        responseBuilder.data(inquiryInfoNew);
+        String sffs="";
+//        BusiJbpmFlow busiJbpmFlow = inquiryInfoNewService.sffsxjjl(inquiryInfoNew.getInquiryId().toString(),"enquiryAudit","0",this.getUser().getUsername());
+//        //不对不对！！！！
+//        if(busiJbpmFlow!=null){
+//            if(busiJbpmFlow.getParentActor().equals(busiJbpmFlow.getNextActor())){
+//                //busiJbpmFlow存在数据表示该登录人保存询价记录，未发送给下一个人
+//                sffs="0";
+//            }else {
+//                sffs="1";//已经发送
+//            }
+//
+//        }else {
+//            //不存在
+//        }
+        InquiryInfoNewDto inquiryInfoNewDto=new InquiryInfoNewDto();
+        BeanUtils.copyProperties(inquiryInfoNew, inquiryInfoNewDto);
+        inquiryInfoNewDto.setSffs(sffs);
+        responseBuilder.data(inquiryInfoNewDto);
         return responseBuilder.build();
     }
 

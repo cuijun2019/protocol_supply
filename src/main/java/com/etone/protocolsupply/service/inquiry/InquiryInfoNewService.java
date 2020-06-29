@@ -8,9 +8,11 @@ import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoNewDto;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew;
+import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
 import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.repository.inquiry.InquiryInfoNewRepository;
+import com.etone.protocolsupply.repository.procedure.BusiJbpmFlowRepository;
 import com.etone.protocolsupply.repository.supplier.PartnerInfoRepository;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
@@ -42,6 +44,8 @@ public class InquiryInfoNewService {
     private InquiryInfoNewRepository inquiryInfoNewRepository;
     @Autowired
     private AttachmentRepository attachmentRepository;
+    @Autowired
+    private BusiJbpmFlowRepository busiJbpmFlowRepository;
 
     @Autowired
     private PagingMapper         pagingMapper;
@@ -57,11 +61,9 @@ public class InquiryInfoNewService {
         if (maxOneCode == null) {
             inquiryInfoNew.setInquiryCode("XJD-" + Common.getYYYYMMDDDate(date) + "-001");
         } else {
-           // InquiryInfoNew inquiryInfoNew1 = inquiryInfoNewRepository.findAllByInquiryId(Long.parseLong(maxOne));
             inquiryInfoNew.setInquiryCode("XJD-" + Common.getYYYYMMDDDate(date) + "-" + Common.convertSerialProject(maxOneCode.substring(13), 1));
 
         }
-
         inquiryInfoNew.setCreator(userName);//创建人
         inquiryInfoNew.setCreateDate(date);//创建时间
         inquiryInfoNew.setIsDelete(Constant.DELETE_NO);
@@ -115,6 +117,12 @@ public class InquiryInfoNewService {
         } else {
             return null;
         }
+    }
+
+    //查询是否发送过询价记录
+    public BusiJbpmFlow sffsxjjl(String businessId,String businessType,String type,String actor){
+        return busiJbpmFlowRepository.findsffsxjjl(businessId,businessType,type,actor);
+
     }
 
     //询价修改

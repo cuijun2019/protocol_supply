@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 public class InquiryInfoNewDto extends InquiryInfoNew {
-   private List<Long> inquiryIds;//询价ids
+    private List<Long> inquiryIds;//询价ids
     private String actor;//当前登录人
-   // private String id;
+    private String sffs;//是否发送询价记录
 }
