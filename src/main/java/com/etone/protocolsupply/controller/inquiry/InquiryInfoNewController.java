@@ -110,6 +110,26 @@ public class InquiryInfoNewController extends GenericController {
 
 
     /**
+     * 修改询价
+     * @param inquiryInfoNewDto
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(
+            method = RequestMethod.PUT,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseValue updateInquiryInfoNew(@Validated
+                                           @RequestBody InquiryInfoNewDto inquiryInfoNewDto) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        InquiryInfoNew inquiryInfoNew = inquiryInfoNewService.update(inquiryInfoNewDto);
+        responseBuilder.data(inquiryInfoNew);
+        return responseBuilder.build();
+    }
+
+
+    /**
      * 批量删除询价
      *
      * @param inquiryIds

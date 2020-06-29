@@ -33,8 +33,8 @@ public interface InquiryInfoNewRepository extends JpaRepository<InquiryInfoNew, 
     List<InquiryInfoNew> findAllListWithCreator(String isDelete,String inquiryCode,String cargoName,Integer status,String actor);
 
     @Transactional(rollbackFor = Exception.class)
-    @Query(value = "select max(i.inquiry_id)from inquiry_info_new i where i.is_delete=2 limit 1", nativeQuery = true)
-    String findMaxOne();
+    @Query(value = "select max(i.inquiry_code)from inquiry_info_new i where i.is_delete=2 and i.cargo_id=?1  limit 1", nativeQuery = true)
+    String findMaxOne(String cargoId);
 
     @Transactional(rollbackFor = Exception.class)
     @Query(value = "select * from inquiry_info_new where is_delete=2 and inquiry_id=?1", nativeQuery = true)
@@ -43,8 +43,10 @@ public interface InquiryInfoNewRepository extends JpaRepository<InquiryInfoNew, 
     @Query(value = "select * from inquiry_info_new where is_delete=2 and inquiry_id in ?1  ", nativeQuery = true)
     List<InquiryInfoNew> findByInquiryIds(List<Long> inquiryIds);
 
-    @Query(value = "select i.* from inquiry_info_new i where exists(select 1 from busi_jbpm_flow b where i.inquiry_id = b.business_id and b.business_type='enquiryAudit' " +
-            " and if((?2 is not null), (b.parent_actor=?2 or b.next_actor=?2), (1=1)))" +
-            " and i.is_delete=?1 ", nativeQuery = true)
+//    @Query(value = "select i.* from inquiry_info_new i where exists(select 1 from busi_jbpm_flow b where i.inquiry_id = b.business_id and b.business_type='enquiryAudit' " +
+//            " and if((?2 is not null), (b.parent_actor=?2 or b.next_actor=?2), (1=1)))" +
+//            " and i.is_delete=?1 ", nativeQuery = true)
+@Query(value = "select i.* from inquiry_info_new i where i.purchaser = ?2  " +
+        " and i.is_delete=?1 ", nativeQuery = true)
     List<InquiryInfoNew> findExpert(Integer isDelete,String actor);
 }

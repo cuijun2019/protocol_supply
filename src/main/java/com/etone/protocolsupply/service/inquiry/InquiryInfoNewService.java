@@ -5,6 +5,7 @@ import com.etone.protocolsupply.exception.GlobalServiceException;
 import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoNewCollectionDto;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoNewDto;
+import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew;
 import com.etone.protocolsupply.repository.AttachmentRepository;
@@ -39,6 +40,8 @@ public class InquiryInfoNewService {
     private CargoInfoRepository  cargoInfoRepository;
     @Autowired
     private InquiryInfoNewRepository inquiryInfoNewRepository;
+    @Autowired
+    private AttachmentRepository attachmentRepository;
 
     @Autowired
     private PagingMapper         pagingMapper;
@@ -50,12 +53,12 @@ public class InquiryInfoNewService {
         String userName = jwtUser.getUsername();
         InquiryInfoNew inquiryInfoNew = new InquiryInfoNew();
         BeanUtils.copyProperties(inquiryInfoNewDto, inquiryInfoNew);
-        String maxOne = inquiryInfoNewRepository.findMaxOne();
-        if (maxOne == null) {
+        String maxOneCode = inquiryInfoNewRepository.findMaxOne(inquiryInfoNew.getCargoInfo().getCargoId().toString());
+        if (maxOneCode == null) {
             inquiryInfoNew.setInquiryCode("XJD-" + Common.getYYYYMMDDDate(date) + "-001");
         } else {
-            InquiryInfoNew inquiryInfoNew1 = inquiryInfoNewRepository.findAllByInquiryId(Long.parseLong(maxOne));
-            inquiryInfoNew.setInquiryCode("XJD-" + Common.getYYYYMMDDDate(date) + "-" + Common.convertSerialProject(inquiryInfoNew1.getInquiryCode().substring(13), 1));
+           // InquiryInfoNew inquiryInfoNew1 = inquiryInfoNewRepository.findAllByInquiryId(Long.parseLong(maxOne));
+            inquiryInfoNew.setInquiryCode("XJD-" + Common.getYYYYMMDDDate(date) + "-" + Common.convertSerialProject(maxOneCode.substring(13), 1));
 
         }
 
@@ -114,6 +117,44 @@ public class InquiryInfoNewService {
         }
     }
 
+    //询价修改
+    public InquiryInfoNew update(InquiryInfoNewDto inquiryInfoNewDto) throws GlobalServiceException{
+        InquiryInfoNew inquiryInfoNew = new InquiryInfoNew();
+        BeanUtils.copyProperties(inquiryInfoNewDto, inquiryInfoNew);
+        if(null!=inquiryInfoNewDto.getInquiryId() && !"".equals(inquiryInfoNewDto.getInquiryId())){
+            //inquiryInfoNew.setInquiryId(inquiryInfoNewDto.getInquiryId());
+            InquiryInfoNew inquiryInfoNew1=inquiryInfoNewRepository.findAllByInquiryId(inquiryInfoNewDto.getInquiryId());
+            inquiryInfoNew.setInquiryCode(inquiryInfoNew1.getInquiryCode());//询价单号不能修改
+            inquiryInfoNew.setIsDelete(inquiryInfoNew1.getIsDelete());
+            inquiryInfoNew.setCreator(inquiryInfoNew1.getCreator());
+            inquiryInfoNew.setCreateDate(inquiryInfoNew1.getCreateDate());
+        }
+        CargoInfo cargoInfo = inquiryInfoNewDto.getCargoInfo();
+        Attachment attachment = inquiryInfoNewDto.getAttachment();
+        if (attachment != null && attachment.getAttachId()!=null && !attachment.getAttachId().equals("")) {
+            Optional<Attachment> optional = attachmentRepository.findById(attachment.getAttachId());
+            if (optional.isPresent()) {
+                inquiryInfoNew.setAttachment(optional.get());
+            }
+        }else {
+            inquiryInfoNew.setAttachment(null);
+        }
+        if (cargoInfo != null && cargoInfo.getCargoId()!=null && !cargoInfo.getCargoId().equals("")) {
+            Optional<CargoInfo> optional = cargoInfoRepository.findById(cargoInfo.getCargoId());
+            if (optional.isPresent()) {
+                inquiryInfoNew.setCargoInfo(optional.get());
+
+            }
+        }else {
+            inquiryInfoNew.setCargoInfo(null);
+        }
+
+        inquiryInfoNewRepository.save(inquiryInfoNew);
+        inquiryInfoNew.getCargoInfo().setPartInfos(null);
+        return inquiryInfoNew;
+    }
+
+
     //批量删除
     public void delete(List<Long> inquiryIds) {
         inquiryInfoNewRepository.updateIsDelete(inquiryIds);
@@ -142,7 +183,7 @@ public class InquiryInfoNewService {
             List<InquiryInfoNew> list = null;
             if (inquiryIds != null && !inquiryIds.isEmpty()) {
                 list = inquiryInfoNewRepository.findByInquiryIds(inquiryIds);
-            } else if(null != actor && inquiryIds.isEmpty()){
+            } else if(null != actor && inquiryIds==null){
                 list = inquiryInfoNewRepository.findExpert(Constant.DELETE_NO,actor);
             }else {
                 list = inquiryInfoNewRepository.findAll();
