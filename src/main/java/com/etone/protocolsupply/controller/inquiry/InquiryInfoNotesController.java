@@ -4,6 +4,7 @@ import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoNotesCollectionDto;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoNotesDto;
+import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNotes;
 import com.etone.protocolsupply.service.inquiry.InquiryInfoNotesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +77,29 @@ public class InquiryInfoNotesController extends GenericController {
         return responseBuilder.build();
     }
 
-
+    /**
+     * 回复详情
+     *
+     * @param inquiryId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/{inquiryId}",
+            method = RequestMethod.GET,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseValue getInquiryInfoNew(@PathVariable("inquiryId") String inquiryId) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        InquiryInfoNotes inquiryInfoNotes = inquiryInfoNotesService.findNotesByInquiryId(inquiryId);
+        if(null==inquiryInfoNotes.getAttachment()){
+            Attachment attachment=new Attachment();
+            inquiryInfoNotes.setAttachment(attachment);
+        }
+        inquiryInfoNotes.getInquiryInfoNew().getCargoInfo().setPartInfos(null);
+        responseBuilder.data(inquiryInfoNotes);
+        return responseBuilder.build();
+    }
 
 
 

@@ -76,6 +76,10 @@ public class InquiryInfoNotesService {
         return inquiryInfoNotesCollectionDto;
     }
 
+    public InquiryInfoNotes findNotesByInquiryId(String inquiryId){
+        return inquiryInfoNotesRepository.findNotesByInquiryId(Constant.DELETE_NO,inquiryId);
+
+    }
 
 
 }

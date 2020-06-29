@@ -22,6 +22,9 @@ public interface InquiryInfoNotesRepository extends JpaRepository<InquiryInfoNot
             "and if((?3 is not null), (creator = ?3),(1=1)) )" , nativeQuery = true)
     List<InquiryInfoNotes> findAllListWithCreator(String isDelete,  Integer status, String actor);
 
-
+    @Query(value = "select * from inquiry_notes " +
+            "where is_delete=?1 " +
+            "and if((?2 is not null), (inquiry_id = ?2), (1=1) ) " , nativeQuery = true)
+    InquiryInfoNotes findNotesByInquiryId(Integer isDelete ,String inquiryId);
 
 }
