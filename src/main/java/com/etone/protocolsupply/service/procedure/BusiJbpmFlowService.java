@@ -8,6 +8,7 @@ import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowDto;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
 import com.etone.protocolsupply.model.entity.user.Role;
+import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.procedure.BusiJbpmFlowRepository;
 import com.etone.protocolsupply.repository.user.RoleRepository;
 import com.etone.protocolsupply.utils.Common;
@@ -40,6 +41,8 @@ public class BusiJbpmFlowService {
     @Autowired
     private BusiJbpmFlowRepository busiJbpmFlowRepository;
     @Autowired
+    private AttachmentRepository attachmentRepository;
+    @Autowired
     private PagingMapper         pagingMapper;
     @Autowired
     private RoleRepository roleRepository;
@@ -50,13 +53,11 @@ public class BusiJbpmFlowService {
         String userName = jwtUser.getUsername();
         BusiJbpmFlow busiJbpmFlow = new BusiJbpmFlow();
         BeanUtils.copyProperties(busiJbpmFlowDto, busiJbpmFlow);
-        Attachment attachment=new Attachment();
-        if(busiJbpmFlowDto.getAttachment().getAttachId()==null){
-            busiJbpmFlow.setAttachment(attachment);
-        }
+
         busiJbpmFlow.setFlowStartTime(date);//询价时间
         busiJbpmFlow.setFlowInitorId(userName);
         busiJbpmFlow.setType(Constant.BUSINESS_TYPE_DAIBAN);
+        Attachment attachment=new Attachment();
         busiJbpmFlow = busiJbpmFlowRepository.save(busiJbpmFlow);
         return busiJbpmFlow;
     }
@@ -169,10 +170,15 @@ public class BusiJbpmFlowService {
                 busiJbpmFlowDto.setNextActor_roleDescription(list.get(0).getDescription());
                 busiJbpmFlowDto.setNextActor_roleStatus(list.get(0).getStatus());
             }
-            if(busiJbpmFlowDto.getAttachment()==null){
-                Attachment attachment=new Attachment();
-                busiJbpmFlowDto.setAttachment(attachment);
+            Attachment attachment=new Attachment();
+            if(busiJbpmFlow.getAttachment()!=null){
+                Optional<Attachment> optional=attachmentRepository.findById(busiJbpmFlow.getAttachment().getAttachId());
+                if (optional.isPresent()) {
+                    attachment=optional.get();
+
+                }
             }
+            busiJbpmFlowDto.setAttachment(attachment);
             busiJbpmFlowCollectionDto.add(busiJbpmFlowDto);
         }
         return busiJbpmFlowCollectionDto;

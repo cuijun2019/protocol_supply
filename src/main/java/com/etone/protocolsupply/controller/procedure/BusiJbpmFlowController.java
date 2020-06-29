@@ -5,6 +5,7 @@ import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowCollectionDto;
 import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowDto;
 import com.etone.protocolsupply.model.dto.project.ProjectCollectionDto;
+import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.service.procedure.BusiJbpmFlowService;
@@ -49,6 +50,10 @@ public class BusiJbpmFlowController extends GenericController {
                                        @RequestBody BusiJbpmFlowDto busiJbpmFlowDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         BusiJbpmFlow busiJbpmFlow = busiJbpmFlowService.save(busiJbpmFlowDto, this.getUser());
+        if(busiJbpmFlow.getAttachment()==null){
+            Attachment attachment=new Attachment();
+            busiJbpmFlow.setAttachment(attachment);
+        }
         responseBuilder.data(busiJbpmFlow);
         return responseBuilder.build();
     }
