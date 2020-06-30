@@ -68,6 +68,7 @@ public class CargoInfoController extends GenericController {
             produces = {"application/json"})
     public ResponseValue getCargoInfos(@Validated
                                        @RequestParam(value = "isDelete", required = false) String isDelete,
+                                       @RequestParam(value = "isUpdate", required = false,defaultValue = "2") String isUpdate,
                                        @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
                                        @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
                                        @RequestParam(value = "cargoName", required = false) String cargoName,
@@ -80,7 +81,7 @@ public class CargoInfoController extends GenericController {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort = new Sort(Sort.Direction.DESC, "createDate");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Page<CargoInfo> page = cargoInfoService.findCargoInfos(isDelete, cargoName,cName, cargoCode,actor,status, pageable);
+        Page<CargoInfo> page = cargoInfoService.findCargoInfos(isDelete,isUpdate, cargoName,cName, cargoCode,actor,status, pageable);
         CargoCollectionDto cargoCollectionDto = cargoInfoService.to(page, request);
         for (CargoInfoDto cargoInfoDto : cargoCollectionDto.getCargoInfoDtos()) {
             cargoInfoDto.setPartInfos(null);
@@ -148,6 +149,45 @@ public class CargoInfoController extends GenericController {
         responseBuilder.data(cargoInfo);
         return responseBuilder.build();
     }
+
+    /**
+     * 变更历史列表
+     * @param isUpdate
+     * @param currentPage
+     * @param pageSize
+     * @param cargoName
+     * @param cargoCode
+     * @param cargoId
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/updateList",
+            method = RequestMethod.GET,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    public ResponseValue getCargoInfoUpdateList(@Validated
+                                       @RequestParam(value = "isUpdate", required = false,defaultValue = "1") String isUpdate,
+                                       @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
+                                       @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+                                       @RequestParam(value = "cargoName", required = false) String cargoName,
+                                       @RequestParam(value = "cargoCode", required = false) String cargoCode,
+                                       @RequestParam(value = "OldcargoId", required = false) String OldcargoId,
+                                       HttpServletRequest request) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        Sort sort = new Sort(Sort.Direction.DESC, "createDate");
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
+        Page<CargoInfo> page = cargoInfoService.findCargoInfoUpdateList(isUpdate, cargoName, cargoCode,OldcargoId, pageable);
+        CargoCollectionDto cargoCollectionDto = cargoInfoService.to(page, request);
+        for (CargoInfoDto cargoInfoDto : cargoCollectionDto.getCargoInfoDtos()) {
+            cargoInfoDto.setPartInfos(null);
+        }
+        responseBuilder.data(cargoCollectionDto);
+
+        return responseBuilder.build();
+    }
+
+
 
 
     /**

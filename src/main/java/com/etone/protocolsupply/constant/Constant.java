@@ -20,6 +20,16 @@ public class Constant {
     public static int DELETE_NO = 2;
 
     /**
+     * 是否变更--是
+     */
+    public static int UPDATW_YES = 1;
+
+    /**
+     * 是否变更--否
+     */
+    public static int UPDATW_NO = 2;
+
+    /**
      * 是否推荐供应商 -- 是
      */
     public static int RECOMMEND_SUPPLIER_YES = 1;

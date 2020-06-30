@@ -42,19 +42,21 @@ public interface CargoInfoRepository extends JpaRepository<CargoInfo, Long>, Jpa
     @Query(value = "select cargo_serial from cargo_info where is_delete=2 order by create_date desc limit 1", nativeQuery = true)
     String findLastCargoSerial();
 
-    @Query(value = "select c.* from cargo_info c where c.is_delete=?1 and if((?2 is not null), (c.cargo_name like %?2%), (1=1))  " +
-            "and if((?4 is not null), (c.status =?4), (1=1)) and " +
-            "if((?3 is not null), ( c.cargo_code like %?3%), (1=1)) order by c.create_date desc", nativeQuery = true)
-    List<CargoInfo> findAll(String isDelete, String cargoName, String cargoCode,Integer status);
+    @Query(value = "select c.* from cargo_info c where c.is_delete=?1 and if((?3 is not null), (c.cargo_name like %?3%), (1=1))  " +
+            "and if((?5 is not null), (c.status =?5), (1=1)) " +
+            "and c.is_update =?2 " +
+            "and if((?4 is not null), ( c.cargo_code like %?4%), (1=1)) order by c.create_date desc", nativeQuery = true)
+    List<CargoInfo> findAll(String isDelete,String isUpdate, String cargoName, String cargoCode,Integer status);
 
     @Query(value = "select c.* from cargo_info c WHERE exists(select 1 from busi_jbpm_flow b where c.cargo_id = b.business_id and b.business_type='cargoAudit' " +
-            "and if((?4 is not null), (b.parent_actor=?4 or b.next_actor=?4), (1=1)))" +
-            " and  c.is_delete=?1 " +
-            "and if((?2 is not null), (c.cargo_name like %?2%), (1=1))  " +
-            "and if((?6 is not null), (c.cargo_name =?6), (1=1))  " +
-            " and if((?5 is not null), (c.status =?5), (1=1)) and " +
-            "if((?3 is not null), ( c.cargo_code like %?3%), (1=1)) order by c.create_date desc", nativeQuery = true)
-    List<CargoInfo> findAllMyCargo(String isDelete, String cargoName, String cargoCode,String actor ,Integer status,String cName);
+            "and if((?5 is not null), (b.parent_actor=?5 or b.next_actor=?5), (1=1)))" +
+            "and  c.is_delete=?1 " +
+            "and  c.is_update=?2 " +
+            "and if((?3 is not null), (c.cargo_name like %?3%), (1=1))  " +
+            "and if((?7 is not null), (c.cargo_name =?7), (1=1))  " +
+            " and if((?6 is not null), (c.status =?6), (1=1)) and " +
+            "if((?4 is not null), ( c.cargo_code like %?4%), (1=1)) order by c.create_date desc", nativeQuery = true)
+    List<CargoInfo> findAllMyCargo(String isDelete,String isUpdate, String cargoName, String cargoCode,String actor ,Integer status,String cName);
 
     @Query(value = "select * from cargo_info where is_delete=2 and cargo_id=(select cargo_id from part_info_exp where project_id=?1 limit 1) ", nativeQuery = true)
     List<CargoInfo> findByProjectId(long projectId);
@@ -68,4 +70,11 @@ public interface CargoInfoRepository extends JpaRepository<CargoInfo, Long>, Jpa
     @Query(value = "select * from cargo_info  where is_delete=?3 " +
             "and status=?2 and creator=?1 order by create_date desc", nativeQuery = true)
     List<CargoInfo> findAllByactor(String actor,Integer status ,Integer isDelete);
+
+
+    @Query(value = "select c.* from cargo_info c where c.is_update=?1 " +
+            "and if((?2 is not null), (c.cargo_name like %?2%), (1=1))  " +
+            "and if((?3 is not null), ( c.cargo_code like %?3%), (1=1))" +
+            "and if((?4 is not null), ( c.old_cargoId = ?4 ), (1=1)) order by c.create_date desc", nativeQuery = true)
+    List<CargoInfo> findCargoInfoUpdateList(String isUpdate, String cargoName, String cargoCode,String OldcargoId);
 }

@@ -144,6 +144,12 @@ public class CargoInfo implements Serializable {
     private Integer isDelete;
 
     /**
+     * 是否已变更
+     */
+    @Column(name = "IS_UPDATE", length = 4)
+    private Integer isUpdate;
+
+    /**
      * 参考价格
      */
     @Column(name = "REPRICE")

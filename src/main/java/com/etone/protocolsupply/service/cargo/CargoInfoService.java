@@ -71,6 +71,7 @@ public class CargoInfoService {
         CargoInfo cargoInfo = new CargoInfo();
         BeanUtils.copyProperties(cargoInfoDto, cargoInfo);
         cargoInfo.setIsDelete(Constant.DELETE_NO);
+        cargoInfo.setIsUpdate(Constant.UPDATW_NO);//是否变更：1 是；2：否
         cargoInfo.setCreator(userName);
         cargoInfo.setCreateDate(date);
         cargoInfo.setMaintenanceDate(date);
@@ -135,12 +136,18 @@ public class CargoInfoService {
         };
     }
 
-    public Page<CargoInfo> findCargoInfos(String isDelete, String cargoName,String cName, String cargoCode,String actor,Integer status, Pageable pageable) {
+    public Page<CargoInfo> findCargoInfos(String isDelete,String isUpdate, String cargoName,String cName, String cargoCode,String actor,Integer status, Pageable pageable) {
         if(null == actor ||actor.equals("admin")){
-            return Common.listConvertToPage(cargoInfoRepository.findAll(isDelete, cargoName, cargoCode,status), pageable);
+            return Common.listConvertToPage(cargoInfoRepository.findAll(isDelete,isUpdate, cargoName, cargoCode,status), pageable);
         }else {
-            return Common.listConvertToPage(cargoInfoRepository.findAllMyCargo(isDelete, cargoName,cargoCode,actor,status,cName), pageable);
+            return Common.listConvertToPage(cargoInfoRepository.findAllMyCargo(isDelete,isUpdate, cargoName,cargoCode,actor,status,cName), pageable);
         }
+
+    }
+
+    public Page<CargoInfo> findCargoInfoUpdateList(String isUpdate, String cargoName,String cargoCode,String OldcargoId, Pageable pageable) {
+
+            return Common.listConvertToPage(cargoInfoRepository.findCargoInfoUpdateList(isUpdate, cargoName,cargoCode,OldcargoId), pageable);
 
     }
 
@@ -196,10 +203,14 @@ public class CargoInfoService {
         String userName = jwtUser.getUsername();
         CargoInfo model=new CargoInfo();
         model = cargoInfoRepository.findAllByCargoId(cargoInfo.getCargoId());
-//        model.setCreator(userName);
-//        model.setCreateDate(date);
+
         model.setMaintenanceMan(userName);
         model.setMaintenanceDate(date);
+        if(model.getOldCargoId()==null){
+            model.setOldCargoId(model.getCargoId());
+        }
+
+        model.setIsUpdate(Constant.UPDATW_YES);//已变更
         cargoInfoRepository.save(model);//修改旧数据
 
         CargoInfo newCargoInfo=new CargoInfo();
@@ -212,6 +223,7 @@ public class CargoInfoService {
         newCargoInfo.setCurrency(model.getCurrency());
         newCargoInfo.setGuaranteeRate(model.getGuaranteeRate());
         newCargoInfo.setIsDelete(model.getIsDelete());
+        newCargoInfo.setIsUpdate(Constant.UPDATW_NO);
         newCargoInfo.setItemCode(model.getItemCode());
         newCargoInfo.setItemName(model.getItemName());
         newCargoInfo.setMainParams(cargoInfo.getMainParams());//主要参数
@@ -224,12 +236,8 @@ public class CargoInfoService {
         newCargoInfo.setType(model.getType());
         newCargoInfo.setPartnerId(model.getPartnerId());
         newCargoInfo.setReprice(model.getReprice());
-        if(model.getOldCargoId()==null){
-            //最初货物id字段为空。表示该条数据是第一次变更
-            newCargoInfo.setOldCargoId(cargoInfo.getCargoId());
-        }else {
-            newCargoInfo.setOldCargoId(model.getOldCargoId());
-        }
+
+        newCargoInfo.setOldCargoId(model.getOldCargoId());
 
         if(cargoInfo.getAttachment()!=null){
             newCargoInfo.setAttachment(cargoInfo.getAttachment());
