@@ -145,9 +145,9 @@ public class CargoInfoService {
 
     }
 
-    public Page<CargoInfo> findCargoInfoUpdateList(String isUpdate, String cargoName,String cargoCode,String OldcargoId, Pageable pageable) {
+    public Page<CargoInfo> findCargoInfoUpdateList(String isUpdate, String cargoName,String cargoCode,String oldCargoId, Pageable pageable) {
 
-            return Common.listConvertToPage(cargoInfoRepository.findCargoInfoUpdateList(isUpdate, cargoName,cargoCode,OldcargoId), pageable);
+            return Common.listConvertToPage(cargoInfoRepository.findCargoInfoUpdateList(isUpdate, cargoName,cargoCode,oldCargoId), pageable);
 
     }
 

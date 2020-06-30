@@ -76,5 +76,5 @@ public interface CargoInfoRepository extends JpaRepository<CargoInfo, Long>, Jpa
             "and if((?2 is not null), (c.cargo_name like %?2%), (1=1))  " +
             "and if((?3 is not null), ( c.cargo_code like %?3%), (1=1))" +
             "and if((?4 is not null), ( c.old_cargoId = ?4 ), (1=1)) order by c.create_date desc", nativeQuery = true)
-    List<CargoInfo> findCargoInfoUpdateList(String isUpdate, String cargoName, String cargoCode,String OldcargoId);
+    List<CargoInfo> findCargoInfoUpdateList(String isUpdate, String cargoName, String cargoCode,String oldCargoId);
 }
