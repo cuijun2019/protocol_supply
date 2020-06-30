@@ -131,11 +131,12 @@ public class InquiryInfoNewService {
         BeanUtils.copyProperties(inquiryInfoNewDto, inquiryInfoNew);
         if(null!=inquiryInfoNewDto.getInquiryId() && !"".equals(inquiryInfoNewDto.getInquiryId())){
             //inquiryInfoNew.setInquiryId(inquiryInfoNewDto.getInquiryId());
-            InquiryInfoNew inquiryInfoNew1=inquiryInfoNewRepository.findAllByInquiryId(inquiryInfoNewDto.getInquiryId());
-            inquiryInfoNew.setInquiryCode(inquiryInfoNew1.getInquiryCode());//询价单号不能修改
-            inquiryInfoNew.setIsDelete(inquiryInfoNew1.getIsDelete());
-            inquiryInfoNew.setCreator(inquiryInfoNew1.getCreator());
-            inquiryInfoNew.setCreateDate(inquiryInfoNew1.getCreateDate());
+            inquiryInfoNew=inquiryInfoNewRepository.findAllByInquiryId(inquiryInfoNewDto.getInquiryId());
+            inquiryInfoNew.setProjectBudget(inquiryInfoNewDto.getProjectBudget()==null?inquiryInfoNew.getProjectBudget():inquiryInfoNewDto.getProjectBudget());
+            inquiryInfoNew.setProjectBackground(inquiryInfoNewDto.getProjectBackground()==null?inquiryInfoNew.getProjectBackground():inquiryInfoNewDto.getProjectBackground());
+            inquiryInfoNew.setPurchaser(inquiryInfoNewDto.getPurchaser()==null?inquiryInfoNew.getPurchaser():inquiryInfoNewDto.getPurchaser());
+            inquiryInfoNew.setManufactor(inquiryInfoNewDto.getManufactor()==null?inquiryInfoNew.getManufactor():inquiryInfoNewDto.getManufactor());
+            inquiryInfoNew.setStatus(inquiryInfoNewDto.getStatus()==null?inquiryInfoNew.getStatus():inquiryInfoNewDto.getStatus());
         }
         CargoInfo cargoInfo = inquiryInfoNewDto.getCargoInfo();
         Attachment attachment = inquiryInfoNewDto.getAttachment();
@@ -144,8 +145,6 @@ public class InquiryInfoNewService {
             if (optional.isPresent()) {
                 inquiryInfoNew.setAttachment(optional.get());
             }
-        }else {
-            inquiryInfoNew.setAttachment(null);
         }
         if (cargoInfo != null && cargoInfo.getCargoId()!=null && !cargoInfo.getCargoId().equals("")) {
             Optional<CargoInfo> optional = cargoInfoRepository.findById(cargoInfo.getCargoId());
@@ -153,8 +152,6 @@ public class InquiryInfoNewService {
                 inquiryInfoNew.setCargoInfo(optional.get());
 
             }
-        }else {
-            inquiryInfoNew.setCargoInfo(null);
         }
 
         inquiryInfoNewRepository.save(inquiryInfoNew);
