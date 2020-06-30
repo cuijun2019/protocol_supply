@@ -25,6 +25,12 @@ public class CargoInfo implements Serializable {
     private Long cargoId;
 
     /**
+     * 最初货物id
+     */
+    @Column(name = "OLD_CARGOID", length = 20)
+    private Long oldCargoId;
+
+    /**
      * 货物序号
      */
     @Column(name = "CARGO_SERIAL", length = 100)
@@ -148,7 +154,6 @@ public class CargoInfo implements Serializable {
      */
     @OneToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "PROVE_FILE_ID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment;
 

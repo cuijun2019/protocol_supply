@@ -154,8 +154,17 @@ public class ProjectInfo implements Serializable {
 //    @JoinColumn(name = "INQUIRY_ID", referencedColumnName = "INQUIRY_ID")
 //    private InquiryInfo inquiryInfo;
 
+    /**
+     * 询价id
+     */
     @Column(name = "INQUIRY_ID", length = 20)
     private Long inquiryId;
+
+    /**
+     * 询价编号
+     */
+    @Column(name = "INQUIRY_CODE", length = 100)
+    private String inquiryCode;
 
 //    /**
 //     * 配件拓展表

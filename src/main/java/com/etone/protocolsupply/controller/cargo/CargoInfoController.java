@@ -130,31 +130,20 @@ public class CargoInfoController extends GenericController {
     }
 
     /**
-     * 修改货物
+     * 货物变更
      *
-     * @param cargoId
+
      * @param cargoInfo
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{cargoId}",
+    @RequestMapping(value = "/update",
             method = RequestMethod.PUT,
             consumes = {"application/json"},
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
-    public ResponseValue updateCargo(@PathVariable("cargoId") String cargoId,
-                                     @RequestBody CargoInfo cargoInfo) {
+    public ResponseValue updateCargo(@Validated @RequestBody CargoInfo cargoInfo) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        CargoInfo model = cargoInfoService.findOne(Long.parseLong(cargoId));
-        cargoInfo.setCargoId(Long.parseLong(cargoId));
-        cargoInfo.setCreator(model.getCreator());
-        cargoInfo.setCreateDate(model.getCreateDate());
-        cargoInfo.setCargoSerial(model.getCargoSerial());
-        cargoInfo.setCargoCode(model.getCargoCode());
-        cargoInfo.setCargoCode(model.getCargoCode());
-        cargoInfo.setIsDelete(model.getIsDelete());
-        cargoInfo.setItemCode(model.getItemCode());
-        cargoInfo.setReprice(model.getReprice());
         cargoInfo = cargoInfoService.update(cargoInfo, this.getUser());
         responseBuilder.data(cargoInfo);
         return responseBuilder.build();

@@ -103,6 +103,7 @@ public class ProjectInfoService {
         InquiryInfo inquiryInfo=projectInfoDto.getInquiryInfo();
             if (null!=inquiryInfo.getInquiryId()) {
                 projectInfo.setInquiryId(projectInfoDto.getInquiryInfo().getInquiryId());
+                projectInfo.setInquiryCode(projectInfoDto.getInquiryInfo().getInquiryCode());
             }
         projectInfo.setProjectSubject(projectInfoDto.getCargoName() + "的采购");
         Optional<CargoInfo> optional = cargoInfoRepository.findById(Long.parseLong(projectInfoDto.getCargoId()));

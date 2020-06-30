@@ -76,15 +76,15 @@ public class CargoInfoService {
         cargoInfo.setMaintenanceDate(date);
         cargoInfo.setMaintenanceMan(userName);
         //cargoInfo.setStatus(1);
-        Attachment attachment = cargoInfoDto.getAttachment();
-        if (attachment != null && attachment.getAttachId()!=null && !attachment.getAttachId().equals("")) {
-            Optional<Attachment> optional = attachmentRepository.findById(attachment.getAttachId());
-            if (optional.isPresent()) {
-                cargoInfo.setAttachment(optional.get());
-            }
-        }else {
-            cargoInfo.setAttachment(null);
-        }
+//        Attachment attachment = cargoInfoDto.getAttachment();
+//        if (attachment != null && attachment.getAttachId()!=null && !attachment.getAttachId().equals("")) {
+//            Optional<Attachment> optional = attachmentRepository.findById(attachment.getAttachId());
+//            if (optional.isPresent()) {
+//                cargoInfo.setAttachment(optional.get());
+//            }
+//        }else {
+//            cargoInfo.setAttachment(null);
+//        }
         //PartnerInfo partnerInfo= cargoInfoDto.getPartnerInfo();
         if ( cargoInfoDto.getPartnerId()!=null && !cargoInfoDto.getPartnerId().equals("")) {
             Optional<PartnerInfo> optional = partnerInfoRepository.findById(cargoInfoDto.getPartnerId());
@@ -190,27 +190,56 @@ public class CargoInfoService {
             throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("通过货物id"));
         }
     }
-
+    //变更=原数据修改+新数据新增
     public CargoInfo update(CargoInfo cargoInfo, JwtUser jwtUser) throws GlobalServiceException {
         Date date = new Date();
         String userName = jwtUser.getUsername();
-        cargoInfo.setMaintenanceMan(userName);
-        cargoInfo.setMaintenanceDate(date);
-        if (cargoInfo.getAttachment()== null) {
-            cargoInfoRepository.save(cargoInfo);
-        }
-        if (cargoInfo.getAttachment().getAttachId() != null) {
-            Optional<Attachment> optional = attachmentRepository.findById(cargoInfo.getAttachment().getAttachId());
-            if (optional.isPresent()) {
-                cargoInfo.setAttachment(optional.get());
-            }
+        CargoInfo model=new CargoInfo();
+        model = cargoInfoRepository.findAllByCargoId(cargoInfo.getCargoId());
+//        model.setCreator(userName);
+//        model.setCreateDate(date);
+        model.setMaintenanceMan(userName);
+        model.setMaintenanceDate(date);
+        cargoInfoRepository.save(model);//修改旧数据
+
+        CargoInfo newCargoInfo=new CargoInfo();
+        newCargoInfo.setBrand(model.getBrand());
+        newCargoInfo.setCargoCode(model.getCargoCode());
+        newCargoInfo.setCargoName(model.getCargoName());
+        newCargoInfo.setCargoSerial(model.getCargoSerial());
+        newCargoInfo.setCreator(userName);
+        newCargoInfo.setCreateDate(date);
+        newCargoInfo.setCurrency(model.getCurrency());
+        newCargoInfo.setGuaranteeRate(model.getGuaranteeRate());
+        newCargoInfo.setIsDelete(model.getIsDelete());
+        newCargoInfo.setItemCode(model.getItemCode());
+        newCargoInfo.setItemName(model.getItemName());
+        newCargoInfo.setMainParams(cargoInfo.getMainParams());//主要参数
+        newCargoInfo.setMaintenanceMan(userName);
+        newCargoInfo.setMaintenanceDate(date);
+        newCargoInfo.setManufactor(model.getManufactor());
+        newCargoInfo.setModel(model.getModel());
+        newCargoInfo.setRemark(model.getRemark());
+        newCargoInfo.setStatus(model.getStatus());
+        newCargoInfo.setType(model.getType());
+        newCargoInfo.setPartnerId(model.getPartnerId());
+        newCargoInfo.setReprice(model.getReprice());
+        if(model.getOldCargoId()==null){
+            //最初货物id字段为空。表示该条数据是第一次变更
+            newCargoInfo.setOldCargoId(cargoInfo.getCargoId());
         }else {
-            cargoInfo.setAttachment(null);
+            newCargoInfo.setOldCargoId(model.getOldCargoId());
         }
-            partInfoRepository.deleteByCargoId(cargoInfo.getCargoId());
+
+        if(cargoInfo.getAttachment()!=null){
+            newCargoInfo.setAttachment(cargoInfo.getAttachment());
+        }
+        CargoInfo cargoInfo1=new CargoInfo();
+
             Set<PartInfo> partInfos =cargoInfo.getPartInfos();
             if (partInfos != null && !partInfos.isEmpty()) {
-                String partSerial = partInfoService.findLastPartSerial(cargoInfo.getCargoSerial());
+                String partSerial = "0001";
+                        //partInfoService.findLastPartSerial(model.getCargoSerial());
                 int step = 0;
                 for (PartInfo partInfo : partInfos) {
                     if (step == 0) {
@@ -218,21 +247,25 @@ public class CargoInfoService {
                     } else {
                         partInfo.setPartSerial(Common.convertSerial(partSerial, 1));
                     }
-                    partInfo.setPartCode(cargoInfo.getCargoCode() + partInfo.getPartSerial());
+                    partInfo.setPartCode(model.getCargoCode() + partInfo.getPartSerial());
                     partInfo.setIsDelete(Constant.DELETE_NO);
                     step++;
                 }
-            }
-            cargoInfo=cargoInfoRepository.save(cargoInfo);
-            List<Long> partIds = new ArrayList<>();
-            if(partInfos.size()>0){
-                for (PartInfo partInfo : cargoInfo.getPartInfos()) {
-                    partIds.add(partInfo.getPartId());
+                newCargoInfo.setPartInfos(partInfos);
+                 cargoInfo1=cargoInfoRepository.save(newCargoInfo);
+                List<Long> partIds = new ArrayList<>();
+                if(partInfos.size()>0){
+                    for (PartInfo partInfo : cargoInfo1.getPartInfos()) {
+                        partIds.add(partInfo.getPartId());
+                    }
+                    partInfoRepository.setCargoId(cargoInfo1.getCargoId(), partIds);
                 }
-                partInfoRepository.setCargoId(cargoInfo.getCargoId(), partIds);
+            }else {
+                newCargoInfo.setPartInfos(model.getPartInfos());
+                 cargoInfo1=cargoInfoRepository.save(newCargoInfo);
             }
 
-        return cargoInfo;
+        return cargoInfo1;
     }
 
     private String getStatus(int status){
