@@ -33,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Transactional(rollbackFor = Exception.class)
 @Service
@@ -221,6 +222,11 @@ public class InquiryInfoNewService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public Set<BusiJbpmFlow> getSetBusiJbpmFlowList(Long businessId,String businessType){
+        Set<BusiJbpmFlow> busiJbpmFlows=busiJbpmFlowRepository.getSetBusiJbpmFlowList(businessId,businessType);
+        return busiJbpmFlows;
     }
 
 

@@ -11,12 +11,14 @@ import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.BrandItem;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.cargo.PartInfo;
+import com.etone.protocolsupply.model.entity.project.PartInfoExp;
 import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
 import com.etone.protocolsupply.model.entity.user.User;
 import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.cargo.BrandItemRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.repository.cargo.PartInfoRepository;
+import com.etone.protocolsupply.repository.project.PartInfoExpRepository;
 import com.etone.protocolsupply.repository.supplier.PartnerInfoRepository;
 import com.etone.protocolsupply.repository.user.UserRepository;
 import com.etone.protocolsupply.utils.Common;
@@ -53,6 +55,8 @@ public class CargoInfoService {
     private PartInfoService      partInfoService;
     @Autowired
     private PartInfoRepository   partInfoRepository;
+    @Autowired
+    private PartInfoExpRepository partInfoExpRepository;
     @Autowired
     private AttachmentRepository attachmentRepository;
     @Autowired
@@ -158,6 +162,13 @@ public class CargoInfoService {
         for (CargoInfo cargoInfo : source) {
             cargoInfoDto = new CargoInfoDto();
             BeanUtils.copyProperties(cargoInfo, cargoInfoDto);
+            //根据货物id查询审核流程被使用的配件表，查询是否货物被应用
+            List<PartInfoExp> count= partInfoExpRepository.selectCountByCargoId(cargoInfo.getCargoId());
+            if(count.size()>0){
+                cargoInfoDto.setSfbyy(Constant.BEUSE_YES);//是否被引用
+            }else {
+                cargoInfoDto.setSfbyy(Constant.BEUSE_NO);
+            }
             if(null!=cargoInfo.getPartnerId()){
                 Optional<PartnerInfo> optional=partnerInfoRepository.findById(cargoInfo.getPartnerId());
                 if(optional.isPresent()){

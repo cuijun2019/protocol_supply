@@ -16,4 +16,6 @@ public class CargoInfoDto extends CargoInfo {
 
     private List<Long> cargoIds;
     private String actor;
+
+    private Integer sfbyy;//是否被引用
 }

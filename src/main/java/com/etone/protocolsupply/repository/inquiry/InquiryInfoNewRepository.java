@@ -50,4 +50,8 @@ public interface InquiryInfoNewRepository extends JpaRepository<InquiryInfoNew, 
 @Query(value = "select i.* from inquiry_info_new i where i.purchaser = ?2  " +
         " and i.is_delete=?1 ", nativeQuery = true)
     List<InquiryInfoNew> findExpert(Integer isDelete,String actor);
+
+    @Transactional(rollbackFor = Exception.class)
+    @Query(value = "select * from inquiry_info_new where inquiry_id=(select p.inquiry_id from project_info p where p.inquiry_id =inquiry_id and p.project_id=?1 ) and is_delete=2  ", nativeQuery = true)
+    InquiryInfoNew findAllByProjectId(Long ProjectId);
 }

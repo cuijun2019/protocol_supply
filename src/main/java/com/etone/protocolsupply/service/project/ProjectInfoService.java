@@ -14,6 +14,7 @@ import com.etone.protocolsupply.model.entity.project.PartInfoExp;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
+import com.etone.protocolsupply.repository.inquiry.InquiryInfoNewRepository;
 import com.etone.protocolsupply.repository.inquiry.InquiryInfoRepository;
 import com.etone.protocolsupply.repository.project.AgentInfoExpRepository;
 import com.etone.protocolsupply.repository.project.PartInfoExpRepository;
@@ -54,6 +55,8 @@ public class ProjectInfoService {
     private PartInfoExpRepository  partInfoExpRepository;
     @Autowired
     private InquiryInfoRepository inquiryInfoRepository;
+    @Autowired
+    private InquiryInfoNewRepository inquiryInfoNewRepository;
     @Autowired
     private PagingMapper           pagingMapper;
 

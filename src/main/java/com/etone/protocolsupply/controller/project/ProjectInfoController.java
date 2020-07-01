@@ -7,9 +7,12 @@ import com.etone.protocolsupply.model.dto.cargo.CargoInfoDto;
 import com.etone.protocolsupply.model.dto.project.ProjectCollectionDto;
 import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
+import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
 import com.etone.protocolsupply.model.entity.project.PartInfoExp;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.service.cargo.PartInfoService;
+import com.etone.protocolsupply.service.inquiry.InquiryInfoNewService;
+import com.etone.protocolsupply.service.inquiry.InquiryInfoService;
 import com.etone.protocolsupply.service.project.ProjectInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,6 +38,8 @@ public class ProjectInfoController extends GenericController {
 
     @Autowired
     private PartInfoService  partInfoService;
+    @Autowired
+    private InquiryInfoNewService inquiryInfoNewService;
 
     /**
      * 新增项目
@@ -216,6 +221,12 @@ public class ProjectInfoController extends GenericController {
     public ResponseValue getProject(@PathVariable("projectId") String projectId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         ProjectInfoDto projectInfoDto = projectInfoService.findOne(Long.parseLong(projectId));
+        Set<BusiJbpmFlow> projectBusiJbpmFlows= inquiryInfoNewService.getSetBusiJbpmFlowList(Long.parseLong(projectId),"projectAudit");
+        projectInfoDto.setProjectBusiJbpmFlows(projectBusiJbpmFlows);
+        if(projectInfoDto.getInquiryId()!=null){
+            Set<BusiJbpmFlow> inquiryBusiJbpmFlows= inquiryInfoNewService.getSetBusiJbpmFlowList(projectInfoDto.getInquiryId(),"enquiryAudit");
+            projectInfoDto.setInquiryBusiJbpmFlows(inquiryBusiJbpmFlows);
+        }
         responseBuilder.data(projectInfoDto);
         return responseBuilder.build();
     }

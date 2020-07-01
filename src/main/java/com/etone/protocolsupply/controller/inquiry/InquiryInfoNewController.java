@@ -6,6 +6,8 @@ import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoNewCollectionDto;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoNewDto;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew;
+import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
+import com.etone.protocolsupply.repository.procedure.BusiJbpmFlowRepository;
 import com.etone.protocolsupply.service.inquiry.InquiryInfoNewService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping(value = "${jwt.route.path}/inquiryInfoNew")
@@ -28,6 +31,7 @@ public class InquiryInfoNewController extends GenericController {
 
     @Autowired
     private InquiryInfoNewService inquiryInfoNewService;
+
 
 
     /**
@@ -99,28 +103,16 @@ public class InquiryInfoNewController extends GenericController {
     public ResponseValue getInquiryInfoNew(@PathVariable("inquiryId") String inquiryId) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         InquiryInfoNew inquiryInfoNew = inquiryInfoNewService.findOne(Long.parseLong(inquiryId));
-        if(null==inquiryInfoNew.getAttachment()){
-            Attachment attachment=new Attachment();
-            inquiryInfoNew.setAttachment(attachment);
-        }
+        Set<BusiJbpmFlow> inquiryBusiJbpmFlows= inquiryInfoNewService.getSetBusiJbpmFlowList(Long.parseLong(inquiryId),"enquiryAudit");
+
         inquiryInfoNew.getCargoInfo().setPartInfos(null);
-        String sffs="";
-//        BusiJbpmFlow busiJbpmFlow = inquiryInfoNewService.sffsxjjl(inquiryInfoNew.getInquiryId().toString(),"enquiryAudit","0",this.getUser().getUsername());
-//        //不对不对！！！！
-//        if(busiJbpmFlow!=null){
-//            if(busiJbpmFlow.getParentActor().equals(busiJbpmFlow.getNextActor())){
-//                //busiJbpmFlow存在数据表示该登录人保存询价记录，未发送给下一个人
-//                sffs="0";
-//            }else {
-//                sffs="1";//已经发送
-//            }
-//
-//        }else {
-//            //不存在
-//        }
         InquiryInfoNewDto inquiryInfoNewDto=new InquiryInfoNewDto();
+        if(inquiryInfoNew.getProjectId()!=null){
+            Set<BusiJbpmFlow> projectBusiJbpmFlows = inquiryInfoNewService.getSetBusiJbpmFlowList(inquiryInfoNew.getProjectId(),"projectAudit");
+            inquiryInfoNewDto.setProjectBusiJbpmFlows(projectBusiJbpmFlows);
+        }
+        inquiryInfoNewDto.setInquiryBusiJbpmFlows(inquiryBusiJbpmFlows);//询价节点
         BeanUtils.copyProperties(inquiryInfoNew, inquiryInfoNewDto);
-        inquiryInfoNewDto.setSffs(sffs);
         responseBuilder.data(inquiryInfoNewDto);
         return responseBuilder.build();
     }

@@ -30,6 +30,16 @@ public class Constant {
     public static int UPDATW_NO = 2;
 
     /**
+     * 是否被引用--是
+     */
+    public static int BEUSE_YES = 1;
+
+    /**
+     * 是否被引用--否
+     */
+    public static int BEUSE_NO = 2;
+
+    /**
      * 是否推荐供应商 -- 是
      */
     public static int RECOMMEND_SUPPLIER_YES = 1;
