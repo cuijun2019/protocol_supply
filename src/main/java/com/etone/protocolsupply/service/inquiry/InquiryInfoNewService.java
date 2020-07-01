@@ -137,6 +137,8 @@ public class InquiryInfoNewService {
             inquiryInfoNew.setPurchaser(inquiryInfoNewDto.getPurchaser()==null?inquiryInfoNew.getPurchaser():inquiryInfoNewDto.getPurchaser());
             inquiryInfoNew.setManufactor(inquiryInfoNewDto.getManufactor()==null?inquiryInfoNew.getManufactor():inquiryInfoNewDto.getManufactor());
             inquiryInfoNew.setStatus(inquiryInfoNewDto.getStatus()==null?inquiryInfoNew.getStatus():inquiryInfoNewDto.getStatus());
+            //
+            inquiryInfoNew.setProjectId(inquiryInfoNewDto.getProjectId()==null?inquiryInfoNew.getProjectId():inquiryInfoNewDto.getProjectId());
         }
         CargoInfo cargoInfo = inquiryInfoNewDto.getCargoInfo();
         Attachment attachment = inquiryInfoNewDto.getAttachment();

@@ -24,6 +24,12 @@ public class InquiryInfoNew implements Serializable {
     private Long inquiryId;
 
     /**
+     * 项目id
+     */
+    @Column(name = "PROJECT_ID", length = 20)
+    private Long projectId;
+
+    /**
      * 询价单号
      */
     @Column(name = "INQUIRY_CODE", length = 100)

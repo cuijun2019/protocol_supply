@@ -157,7 +157,7 @@ public class CargoInfoController extends GenericController {
      * @param pageSize
      * @param cargoName
      * @param cargoCode
-     * @param cargoId
+     * @param oldCargoId
      * @param request
      * @return
      */
