@@ -120,7 +120,7 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
     BusiJbpmFlow  findsffsxjjl( String businessId,String businessType,String type,String actor);
 
 
-    @Query(value = "select * from busi_jbpm_flow where business_id=?1 and business_type=?2 order by flow_start_time desc", nativeQuery = true)
+    @Query(value = "select * from busi_jbpm_flow where business_id=?1 and business_type=?2 order by flow_start_time asc", nativeQuery = true)
     Set<BusiJbpmFlow> getSetBusiJbpmFlowList(Long businessId,String businessType);
 
 }
