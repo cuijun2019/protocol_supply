@@ -21,7 +21,8 @@ public interface InquiryInfoNewRepository extends JpaRepository<InquiryInfoNew, 
             "where is_delete=?1 " +
             "and if((?2 is not null), (inquiry_code like %?2%), (1=1))  " +
             "and if((?4 is not null), (status = ?4), (1=1) ) " +
-            "and if((?3 is not null), (exists (select 1 from cargo_info c where c.cargo_id = cargo_id and c.cargo_name like %?3%)), (1=1))", nativeQuery = true)
+            "and if((?3 is not null), (exists (select 1 from cargo_info c where c.cargo_id = cargo_id and c.cargo_name like %?3%)), (1=1))" +
+            "order by create_date desc", nativeQuery = true)
     List<InquiryInfoNew> findAllList(String isDelete,String inquiryCode,String cargoName,Integer status);
 
     @Query(value = "select * from inquiry_info_new  " +
@@ -30,7 +31,8 @@ public interface InquiryInfoNewRepository extends JpaRepository<InquiryInfoNew, 
             "and  is_delete=?1 " +
             "and if((?2 is not null), (inquiry_code like %?2%), (1=1))  " +
             "and if((?4 is not null), (status = ?4), (1=1) )" +
-            "and if((?3 is not null), (exists (select 1 from cargo_info c where c.cargo_id = cargo_id and c.cargo_name like %?3%)), (1=1))", nativeQuery = true)
+            "and if((?3 is not null), (exists (select 1 from cargo_info c where c.cargo_id = cargo_id and c.cargo_name like %?3%)), (1=1))" +
+            "order by create_date desc ", nativeQuery = true)
     List<InquiryInfoNew> findAllListWithCreator(String isDelete,String inquiryCode,String cargoName,Integer status,String actor);
 
     @Transactional(rollbackFor = Exception.class)
