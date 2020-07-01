@@ -130,6 +130,24 @@ public class CargoInfoController extends GenericController {
         return responseBuilder.build();
     }
 
+    /**
+     * 货物编辑修改
+     * @param cargoInfo
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/edit",
+            method = RequestMethod.PUT,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseValue editCargo(@Validated @RequestBody CargoInfo cargoInfo) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        cargoInfo = cargoInfoService.edit(cargoInfo, this.getUser());
+        responseBuilder.data(cargoInfo);
+        return responseBuilder.build();
+    }
+
 
 
 

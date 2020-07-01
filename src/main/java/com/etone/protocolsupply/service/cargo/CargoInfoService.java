@@ -208,6 +208,45 @@ public class CargoInfoService {
             throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("通过货物id"));
         }
     }
+
+    //货物修改edit
+    public CargoInfo edit(CargoInfo cargoInfo, JwtUser jwtUser) throws GlobalServiceException {
+        Date date = new Date();
+        String userName = jwtUser.getUsername();
+
+        CargoInfo cargoInfo1=new CargoInfo();
+        partInfoRepository.deleteByCargoId(cargoInfo.getCargoId());
+
+        Set<PartInfo> partInfos =cargoInfo.getPartInfos();
+        if (partInfos != null && !partInfos.isEmpty()) {
+
+           String partSerial= partInfoService.findLastPartSerial(cargoInfo.getCargoSerial());
+            int step = 0;
+            for (PartInfo partInfo : partInfos) {
+                if (step == 0) {
+                    partInfo.setPartSerial(Common.convertSerial(partSerial, 0));
+                } else {
+                    partInfo.setPartSerial(Common.convertSerial(partSerial, 1));
+                }
+                partInfo.setPartCode(cargoInfo.getCargoCode() + partInfo.getPartSerial());
+                partInfo.setIsDelete(Constant.DELETE_NO);
+                step++;
+            }
+            cargoInfo.setPartInfos(partInfos);
+            cargoInfo1=cargoInfoRepository.save(cargoInfo);
+            List<Long> partIds = new ArrayList<>();
+            if(partInfos.size()>0){
+                for (PartInfo partInfo : cargoInfo1.getPartInfos()) {
+                    partIds.add(partInfo.getPartId());
+                }
+                partInfoRepository.setCargoId(cargoInfo1.getCargoId(), partIds);
+            }
+        }
+
+        return cargoInfo1;
+    }
+
+
     //变更=原数据修改+新数据新增
     public CargoInfo update(CargoInfo cargoInfo, JwtUser jwtUser) throws GlobalServiceException {
         Date date = new Date();
