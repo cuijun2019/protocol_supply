@@ -282,7 +282,7 @@ public class CargoInfoService {
         newCargoInfo.setManufactor(model.getManufactor());
         newCargoInfo.setModel(model.getModel());
         newCargoInfo.setRemark(model.getRemark());
-        newCargoInfo.setStatus(model.getStatus());
+        newCargoInfo.setStatus(8);//货物状态：1：草稿，2：审核中，3：同意，4退回，5完成，6结束，7建立项目，8已变更
         newCargoInfo.setType(model.getType());
         newCargoInfo.setPartnerId(model.getPartnerId());
         newCargoInfo.setReprice(model.getReprice());
