@@ -320,8 +320,10 @@ public class AgentInfoService {
         if(partnerInfoListObj!=null && partnerInfoListObj.size()>0){
             for (int i = 0; i < partnerInfoListObj.size(); i++) {
                 PartnerInfoDtoUsername partnerInfoDto = new PartnerInfoDtoUsername();
-                partnerInfoDto.setUsername(partnerInfoListObj.get(i).get("username")==null?null:partnerInfoListObj.get(i).get("username").toString());
-                partnerInfoDto.setCompanyNo(partnerInfoListObj.get(i).get("company_no")==null?null:partnerInfoListObj.get(i).get("company_no").toString());
+                String code = partnerInfoListObj.get(i).get("username") == null ? null : partnerInfoListObj.get(i).get("username").toString();
+                String companyName = partnerInfoListObj.get(i).get("company_no") == null ? null : partnerInfoListObj.get(i).get("company_no").toString();
+                partnerInfoDto.setUsername(companyName+"("+code+")");
+                partnerInfoDto.setCompanyNo(companyName);
                 partnerInfoDto.setPartnerId(Long.parseLong(partnerInfoListObj.get(i).get("partner_id")+""));
                 partnerInfoList.add(partnerInfoDto);
             }

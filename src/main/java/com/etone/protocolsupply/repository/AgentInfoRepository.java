@@ -39,7 +39,7 @@ public interface AgentInfoRepository extends JpaRepository<AgentInfo, Long>, Jpa
             " where agent_id = b.business_id and b.business_type='agentAudit' " +
             " and if((:actor is not null), (b.parent_actor=:actor or b.next_actor=:actor), (1=1))) " +
             " and  is_delete=:isDelete and if((:agentName is not null), (agent_name like %:agentName%), (1=1)) " +
-            "and if((:status is not null), (status=:status), (1=1)) and if((:reviewStatus is not null), (review_status=:reviewStatus), (1=1))", nativeQuery = true)
+            "and if((:status is not null), (status=:status), (1=1)) and if((:reviewStatus is not null), (review_status=:reviewStatus), (1=1)) order by create_date desc", nativeQuery = true)
     List<AgentInfo> findMyAgent(@Param("agentName") String agentName, @Param("status") String status,
                                 @Param("isDelete") String isDelete, @Param("actor") String actor,@Param("reviewStatus") String reviewStatus);
 
