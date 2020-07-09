@@ -41,6 +41,12 @@ public class BusiJbpmFlow implements Serializable {
     private String businessType;
 
     /**
+     * 询价单号
+     */
+    @Column(name = "INQUIRY_Code", length = 100)
+    private String inquiryCode;
+
+    /**
      * 待办主题（业务表名称）
      */
     @Column(name = "BUSINESS_SUBJECT", length = 100)

@@ -53,11 +53,13 @@ public class BusiJbpmFlowService {
         String userName = jwtUser.getUsername();
         BusiJbpmFlow busiJbpmFlow = new BusiJbpmFlow();
         BeanUtils.copyProperties(busiJbpmFlowDto, busiJbpmFlow);
-
+        if(busiJbpmFlowDto.getInquiryCode()!=null){
+            busiJbpmFlow.setInquiryCode(busiJbpmFlowDto.getInquiryCode());
+        }
         busiJbpmFlow.setFlowStartTime(date);//询价时间
         busiJbpmFlow.setFlowInitorId(userName);
         busiJbpmFlow.setType(Constant.BUSINESS_TYPE_DAIBAN);
-        Attachment attachment=new Attachment();
+//        Attachment attachment=new Attachment();
         busiJbpmFlow = busiJbpmFlowRepository.save(busiJbpmFlow);
         return busiJbpmFlow;
     }

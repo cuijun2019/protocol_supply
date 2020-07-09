@@ -22,6 +22,11 @@ public class InquiryInfoNotes implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long notesId;
 
+    /**
+     * 询价单号
+     */
+    @Column(name = "INQUIRY_CODE", length = 100)
+    private String inquiryCode;
 
     /**
      * 询价主题

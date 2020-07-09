@@ -41,6 +41,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -212,11 +213,12 @@ public class CargoInfoService {
     //货物修改edit
     public CargoInfo edit(CargoInfo cargoInfo, JwtUser jwtUser) throws GlobalServiceException {
         Date date = new Date();
-        String userName = jwtUser.getUsername();
 
+        String userName = jwtUser.getUsername();
         CargoInfo cargoInfo1=new CargoInfo();
         partInfoRepository.deleteByCargoId(cargoInfo.getCargoId());
-
+        cargoInfo.setManufactor(userName);
+        cargoInfo.setMaintenanceDate(date);
         Set<PartInfo> partInfos =cargoInfo.getPartInfos();
         if (partInfos != null && !partInfos.isEmpty()) {
 
