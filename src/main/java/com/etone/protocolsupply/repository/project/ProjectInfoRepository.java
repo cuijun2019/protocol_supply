@@ -63,7 +63,7 @@ public interface ProjectInfoRepository extends JpaRepository<ProjectInfo, Long>,
             ,@Param("status") String status,@Param("inquiryId") String inquiryId );
 
 
-    @Query(value = "select * from project_info WHERE exists(select 1 from busi_jbpm_flow b where project_id = b.business_id and b.business_type='projectAudit' and read_type is null" +
+    @Query(value = "select * from project_info WHERE exists(select 1 from busi_jbpm_flow b where project_id = b.business_id and b.business_type='projectAudit' and read_type is null " +
             "and if((:actor is not null), (b.parent_actor=:actor or b.next_actor=:actor), (1=1)))" +
             "and  is_delete=:isDelete and  if((:projectSubject is not null), (project_subject like %:projectSubject%), (1=1)) " +
             "and if((:status is not null), (status=:status), (1=1)) and if((:projectCode is not null), (project_code=:projectCode), (1=1)) " +

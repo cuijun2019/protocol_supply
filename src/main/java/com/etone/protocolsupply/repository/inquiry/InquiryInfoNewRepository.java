@@ -26,7 +26,7 @@ public interface InquiryInfoNewRepository extends JpaRepository<InquiryInfoNew, 
     List<InquiryInfoNew> findAllList(String isDelete,String inquiryCode,String cargoName,Integer status);
 
     @Query(value = "select * from inquiry_info_new  " +
-            "where exists(select 1 from busi_jbpm_flow b where inquiry_id = b.business_id and b.business_type='enquiryAudit' " +
+            "where exists(select 1 from busi_jbpm_flow b where inquiry_id = b.business_id and b.business_type='enquiryAudit' and read_type is null " +
             "and if((?5 is not null), (b.parent_actor=?5 or b.next_actor=?5), (1=1))) " +
             "and  is_delete=?1 " +
             "and if((?2 is not null), (inquiry_code like %?2%), (1=1))  " +
