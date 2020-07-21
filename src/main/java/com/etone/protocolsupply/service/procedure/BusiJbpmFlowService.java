@@ -84,6 +84,7 @@ public class BusiJbpmFlowService {
         busiJbpmFlow.setFlowStartTime(date);//询价时间
         busiJbpmFlow.setFlowInitorId(userName);
         //busiJbpmFlow.setType(Constant.BUSINESS_TYPE_DAIYUE);
+        busiJbpmFlow.setTaskState("0");
         busiJbpmFlow.setReadType(Constant.BUSINESS_TYPE_DAIYUE);//待阅
         busiJbpmFlow = busiJbpmFlowRepository.save(busiJbpmFlow);
         return busiJbpmFlow;
