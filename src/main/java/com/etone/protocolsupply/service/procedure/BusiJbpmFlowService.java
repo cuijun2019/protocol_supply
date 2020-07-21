@@ -153,8 +153,6 @@ public class BusiJbpmFlowService {
             return Common.listConvertToPage(busiJbpmFlowRepository.findAllListAsc(businessType, businessSubject, type,readType,
                     businessId,parentActor,nextActor,action), pageable);
 
-
-
         }else {
             return Common.listConvertToPage(busiJbpmFlowRepository.findAllList(businessType, businessSubject, type,readType,
                     businessId,parentActor,nextActor,action), pageable);

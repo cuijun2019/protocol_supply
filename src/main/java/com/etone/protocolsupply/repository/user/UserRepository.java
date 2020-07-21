@@ -58,4 +58,7 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     @Query(value = "select * from users  where partner_id=?1", nativeQuery = true)
     User findByPartnerId(long partnerId);
+
+    @Query(value = "select * from users  where username=?1", nativeQuery = true)
+    User findUserInfoByUserName(String userName);
 }

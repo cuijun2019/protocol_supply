@@ -128,6 +128,12 @@ public class UserService {
         }
     }
 
+    //根据用户名称查询用户信息
+    public User findUserInfo(String userName) {
+        User user = userRepository.findUserInfoByUserName(userName);
+       return user;
+    }
+
     public void delete(long userId) {
         userRepository.updateIsDelete(userId);
     }

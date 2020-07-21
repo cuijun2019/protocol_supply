@@ -1,6 +1,7 @@
 package com.etone.protocolsupply.controller.project;
 
 import com.etone.protocolsupply.controller.GenericController;
+import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.PartExpCollectionDto;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.cargo.CargoInfoDto;
@@ -10,10 +11,12 @@ import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
 import com.etone.protocolsupply.model.entity.project.PartInfoExp;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
+import com.etone.protocolsupply.model.entity.user.User;
 import com.etone.protocolsupply.service.cargo.PartInfoService;
 import com.etone.protocolsupply.service.inquiry.InquiryInfoNewService;
 import com.etone.protocolsupply.service.inquiry.InquiryInfoService;
 import com.etone.protocolsupply.service.project.ProjectInfoService;
+import com.etone.protocolsupply.service.system.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,6 +43,8 @@ public class ProjectInfoController extends GenericController {
     private PartInfoService  partInfoService;
     @Autowired
     private InquiryInfoNewService inquiryInfoNewService;
+    @Autowired
+    private UserService userService;
 
     /**
      * 新增项目
@@ -226,6 +231,9 @@ public class ProjectInfoController extends GenericController {
         if(projectInfoDto.getInquiryId()!=null){
             Set<BusiJbpmFlow> inquiryBusiJbpmFlows= inquiryInfoNewService.getSetBusiJbpmFlowList(projectInfoDto.getInquiryId(),"enquiryAudit");
             projectInfoDto.setInquiryBusiJbpmFlows(inquiryBusiJbpmFlows);
+            User user=userService.findUserByUsername(projectInfoDto.getPurchaser());
+            projectInfoDto.setPurchaseSchool(user.getCompany());//采购人学院
+            projectInfoDto.setPurchasePhone(user.getTelephone());//采购人电话
         }
         responseBuilder.data(projectInfoDto);
         return responseBuilder.build();

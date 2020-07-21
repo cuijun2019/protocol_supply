@@ -20,6 +20,9 @@ public class ProjectInfoDto extends ProjectInfo {
     private String currency;//币种
     private String guaranteeRate;//维保率/月
 
+    private String purchaseSchool;//采购人学院
+    private String purchasePhone;//采购人联系方式
+
     /**
      * 配件拓展表
      */

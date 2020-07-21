@@ -123,7 +123,7 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
             " and if((:businessId is not null), (business_id=:businessId), (1=1))  " +
             " and if((:parentActor is not null), (parent_actor=:parentActor), (1=1))  " +
             " and if((:nextActor is not null), (next_actor=:nextActor), (1=1))  " +
-            " and if((:action is not null), (action !=:action), (1=1))  order by flow_start_time asc" +
+            " and if((:action is not null), (action !=:action), (1=1)) and read_type is null  order by flow_start_time asc" +
             " ", nativeQuery = true)
     List<BusiJbpmFlow> findAllListAsc(@Param("businessType") String businessType,@Param("businessSubject") String businessSubject
             ,@Param("type") Integer type,@Param("readType") Integer readType,@Param("businessId") String businessId,@Param("parentActor") String parentActor
