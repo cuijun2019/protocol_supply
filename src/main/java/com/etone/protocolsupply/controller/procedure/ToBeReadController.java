@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "${jwt.route.path}/toBeRead")
 public class ToBeReadController extends GenericController {
@@ -42,6 +44,34 @@ public class ToBeReadController extends GenericController {
                                        @RequestBody BusiJbpmFlowDto busiJbpmFlowDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         BusiJbpmFlow busiJbpmFlow = busiJbpmFlowService.saveToBeRead(busiJbpmFlowDto, this.getUser());
+        responseBuilder.data(busiJbpmFlow);
+        return responseBuilder.build();
+    }
+
+
+    /**
+     * 根据业务表id，待办类型，提交给的人员 修改readtype=1
+     * @param busiJbpmFlowDto
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.PUT,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseValue updateBusiJbpmFlows(@Validated
+                                             @RequestBody BusiJbpmFlowDto busiJbpmFlowDto) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        List<BusiJbpmFlow> list = busiJbpmFlowService.getBJFListWithReadType(
+                busiJbpmFlowDto.getBusinessId(),busiJbpmFlowDto.getBusinessType(),busiJbpmFlowDto.getNextActor());
+        BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
+        if(list.size()!=0){
+            busiJbpmFlow=list.get(0);
+            busiJbpmFlowService.updateReadType(busiJbpmFlow.getId());
+            busiJbpmFlow.setReadType(1);
+        }else {
+            responseBuilder.message("查询不到数据，操作失败！");
+        }
         responseBuilder.data(busiJbpmFlow);
         return responseBuilder.build();
     }

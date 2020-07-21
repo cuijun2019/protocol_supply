@@ -290,6 +290,9 @@ public class BusiJbpmFlowService {
         return busiJbpmFlowRepository.isBusiJbpmFlows(businessId,businessType,nextActor);
     }
 
+    public List<BusiJbpmFlow> getBJFListWithReadType(String businessId, String businessType,String nextActor){
+        return busiJbpmFlowRepository.findBJFListWithReadType(businessId,businessType,nextActor);
+    }
 
     public List<BusiJbpmFlow> isBusiJbpmFlows(String businessId, String businessType,String parentActor,String nextActor){
         return busiJbpmFlowRepository.isCover(businessId,businessType,parentActor,nextActor);
@@ -310,6 +313,10 @@ public class BusiJbpmFlowService {
 
     public void updateType(Long id){
          busiJbpmFlowRepository.updateType(id);
+    }
+
+    public void updateReadType(Long id){
+        busiJbpmFlowRepository.updateReadType(id);
     }
 
     public void upnextActor(Long id,String nextActor){

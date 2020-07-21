@@ -148,7 +148,7 @@ public class BusiJbpmFlowController extends GenericController {
 
 
     /**
-     * 根据业务表id，待办类型，当前处理人 修改type=1
+     * 根据业务表id，待办类型，提交给的人员 修改type=1
      * @param busiJbpmFlowDto
      * @return
      */

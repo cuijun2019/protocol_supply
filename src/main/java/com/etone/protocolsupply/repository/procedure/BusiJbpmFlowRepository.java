@@ -38,6 +38,11 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying
+    @Query(value = "update busi_jbpm_flow set read_type=1 where id=?1", nativeQuery = true)
+    void updateReadType(Long id);
+
+    @Transactional(rollbackFor = Exception.class)
+    @Modifying
     @Query(value = "update busi_jbpm_flow set next_actor=:nextActor ,action =2 where id=:id", nativeQuery = true)
     void upNextActor(@Param("id") Long id,@Param("nextActor") String nextActor);
 
@@ -58,6 +63,15 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
             " and type=0", nativeQuery = true)
     List<BusiJbpmFlow> isBusiJbpmFlows(@Param("businessId") String businessId,@Param("businessType") String businessType
     ,@Param("nextActor") String nextActor);
+
+    @Query(value = "select * from busi_jbpm_flow where 1=1 " +
+            " and if((:businessId is not null), (business_id =:businessId), (1=1))  " +
+            " and if((:businessType is not null), (business_type =:businessType), (1=1)) " +
+            " and if((:nextActor is not null), (next_actor=:nextActor), (1=1))  " +
+            " and read_type=0", nativeQuery = true)
+    List<BusiJbpmFlow> findBJFListWithReadType(@Param("businessId") String businessId,@Param("businessType") String businessType
+            ,@Param("nextActor") String nextActor);
+
 
 
     @Query(value = "select * from busi_jbpm_flow where 1=1 " +
