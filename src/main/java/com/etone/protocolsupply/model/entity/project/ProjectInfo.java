@@ -166,6 +166,20 @@ public class ProjectInfo implements Serializable {
     @Column(name = "INQUIRY_CODE", length = 100)
     private String inquiryCode;
 
+    /**
+     * 采购人学院
+     */
+    @Column(name = "PURCHASE_SCHOOL", length = 100)
+    private String purchaseSchool;
+
+    /**
+     * 采购人联系方式
+     */
+    @Column(name = "PURCHASE_PHONE", length = 50)
+    private String purchasePhone;
+
+
+
 //    /**
 //     * 配件拓展表
 //     */
