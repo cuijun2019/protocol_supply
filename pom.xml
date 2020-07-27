@@ -95,6 +95,11 @@
 			<artifactId>fastjson</artifactId>
 			<version>1.2.22</version>
 		</dependency>
+		<dependency>
+			<groupId>com.github.livesense</groupId>
+			<artifactId>jodconverter-core</artifactId>
+			<version>1.0.5</version>
+		</dependency>
     </dependencies>
 
 	<build>
@@ -108,6 +113,7 @@
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
+
 
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

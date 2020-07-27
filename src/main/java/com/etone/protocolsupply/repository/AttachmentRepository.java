@@ -3,6 +3,7 @@ package com.etone.protocolsupply.repository;
 import com.etone.protocolsupply.model.entity.Attachment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,5 +27,4 @@ public interface AttachmentRepository extends JpaRepository<Attachment, Long>, J
     @Query(value = "SELECT * FROM attachment where attach_name=?1 order by upload_time desc limit 1 ",
             nativeQuery = true)
     Attachment findAttachmentByName(String attachName);
-
 }

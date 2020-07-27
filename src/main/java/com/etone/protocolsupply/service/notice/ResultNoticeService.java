@@ -13,6 +13,8 @@ import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.notice.ResultNoticeRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.repository.user.UserRepository;
+import com.etone.protocolsupply.utils.Common;
+import com.etone.protocolsupply.utils.ImageUtil;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
@@ -181,11 +183,12 @@ public class ResultNoticeService {
             //查询创建人所在公司
             User creator = userRepository.findByUsername(projectInfo.getCreator());
 
-            //文件类型
+            /*//文件类型
             String fileType = templatePath.substring(templatePath.lastIndexOf(".") + 1);
 
             //生成采购结果通知书并上传保存
             InputStream is = new FileInputStream(templatePath);
+
 
             //获取工作薄
             Workbook wb = null;
@@ -231,13 +234,23 @@ public class ResultNoticeService {
             FileOutputStream excelFileOutPutStream = new FileOutputStream(uploadFilePath+uuid+".xlsx");
             wb.write(excelFileOutPutStream);
             excelFileOutPutStream.flush();
-            excelFileOutPutStream.close();
+            excelFileOutPutStream.close();*/
 
+            String uuid = UUID.randomUUID().toString().substring(0,8);
+
+            String imageType="采购结果通知书";
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+            String path = uploadFilePath + Common.getYYYYMMDate(new Date());
+
+            //生成采购结果通知书图片
+            ImageUtil.getImage(projectInfo,creator,imageType,path,path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".jpg","");
 
             //附件表增加记录
-            attachment.setAttachName(uuid+".xlsx");
-            attachment.setFileType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            attachment.setPath(uploadFilePath+uuid+".xlsx");
+            attachment.setAttachName(imageType+"_"+sdf.format(new Date())+uuid+".jpg");
+            attachment.setFileType("image/jpeg");
+            attachment.setPath(path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".jpg");
             attachment.setUploadTime(new Date());
             attachment.setUploader(user.getUsername());
             attachment = attachmentRepository.save(attachment);
@@ -260,6 +273,7 @@ public class ResultNoticeService {
         resultNoticeRepository.save(resultNotice);
 
         projectInfoRepository.updatePurchaseId(attachment.getAttachId(),Long.parseLong(projectId));
+
         return resultNotice;
     }
 }

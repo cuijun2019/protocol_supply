@@ -14,6 +14,8 @@ import com.etone.protocolsupply.repository.notice.BidNoticeRepository;
 import com.etone.protocolsupply.repository.project.AgentInfoExpRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.repository.user.UserRepository;
+import com.etone.protocolsupply.utils.Common;
+import com.etone.protocolsupply.utils.ImageUtil;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
@@ -76,7 +78,7 @@ public class BidNoticeService {
             //查询创建人所在公司
             User creator = userRepository.findByUsername(projectInfo.getCreator());
 
-            //文件类型
+            /*//文件类型
             String fileType = bidTemplatePath.substring(bidTemplatePath.lastIndexOf(".") + 1);
 
             //生成成交通知书并上传保存
@@ -98,26 +100,6 @@ public class BidNoticeService {
                     //根据不同类型转化成字符串
                     cell.setCellType(CellType.STRING);
                     DataFormatter formatter = new DataFormatter();
-                    /*if("成交供应商名称:".equals(cell.getStringCellValue())){
-                        cell.setCellValue(agentInfoExp.get(0).getAgentName());
-                    }
-                    if("FW008".equals(cell.getStringCellValue())){
-                        cell.setCellValue(projectInfo.getProjectCode());
-                    }
-                    if("FW009".equals(cell.getStringCellValue())){
-                        cell.setCellValue(projectInfo.getProjectSubject());
-                    }
-                    if("FW010".equals(cell.getStringCellValue())){
-                        cell.setCellValue(projectInfo.getAmountRmb());
-                    }
-                    if("FW011".equals(cell.getStringCellValue())){
-                        cell.setCellValue(creator.getCompany());
-                    }
-                    if("2018年6月6日".equals(cell.getStringCellValue().trim())){
-                        Date date = new Date();
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日");
-                        cell.setCellValue(simpleDateFormat.format(date));
-                    }*/
                     if("成交供应商名称:".equals(formatter.formatCellValue(cell))){
                         cell.setCellValue(agentInfoExp.get(0).getAgentName());
                     }
@@ -146,13 +128,23 @@ public class BidNoticeService {
             FileOutputStream excelFileOutPutStream = new FileOutputStream(uploadFilePath+uuid+".xlsx");
             wb.write(excelFileOutPutStream);
             excelFileOutPutStream.flush();
-            excelFileOutPutStream.close();
+            excelFileOutPutStream.close();*/
 
+            String uuid = UUID.randomUUID().toString().substring(0,8);
+
+            String imageType="中标通知书";
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+            String path = uploadFilePath + Common.getYYYYMMDate(new Date());
+
+            //生成采购结果通知书图片
+            ImageUtil.getImage(projectInfo,creator,imageType,path,path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".jpg",agentInfoExp.get(0).getAgentName());
 
             //附件表增加记录
-            attachment.setAttachName(uuid+".xlsx");
-            attachment.setFileType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            attachment.setPath(uploadFilePath+uuid+".xlsx");
+            attachment.setAttachName(imageType+"_"+sdf.format(new Date())+uuid+".jpg");
+            attachment.setFileType("image/jpeg");
+            attachment.setPath(path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".jpg");
             attachment.setUploadTime(new Date());
             attachment.setUploader(jwtUser.getUsername());
             attachment = attachmentRepository.save(attachment);

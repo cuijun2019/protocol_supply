@@ -19,6 +19,7 @@ import com.etone.protocolsupply.repository.user.UserRepository;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.ConvertUpMoney;
 import com.etone.protocolsupply.utils.PagingMapper;
+import com.etone.protocolsupply.utils.WordToPDFUtil;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -203,6 +204,8 @@ public class ContractNoticeService {
 
 
         try{
+            //本地测试
+            //path ="D:\\合同测试.docx";
             document = new XWPFDocument(new FileInputStream(new File(path)));
 
             //获取文件中的所有表格
@@ -221,7 +224,6 @@ public class ContractNoticeService {
             }
 
 
-            //
             if(expList!=null){
                 //根据配件表集合大小增加空白单元格
                 if(expList.size()>1){
@@ -262,23 +264,34 @@ public class ContractNoticeService {
                 }
             }
 
+            String wordPath = uploadFilePath + Common.getYYYYMMDate(new Date());
+
+            File uploadPath = new File(wordPath);
+            if (!uploadPath.exists()) {
+                uploadPath.mkdirs();
+            }
             //导出到文件
             UUID uuid = UUID.randomUUID();
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             document.write(byteArrayOutputStream);
-            OutputStream outputStream = new FileOutputStream(uploadFilePath+uuid+".docx");
+            OutputStream outputStream = new FileOutputStream(wordPath+uuid+".docx");
             outputStream.write(byteArrayOutputStream.toByteArray());
             outputStream.close();
 
 
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+            //word转PDF保存
+            WordToPDFUtil.convert(wordPath+uuid+".docx",wordPath+"/"+"采购合同_"+sdf.format(new Date())+uuid+".pdf");
 
             //附件表增加记录
-            attachment.setAttachName(uuid+".docx");
-            attachment.setFileType("application/msword");
-            attachment.setPath(uploadFilePath+uuid+".docx");
+            attachment.setAttachName("采购合同_"+sdf.format(new Date())+uuid+".pdf");
+            attachment.setFileType("application/pdf");
+            attachment.setPath(wordPath+"/"+"采购合同_"+sdf.format(new Date())+uuid+".pdf");
             attachment.setUploadTime(new Date());
             attachment.setUploader(user.getUsername());
             attachment = attachmentRepository.save(attachment);
+
 
 
         }catch (Exception e){
@@ -303,6 +316,7 @@ public class ContractNoticeService {
 
         //TODO 更新工程表的附件字段
         projectInfoRepository.updateContractId(attachment.getAttachId(),Long.parseLong(projectId));
+
         return contractNotice;
     }
 
