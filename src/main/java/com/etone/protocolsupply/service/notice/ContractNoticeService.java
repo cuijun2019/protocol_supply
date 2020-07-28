@@ -205,7 +205,7 @@ public class ContractNoticeService {
 
         try{
             //本地测试
-            //path ="D:\\合同测试.docx";
+            //path ="D:\\合同模板.docx";
             document = new XWPFDocument(new FileInputStream(new File(path)));
 
             //获取文件中的所有表格

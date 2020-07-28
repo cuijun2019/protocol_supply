@@ -2,14 +2,11 @@ package com.etone.protocolsupply.utils;
 
 import org.artofsolving.jodconverter.OfficeDocumentConverter;
 import org.artofsolving.jodconverter.office.OfficeManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
 public class WordToPDFUtil {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public static void convert(String wordPath,String pdfPath) {
 
