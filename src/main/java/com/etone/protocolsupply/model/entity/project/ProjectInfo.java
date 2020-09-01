@@ -94,14 +94,14 @@ public class ProjectInfo implements Serializable {
     /**
      * 项目总金额
      */
-    @Column(name = "AMOUNT")
-    private Double amount;
+    @Column(name = "AMOUNT", length =100)
+    private String amount;
 
     /**
      * 项目总金额-人民币
      */
-    @Column(name = "AMOUNTRMB")
-    private Double amountRmb;
+    @Column(name = "AMOUNTRMB",length = 100)
+    private String amountRmb;
 
     /**
      * 币种
