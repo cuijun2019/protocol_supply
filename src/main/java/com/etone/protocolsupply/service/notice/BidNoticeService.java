@@ -159,9 +159,9 @@ public class BidNoticeService {
         bidNotice.setAmount(projectInfo.getAmountRmb()+"");
         bidNotice.setSupplier(projectInfoRepository.getAgentName(proId));
         //Constant.NOTICE_MONEY=200000
-        if(projectInfo.getAmountRmb()>=Constant.NOTICE_MONEY){
+        if(Double.parseDouble(projectInfo.getAmountRmb())>=Constant.NOTICE_MONEY){
             bidNotice.setStatus(Constant.STATE_DRAFT);//1:拟稿  7:待办
-        }else if(projectInfo.getAmountRmb()<Constant.NOTICE_MONEY){
+        }else if(Double.parseDouble(projectInfo.getAmountRmb())<Constant.NOTICE_MONEY){
             bidNotice.setStatus(Constant.STATE_WAIT_SIGN);//1:拟稿  7:待办
         }
         bidNotice.setCreator(jwtUser.getFullname());

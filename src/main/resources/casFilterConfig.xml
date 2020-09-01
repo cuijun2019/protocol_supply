@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <loginServer> https://sso.scut.edu.cn/cas/</loginServer>
+    <validateServer>https://sso.scut.edu.cn/cas/</validateServer>
+    <serverName>http://localhost:8780</serverName >
+    <notForceAuthUrls>
+        <url-pattern>\.js$</url-pattern>
+        <url-pattern>\.xsl$</url-pattern>
+        <url-pattern>\.xml$</url-pattern>
+        <url-pattern>\.gif$</url-pattern>
+        <url-pattern>\.jpg$</url-pattern>
+        <url-pattern>\.bmp$</url-pattern>
+        <url-pattern>\.css$</url-pattern>
+        <url-pattern>\.swf$</url-pattern>
+    </notForceAuthUrls>
+</config>

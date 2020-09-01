@@ -27,7 +27,10 @@ public class CasConfigure {
     @Value("${cas.validation-type}")
     private String validationType;
 
-    @Bean
+
+
+
+   /* @Bean
     public FilterRegistrationBean CASValidationFilter(){
         FilterRegistrationBean authenticationFilter = new FilterRegistrationBean();
         authenticationFilter.setFilter(new Cas20ProxyReceivingTicketValidationFilter());
@@ -36,7 +39,7 @@ public class CasConfigure {
         initParameters.put("serverName",clientHostUrl);
         //initParameters.put("exclusions","/api/getCode");
         authenticationFilter.setInitParameters(initParameters);
-        authenticationFilter.setOrder(1);
+        authenticationFilter.setOrder(2);
         List<String> urlPatterns = new ArrayList<String>();
         urlPatterns.add("/*");// 设置匹配的url
         authenticationFilter.setUrlPatterns(urlPatterns);
@@ -52,7 +55,7 @@ public class CasConfigure {
         initParameters.put("serverName",clientHostUrl);
         //initParameters.put("exclusions","/api/getCode");
         authenticationFilter.setInitParameters(initParameters);
-        authenticationFilter.setOrder(2);
+        authenticationFilter.setOrder(1);
         List<String> urlPatterns = new ArrayList<String>();
         urlPatterns.add("/*");// 设置匹配的url
         authenticationFilter.setUrlPatterns(urlPatterns);
@@ -84,7 +87,7 @@ public class CasConfigure {
         //authenticationFilter.addInitParameter("exclusions","/api/getCode");
         return authenticationFilter;
     }
-
+*/
 
 
 

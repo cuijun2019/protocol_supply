@@ -1,5 +1,6 @@
 package com.etone.protocolsupply;
 
+import net.unicon.cas.client.configuration.EnableCasClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -14,6 +15,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 @EnableCaching
 @SpringBootApplication
 @EnableScheduling
+//@EnableCasClient
 public class ProtocolSupplyApplication {
 
     public static void main(String[] args) {
