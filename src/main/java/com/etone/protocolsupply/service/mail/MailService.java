@@ -19,7 +19,7 @@ import java.util.Map;
 @Service
 public class MailService {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger logger = LoggerFactory.getLogger(MailService.class);
 
 
     @Autowired
@@ -61,7 +61,7 @@ public class MailService {
             logger.info("测试邮件已发送。");
 
         } catch (Exception e) {
-            logger.error("发送邮件时发生异常了！", e);
+            logger.error("发送邮件时发生异常了！", e.getMessage());
             return false;
         }
         return true;

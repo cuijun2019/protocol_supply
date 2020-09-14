@@ -4,6 +4,8 @@ import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.utils.Common;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,8 @@ import java.util.Optional;
 @Service
 public class AttachmentService {
 
+    private static final Logger logger = LoggerFactory.getLogger(AttachmentService.class);
+
     @Value("${file.upload.path.filePath}")
     protected String uploadFilePath;
 
@@ -32,7 +36,7 @@ public class AttachmentService {
 //            保存文件到本地
             return Common.saveUploadedFiles(uploadFile, uploadFilePath + Common.getYYYYMMDate(new Date()), jwtUser.getUsername());
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("文件下载异常",e.getMessage());
         }
         return null;
     }

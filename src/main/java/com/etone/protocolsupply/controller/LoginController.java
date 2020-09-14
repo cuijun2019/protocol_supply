@@ -18,6 +18,8 @@ import com.etone.protocolsupply.utils.RedisUtil;
 import com.etone.protocolsupply.utils.VerifyCodeUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -52,6 +54,8 @@ import java.util.TreeSet;
 @Slf4j
 @RestController
 public class LoginController {
+
+    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     @Value("${jwt.header}")
     private String tokenHeader;
@@ -97,7 +101,7 @@ public class LoginController {
         try {
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("用户名或密码错误",e.getMessage());
             return ResponseEntity.ok(ResponseValue.createBuilder().message("用户名或密码错误").build());
         }
 
@@ -209,7 +213,7 @@ public class LoginController {
             int w = 146, h = 33;
             VerifyCodeUtils.outputImage(w, h, response.getOutputStream(), verifyCode);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("生成验证码图片异常",e.getMessage());
         }
     }
 }

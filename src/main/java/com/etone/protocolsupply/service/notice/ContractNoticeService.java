@@ -28,6 +28,8 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,6 +50,8 @@ import java.util.*;
 @Transactional(rollbackFor = Exception.class)
 @Service
 public class ContractNoticeService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ContractNoticeService.class);
 
     @Autowired
     private ContractNoticeRepository ContractNoticeRepository;
@@ -168,7 +172,7 @@ public class ContractNoticeService {
             response.flushBuffer();
             workbook.write(response.getOutputStream());
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("导出合同通知书异常",e.getMessage());
         }
     }
 
@@ -290,12 +294,11 @@ public class ContractNoticeService {
             attachment.setPath(wordPath+"/"+"采购合同_"+sdf.format(new Date())+uuid+".pdf");
             attachment.setUploadTime(new Date());
             attachment.setUploader(user.getUsername());
-            attachment = attachmentRepository.save(attachment);
-
+            attachmentRepository.save(attachment);
 
 
         }catch (Exception e){
-            e.printStackTrace();
+            logger.error("生成合同通知书图片时异常",e.getMessage());
         }
 
 

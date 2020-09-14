@@ -12,6 +12,8 @@ import com.etone.protocolsupply.repository.user.UserRepository;
 import com.etone.protocolsupply.utils.BcryptCipher;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,9 +21,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +33,8 @@ import java.util.*;
 @Transactional(rollbackFor = Exception.class)
 @Service
 public class UserService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     private UserRepository userRepository;
@@ -227,7 +228,7 @@ public class UserService {
             Map<String, String> pwd = BcryptCipher.Bcrypt(newPassword);
             userRepository.updatePassword(pwd.get("cipher"),username);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("用户修改密码发生异常",e.getMessage());
             return false;
         }
         return true;

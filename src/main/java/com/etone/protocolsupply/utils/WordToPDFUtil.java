@@ -2,11 +2,14 @@ package com.etone.protocolsupply.utils;
 
 import org.artofsolving.jodconverter.OfficeDocumentConverter;
 import org.artofsolving.jodconverter.office.OfficeManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
 public class WordToPDFUtil {
 
+    private static final Logger logger = LoggerFactory.getLogger(WordToPDFUtil.class);
 
     public static void convert(String wordPath,String pdfPath) {
 
@@ -24,7 +27,7 @@ public class WordToPDFUtil {
             createPDF(converter,wordPath,pdfPath);
 
         }catch (Exception e){
-            e.printStackTrace();
+            logger.error("word文档转化PDF异常",e.getMessage());
         }/*finally {
             // 4) Stop LibreOffice in headless mode.
             if (officeManager != null) {
@@ -40,8 +43,8 @@ public class WordToPDFUtil {
                     pdfPath));
             System.err.println("Generate pdf/HelloWorld.pdf with "
                     + (System.currentTimeMillis() - start) + "ms");
-        } catch (Throwable e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            logger.error("PDF生成失败",e.getMessage());
         }
     }
 }

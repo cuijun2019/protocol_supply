@@ -20,6 +20,8 @@ import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,6 +43,8 @@ import java.util.*;
 @Transactional(rollbackFor = Exception.class)
 @Service
 public class ResultNoticeService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ResultNoticeService.class);
 
     @Autowired
     private ResultNoticeRepository resultNoticeRepository;
@@ -160,7 +164,7 @@ public class ResultNoticeService {
             response.flushBuffer();
             workbook.write(response.getOutputStream());
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("导出采购结果通知书异常",e.getMessage());
         }
     }
 
@@ -256,7 +260,7 @@ public class ResultNoticeService {
             attachment = attachmentRepository.save(attachment);
 
         }catch (Exception e){
-            e.printStackTrace();
+            logger.error("生成采购结果通知书图片异常",e.getMessage());
         }
         Long proId = Long.valueOf(projectId);
         ResultNotice resultNotice = new ResultNotice();

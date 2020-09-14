@@ -21,6 +21,8 @@ import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,6 +44,8 @@ import java.util.*;
 @Transactional(rollbackFor = Exception.class)
 @Service
 public class BidNoticeService {
+
+    private static final Logger logger = LoggerFactory.getLogger(BidNoticeService.class);
 
     @Autowired
     private PagingMapper          pagingMapper;
@@ -150,7 +154,7 @@ public class BidNoticeService {
             attachment = attachmentRepository.save(attachment);
 
         }catch (Exception e){
-            e.printStackTrace();
+            logger.error("生成采购结果通知书图片发生异常",e.getMessage());
         }
         Long proId = Long.valueOf(projectId);
         BidNotice bidNotice = new BidNotice();
@@ -279,7 +283,7 @@ public class BidNoticeService {
             response.flushBuffer();
             workbook.write(response.getOutputStream());
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("导出采购结果通知书发生异常",e.getMessage());
         }
     }
 

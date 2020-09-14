@@ -2,6 +2,8 @@ package com.etone.protocolsupply.utils;
 
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.model.entity.user.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -14,6 +16,8 @@ import java.util.Map;
 
 public class ImageUtil {
 
+    private static final Logger logger = LoggerFactory.getLogger(ImageUtil.class);
+
     private static void createImage(String path, String dstName, BufferedImage dstImage) {
         try {
             File uploadPath = new File(path);
@@ -25,7 +29,7 @@ public class ImageUtil {
             ImageIO.write(dstImage,formatName,new File(dstName));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("生成图片异常",e.getMessage());
         }
     }
 
