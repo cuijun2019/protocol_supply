@@ -31,7 +31,7 @@ public class OfficeManagerUtil {
             }
 
         }catch (Exception e){
-            logger.error("officeManager初始化失敗"+e.getMessage());
+            logger.error("officeManager初始化失敗"+e);
         }
         return officeManager;
     }

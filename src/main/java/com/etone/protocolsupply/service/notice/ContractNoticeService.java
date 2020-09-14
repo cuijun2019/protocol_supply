@@ -172,7 +172,7 @@ public class ContractNoticeService {
             response.flushBuffer();
             workbook.write(response.getOutputStream());
         } catch (Exception e) {
-            logger.error("导出合同通知书异常",e.getMessage());
+            logger.error("导出合同通知书异常",e);
         }
     }
 
@@ -298,7 +298,7 @@ public class ContractNoticeService {
 
 
         }catch (Exception e){
-            logger.error("生成合同通知书图片时异常",e.getMessage());
+            logger.error("生成合同通知书图片时异常",e);
         }
 
 

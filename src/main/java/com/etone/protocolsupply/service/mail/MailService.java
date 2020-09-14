@@ -61,7 +61,7 @@ public class MailService {
             logger.info("测试邮件已发送。");
 
         } catch (Exception e) {
-            logger.error("发送邮件时发生异常了！", e.getMessage());
+            logger.error("发送邮件时发生异常了！", e);
             return false;
         }
         return true;

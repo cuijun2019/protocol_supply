@@ -29,7 +29,7 @@ public class ImageUtil {
             ImageIO.write(dstImage,formatName,new File(dstName));
 
         } catch (Exception e) {
-            logger.error("生成图片异常",e.getMessage());
+            logger.error("生成图片异常",e);
         }
     }
 

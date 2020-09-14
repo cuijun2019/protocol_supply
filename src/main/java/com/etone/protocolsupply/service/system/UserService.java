@@ -228,7 +228,7 @@ public class UserService {
             Map<String, String> pwd = BcryptCipher.Bcrypt(newPassword);
             userRepository.updatePassword(pwd.get("cipher"),username);
         } catch (Exception e) {
-            logger.error("用户修改密码发生异常",e.getMessage());
+            logger.error("用户修改密码发生异常",e);
             return false;
         }
         return true;

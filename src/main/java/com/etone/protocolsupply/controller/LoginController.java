@@ -101,7 +101,7 @@ public class LoginController {
         try {
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (Exception e) {
-            logger.error("用户名或密码错误",e.getMessage());
+            logger.error("用户名或密码错误",e);
             return ResponseEntity.ok(ResponseValue.createBuilder().message("用户名或密码错误").build());
         }
 
@@ -213,7 +213,7 @@ public class LoginController {
             int w = 146, h = 33;
             VerifyCodeUtils.outputImage(w, h, response.getOutputStream(), verifyCode);
         } catch (Exception e) {
-            logger.error("生成验证码图片异常",e.getMessage());
+            logger.error("生成验证码图片异常",e);
         }
     }
 }

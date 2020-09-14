@@ -154,7 +154,7 @@ public class BidNoticeService {
             attachment = attachmentRepository.save(attachment);
 
         }catch (Exception e){
-            logger.error("生成采购结果通知书图片发生异常",e.getMessage());
+            logger.error("生成采购结果通知书图片发生异常",e);
         }
         Long proId = Long.valueOf(projectId);
         BidNotice bidNotice = new BidNotice();
@@ -283,7 +283,7 @@ public class BidNoticeService {
             response.flushBuffer();
             workbook.write(response.getOutputStream());
         } catch (Exception e) {
-            logger.error("导出采购结果通知书发生异常",e.getMessage());
+            logger.error("导出采购结果通知书发生异常",e);
         }
     }
 

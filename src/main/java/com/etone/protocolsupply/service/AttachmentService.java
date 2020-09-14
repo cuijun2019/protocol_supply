@@ -36,7 +36,7 @@ public class AttachmentService {
 //            保存文件到本地
             return Common.saveUploadedFiles(uploadFile, uploadFilePath + Common.getYYYYMMDate(new Date()), jwtUser.getUsername());
         } catch (Exception e) {
-            logger.error("文件下载异常",e.getMessage());
+            logger.error("文件下载异常",e);
         }
         return null;
     }

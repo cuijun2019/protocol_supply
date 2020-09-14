@@ -27,7 +27,7 @@ public class WordToPDFUtil {
             createPDF(converter,wordPath,pdfPath);
 
         }catch (Exception e){
-            logger.error("word文档转化PDF异常",e.getMessage());
+            logger.error("word文档转化PDF异常",e);
         }/*finally {
             // 4) Stop LibreOffice in headless mode.
             if (officeManager != null) {
@@ -44,7 +44,7 @@ public class WordToPDFUtil {
             System.err.println("Generate pdf/HelloWorld.pdf with "
                     + (System.currentTimeMillis() - start) + "ms");
         } catch (Exception e) {
-            logger.error("PDF生成失败",e.getMessage());
+            logger.error("PDF生成失败",e);
         }
     }
 }
