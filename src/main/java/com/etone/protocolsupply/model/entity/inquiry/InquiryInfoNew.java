@@ -108,4 +108,34 @@ public class InquiryInfoNew implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "CARGO_ID", referencedColumnName = "CARGO_ID")
     private CargoInfo cargoInfo;
+
+    /**
+     * 项目委托单位
+     */
+    @Column(name = "PROJECT_ENTRUSTING_UNIT", length = 200)
+    private String projectEntrustingUnit;
+
+    /**
+     * 最终使用单位
+     */
+    @Column(name = "FINAL_USER", length = 200)
+    private String finalUser;
+
+    /**
+     * 联系人
+     */
+    @Column(name = "CONTACT", length = 200)
+    private String contact;
+
+    /**
+     * 联系人电话
+     */
+    @Column(name = "CONTACT_PHONE", length = 200)
+    private String contactPhone;
+
+    /**
+     * 经费卡号
+     */
+    @Column(name = "FUNDS_CARD_NUMBER", length = 200)
+    private String fundsCardNumber;
 }

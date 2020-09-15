@@ -14,11 +14,14 @@ import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.repository.inquiry.InquiryInfoNewRepository;
 import com.etone.protocolsupply.repository.procedure.BusiJbpmFlowRepository;
 import com.etone.protocolsupply.repository.supplier.PartnerInfoRepository;
+import com.etone.protocolsupply.service.notice.ContractNoticeService;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -38,6 +41,7 @@ import java.util.Set;
 @Transactional(rollbackFor = Exception.class)
 @Service
 public class InquiryInfoNewService {
+    private static final Logger logger = LoggerFactory.getLogger(InquiryInfoNewService.class);
 
     @Autowired
     private CargoInfoRepository  cargoInfoRepository;
@@ -54,6 +58,7 @@ public class InquiryInfoNewService {
 
     //新建保存
     public InquiryInfoNew save(InquiryInfoNewDto inquiryInfoNewDto, JwtUser jwtUser) throws GlobalServiceException {
+
         Date date = new Date();
         String userName = jwtUser.getUsername();
         InquiryInfoNew inquiryInfoNew = new InquiryInfoNew();
@@ -78,7 +83,6 @@ public class InquiryInfoNewService {
         }else {
             inquiryInfoNew.setCargoInfo(null);
         }
-
         inquiryInfoNewRepository.save(inquiryInfoNew);
         inquiryInfoNew.getCargoInfo().setPartInfos(null);//如果暂时setnull就会error："Could not write JSON: Infinite recursion (StackOverflowError); nested exception is com.fasterxml.jackson.databind.JsonMappingException: Infinite recursion (StackOverflowError) (through reference chain: com.etone.protocolsupply.model.dto.ResponseValue[\"data\"]->com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew[\"cargoInfo\"]->com.etone.protocolsupply.model.entity.cargo.CargoInfo[\"partInfos\"])"
         return inquiryInfoNew;
@@ -220,7 +224,8 @@ public class InquiryInfoNewService {
             response.flushBuffer();
             workbook.write(response.getOutputStream());
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            logger.error("询价导出出现异常",e);
         }
     }
 

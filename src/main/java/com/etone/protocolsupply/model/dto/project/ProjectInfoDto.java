@@ -2,6 +2,7 @@ package com.etone.protocolsupply.model.dto.project;
 
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfo;
+import com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew;
 import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
 import com.etone.protocolsupply.model.entity.project.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.project.PartInfoExp;
@@ -23,6 +24,15 @@ public class ProjectInfoDto extends ProjectInfo {
     private String purchaseSchool;//采购人学院
     private String purchasePhone;//采购人联系方式
 
+    /**
+     * 关联询价id获取得到的信息
+     */
+    private String projectEntrustingUnit;//项目委托单位
+    private String finalUser;//最终使用单位
+    private String contact;//联系人
+    private String contactPhone;//联系人电话
+    private String fundsCardNumber;//经费卡号
+
 
     /**
      * 配件拓展表
@@ -38,7 +48,7 @@ public class ProjectInfoDto extends ProjectInfo {
 
     private CargoInfo cargoInfo;
 
-    private InquiryInfo inquiryInfo;
+    private InquiryInfoNew inquiryInfoNew;
 
     private Set<BusiJbpmFlow> InquiryBusiJbpmFlows;
     private Set<BusiJbpmFlow> ProjectBusiJbpmFlows;
