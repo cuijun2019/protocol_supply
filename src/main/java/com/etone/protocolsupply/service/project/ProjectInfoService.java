@@ -223,7 +223,7 @@ public class ProjectInfoService {
         for (ProjectInfo projectInfo : source) {
             CargoInfo cargoInfo = cargoInfoRepository.findAllByProjectId(projectInfo.getProjectId());
 
-            InquiryInfoNew inquiryInfoNew = inquiryInfoNewRepository.getOne(projectInfo.getInquiryId());
+            InquiryInfoNew inquiryInfoNew = inquiryInfoNewRepository.findAllByInquiryId(projectInfo.getInquiryId());
             cargoInfo.setPartInfos(null);
             projectInfoDto = new ProjectInfoDto();
             if(null!=inquiryInfoNew){
