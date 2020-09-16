@@ -1,5 +1,6 @@
 package com.etone.protocolsupply.repository.inquiry;
 
+import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoNewDto;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 public interface InquiryInfoRepository extends JpaRepository<InquiryInfo, Long>, JpaSpecificationExecutor<InquiryInfo> {
 
@@ -53,4 +55,6 @@ public interface InquiryInfoRepository extends JpaRepository<InquiryInfo, Long>,
             " and if((?2 is not null), (b.parent_actor=?2 or b.next_actor=?2), (1=1)))" +
             " and i.is_delete=?1 ", nativeQuery = true)
     List<InquiryInfo> findExpert(Integer isDelete,String actor);
+
+
 }

@@ -55,6 +55,29 @@ public class InquiryInfoNewController extends GenericController {
     }
 
     /**
+     * 新增项目时判断项目预算是否超过一百万
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getProjectInfoBudget",
+            method = RequestMethod.GET,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    public ResponseValue getProjectInfoBudget(@Validated
+                                              @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
+                                              @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+                                              @RequestParam(value = "fundsCardNumber", required = false) String fundsCardNumber,
+                                              @RequestParam(value = "itemName", required = false) String itemName,
+                                              HttpServletRequest request) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        Sort sort = new Sort(Sort.Direction.DESC, "createDate");//按照创建时间倒序
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
+        Page<InquiryInfoNew> page = inquiryInfoNewService.getProjectInfoBudget(fundsCardNumber, itemName,pageable);
+        InquiryInfoNewCollectionDto inquiryInfoNewCollectionDto = inquiryInfoNewService.getProjectInfoBudgetto(page,itemName, request);
+        responseBuilder.data(inquiryInfoNewCollectionDto);
+        return responseBuilder.build();
+    }
+
+    /**
      * 查询询价list
      * @param currentPage
      * @param pageSize

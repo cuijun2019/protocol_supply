@@ -87,6 +87,41 @@ public class InquiryInfoNewService {
         inquiryInfoNew.getCargoInfo().setPartInfos(null);//如果暂时setnull就会error："Could not write JSON: Infinite recursion (StackOverflowError); nested exception is com.fasterxml.jackson.databind.JsonMappingException: Infinite recursion (StackOverflowError) (through reference chain: com.etone.protocolsupply.model.dto.ResponseValue[\"data\"]->com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew[\"cargoInfo\"]->com.etone.protocolsupply.model.entity.cargo.CargoInfo[\"partInfos\"])"
         return inquiryInfoNew;
     }
+    public Page<InquiryInfoNew> getProjectInfoBudget(String fundsCardNumber, String itemName, Pageable pageable) {
+        return Common.listConvertToPage(inquiryInfoNewRepository.getProjectInfoBudget(fundsCardNumber,itemName), pageable);
+    }
+    public InquiryInfoNewCollectionDto getProjectInfoBudgetto(Page<InquiryInfoNew> source,String itemName, HttpServletRequest request) {
+        InquiryInfoNewCollectionDto inquiryInfoNewCollectionDto = new InquiryInfoNewCollectionDto();
+        pagingMapper.storeMappedInstanceBefore(source, inquiryInfoNewCollectionDto, request);
+        InquiryInfoNewDto inquiryInfoNewDto;
+        double sum=0;
+        for (InquiryInfoNew inquiryInfoNew: source) {
+            sum+=inquiryInfoNew.getProjectBudget();
+            inquiryInfoNewDto=new InquiryInfoNewDto();
+            inquiryInfoNew.getCargoInfo().setPartInfos(null);
+            BeanUtils.copyProperties(inquiryInfoNew, inquiryInfoNewDto);
+            inquiryInfoNewDto.setItemName(itemName);
+            inquiryInfoNewDto.setCargoInfo(null);
+            inquiryInfoNewDto.setAttachment(null);
+            inquiryInfoNewCollectionDto.add(inquiryInfoNewDto);
+
+        }
+        if(sum>1000000){
+            for(InquiryInfoNewDto inquiryInfoNewDto1: inquiryInfoNewCollectionDto.getInquiryInfoNewDtos()){
+                inquiryInfoNewDto1.setSum(sum);
+                inquiryInfoNewDto1.setSfcgybw("1");
+            }
+        }else {
+            for(InquiryInfoNewDto inquiryInfoNewDto2: inquiryInfoNewCollectionDto.getInquiryInfoNewDtos()){
+                inquiryInfoNewDto2.setSum(sum);
+                inquiryInfoNewDto2.setSfcgybw("0");
+            }
+        }
+
+        return inquiryInfoNewCollectionDto;
+    }
+
+
 
     //查询list
     public Page<InquiryInfoNew> findInquiryInfoNewList(String isDelete, String inquiryCode,String cargoName,String actor,Integer status, Pageable pageable) {

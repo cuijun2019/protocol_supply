@@ -23,6 +23,8 @@ import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -45,7 +47,7 @@ import java.util.*;
 @Transactional(rollbackFor = Exception.class)
 @Service
 public class PartInfoService {
-
+    private static final Logger logger = LoggerFactory.getLogger(PartInfoService.class);
     @Autowired
     private PartInfoRepository    partInfoRepository;
     @Autowired
@@ -195,7 +197,8 @@ public class PartInfoService {
                 batchInsertPartInfo(tempList, cargoId);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            logger.error("配件导入出现异常",e);
         }
     }
 
@@ -251,7 +254,8 @@ public class PartInfoService {
             response.flushBuffer();
             workbook.write(response.getOutputStream());
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            logger.error("配件导出出现异常",e);
         }
     }
 
@@ -292,7 +296,8 @@ public class PartInfoService {
             response.flushBuffer();
             workbook.write(response.getOutputStream());
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            logger.error("下载配件导入模板出现异常",e);
         }
     }
 
@@ -343,7 +348,8 @@ public class PartInfoService {
             response.flushBuffer();
             workbook.write(response.getOutputStream());
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            logger.error("项目详情中的配件导出现异常",e);
         }
     }
 
@@ -423,9 +429,11 @@ public class PartInfoService {
             }
 
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+           // e.printStackTrace();
+            logger.error("Workbook读取excel文件出现异常",e);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Workbook读取excel文件出现异常",e);
+           // e.printStackTrace();
         }
         return wb;
     }

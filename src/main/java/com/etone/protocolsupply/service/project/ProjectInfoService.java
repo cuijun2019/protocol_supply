@@ -4,6 +4,7 @@ import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.exception.GlobalServiceException;
 import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.cargo.CargoInfoDto;
+import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoNewDto;
 import com.etone.protocolsupply.model.dto.project.ProjectCollectionDto;
 import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
 import com.etone.protocolsupply.model.entity.Attachment;
@@ -107,7 +108,7 @@ public class ProjectInfoService {
         } else {
             projectInfo.setAttachment_p(null);
         }
-        InquiryInfoNew inquiryInfoNew=projectInfoDto.getInquiryInfoNew();
+        InquiryInfoNew inquiryInfoNew=inquiryInfoNewRepository.findAllByInquiryId(projectInfoDto.getInquiryInfoNew().getInquiryId());
             if (null!=inquiryInfoNew.getInquiryId()) {
                 projectInfo.setInquiryId(projectInfoDto.getInquiryInfoNew().getInquiryId());
                 projectInfo.setInquiryCode(projectInfoDto.getInquiryInfoNew().getInquiryCode());
@@ -144,6 +145,7 @@ public class ProjectInfoService {
             agentInfoExp.setProjectInfo(projectInfo);
             agentInfoExpRepository.save(agentInfoExp);
         }
+
         return projectInfo;
     }
     public List<CargoInfo> getSetCargoInfo(String actor) throws GlobalServiceException {

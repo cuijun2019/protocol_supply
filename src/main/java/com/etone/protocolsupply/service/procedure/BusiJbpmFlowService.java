@@ -11,12 +11,15 @@ import com.etone.protocolsupply.model.entity.user.Role;
 import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.procedure.BusiJbpmFlowRepository;
 import com.etone.protocolsupply.repository.user.RoleRepository;
+import com.etone.protocolsupply.service.cargo.PartInfoService;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,7 +40,7 @@ import java.util.Optional;
 @Transactional(rollbackFor = Exception.class)
 @Service
 public class BusiJbpmFlowService {
-
+    private static final Logger logger = LoggerFactory.getLogger(BusiJbpmFlowService.class);
     @Autowired
     private BusiJbpmFlowRepository busiJbpmFlowRepository;
     @Autowired
@@ -262,7 +265,8 @@ public class BusiJbpmFlowService {
             response.flushBuffer();
             workbook.write(response.getOutputStream());
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            logger.error("审批流程导出出现异常",e);
         }
     }
 

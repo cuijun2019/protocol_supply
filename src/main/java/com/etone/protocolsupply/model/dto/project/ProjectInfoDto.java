@@ -1,5 +1,6 @@
 package com.etone.protocolsupply.model.dto.project;
 
+import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoNewDto;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfo;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew;
@@ -34,6 +35,10 @@ public class ProjectInfoDto extends ProjectInfo {
     private String fundsCardNumber;//经费卡号
 
 
+    private String sfcgybw;//同一卡号，同一品目，同一项目的项目预算总数是否超过一百万
+
+
+
     /**
      * 配件拓展表
      */
@@ -52,5 +57,7 @@ public class ProjectInfoDto extends ProjectInfo {
 
     private Set<BusiJbpmFlow> InquiryBusiJbpmFlows;
     private Set<BusiJbpmFlow> ProjectBusiJbpmFlows;
+
+    private Set<InquiryInfoNewDto> inquiryInfoNewDto;
 
 }

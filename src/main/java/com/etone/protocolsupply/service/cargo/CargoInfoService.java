@@ -21,11 +21,14 @@ import com.etone.protocolsupply.repository.cargo.PartInfoRepository;
 import com.etone.protocolsupply.repository.project.PartInfoExpRepository;
 import com.etone.protocolsupply.repository.supplier.PartnerInfoRepository;
 import com.etone.protocolsupply.repository.user.UserRepository;
+import com.etone.protocolsupply.service.project.ProjectInfoService;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -49,7 +52,7 @@ import java.util.*;
 @Transactional(rollbackFor = Exception.class)
 @Service
 public class CargoInfoService {
-
+    private static final Logger logger = LoggerFactory.getLogger(CargoInfoService.class);
     @Autowired
     private CargoInfoRepository  cargoInfoRepository;
     @Autowired
@@ -416,7 +419,9 @@ public class CargoInfoService {
             response.flushBuffer();
             workbook.write(response.getOutputStream());
         } catch (Exception e) {
-            e.printStackTrace();
+           // e.printStackTrace();
+            logger.error("货物导出出现异常",e);
+
         }
     }
 
@@ -458,7 +463,8 @@ public class CargoInfoService {
             response.flushBuffer();
             workbook.write(response.getOutputStream());
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            logger.error("货物模板下载出现异常",e);
         }
     }
 
@@ -490,7 +496,8 @@ public class CargoInfoService {
                 batchInsertCargoInfo(tempList,jwtUser,partnerId);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            logger.error("货物导入出现异常",e);
         }
     }
     public void batchInsertCargoInfo(List<Object> maps,JwtUser jwtUser,Long partnerId) {
@@ -607,9 +614,11 @@ public class CargoInfoService {
             }
 
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+           // e.printStackTrace();
+            logger.error("Workbook读取excel文件出现异常");
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            logger.error("Workbook读取excel文件出现异常");
         }
         return wb;
     }

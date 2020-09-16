@@ -1,5 +1,6 @@
 package com.etone.protocolsupply.repository.inquiry;
 
+import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoNewDto;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -56,4 +57,11 @@ public interface InquiryInfoNewRepository extends JpaRepository<InquiryInfoNew, 
     @Transactional(rollbackFor = Exception.class)
     @Query(value = "select * from inquiry_info_new where inquiry_id=(select p.inquiry_id from project_info p where p.inquiry_id =inquiry_id and p.project_id=?1 ) and is_delete=2  ", nativeQuery = true)
     InquiryInfoNew findAllByProjectId(Long ProjectId);
+
+    @Query(value = "select a.*  from (" +
+            " select i.* " +
+            " FROM inquiry_info_new i left join cargo_info c on c.cargo_id=i.cargo_id " +
+            " where i.funds_card_number=?1 and c.item_name=?2 order by i.create_date asc  " +
+            " )a GROUP BY a.inquiry_id,a.inquiry_code,a.funds_card_number,a.project_budget,a.project_background", nativeQuery = true)
+    List<InquiryInfoNew> getProjectInfoBudget(String  inquiryCode, String itemName);
 }

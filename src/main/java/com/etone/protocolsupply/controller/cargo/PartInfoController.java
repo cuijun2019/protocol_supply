@@ -7,7 +7,9 @@ import com.etone.protocolsupply.model.dto.part.PartInfoDto;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.PartInfo;
 import com.etone.protocolsupply.service.AttachmentService;
+import com.etone.protocolsupply.service.cargo.CargoInfoService;
 import com.etone.protocolsupply.service.cargo.PartInfoService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +33,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "${jwt.route.path}/partInfo")
 public class PartInfoController extends GenericController {
+
 
     @Autowired
     private PartInfoService partInfoService;
