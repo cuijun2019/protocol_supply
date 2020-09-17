@@ -104,7 +104,7 @@ public class BusiJbpmFlow implements Serializable {
     /**
      * 审批意见
      */
-    @Column(name = "OPINION", length = 2000)
+    @Column(name = "OPINION", length = 20000)
     private String opinion;
 
     /**

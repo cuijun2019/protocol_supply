@@ -61,7 +61,7 @@ public interface InquiryInfoNewRepository extends JpaRepository<InquiryInfoNew, 
     @Query(value = "select a.*  from (" +
             " select i.* " +
             " FROM inquiry_info_new i left join cargo_info c on c.cargo_id=i.cargo_id " +
-            " where i.funds_card_number=?1 and c.item_name=?2 order by i.create_date asc  " +
-            " )a GROUP BY a.inquiry_id,a.inquiry_code,a.funds_card_number,a.project_budget,a.project_background", nativeQuery = true)
+            " where i.funds_card_number=?1 and c.item_name=?2 )a " +
+            " GROUP BY a.inquiry_id,a.inquiry_code,a.funds_card_number,a.project_budget,a.project_background order by a.create_date desc", nativeQuery = true)
     List<InquiryInfoNew> getProjectInfoBudget(String  inquiryCode, String itemName);
 }
