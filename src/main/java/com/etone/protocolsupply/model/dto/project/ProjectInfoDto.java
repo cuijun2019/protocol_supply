@@ -53,7 +53,7 @@ public class ProjectInfoDto extends ProjectInfo {
 
     private CargoInfo cargoInfo;
 
-    private InquiryInfoNew inquiryInfoNew;
+    private InquiryInfoNew inquiryInfo;
 
     private Set<BusiJbpmFlow> InquiryBusiJbpmFlows;
     private Set<BusiJbpmFlow> ProjectBusiJbpmFlows;
