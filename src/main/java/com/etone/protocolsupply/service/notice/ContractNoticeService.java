@@ -74,6 +74,9 @@ public class ContractNoticeService {
     @Autowired
     private CargoInfoRepository cargoInfoRepository;
 
+    @Autowired
+    private WordToPDFUtil wordToPDFUtil;
+
     @Value("${file.upload.path.filePath}")
     protected String uploadFilePath;
 
@@ -286,7 +289,7 @@ public class ContractNoticeService {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
             //word转PDF保存
-            WordToPDFUtil.convert(wordPath+uuid+".docx",wordPath+"/"+"采购合同_"+sdf.format(new Date())+uuid+".pdf");
+            wordToPDFUtil.convert(wordPath+uuid+".docx",wordPath+"/"+"采购合同_"+sdf.format(new Date())+uuid+".pdf");
 
             //附件表增加记录
             attachment.setAttachName("采购合同_"+sdf.format(new Date())+uuid+".pdf");
@@ -302,23 +305,28 @@ public class ContractNoticeService {
         }
 
 
-        Long proId = Long.valueOf(projectId);
-        ContractNotice contractNotice = new ContractNotice();
-        contractNotice.setProjectCode(projectInfo.getProjectCode());
-        contractNotice.setProjectSubject(projectInfo.getProjectSubject());
-        contractNotice.setAmount(projectInfo.getAmountRmb()+"");
-        contractNotice.setSupplier(projectInfoRepository.getAgentName(proId));
-        contractNotice.setStatus(Constant.STATE_WAIT_SIGN);
-        contractNotice.setCreator(user.getFullname());
-        contractNotice.setCreateDate(new Date());
-        contractNotice.setPurchaser(projectInfo.getPurchaser());
-        contractNotice.setProjectInfo(projectInfo);
-        contractNotice.setAttachment(attachment);
-        ContractNoticeRepository.save(contractNotice);
+        ContractNotice contractNotice = null;
+        try {
+            Long proId = Long.valueOf(projectId);
+            contractNotice = new ContractNotice();
+            contractNotice.setProjectCode(projectInfo.getProjectCode());
+            contractNotice.setProjectSubject(projectInfo.getProjectSubject());
+            contractNotice.setAmount(projectInfo.getAmountRmb()+"");
+            contractNotice.setSupplier(projectInfoRepository.getAgentName(proId));
+            contractNotice.setStatus(Constant.STATE_WAIT_SIGN);
+            contractNotice.setCreator(user.getFullname());
+            contractNotice.setCreateDate(new Date());
+            contractNotice.setPurchaser(projectInfo.getPurchaser());
+            contractNotice.setProjectInfo(projectInfo);
+            contractNotice.setAttachment(attachment);
+            ContractNoticeRepository.save(contractNotice);
 
 
-        //TODO 更新工程表的附件字段
-        projectInfoRepository.updateContractId(attachment.getAttachId(),Long.parseLong(projectId));
+            //TODO 更新工程表的附件字段
+            projectInfoRepository.updateContractId(attachment.getAttachId(),Long.parseLong(projectId));
+        } catch (Exception e) {
+            logger.error("这一步异常了！！！",e);
+        }
 
         return contractNotice;
     }

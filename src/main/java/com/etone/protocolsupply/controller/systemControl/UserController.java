@@ -51,8 +51,12 @@ public class UserController extends GenericController {
 
         Sort sort = new Sort(Sort.Direction.DESC, "createTime");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Specification<User> specification = userService.getWhereClause(isDelete,username,enabled);
-        Page<User> page = userService.findUsers(specification, pageable);
+        //Specification<User> specification = userService.getWhereClause(isDelete,username,enabled);
+        int enable = 1;
+        if(enabled!=null){
+            enable = (enabled.equals("true")?1:0);
+        }
+        Page<User> page = userService.findUsers(username,enable, pageable);
 
         UserCollectionDto userDtos = userService.to(page, request);
         responseBuilder.data(userDtos);

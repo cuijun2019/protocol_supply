@@ -10,6 +10,7 @@ import com.etone.protocolsupply.model.entity.user.User;
 import com.etone.protocolsupply.repository.user.RoleRepository;
 import com.etone.protocolsupply.repository.user.UserRepository;
 import com.etone.protocolsupply.utils.BcryptCipher;
+import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
@@ -63,13 +64,15 @@ public class UserService {
                 }
             }
             predicates.add(criteriaBuilder.equal(root.get("isDelete").as(Long.class), isDelete));
+            predicates.add(criteriaBuilder.equal(root.get("").as(Long.class), isDelete));
             Predicate[] pre = new Predicate[predicates.size()];
             return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
         };
     }
 
-    public Page<User> findUsers(Specification<User> specification, Pageable pageable) {
-        return userRepository.findAll(specification,pageable);
+    public Page<User> findUsers(String username,int enable,Pageable pageable) {
+        List<User> userList = userRepository.findAllUsers(username,enable);
+        return Common.listConvertToPage(userList,pageable);
     }
 
     public UserCollectionDto to(Page<User> page, HttpServletRequest request) {
