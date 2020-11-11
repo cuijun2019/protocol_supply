@@ -9,12 +9,13 @@ import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew;
 import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
+
+import com.etone.protocolsupply.model.entity.user.Leaders;
 import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.repository.inquiry.InquiryInfoNewRepository;
 import com.etone.protocolsupply.repository.procedure.BusiJbpmFlowRepository;
-import com.etone.protocolsupply.repository.supplier.PartnerInfoRepository;
-import com.etone.protocolsupply.service.notice.ContractNoticeService;
+import com.etone.protocolsupply.repository.user.LeadersRepository;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.poi.hssf.usermodel.*;
@@ -51,6 +52,8 @@ public class InquiryInfoNewService {
     private AttachmentRepository attachmentRepository;
     @Autowired
     private BusiJbpmFlowRepository busiJbpmFlowRepository;
+    @Autowired
+    private LeadersRepository leadersRepository;
 
     @Autowired
     private PagingMapper         pagingMapper;
@@ -210,7 +213,7 @@ public class InquiryInfoNewService {
     //询价导出
     public void export(HttpServletResponse response, List<Long> inquiryIds, String actor) {
         try {
-            String[] header = {"询价单号", "采购人", "厂家名称", "货物名称", "项目预算"};
+            String[] header = {"询价单号", "采购人", "制造商名称", "货物名称", "项目预算"};
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet("询价列表");
             sheet.setDefaultColumnWidth(10);
@@ -268,6 +271,8 @@ public class InquiryInfoNewService {
         Set<BusiJbpmFlow> busiJbpmFlows=busiJbpmFlowRepository.getSetBusiJbpmFlowList(businessId,businessType);
         return busiJbpmFlows;
     }
-
+    public List<Leaders> getGroupList() {
+        return leadersRepository.getGroupList();
+    }
 
 }

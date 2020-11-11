@@ -4,10 +4,10 @@ import com.etone.protocolsupply.controller.GenericController;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoNewCollectionDto;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoNewDto;
-import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew;
 import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
-import com.etone.protocolsupply.repository.procedure.BusiJbpmFlowRepository;
+
+import com.etone.protocolsupply.model.entity.user.Leaders;
 import com.etone.protocolsupply.service.inquiry.InquiryInfoNewService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -199,7 +199,21 @@ public class InquiryInfoNewController extends GenericController {
         return responseBuilder.build();
     }
 
-
+    /**
+     * 查询领导学院列表
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getGroupList",method = RequestMethod.GET,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseValue getGroupList() {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        List<Leaders> list = inquiryInfoNewService.getGroupList();
+        responseBuilder.data(list);
+        return responseBuilder.build();
+    }
 
 
 }

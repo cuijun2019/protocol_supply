@@ -1,6 +1,8 @@
 package com.etone.protocolsupply.repository.procedure;
 
 import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
+
+import com.etone.protocolsupply.model.entity.user.Leaders;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -133,8 +135,11 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
     @Query(value = "select * from busi_jbpm_flow where business_id=?1 and business_type=?2 and type=?3 and next_actor=?4 order by flow_start_time desc", nativeQuery = true)
     BusiJbpmFlow  findsffsxjjl( String businessId,String businessType,String type,String actor);
 
-
     @Query(value = "select * from busi_jbpm_flow where business_id=?1 and business_type=?2 and read_type is null order by flow_start_time asc", nativeQuery = true)
     Set<BusiJbpmFlow> getSetBusiJbpmFlowList(Long businessId,String businessType);
+
+    @Query(value = "select username from users where fullname=(select leader from leaders where dwmc=(" +
+            "select company from users where username=?1))" , nativeQuery = true)
+    String getLeaderByuserName(@Param("username") String username);
 
 }
