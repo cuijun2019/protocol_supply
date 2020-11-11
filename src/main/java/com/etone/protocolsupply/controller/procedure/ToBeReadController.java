@@ -1,9 +1,11 @@
 package com.etone.protocolsupply.controller.procedure;
 
 import com.etone.protocolsupply.controller.GenericController;
+import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowDto;
 import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
+import com.etone.protocolsupply.model.entity.user.Leaders;
 import com.etone.protocolsupply.service.AttachmentService;
 import com.etone.protocolsupply.service.cargo.CargoInfoService;
 import com.etone.protocolsupply.service.inquiry.InquiryInfoService;
@@ -47,83 +49,6 @@ public class ToBeReadController extends GenericController {
         responseBuilder.data(busiJbpmFlow);
         return responseBuilder.build();
     }
-
-
-    /**
-     * 根据业务表id，待办类型，提交给的人员 修改readtype=1
-     * @param busiJbpmFlowDto
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(method = RequestMethod.PUT,
-            consumes = {"application/json"},
-            produces = {"application/json"})
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseValue updateBusiJbpmFlows(@Validated
-                                             @RequestBody BusiJbpmFlowDto busiJbpmFlowDto) {
-        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        List<BusiJbpmFlow> list = busiJbpmFlowService.getBJFListWithReadType(
-                busiJbpmFlowDto.getBusinessId(),busiJbpmFlowDto.getBusinessType(),busiJbpmFlowDto.getNextActor());
-        BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
-        if(list.size()!=0){
-            busiJbpmFlow=list.get(0);
-            busiJbpmFlowService.updateReadType(busiJbpmFlow.getId());
-            busiJbpmFlow.setReadType(1);
-        }else {
-            responseBuilder.message("查询不到数据，操作失败！");
-        }
-        responseBuilder.data(busiJbpmFlow);
-        return responseBuilder.build();
-    }
-
-//    /**
-//     * 待阅列表
-//     * @param currentPage
-//     * @param pageSize
-//     * @param businessType
-//     * @param businessSubject
-//     * @param request
-//     * @return
-//     */
-//    @ResponseBody
-//    @RequestMapping(method = RequestMethod.GET,
-//            consumes = {"application/json"},
-//            produces = {"application/json"})
-//    public ResponseValue getBusiJbpmFlows(@Validated
-//                                       @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
-//                                       @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
-//                                       @RequestParam(value = "businessType", required = false) String businessType,
-//                                       @RequestParam(value = "businessSubject", required = false) String businessSubject,
-//                                       @RequestParam(value = "businessId", required = false) String businessId,
-//                                       HttpServletRequest request) {
-//        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-//        Sort sort = new Sort(Sort.Direction.DESC, "flowStartTime");
-//        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-//        Specification<BusiJbpmFlow> specification = busiJbpmFlowService.getWhereClause(businessType, businessSubject, Constant.BUSINESS_TYPE_DAIYUE,businessId);
-//        Page<BusiJbpmFlow> page = busiJbpmFlowService.findAgents(specification, pageable);
-//        BusiJbpmFlowCollectionDto busiJbpmFlowDto = busiJbpmFlowService.to(page, request,this.getUser());
-//        responseBuilder.data(busiJbpmFlowDto);
-//        return responseBuilder.build();
-//    }
-//
-//    /**
-//     * 导出待阅
-//     * @param businessType
-//     * @param businessSubject
-//     * @param ids
-//     * @param response
-//     */
-//    @ResponseBody
-//    @RequestMapping(value = "/export",
-//            method = RequestMethod.POST,
-//            consumes = {"application/json"},
-//            produces = {"application/json"})
-//    public void exportAgent(@RequestParam(value = "businessType", required = false) String businessType,
-//                            @RequestParam(value = "businessSubject", required = false) String businessSubject,
-//                            @RequestBody(required = false) List<Long> ids,
-//                            @Context HttpServletResponse response) {
-//        busiJbpmFlowService.export(response, businessType, businessSubject, ids,Constant.BUSINESS_TYPE_DAIYUE);
-//    }
 
 
 }

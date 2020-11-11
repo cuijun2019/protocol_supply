@@ -6,4 +6,5 @@ import lombok.Data;
 @Data
 public class UserDto extends User {
     private String token;
+    private String leader;
 }

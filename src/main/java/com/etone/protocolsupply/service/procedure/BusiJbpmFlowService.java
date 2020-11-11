@@ -86,8 +86,7 @@ public class BusiJbpmFlowService {
         BeanUtils.copyProperties(busiJbpmFlowDto, busiJbpmFlow);
         busiJbpmFlow.setFlowStartTime(date);//询价时间
         busiJbpmFlow.setFlowInitorId(userName);
-        String leader=busiJbpmFlowRepository.getLeaderByuserName(userName);//根据登录人的username查找该学院的领导人
-        busiJbpmFlow.setNextActor(leader);
+        //busiJbpmFlow.setNextActor(leader);
         busiJbpmFlow.setTaskState("0");
         busiJbpmFlow.setReadType(Constant.BUSINESS_TYPE_DAIYUE);//待阅
         busiJbpmFlow = busiJbpmFlowRepository.save(busiJbpmFlow);
@@ -326,5 +325,7 @@ public class BusiJbpmFlowService {
     public void upnextActor(Long id,String nextActor){
         busiJbpmFlowRepository.upNextActor(id,nextActor);
     }
+
+
 
 }

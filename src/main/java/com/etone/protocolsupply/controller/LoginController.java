@@ -12,6 +12,7 @@ import com.etone.protocolsupply.model.entity.user.PermissionComparator;
 import com.etone.protocolsupply.model.entity.user.Permissions;
 import com.etone.protocolsupply.model.entity.user.Role;
 import com.etone.protocolsupply.model.entity.user.User;
+import com.etone.protocolsupply.repository.procedure.BusiJbpmFlowRepository;
 import com.etone.protocolsupply.repository.supplier.PartnerInfoRepository;
 import com.etone.protocolsupply.service.security.JwtTokenUtil;
 import com.etone.protocolsupply.service.system.ScutUserService;
@@ -97,6 +98,9 @@ public class LoginController {
     @Autowired
     private CasUtils casUtils;
 
+    @Autowired
+    private BusiJbpmFlowRepository busiJbpmFlowRepository;
+
     @RequestMapping(value = "${jwt.route.authentication.path}", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@Validated @RequestBody LoginRequest authenticationRequest,HttpServletRequest request) {
 
@@ -142,6 +146,9 @@ public class LoginController {
         }
         BeanUtils.copyProperties(user, userDto);
         userDto.setToken(token);
+        //根据username查找领导人
+        String leader=busiJbpmFlowRepository.getLeaderByuserName(username);
+        userDto.setLeader(leader);
 
         // Return the token
         return ResponseEntity.ok(ResponseValue.createBuilder().data(userDto).build());
