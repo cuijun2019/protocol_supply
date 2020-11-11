@@ -15,12 +15,13 @@ import com.etone.protocolsupply.repository.project.AgentInfoExpRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.repository.user.UserRepository;
 import com.etone.protocolsupply.utils.Common;
+import com.etone.protocolsupply.utils.EncryptZipUtil;
 import com.etone.protocolsupply.utils.ImageUtil;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -29,17 +30,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 @Transactional(rollbackFor = Exception.class)
 @Service
@@ -68,8 +71,15 @@ public class BidNoticeService {
     @Value("${file.upload.path.filePath}")
     protected String uploadFilePath;
 
-    public BidNotice save(String projectId, JwtUser jwtUser, String bidTemplatePath) {
-        Attachment attachment = new Attachment();
+    @Autowired
+    private JavaMailSender mailSender;
+
+    @Value("${spring.mail.username}")
+    private String host;
+
+    public BidNotice save(String projectId, JwtUser jwtUser) {
+        Attachment attachment = new Attachment();//未加密附件
+        Attachment attachmentEncrypt = new Attachment();//加密附件
 
         //查询项目详情
         ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(Long.valueOf(projectId));
@@ -82,70 +92,18 @@ public class BidNoticeService {
             //查询创建人所在公司
             User creator = userRepository.findByUsername(projectInfo.getCreator());
 
-            /*//文件类型
-            String fileType = bidTemplatePath.substring(bidTemplatePath.lastIndexOf(".") + 1);
-
-            //生成成交通知书并上传保存
-            InputStream is = new FileInputStream(bidTemplatePath);
-
-            //获取工作薄
-            Workbook wb = null;
-            if (fileType.equals("xls")) {
-                wb = new HSSFWorkbook(is);
-            } else if (fileType.equals("xlsx")) {
-                wb = new XSSFWorkbook(is);
-            }
-
-            //读取第一个工作页sheet
-            Sheet sheet = wb.getSheetAt(0);
-            //第一行为标题
-            for (Row row : sheet) {
-                for (Cell cell : row) {
-                    //根据不同类型转化成字符串
-                    cell.setCellType(CellType.STRING);
-                    DataFormatter formatter = new DataFormatter();
-                    if("成交供应商名称:".equals(formatter.formatCellValue(cell))){
-                        cell.setCellValue(agentInfoExp.get(0).getAgentName());
-                    }
-                    if("FW008".equals(formatter.formatCellValue(cell))){
-                        cell.setCellValue(projectInfo.getProjectCode());
-                    }
-                    if("FW009".equals(formatter.formatCellValue(cell))){
-                        cell.setCellValue(projectInfo.getProjectSubject());
-                    }
-                    if("FW010".equals(formatter.formatCellValue(cell))){
-                        cell.setCellValue(projectInfo.getAmountRmb());
-                    }
-                    if("FW011".equals(formatter.formatCellValue(cell))){
-                        cell.setCellValue(creator.getCompany());
-                    }
-                    if("2018年6月6日".equals(formatter.formatCellValue(cell).trim())){
-                        Date date = new Date();
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日");
-                        cell.setCellValue(simpleDateFormat.format(date));
-                    }
-                }
-            }
-
-            //改名保存
-            UUID uuid = UUID.randomUUID();
-            FileOutputStream excelFileOutPutStream = new FileOutputStream(uploadFilePath+uuid+".xlsx");
-            wb.write(excelFileOutPutStream);
-            excelFileOutPutStream.flush();
-            excelFileOutPutStream.close();*/
-
             String uuid = UUID.randomUUID().toString().substring(0,8);
 
-            String imageType="中标通知书";
+            String imageType="成交通知书";
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
             String path = uploadFilePath + Common.getYYYYMMDate(new Date());
 
-            //生成采购结果通知书图片
+            //生成成交通知书图片
             ImageUtil.getImage(projectInfo,creator,imageType,path,path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".jpg",agentInfoExp.get(0).getAgentName());
 
-            //附件表增加记录
+            //附件表增加成交通知书图片记录
             attachment.setAttachName(imageType+"_"+sdf.format(new Date())+uuid+".jpg");
             attachment.setFileType("image/jpeg");
             attachment.setPath(path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".jpg");
@@ -153,8 +111,31 @@ public class BidNoticeService {
             attachment.setUploader(jwtUser.getUsername());
             attachment = attachmentRepository.save(attachment);
 
+            //成交通知书图片压缩并加密上传
+            String password = EncryptZipUtil.zipFile(path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".zip",path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".jpg");
+            if("添加压缩文件出错".equals(password)){
+                throw new RuntimeException("添加成交通知书的压缩文件出错*****");
+            }
+
+
+
+            //附件表增加成交通知书加密文件记录
+            attachmentEncrypt.setAttachName(imageType+"_"+sdf.format(new Date())+uuid+".zip");
+            attachmentEncrypt.setFileType("application/zip");
+            attachmentEncrypt.setPath(path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".zip");
+            attachmentEncrypt.setUploadTime(new Date());
+            attachmentEncrypt.setUploader(jwtUser.getUsername());
+            attachmentEncrypt.setPassword(password);
+            attachmentEncrypt = attachmentRepository.save(attachmentEncrypt);
+
+            //发送加密文件密码给密码负责人
+            boolean sendEmail = sendEmail(imageType + "_" + sdf.format(new Date()) + uuid + ".zip", password, projectInfo.getProjectCode());
+            if(!sendEmail){
+                throw new RuntimeException("成交通知书的通知邮件发送失败");
+            }
+
         }catch (Exception e){
-            logger.error("生成采购结果通知书图片发生异常",e);
+            logger.error("生成成交通知书图片发生异常",e);
         }
         Long proId = Long.valueOf(projectId);
         BidNotice bidNotice = new BidNotice();
@@ -173,12 +154,39 @@ public class BidNoticeService {
         bidNotice.setPurchaser(projectInfo.getPurchaser());
         bidNotice.setProjectInfo(projectInfo);
         bidNotice.setAttachment(attachment);
+        bidNotice.setAttachmentEncrypt(attachmentEncrypt);
         bidNoticeRepository.save(bidNotice);
 
         //更新项目表的采购结果附件id字段
         projectInfoRepository.updateNoticeId(attachment.getAttachId(),Long.parseLong(projectId));
 
         return bidNotice;
+    }
+
+    //发送密码给密码保管人
+    private boolean sendEmail(String zipFileName,String password,String projectCode) {
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        message.setFrom(host);
+
+        //测试账号
+        //message.setTo("377860567@qq.com");
+        message.setTo("444714660@qq.com");
+
+        message.setSubject("成交通知书密码");
+
+        message.setText("项目编号:"+projectCode+"的"+zipFileName+"的密码为"+password+",请查收");
+
+        try {
+
+            mailSender.send(message);
+            logger.info("测试邮件已发送。");
+
+        } catch (Exception e) {
+            logger.error("发送邮件时发生异常了！", e);
+            return false;
+        }
+        return true;
     }
 
     public BidNoticeCollectionDto to(Page<BidNotice> source, HttpServletRequest request) {

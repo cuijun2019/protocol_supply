@@ -16,10 +16,7 @@ import com.etone.protocolsupply.repository.notice.ContractNoticeRepository;
 import com.etone.protocolsupply.repository.project.PartInfoExpRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.repository.user.UserRepository;
-import com.etone.protocolsupply.utils.Common;
-import com.etone.protocolsupply.utils.ConvertUpMoney;
-import com.etone.protocolsupply.utils.PagingMapper;
-import com.etone.protocolsupply.utils.WordToPDFUtil;
+import com.etone.protocolsupply.utils.*;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -36,6 +33,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,6 +78,12 @@ public class ContractNoticeService {
 
     @Value("${file.upload.path.filePath}")
     protected String uploadFilePath;
+
+    @Autowired
+    private JavaMailSender mailSender;
+
+    @Value("${spring.mail.username}")
+    private String host;
 
     public Specification<ContractNotice> getWhereClause(String projectCode, String projectSubject) {
         return (Specification<ContractNotice>) (root, criteriaQuery, criteriaBuilder) -> {
@@ -184,8 +189,10 @@ public class ContractNoticeService {
     }
 
     public ContractNotice save(String projectId, JwtUser user, String path) {
-        //
+        //未加密附件
         Attachment attachment = new Attachment();
+        //加密附件
+        Attachment attachmentEncrypt = new Attachment();
 
         //查询项目详情
         ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(Long.valueOf(projectId));
@@ -291,6 +298,14 @@ public class ContractNoticeService {
             //word转PDF保存
             wordToPDFUtil.convert(wordPath+uuid+".docx",wordPath+"/"+"采购合同_"+sdf.format(new Date())+uuid+".pdf");
 
+            //合同文件压缩并加密上传
+            String password = EncryptZipUtil.zipFile(wordPath+"/"+"采购合同_"+sdf.format(new Date())+uuid+".zip",wordPath+"/"+"采购合同_"+sdf.format(new Date())+uuid+".pdf");
+            if("添加压缩文件出错".equals(password)){
+                throw new RuntimeException("添加合同的压缩文件出错*****");
+            }
+
+
+
             //附件表增加记录
             attachment.setAttachName("采购合同_"+sdf.format(new Date())+uuid+".pdf");
             attachment.setFileType("application/pdf");
@@ -300,8 +315,23 @@ public class ContractNoticeService {
             attachmentRepository.save(attachment);
 
 
+            //附件表增加合同加密文件记录
+            attachmentEncrypt.setAttachName("采购合同_"+sdf.format(new Date())+uuid+".zip");
+            attachmentEncrypt.setFileType("application/zip");
+            attachmentEncrypt.setPath(wordPath+"/"+"采购合同_"+sdf.format(new Date())+uuid+".zip");
+            attachmentEncrypt.setUploadTime(new Date());
+            attachmentEncrypt.setUploader(user.getUsername());
+            attachmentEncrypt.setPassword(password);
+            attachmentEncrypt = attachmentRepository.save(attachmentEncrypt);
+
+            //发送加密文件密码给密码负责人
+            boolean sendEmail = sendEmail("采购合同_" + sdf.format(new Date()) + uuid + ".zip", password, projectInfo.getProjectCode());
+            if(!sendEmail){
+                throw new RuntimeException("采购合同的通知邮件发送失败");
+            }
+
         }catch (Exception e){
-            logger.error("生成合同通知书图片时异常",e);
+            logger.error("生成合同时异常",e);
         }
 
 
@@ -319,16 +349,43 @@ public class ContractNoticeService {
             contractNotice.setPurchaser(projectInfo.getPurchaser());
             contractNotice.setProjectInfo(projectInfo);
             contractNotice.setAttachment(attachment);
+            contractNotice.setAttachmentEncrypt(attachmentEncrypt);
             ContractNoticeRepository.save(contractNotice);
 
 
             //TODO 更新工程表的附件字段
             projectInfoRepository.updateContractId(attachment.getAttachId(),Long.parseLong(projectId));
         } catch (Exception e) {
-            logger.error("这一步异常了！！！",e);
+            logger.error("合同保存时异常",e);
         }
 
         return contractNotice;
+    }
+
+    //发送密码给密码保管人
+    private boolean sendEmail(String zipFileName,String password,String projectCode) {
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        message.setFrom(host);
+
+        //测试账号
+        //message.setTo("377860567@qq.com");
+        message.setTo("444714660@qq.com");
+
+        message.setSubject("成交通知书密码");
+
+        message.setText("项目编号:"+projectCode+"的"+zipFileName+"的密码为"+password+",请查收");
+
+        try {
+
+            mailSender.send(message);
+            logger.info("测试邮件已发送。");
+
+        } catch (Exception e) {
+            logger.error("发送邮件时发生异常了！", e);
+            return false;
+        }
+        return true;
     }
 
     public Page<ContractNotice> getContractByCondition(String projectCode, String projectSubject, JwtUser user, Pageable pageable) {

@@ -48,10 +48,10 @@ public class BidNoticeController extends GenericController {
     public ResponseValue getBidNotice(@Validated
                                        @PathVariable("projectId") String projectId) {
         //查看成交通知书模板路径
-        Attachment attachment =  attachmentService.findBidTemplate();
+        //Attachment attachment =  attachmentService.findBidTemplate();
 
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        BidNotice bidNotice = bidNoticeService.save(projectId, this.getUser(),attachment.getPath());
+        BidNotice bidNotice = bidNoticeService.save(projectId, this.getUser());
         responseBuilder.data(bidNotice);
         return responseBuilder.build();
     }

@@ -49,10 +49,10 @@ public class ResultNoticeController extends GenericController {
     public ResponseValue getResultNotice(@Validated
                                        @PathVariable("projectId") String projectId) {
         //查询结果通知书模板的路径
-        Attachment attachment = attachmentService.findByResultTemplate();
+        //Attachment attachment = attachmentService.findByResultTemplate();
 
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        ResultNotice resultNotice = resultNoticeService.save(projectId, this.getUser(),attachment.getPath());
+        ResultNotice resultNotice = resultNoticeService.save(projectId, this.getUser());
         responseBuilder.data(resultNotice);
         return responseBuilder.build();
     }

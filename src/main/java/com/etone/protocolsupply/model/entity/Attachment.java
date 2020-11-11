@@ -56,4 +56,10 @@ public class Attachment implements Serializable {
      */
     @Column(name = "PATH", length = 256)
     private String path;
+
+    /**
+     * 文件路径
+     */
+    @Column(name = "PASSWORD", length = 255)
+    private String password;
 }

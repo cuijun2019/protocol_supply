@@ -172,7 +172,7 @@ public class ResultNoticeService {
         return resultNoticeRepository.findById(Long.parseLong(resultNoticeId)).get().getProjectInfo();
     }
 
-    public ResultNotice save(String projectId, JwtUser user, String templatePath) {
+    public ResultNotice save(String projectId, JwtUser user) {
         Attachment attachment = new Attachment();
 
         Optional<ProjectInfo> optional = projectInfoRepository.findById(Long.valueOf(projectId));
@@ -186,59 +186,6 @@ public class ResultNoticeService {
 
             //查询创建人所在公司
             User creator = userRepository.findByUsername(projectInfo.getCreator());
-
-            /*//文件类型
-            String fileType = templatePath.substring(templatePath.lastIndexOf(".") + 1);
-
-            //生成采购结果通知书并上传保存
-            InputStream is = new FileInputStream(templatePath);
-
-
-            //获取工作薄
-            Workbook wb = null;
-            if (fileType.equals("xls")) {
-                wb = new HSSFWorkbook(is);
-            } else if (fileType.equals("xlsx")) {
-                wb = new XSSFWorkbook(is);
-            }
-
-            //读取第一个工作页sheet
-            Sheet sheet = wb.getSheetAt(0);
-            //第一行为标题
-            for (Row row : sheet) {
-                for (Cell cell : row) {
-                    //根据不同类型转化成字符串
-                    cell.setCellType(CellType.STRING);
-                    DataFormatter formatter = new DataFormatter();
-                    if("学生就业指导中心".equals(formatter.formatCellValue(cell))){
-                        cell.setCellValue(creator.getCompany());
-                    }
-                    if("FW008".equals(formatter.formatCellValue(cell))){
-                        cell.setCellValue(projectInfo.getProjectCode());
-                    }
-                    if("毕业典礼和学位授予仪式布展".equals(formatter.formatCellValue(cell))){
-                        cell.setCellValue(projectInfo.getProjectSubject());
-                    }
-                    if("供应商成交".equals(formatter.formatCellValue(cell))){
-                        cell.setCellValue(projectInfo.getCreator());
-                    }
-                    if("5000".equals(formatter.formatCellValue(cell))){
-                        cell.setCellValue(projectInfo.getAmountRmb());
-                    }
-                    if("2018年6月6日".equals(formatter.formatCellValue(cell).trim())){
-                        Date date = new Date();
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日");
-                        cell.setCellValue(simpleDateFormat.format(date));
-                    }
-                }
-            }
-
-            //改名保存
-            UUID uuid = UUID.randomUUID();
-            FileOutputStream excelFileOutPutStream = new FileOutputStream(uploadFilePath+uuid+".xlsx");
-            wb.write(excelFileOutPutStream);
-            excelFileOutPutStream.flush();
-            excelFileOutPutStream.close();*/
 
             String uuid = UUID.randomUUID().toString().substring(0,8);
 

@@ -76,6 +76,15 @@ public class ContractNotice implements Serializable {
     private Attachment attachment;
 
     /**
+     * 加密后的合同
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JoinColumn(name = "ENCRYPTATTACH_ID", referencedColumnName = "ATTACH_ID")
+    private Attachment attachmentEncrypt;
+
+    /**
      * 创建时间
      */
     @Column(name = "CREATE_DATE")
