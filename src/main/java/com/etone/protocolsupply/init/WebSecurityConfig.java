@@ -111,6 +111,27 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .ignoring()
                 .antMatchers(
+                        HttpMethod.GET,
+                        "/api/redirectCas"
+                )
+
+                .and()
+                .ignoring()
+                .antMatchers(
+                        HttpMethod.GET,
+                        "/api/toLoginPage"
+                )
+
+                .and()
+                .ignoring()
+                .antMatchers(
+                        HttpMethod.GET,
+                        "/api/redirectCasForward"
+                )
+
+                .and()
+                .ignoring()
+                .antMatchers(
                         HttpMethod.POST,
                         "/api/mail/**"
                 )

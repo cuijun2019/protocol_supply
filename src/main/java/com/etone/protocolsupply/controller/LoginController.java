@@ -1,5 +1,6 @@
 package com.etone.protocolsupply.controller;
 
+import com.etone.protocolsupply.cas.CasUtils;
 import com.etone.protocolsupply.exception.AuthenticationException;
 import com.etone.protocolsupply.exception.GlobalExceptionCode;
 import com.etone.protocolsupply.model.dto.JwtUser;
@@ -13,6 +14,7 @@ import com.etone.protocolsupply.model.entity.user.Role;
 import com.etone.protocolsupply.model.entity.user.User;
 import com.etone.protocolsupply.repository.supplier.PartnerInfoRepository;
 import com.etone.protocolsupply.service.security.JwtTokenUtil;
+import com.etone.protocolsupply.service.system.ScutUserService;
 import com.etone.protocolsupply.service.system.UserService;
 import com.etone.protocolsupply.utils.RedisUtil;
 import com.etone.protocolsupply.utils.VerifyCodeUtils;
@@ -38,8 +40,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -59,6 +65,12 @@ public class LoginController {
 
     @Value("${jwt.header}")
     private String tokenHeader;
+
+    @Value("${cas.server-url-prefix}")
+    private String serverUrlPrefix;
+
+    @Value("${cas.client-host-url}")
+    private String clientHostUrl;
 
     @Value("${jwt.auth.prefix}")
     private String authPrefix;
@@ -81,6 +93,9 @@ public class LoginController {
 
     @Autowired
     private PartnerInfoRepository partnerInfoRepository;
+
+    @Autowired
+    private CasUtils casUtils;
 
     @RequestMapping(value = "${jwt.route.authentication.path}", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@Validated @RequestBody LoginRequest authenticationRequest,HttpServletRequest request) {
@@ -169,16 +184,21 @@ public class LoginController {
     }
 
     @PostMapping(value = "/api/logout")
-    public ResponseValue logout(@RequestHeader(value = "Authorization") String auth) {
+    public ResponseValue logout(@RequestHeader(value = "Authorization") String auth, HttpServletResponse response, HttpSession session) {
         String username;
         if (auth != null && auth.startsWith(this.authPrefix)) {
             String authToken = auth.substring(this.authPrefix.length());
             try {
+                session.invalidate();
+                Cookie newCookie=new Cookie("JSESSIONID",null);
+                newCookie.setMaxAge(0);
+                response.addCookie(newCookie);
+
                 username = jwtTokenUtil.getUsernameFromToken(authToken);
                 if (this.userDetailsService instanceof CachingUserDetailsService) {
                     ((CachingUserDetailsService) this.userDetailsService).getUserCache().removeUserFromCache(username);
                     log.info("username {} logout success.", username);
-                    return ResponseValue.createBuilder().build();
+                    return ResponseValue.createBuilder().data("").build();
                 }
             } catch (IllegalArgumentException e) {
                 log.error("an error occured during getting username from token", e);
@@ -215,5 +235,79 @@ public class LoginController {
         } catch (Exception e) {
             logger.error("生成验证码图片异常",e);
         }
+    }
+
+
+    @RequestMapping(value = "/api/redirectCas", method = RequestMethod.GET)
+    public void redirectCas(HttpServletRequest request,HttpServletResponse response) {
+
+        /*//校验票据
+        String ticket = request.getParameter("ticket");
+
+        String username = "";
+
+        try {
+            System.out.println("重定向到/api/redirectCas方法了--------");
+            Map<String, String> validateTickets = CasUtils.validateTickets(ticket, serverUrlPrefix,clientHostUrl);
+            if(validateTickets.size() == 0){
+                return ResponseEntity.ok(ResponseValue.createBuilder().message("用户登陆信息校验异常").build());
+            }
+            username = validateTickets.get("user");
+
+        } catch (Exception e) {
+            logger.error("校验ticket异常",e);
+            return ResponseEntity.ok(ResponseValue.createBuilder().message("用户登陆信息校验异常").build());
+        }
+
+
+        UserDto userDto = new UserDto();
+        User user = userService.findUserByUsername(username);
+
+        //身份权限处理
+        List<Role> roles = user.getRoles();
+        for (int i = 0; i < roles.size(); i++) {
+            Role role = roles.get(i);
+            Set<Permissions> permissions = role.getPermissions();
+            TreeSet<Permissions> tree = new TreeSet<>(new PermissionComparator());
+            tree.addAll(permissions);
+            roles.get(i).setPermissions(tree);
+        }
+        BeanUtils.copyProperties(user, userDto);
+
+        Authentication authentication = null;
+        try {
+            //认证登陆
+            authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, "123456"));
+        } catch (Exception e) {
+            logger.error("用户名或密码错误",e);
+            return ResponseEntity.ok(ResponseValue.createBuilder().message("用户名或密码错误").build());
+        }
+
+        // Reload password post-security so we can generate the token
+        //伪造token
+        final String token = jwtTokenUtil.generateToken((UserDetails) authentication.getPrincipal());
+        userDto.setToken(token);
+
+        // Return the token
+        return ResponseEntity.ok(ResponseValue.createBuilder().data(userDto).build());*/
+    }
+
+    @RequestMapping(value = "/api/redirectCasForward", method = RequestMethod.GET)
+    public ResponseEntity<?> redirectCasForward(HttpServletRequest request,HttpServletResponse response) {
+
+        if(request.getSession().getAttribute("userSession") == null){
+            return ResponseEntity.ok(ResponseValue.createBuilder().message("用户未成功登陆").build());
+        }
+        UserDto userDto = (UserDto) request.getSession().getAttribute("userSession");
+        // Return the token
+        return ResponseEntity.ok(ResponseValue.createBuilder().data(userDto).build());
+    }
+
+    @RequestMapping(value = "/api/toLoginPage", method = RequestMethod.GET)
+    public void toLoginPage(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+
+        //casUtils.getUserInfo(request, response);
+
+        request.getRequestDispatcher(clientHostUrl+"#/login?redirect=%2F&scut=cas").forward(request,response);
     }
 }

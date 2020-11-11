@@ -69,7 +69,7 @@ public class ContractNotice implements Serializable {
     /**
      * 合同
      */
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL )
     @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "ATTACH_ID", referencedColumnName = "ATTACH_ID")

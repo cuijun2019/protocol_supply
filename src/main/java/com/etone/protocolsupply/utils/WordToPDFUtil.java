@@ -4,20 +4,26 @@ import org.artofsolving.jodconverter.OfficeDocumentConverter;
 import org.artofsolving.jodconverter.office.OfficeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 
+@Component
 public class WordToPDFUtil {
+
+    @Autowired
+    private OfficeManagerUtil officeManagerUtil;
 
     private static final Logger logger = LoggerFactory.getLogger(WordToPDFUtil.class);
 
-    public static void convert(String wordPath,String pdfPath) {
+    public void convert(String wordPath,String pdfPath) {
 
         // 1) Start LibreOffice in headless mode.
         OfficeManager officeManager = null;
         try {
 
-            officeManager = OfficeManagerUtil.getOfficeManager();
+            officeManager = officeManagerUtil.getOfficeManager();
 
             // 2) Create JODConverter converter
             OfficeDocumentConverter converter = new OfficeDocumentConverter(
