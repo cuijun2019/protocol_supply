@@ -5,6 +5,7 @@ import com.etone.protocolsupply.model.entity.user.PermissionComparator;
 import com.etone.protocolsupply.model.entity.user.Permissions;
 import com.etone.protocolsupply.model.entity.user.Role;
 import com.etone.protocolsupply.model.entity.user.User;
+import com.etone.protocolsupply.repository.procedure.BusiJbpmFlowRepository;
 import com.etone.protocolsupply.service.security.JwtTokenUtil;
 import com.etone.protocolsupply.service.system.UserService;
 import org.dom4j.Document;
@@ -54,11 +55,15 @@ public class CasUtils {
 
     private static UserService userService;
 
+
+	private static BusiJbpmFlowRepository busiJbpmFlowRepository;
+
 	@Autowired
-    public CasUtils(AuthenticationManager authenticationManager,JwtTokenUtil jwtTokenUtil,UserService userService){
+    public CasUtils(AuthenticationManager authenticationManager,JwtTokenUtil jwtTokenUtil,UserService userService,BusiJbpmFlowRepository busiJbpmFlowRepository){
 	    CasUtils.authenticationManager = authenticationManager;
 	    CasUtils.jwtTokenUtil = jwtTokenUtil;
 	    CasUtils.userService = userService;
+		CasUtils.busiJbpmFlowRepository = busiJbpmFlowRepository;
     }
 
 
@@ -190,7 +195,9 @@ public class CasUtils {
 			//伪造token
 			final String token = jwtTokenUtil.generateToken((UserDetails) authentication.getPrincipal());
 			userDto.setToken(token);
-
+			//根据username查找领导人
+			String leader=busiJbpmFlowRepository.getLeaderByuserName(username);
+			userDto.setLeader(leader);
 			//用户信息保存到token
 			request.getSession().setAttribute("userSession",userDto);
 		}
