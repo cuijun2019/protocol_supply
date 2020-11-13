@@ -322,8 +322,15 @@ public class BusiJbpmFlowService {
         busiJbpmFlowRepository.updateReadType(id);
     }
 
-    public void upnextActor(Long id,String nextActor){
-        busiJbpmFlowRepository.upNextActor(id,nextActor);
+    public void upnextActor(Long id,String nextActor,Attachment attachment){
+
+        if (attachment != null && attachment.getAttachId() != null && !attachment.getAttachId().equals("")) {
+            busiJbpmFlowRepository.upNextActorWithFile(id,nextActor,attachment.getAttachId());
+        } else {
+            busiJbpmFlowRepository.upNextActor(id,nextActor);
+        }
+
+
     }
 
 

@@ -177,7 +177,7 @@ public class BusiJbpmFlowController extends GenericController {
 
 
     /**
-     * 根据业务表id，待办类型，type=0 修改nextActor
+     * 根据业务表id，待办类型，type=0 修改nextActor,（需要上传可行性文件的就修改可行性文件id）
      * @param busiJbpmFlowDto
      * @return
      */
@@ -193,7 +193,7 @@ public class BusiJbpmFlowController extends GenericController {
         BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
         if(list.size()!=0){
             busiJbpmFlow=list.get(0);
-            busiJbpmFlowService.upnextActor(busiJbpmFlow.getId(),busiJbpmFlowDto.getNextActor());
+            busiJbpmFlowService.upnextActor(busiJbpmFlow.getId(),busiJbpmFlowDto.getNextActor(),busiJbpmFlowDto.getAttachment_feasibility());
             busiJbpmFlow.setNextActor(busiJbpmFlowDto.getNextActor());
             responseBuilder.data(busiJbpmFlow);
         }else {

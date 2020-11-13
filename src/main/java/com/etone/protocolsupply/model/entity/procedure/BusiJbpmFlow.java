@@ -122,4 +122,13 @@ public class BusiJbpmFlow implements Serializable {
     private Attachment attachment;
 
 
+    /**
+     * 可行性文件
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
+    @JoinColumn(name = "FEASIBILITY_FILEID", referencedColumnName = "ATTACH_ID")
+    private Attachment attachment_feasibility;
+
+
 }

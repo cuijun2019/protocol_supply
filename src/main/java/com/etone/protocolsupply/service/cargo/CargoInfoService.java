@@ -84,17 +84,7 @@ public class CargoInfoService {
         cargoInfo.setCreateDate(date);
         cargoInfo.setMaintenanceDate(date);
         cargoInfo.setMaintenanceMan(userName);
-        //cargoInfo.setStatus(1);
-//        Attachment attachment = cargoInfoDto.getAttachment();
-//        if (attachment != null && attachment.getAttachId()!=null && !attachment.getAttachId().equals("")) {
-//            Optional<Attachment> optional = attachmentRepository.findById(attachment.getAttachId());
-//            if (optional.isPresent()) {
-//                cargoInfo.setAttachment(optional.get());
-//            }
-//        }else {
-//            cargoInfo.setAttachment(null);
-//        }
-        //PartnerInfo partnerInfo= cargoInfoDto.getPartnerInfo();
+
         if ( cargoInfoDto.getPartnerId()!=null && !cargoInfoDto.getPartnerId().equals("")) {
             Optional<PartnerInfo> optional = partnerInfoRepository.findById(cargoInfoDto.getPartnerId());
                 cargoInfo.setPartnerId(cargoInfoDto.getPartnerId());
