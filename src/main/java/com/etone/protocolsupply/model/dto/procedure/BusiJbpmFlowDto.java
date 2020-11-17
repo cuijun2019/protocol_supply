@@ -17,6 +17,8 @@ public class BusiJbpmFlowDto extends BusiJbpmFlow {
     private String NextActor_roleDescription;//角色描述
     private Integer NextActor_roleStatus;//状态
 
+    private Attachment attachment_feasibility;//可行性论证文件
+
 
 
 }

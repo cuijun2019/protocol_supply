@@ -167,6 +167,13 @@ public class ProjectInfo implements Serializable {
     private String inquiryCode;
 
 
+    /**
+     * 可行性文件
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
+    @JoinColumn(name = "FEASIBILITY_FILEID", referencedColumnName = "ATTACH_ID")
+    private Attachment attachment_feasibility;
 
 
 

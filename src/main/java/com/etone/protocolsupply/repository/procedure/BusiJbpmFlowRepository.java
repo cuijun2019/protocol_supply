@@ -48,11 +48,11 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
     @Query(value = "update busi_jbpm_flow set next_actor=:nextActor ,action =2 where id=:id", nativeQuery = true)
     void upNextActor(@Param("id") Long id,@Param("nextActor") String nextActor);
 
-    @Transactional(rollbackFor = Exception.class)
-    @Modifying
-    @Query(value = "update busi_jbpm_flow set next_actor=:nextActor ,feasibility_fileId=:feasibility_fileId ," +
-            " action =2 where id=:id", nativeQuery = true)
-    void upNextActorWithFile(@Param("id") Long id,@Param("nextActor") String nextActor,@Param("feasibility_fileId") Long feasibility_fileId);
+//    @Transactional(rollbackFor = Exception.class)
+//    @Modifying
+//    @Query(value = "update busi_jbpm_flow set next_actor=:nextActor ,feasibility_fileId=:feasibility_fileId ," +
+//            " action =2 where id=:id", nativeQuery = true)
+//    void upNextActorWithFile(@Param("id") Long id,@Param("nextActor") String nextActor,@Param("feasibility_fileId") Long feasibility_fileId);
 
 
     @Query(value = "select * from busi_jbpm_flow where  " +

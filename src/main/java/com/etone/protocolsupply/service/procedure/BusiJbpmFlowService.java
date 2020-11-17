@@ -10,6 +10,7 @@ import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
 import com.etone.protocolsupply.model.entity.user.Role;
 import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.procedure.BusiJbpmFlowRepository;
+import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.repository.user.RoleRepository;
 import com.etone.protocolsupply.service.cargo.PartInfoService;
 import com.etone.protocolsupply.utils.Common;
@@ -49,6 +50,8 @@ public class BusiJbpmFlowService {
     private PagingMapper         pagingMapper;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private ProjectInfoRepository projectInfoRepository;
 
     //待办新增
     public BusiJbpmFlow save(BusiJbpmFlowDto busiJbpmFlowDto, JwtUser jwtUser) throws GlobalServiceException {
@@ -322,10 +325,11 @@ public class BusiJbpmFlowService {
         busiJbpmFlowRepository.updateReadType(id);
     }
 
-    public void upnextActor(Long id,String nextActor,Attachment attachment){
+    public void upnextActor(Long id,String nextActor,Attachment attachment,String businessId){
 
         if (attachment != null && attachment.getAttachId() != null && !attachment.getAttachId().equals("")) {
-            busiJbpmFlowRepository.upNextActorWithFile(id,nextActor,attachment.getAttachId());
+//            上传更新可行性文件id
+            projectInfoRepository.updateFeasibility_fileId(attachment.getAttachId(),businessId);
         } else {
             busiJbpmFlowRepository.upNextActor(id,nextActor);
         }

@@ -92,6 +92,9 @@ public interface ProjectInfoRepository extends JpaRepository<ProjectInfo, Long>,
     List<ProjectInfo> findAlltoExpert(@Param("isDelete") Integer isDelete ,@Param("actor") String actor  );
 
 
-
+    @Transactional(rollbackFor = Exception.class)
+    @Modifying
+    @Query(value = "update project_info set feasibility_fileId=?1 where project_id=?2", nativeQuery = true)
+    void updateFeasibility_fileId(@Param("attachId") Long attachId,@Param("id") String id);
 
 }
