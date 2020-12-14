@@ -40,7 +40,8 @@ public class DevelopFilter implements Filter {
 
             //跳转
             HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-            httpServletResponse.sendRedirect("http://211.66.32.79/#/login?redirect=%2F&scut=cas");
+            //httpServletResponse.sendRedirect("http://211.66.32.79/#/login?redirect=%2F&scut=cas");
+            httpServletResponse.sendRedirect("http://xygh.zbzx.scut.edu.cn/#/login?redirect=%2F&scut=cas");
         }
         filterChain.doFilter(request,response);
     }

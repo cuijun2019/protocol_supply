@@ -128,7 +128,7 @@ public class SupplierController extends GenericController {
 
         Sort sort = new Sort(Sort.Direction.DESC, "partnerId");
         Pageable pageable = PageRequest.of(Page - 1, pageSize, sort);
-        Page<PartnerInfo> page = partnerInfoService.findPartnerInfoList(isDelete,supplierName, pageable);
+        Page<PartnerInfoDto> page = partnerInfoService.findPartnerInfoList(isDelete,supplierName, pageable);
 
         PartnerInfoCollectionDto partnerInfoCollectionDto = partnerInfoService.to(page, request);
         responseBuilder.data(partnerInfoCollectionDto);

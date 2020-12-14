@@ -14,10 +14,7 @@ import com.etone.protocolsupply.repository.notice.BidNoticeRepository;
 import com.etone.protocolsupply.repository.project.AgentInfoExpRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.repository.user.UserRepository;
-import com.etone.protocolsupply.utils.Common;
-import com.etone.protocolsupply.utils.EncryptZipUtil;
-import com.etone.protocolsupply.utils.ImageUtil;
-import com.etone.protocolsupply.utils.PagingMapper;
+import com.etone.protocolsupply.utils.*;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -77,6 +74,9 @@ public class BidNoticeService {
     @Value("${spring.mail.username}")
     private String host;
 
+    @Autowired
+    private WordToPDFUtil wordToPDFUtil;
+
     public BidNotice save(String projectId, JwtUser jwtUser) {
         Attachment attachment = new Attachment();//未加密附件
         Attachment attachmentEncrypt = new Attachment();//加密附件
@@ -91,8 +91,10 @@ public class BidNoticeService {
 
             //查询创建人所在公司
             User creator = userRepository.findByUsername(projectInfo.getCreator());
-
+            //无水印uuid图片
             String uuid = UUID.randomUUID().toString().substring(0,8);
+            //加水印uuid图片
+            String uuid_icon = UUID.randomUUID().toString().substring(0,8);
 
             String imageType="成交通知书";
 
@@ -101,35 +103,40 @@ public class BidNoticeService {
             String path = uploadFilePath + Common.getYYYYMMDate(new Date());
 
             //生成成交通知书图片
-            ImageUtil.getImage(projectInfo,creator,imageType,path,path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".jpg",agentInfoExp.get(0).getAgentName());
+            ImageUtil.getImage(projectInfo,creator,imageType,path,path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".png",agentInfoExp.get(0).getAgentName());
 
-            //附件表增加成交通知书图片记录
-            attachment.setAttachName(imageType+"_"+sdf.format(new Date())+uuid+".jpg");
-            attachment.setFileType("image/jpeg");
-            attachment.setPath(path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".jpg");
+            //图片盖章
+            ImageUtil.markImageByIcon(uploadFilePath+"timg1.png",path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".png",path+"/"+imageType+"_"+sdf.format(new Date())+uuid_icon+".jpg",null,imageType);
+
+            //转成PDF文件
+            wordToPDFUtil.convert(path+"/"+imageType+"_"+sdf.format(new Date())+uuid_icon+".jpg",path+"/"+imageType+"_"+sdf.format(new Date())+uuid_icon+".pdf");
+
+            //附件表增加成交通知书pdf记录
+            attachment.setAttachName(imageType+"_"+sdf.format(new Date())+uuid_icon+".pdf");
+            attachment.setFileType("application/pdf");
+            attachment.setPath(path+"/"+imageType+"_"+sdf.format(new Date())+uuid_icon+".pdf");
             attachment.setUploadTime(new Date());
             attachment.setUploader(jwtUser.getUsername());
             attachment = attachmentRepository.save(attachment);
 
             //成交通知书图片压缩并加密上传
-            String password = EncryptZipUtil.zipFile(path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".zip",path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".jpg");
+            String password = EncryptZipUtil.zipFile(path+"/"+imageType+"_"+sdf.format(new Date())+uuid_icon+".zip",path+"/"+imageType+"_"+sdf.format(new Date())+uuid_icon+".pdf");
             if("添加压缩文件出错".equals(password)){
                 throw new RuntimeException("添加成交通知书的压缩文件出错*****");
             }
 
 
-
             //附件表增加成交通知书加密文件记录
-            attachmentEncrypt.setAttachName(imageType+"_"+sdf.format(new Date())+uuid+".zip");
+            attachmentEncrypt.setAttachName(imageType+"_"+sdf.format(new Date())+uuid_icon+".zip");
             attachmentEncrypt.setFileType("application/zip");
-            attachmentEncrypt.setPath(path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".zip");
+            attachmentEncrypt.setPath(path+"/"+imageType+"_"+sdf.format(new Date())+uuid_icon+".zip");
             attachmentEncrypt.setUploadTime(new Date());
             attachmentEncrypt.setUploader(jwtUser.getUsername());
             attachmentEncrypt.setPassword(password);
             attachmentEncrypt = attachmentRepository.save(attachmentEncrypt);
 
             //发送加密文件密码给密码负责人
-            boolean sendEmail = sendEmail(imageType + "_" + sdf.format(new Date()) + uuid + ".zip", password, projectInfo.getProjectCode());
+            boolean sendEmail = sendEmail(imageType + "_" + sdf.format(new Date()) + uuid_icon + ".zip", password, projectInfo.getProjectCode());
             if(!sendEmail){
                 throw new RuntimeException("成交通知书的通知邮件发送失败");
             }
@@ -158,7 +165,7 @@ public class BidNoticeService {
         bidNoticeRepository.save(bidNotice);
 
         //更新项目表的采购结果附件id字段
-        projectInfoRepository.updateNoticeId(attachment.getAttachId(),Long.parseLong(projectId));
+        projectInfoRepository.updateNoticeId(attachment.getAttachId(),attachmentEncrypt.getAttachId(),Long.parseLong(projectId));
 
         return bidNotice;
     }

@@ -47,7 +47,7 @@ public class WordToPDFUtil {
             long start = System.currentTimeMillis();
             converter.convert(new File(wordPath), new File(
                     pdfPath));
-            System.err.println("Generate pdf/HelloWorld.pdf with "
+            System.err.println("Generate pdf in "
                     + (System.currentTimeMillis() - start) + "ms");
         } catch (Exception e) {
             logger.error("PDF生成失败",e);

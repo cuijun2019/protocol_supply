@@ -227,6 +227,9 @@ public class LoginController {
             response.setDateHeader("Expires", 0);
             response.setContentType("image/jpg");
 
+            String header = request.getHeader("User-Agent");
+            
+
             //生成随机字串
             String verifyCode = VerifyCodeUtils.generateVerifyCode(4);
             log.info("verifyCode:{}", verifyCode);
@@ -313,7 +316,7 @@ public class LoginController {
     @RequestMapping(value = "/api/toLoginPage", method = RequestMethod.GET)
     public void toLoginPage(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
 
-        //casUtils.getUserInfo(request, response);
+        casUtils.getUserInfo(request, response);
 
         request.getRequestDispatcher(clientHostUrl+"#/login?redirect=%2F&scut=cas").forward(request,response);
     }

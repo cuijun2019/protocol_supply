@@ -58,6 +58,7 @@ public class AttachmentService {
                 response.setHeader("Content-type", type);
                 response.setHeader("Content-Disposition", "attachment;filename=" + fileName + ";filename*=utf-8''"
                         + URLEncoder.encode(fileName, "utf-8"));
+                //response.setHeader("Content-Disposition", "attachment;filename=" + new String(fileName.getBytes("utf-8"),"ISO8859-1"));
                 byte[] buffer = new byte[1024];
                 FileInputStream fis = null;
                 BufferedInputStream bis = null;

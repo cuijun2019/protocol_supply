@@ -91,7 +91,9 @@ public class AgentInfoService {
         PartnerInfo partnerInfo = new PartnerInfo();
         partnerInfo.setSupType(Integer.parseInt(registerData.get("supType")));
         partnerInfo.setCompanyNo(registerData.get("company"));
-        partnerInfo.setAuthStatus(2);//认证状态 1已认证   2未认证
+        partnerInfo.setAuthStatus(1);//认证状态 1已认证   2未认证
+        partnerInfo.setAuthMethod("普通认证");
+        partnerInfo.setAuthDate(new Date());
         partnerInfo.setIsDelete(2);
         partnerInfo.setRegisterTime(new Date());
         partnerInfo.setIsAuditing(1);//1 草稿 2 审核中 3同意 4退回 5 完成

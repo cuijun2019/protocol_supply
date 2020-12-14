@@ -16,6 +16,7 @@ import com.etone.protocolsupply.repository.user.UserRepository;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.ImageUtil;
 import com.etone.protocolsupply.utils.PagingMapper;
+import com.etone.protocolsupply.utils.WordToPDFUtil;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
@@ -63,6 +64,9 @@ public class ResultNoticeService {
 
     @Value("${file.upload.path.filePath}")
     protected String uploadFilePath;
+
+    @Autowired
+    private WordToPDFUtil wordToPDFUtil;
 
 
     public Specification<ResultNotice> getWhereClause(String projectCode, String projectSubject) {
@@ -187,7 +191,11 @@ public class ResultNoticeService {
             //查询创建人所在公司
             User creator = userRepository.findByUsername(projectInfo.getCreator());
 
+            //无水印uuid图片
             String uuid = UUID.randomUUID().toString().substring(0,8);
+
+            //加水印uuid图片
+            String uuid_icon = UUID.randomUUID().toString().substring(0,8);
 
             String imageType="采购结果通知书";
 
@@ -195,13 +203,19 @@ public class ResultNoticeService {
 
             String path = uploadFilePath + Common.getYYYYMMDate(new Date());
 
-            //生成采购结果通知书图片
-            ImageUtil.getImage(projectInfo,creator,imageType,path,path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".jpg","");
+            //生成采购结果通知书
+            ImageUtil.getImage(projectInfo,creator,imageType,path,path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".png","");
+
+            //图片盖章
+            ImageUtil.markImageByIcon(uploadFilePath+"timg1.png",path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".png",path+"/"+imageType+"_"+sdf.format(new Date())+uuid_icon+".jpg",null,imageType);
+
+            //转成PDF文件
+            wordToPDFUtil.convert(path+"/"+imageType+"_"+sdf.format(new Date())+uuid_icon+".jpg",path+"/"+imageType+"_"+sdf.format(new Date())+uuid_icon+".pdf");
 
             //附件表增加记录
-            attachment.setAttachName(imageType+"_"+sdf.format(new Date())+uuid+".jpg");
-            attachment.setFileType("image/jpeg");
-            attachment.setPath(path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".jpg");
+            attachment.setAttachName(imageType+"_"+sdf.format(new Date())+uuid_icon+".pdf");
+            attachment.setFileType("application/pdf");
+            attachment.setPath(path+"/"+imageType+"_"+sdf.format(new Date())+uuid_icon+".pdf");
             attachment.setUploadTime(new Date());
             attachment.setUploader(user.getUsername());
             attachment = attachmentRepository.save(attachment);
