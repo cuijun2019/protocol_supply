@@ -49,7 +49,7 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying
-    @Query(value = "update busi_jbpm_flow set next_actor=:nextActor ,action =2 where id=:id", nativeQuery = true)
+    @Query(value = "update busi_jbpm_flow set next_actor=:nextActor,action =2 where id=:id", nativeQuery = true)
     void upNextActor(@Param("id") Long id,@Param("nextActor") String nextActor);
 
 //    @Transactional(rollbackFor = Exception.class)
@@ -108,7 +108,7 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
     @Query(value = "select * from busi_jbpm_flow where 1=1 " +
             " and if((:businessId is not null), (business_id =:businessId), (1=1))  " +
             " and if((:businessType is not null), (business_type =:businessType), (1=1)) " +
-            " and if((:type is not null), (type=:type ), (1=1)) ", nativeQuery = true)
+            " and if((:type is not null), (type=:type ), (1=1)) and action=1 ", nativeQuery = true)
     List<BusiJbpmFlow> updateNextActor(@Param("businessId") String businessId,@Param("businessType") String businessType
             ,@Param("type") Integer type);
 

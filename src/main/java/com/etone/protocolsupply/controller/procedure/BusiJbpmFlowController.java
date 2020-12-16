@@ -199,11 +199,13 @@ public class BusiJbpmFlowController extends GenericController {
         BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
         if(list.size()!=0){
             busiJbpmFlow=list.get(0);
-           // busiJbpmFlowService.upnextActor(busiJbpmFlow.getId(),busiJbpmFlowDto.getNextActor());
+            busiJbpmFlowService.upnextActor(busiJbpmFlow.getId(),busiJbpmFlowDto.getNextActor());
             busiJbpmFlow.setNextActor(busiJbpmFlowDto.getNextActor());
             responseBuilder.data(busiJbpmFlow);
         }else {
-            responseBuilder.message("查询不到数据，操作失败！");
+           // busiJbpmFlow=list.get(0);
+            //responseBuilder.message("查询不到数据，操作失败！");
+            //busiJbpmFlow.setNextActor(busiJbpmFlowDto.getNextActor());
             responseBuilder.data(null);
         }
         return responseBuilder.build();
