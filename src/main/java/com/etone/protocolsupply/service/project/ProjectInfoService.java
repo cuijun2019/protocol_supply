@@ -83,8 +83,9 @@ public class ProjectInfoService {
             projectInfo.setProjectCode("SCUT-" + Common.getYYYYMMDDDate(date) + "-XY" + Common.convertSerialProject(projectInfo1.getProjectCode().substring(16), 1));
         }
         projectInfo.setIsDelete(Constant.DELETE_NO);
-        User user = userRepository.findByUsername(userName);
-        projectInfo.setCreator(user.getCompany());
+//        User user = userRepository.findByUsername(userName);//需要修改-----
+//        projectInfo.setCreator(user.getCompany());
+        projectInfo.setCreator(userName);
         // projectInfo.setStatus(1);//审核状态：草稿、审核中、已完成、退回
         Attachment attachment = projectInfoDto.getAttachment_n();//中标通知书
         if (attachment != null && attachment.getAttachId() != null && !attachment.getAttachId().equals("")) {

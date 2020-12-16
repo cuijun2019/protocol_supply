@@ -199,7 +199,7 @@ public class BusiJbpmFlowController extends GenericController {
         BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
         if(list.size()!=0){
             busiJbpmFlow=list.get(0);
-            busiJbpmFlowService.upnextActor(busiJbpmFlow.getId(),busiJbpmFlowDto.getNextActor());
+           // busiJbpmFlowService.upnextActor(busiJbpmFlow.getId(),busiJbpmFlowDto.getNextActor());
             busiJbpmFlow.setNextActor(busiJbpmFlowDto.getNextActor());
             responseBuilder.data(busiJbpmFlow);
         }else {
