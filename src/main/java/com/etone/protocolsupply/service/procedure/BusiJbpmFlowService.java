@@ -65,7 +65,11 @@ public class BusiJbpmFlowService {
         busiJbpmFlow.setFlowStartTime(date);//询价时间
         busiJbpmFlow.setFlowInitorId(userName);
         busiJbpmFlow.setType(Constant.BUSINESS_TYPE_DAIBAN);
-//        Attachment attachment=new Attachment();
+
+//        Attachment attachment=busiJbpmFlowDto.getAttachment_feasibility();
+//        if (attachment != null && attachment.getAttachId() != null && !attachment.getAttachId().equals("")) {
+//            projectInfoRepository.updateFeasibility_fileId(attachment.getAttachId(),busiJbpmFlowDto.getBusinessId());
+//        }
         busiJbpmFlow = busiJbpmFlowRepository.save(busiJbpmFlow);
         return busiJbpmFlow;
     }
@@ -317,24 +321,16 @@ public class BusiJbpmFlowService {
         return busiJbpmFlowRepository.findAll(specification);
     }
 
-    public void updateType(Long id){
-         busiJbpmFlowRepository.updateType(id);
+    public void updateType(String businessId, String businessType,String nextActor){
+         busiJbpmFlowRepository.updateType(businessId,businessType,nextActor);
     }
 
     public void updateReadType(Long id){
         busiJbpmFlowRepository.updateReadType(id);
     }
 
-    public void upnextActor(Long id,String nextActor,Attachment attachment,String businessId){
-
-        if (attachment != null && attachment.getAttachId() != null && !attachment.getAttachId().equals("")) {
-//            上传更新可行性文件id
-            projectInfoRepository.updateFeasibility_fileId(attachment.getAttachId(),businessId);
-        } else {
+    public void upnextActor(Long id,String nextActor){
             busiJbpmFlowRepository.upNextActor(id,nextActor);
-        }
-
-
     }
 
 
