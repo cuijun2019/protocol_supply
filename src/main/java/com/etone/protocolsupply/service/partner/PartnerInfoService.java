@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Transactional(rollbackFor = Exception.class)
 @Service
@@ -142,18 +143,32 @@ public class PartnerInfoService {
         }
     }
 
-    public Page<PartnerInfo> findPartnerInfoList(String isDelete,String supplierName, Pageable pageable) {
-        List<PartnerInfo> list = partnerInfoRepository.findByCondition("2", supplierName);
-        return Common.listConvertToPage(list,pageable);
+    public Page<PartnerInfoDto> findPartnerInfoList(String isDelete,String supplierName, Pageable pageable) {
+        List<Map<String,Object>> list = partnerInfoRepository.findByCondition("2", supplierName);
+        List<PartnerInfoDto> partnerInfoDtoList = new ArrayList<>();
+        if(list!=null && list.size()>0){
+            for(Map map:list){
+                PartnerInfoDto partnerInfoDto = new PartnerInfoDto();
+                partnerInfoDto.setPartnerId(Long.parseLong(map.get("partner_id")+""));
+                partnerInfoDto.setCompanyNo(map.get("company_no")==null?"":map.get("company_no")+"");
+                partnerInfoDto.setIncorporator(map.get("incorporator")==null?"":map.get("incorporator")+"");
+                partnerInfoDto.setFullname(map.get("fullname")==null?"":map.get("fullname")+"");
+                partnerInfoDto.setTelephone(map.get("telephone")==null?"":map.get("telephone")+"");
+                partnerInfoDto.setEmail(map.get("email")==null?"":map.get("email")+"");
+                partnerInfoDto.setDetailAddress(map.get("detail_address")==null?"":map.get("detail_address")+"");
+               partnerInfoDtoList.add(partnerInfoDto);
+            }
+        }
+        return Common.listConvertToPage(partnerInfoDtoList,pageable);
     }
 
-    public PartnerInfoCollectionDto to(Page<PartnerInfo> page, HttpServletRequest request) {
+    public PartnerInfoCollectionDto to(Page<PartnerInfoDto> page, HttpServletRequest request) {
         PartnerInfoCollectionDto partnerInfoCollectionDto = new PartnerInfoCollectionDto();
         pagingMapper.storeMappedInstanceBefore(page,partnerInfoCollectionDto,request);
-        PartnerInfoDto partnerInfoDto;
-        for(PartnerInfo partnerInfo:page){
-            partnerInfoDto = new PartnerInfoDto();
-            BeanUtils.copyProperties(partnerInfo,partnerInfoDto);
+        //PartnerInfoDto partnerInfoDto;
+        for(PartnerInfoDto partnerInfoDto:page){
+            //partnerInfoDto = new PartnerInfoDto();
+            //BeanUtils.copyProperties(partnerInfo,partnerInfoDto);
             partnerInfoCollectionDto.add(partnerInfoDto);
         }
         return partnerInfoCollectionDto;

@@ -22,4 +22,6 @@ public class PartnerInfoDto extends PartnerInfo {
     private String telephone;
 
     private String email;
+
+    private String fullname;
 }

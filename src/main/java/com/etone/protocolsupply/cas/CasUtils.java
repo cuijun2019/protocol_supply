@@ -55,7 +55,6 @@ public class CasUtils {
 
     private static UserService userService;
 
-
 	private static BusiJbpmFlowRepository busiJbpmFlowRepository;
 
 	@Autowired

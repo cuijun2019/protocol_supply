@@ -354,7 +354,7 @@ public class ContractNoticeService {
 
 
             //TODO 更新工程表的附件字段
-            projectInfoRepository.updateContractId(attachment.getAttachId(),Long.parseLong(projectId));
+            projectInfoRepository.updateContractId(attachment.getAttachId(),attachmentEncrypt.getAttachId(),Long.parseLong(projectId));
         } catch (Exception e) {
             logger.error("合同保存时异常",e);
         }

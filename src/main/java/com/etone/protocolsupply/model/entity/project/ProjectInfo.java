@@ -119,13 +119,22 @@ public class ProjectInfo implements Serializable {
     private String quantity;
 
     /**
-     * 中标通知书
+     * 成交通知书
      */
     @OneToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
     //@JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "NOTICE_ID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment_n;
+
+    /**
+     * 加密的成交通知书
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
+    //@JsonInclude(JsonInclude.Include.NON_NULL)
+    @JoinColumn(name = "ENCRYPTNOTICE_ID", referencedColumnName = "ATTACH_ID")
+    private Attachment encryptAttachment_n;
 
     /**
      * 合同
@@ -135,6 +144,16 @@ public class ProjectInfo implements Serializable {
     //@JsonInclude(JsonInclude.Include.NON_NULL)
     @JoinColumn(name = "CONTRACT_ID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment_c;
+
+
+    /**
+     * 加密后的合同
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
+    //@JsonInclude(JsonInclude.Include.NON_NULL)
+    @JoinColumn(name = "ENCRYPTCONTRACT_ID", referencedColumnName = "ATTACH_ID")
+    private Attachment encryptAttachment_c;
 
     /**
      * 采购结果通知书

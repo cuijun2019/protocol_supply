@@ -17,7 +17,7 @@ public class VerifyUtil {
     @Autowired
     private PartnerInfoRepository partnerInfoRepository;
 
-    @Scheduled(cron = "0 0 * * * ?")//每小时审核
+    //@Scheduled(cron = "0 0 * * * ?")//每小时审核
     //@Scheduled(cron = "0 */1 * * * ?")//每分钟--测试
     public void verifySupplier(){
         //每天去查询注册时间满24小时的供应商和代理商，将审核状态改成已审核

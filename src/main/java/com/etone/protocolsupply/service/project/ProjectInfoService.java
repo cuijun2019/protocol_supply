@@ -14,6 +14,7 @@ import com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew;
 import com.etone.protocolsupply.model.entity.project.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.project.PartInfoExp;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
+import com.etone.protocolsupply.model.entity.user.User;
 import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.repository.inquiry.InquiryInfoNewRepository;
@@ -21,6 +22,7 @@ import com.etone.protocolsupply.repository.inquiry.InquiryInfoRepository;
 import com.etone.protocolsupply.repository.project.AgentInfoExpRepository;
 import com.etone.protocolsupply.repository.project.PartInfoExpRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
+import com.etone.protocolsupply.repository.user.UserRepository;
 import com.etone.protocolsupply.service.inquiry.InquiryInfoNewService;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
@@ -64,6 +66,8 @@ public class ProjectInfoService {
     private InquiryInfoNewRepository inquiryInfoNewRepository;
     @Autowired
     private PagingMapper           pagingMapper;
+    @Autowired
+    private UserRepository userRepository;
 
 
     public ProjectInfo save(ProjectInfoDto projectInfoDto, JwtUser jwtUser) throws GlobalServiceException {
@@ -79,7 +83,8 @@ public class ProjectInfoService {
             projectInfo.setProjectCode("SCUT-" + Common.getYYYYMMDDDate(date) + "-XY" + Common.convertSerialProject(projectInfo1.getProjectCode().substring(16), 1));
         }
         projectInfo.setIsDelete(Constant.DELETE_NO);
-        projectInfo.setCreator(userName);
+        User user = userRepository.findByUsername(userName);
+        projectInfo.setCreator(user.getCompany());
         // projectInfo.setStatus(1);//审核状态：草稿、审核中、已完成、退回
         Attachment attachment = projectInfoDto.getAttachment_n();//中标通知书
         if (attachment != null && attachment.getAttachId() != null && !attachment.getAttachId().equals("")) {

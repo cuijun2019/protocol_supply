@@ -48,8 +48,8 @@ public interface PartnerInfoRepository extends JpaRepository<PartnerInfo, Long>,
             nativeQuery = true)
     List<PartnerInfo> findByAuthStatus();
 
-    @Query(value = "SELECT * FROM partner_info p inner join users u on p.partner_id=u.partner_id \n" +
-            "inner join user_role ur on u.id=ur.user_id where ur.role_id=1 and p.is_delete=?1 and if((?2 is not null), (p.company_no like %?2%), (1=1))",
+    @Query(value = "SELECT p.partner_id,p.company_no,p.incorporator,p.detail_address,u.fullname,u.telephone,u.email FROM partner_info p inner join users u on p.partner_id=u.partner_id \n" +
+            "inner join user_role ur on u.id=ur.user_id where ur.role_id=1 and p.sup_type=1 and p.is_delete=?1 and if((?2 is not null), (p.company_no like %?2%), (1=1))",
             nativeQuery = true)
-    List<PartnerInfo> findByCondition(@Param("isDelete")String isDelete,@Param("supplierName") String supplierName);
+    List<Map<String,Object>> findByCondition(@Param("isDelete")String isDelete,@Param("supplierName") String supplierName);
 }

@@ -61,6 +61,6 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     @Query(value = "select * from users  where username=?1", nativeQuery = true)
     User findUserInfoByUserName(String userName);
 
-    @Query(value = "select * from users where is_delete=2 and partner_id is null and if((:username is not null), (username like %:username%), (1=1)) and enabled =:enabled",nativeQuery = true)
+    @Query(value = "select * from users where is_delete=2 and partner_id is null and if((:username is not null), (fullname like %:username%), (1=1)) and enabled =:enabled",nativeQuery = true)
     List<User> findAllUsers(@Param("username")String username,@Param("enabled")int enabled);
 }
