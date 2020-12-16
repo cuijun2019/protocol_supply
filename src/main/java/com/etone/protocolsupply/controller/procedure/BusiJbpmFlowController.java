@@ -206,7 +206,7 @@ public class BusiJbpmFlowController extends GenericController {
            // busiJbpmFlow=list.get(0);
             //responseBuilder.message("查询不到数据，操作失败！");
             //busiJbpmFlow.setNextActor(busiJbpmFlowDto.getNextActor());
-            responseBuilder.data(null);
+            responseBuilder.data(busiJbpmFlow);
         }
         return responseBuilder.build();
     }
