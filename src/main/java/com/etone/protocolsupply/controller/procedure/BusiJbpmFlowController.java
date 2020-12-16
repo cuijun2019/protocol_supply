@@ -164,8 +164,14 @@ public class BusiJbpmFlowController extends GenericController {
                 busiJbpmFlowDto.getBusinessId(),busiJbpmFlowDto.getBusinessType(),busiJbpmFlowDto.getNextActor());
         BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
         if(list.size()!=0){
+            try {
+                busiJbpmFlowService.updateType(busiJbpmFlowDto.getBusinessId(),busiJbpmFlowDto.getBusinessType(),busiJbpmFlowDto.getNextActor());
+            } catch (Exception e) {
+                responseBuilder.message("修改数据type=1失败，操作失败！");
+                e.printStackTrace();
+            }
             busiJbpmFlow=list.get(0);
-            busiJbpmFlowService.updateType(busiJbpmFlow.getId());
+//            busiJbpmFlowService.updateType(busiJbpmFlow.getId());
             busiJbpmFlow.setType(1);
         }else {
             responseBuilder.message("查询不到数据，操作失败！");
@@ -193,7 +199,7 @@ public class BusiJbpmFlowController extends GenericController {
         BusiJbpmFlow busiJbpmFlow=new BusiJbpmFlow();
         if(list.size()!=0){
             busiJbpmFlow=list.get(0);
-            busiJbpmFlowService.upnextActor(busiJbpmFlow.getId(),busiJbpmFlowDto.getNextActor(),busiJbpmFlowDto.getAttachment_feasibility(),busiJbpmFlowDto.getBusinessId());
+            busiJbpmFlowService.upnextActor(busiJbpmFlow.getId(),busiJbpmFlowDto.getNextActor());
             busiJbpmFlow.setNextActor(busiJbpmFlowDto.getNextActor());
             responseBuilder.data(busiJbpmFlow);
         }else {

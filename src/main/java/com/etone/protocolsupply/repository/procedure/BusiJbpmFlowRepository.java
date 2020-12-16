@@ -35,8 +35,12 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying
-    @Query(value = "update busi_jbpm_flow set type=1 where id=?1", nativeQuery = true)
-    void updateType(Long id);
+    @Query(value = "update busi_jbpm_flow set type=1 " +
+            "where id in ( " +
+            "select b.id from(select a.id from busi_jbpm_flow a " +
+            "where a.business_id=:businessId and a.business_type=:businessType and a.next_actor=:nextActor and a.type=0)as b)", nativeQuery = true)
+    void updateType(@Param("businessId") String businessId,@Param("businessType") String businessType
+            ,@Param("nextActor") String nextActor);
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying
