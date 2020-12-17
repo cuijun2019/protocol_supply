@@ -8,10 +8,12 @@ import com.etone.protocolsupply.model.dto.procedure.BusiJbpmFlowDto;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
 import com.etone.protocolsupply.model.entity.user.Role;
+import com.etone.protocolsupply.model.entity.user.User;
 import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.procedure.BusiJbpmFlowRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.repository.user.RoleRepository;
+import com.etone.protocolsupply.repository.user.UserRepository;
 import com.etone.protocolsupply.service.cargo.PartInfoService;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
@@ -51,7 +53,7 @@ public class BusiJbpmFlowService {
     @Autowired
     private RoleRepository roleRepository;
     @Autowired
-    private ProjectInfoRepository projectInfoRepository;
+    private UserRepository userRepository;
 
     //待办新增
     public BusiJbpmFlow save(BusiJbpmFlowDto busiJbpmFlowDto, JwtUser jwtUser) throws GlobalServiceException {
@@ -184,12 +186,13 @@ public class BusiJbpmFlowService {
                 busiJbpmFlowDto.setNextActor_roleDescription(list.get(0).getDescription());
                 busiJbpmFlowDto.setNextActor_roleStatus(list.get(0).getStatus());
             }
+            User user=userRepository.findByUsername(busiJbpmFlow.getFlowInitorId());
+            busiJbpmFlow.setFlowInitorId(user.getCompany()+"("+user.getFullname()+")");//待办创建人显示公司+名称
             Attachment attachment=new Attachment();
             if(busiJbpmFlow.getAttachment()!=null){
                 Optional<Attachment> optional=attachmentRepository.findById(busiJbpmFlow.getAttachment().getAttachId());
                 if (optional.isPresent()) {
                     attachment=optional.get();
-
                 }
             }
             busiJbpmFlowDto.setAttachment(attachment);
