@@ -236,9 +236,12 @@ public class CargoInfoService {
                 }
                 partInfoRepository.setCargoId(cargoInfo1.getCargoId(), partIds);
             }
+            return cargoInfo1;
+        }else {
+            return cargoInfo;
         }
 
-        return cargoInfo1;
+
     }
 
 
