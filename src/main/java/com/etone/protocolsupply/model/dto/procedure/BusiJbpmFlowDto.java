@@ -19,6 +19,8 @@ public class BusiJbpmFlowDto extends BusiJbpmFlow {
 
     private Attachment attachment_feasibility;//可行性论证文件
 
+    private String companyName;//统一信用代码查询的公司名称
+
 
 
 }

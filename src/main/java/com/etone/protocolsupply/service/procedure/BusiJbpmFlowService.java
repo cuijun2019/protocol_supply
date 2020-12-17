@@ -187,7 +187,7 @@ public class BusiJbpmFlowService {
                 busiJbpmFlowDto.setNextActor_roleStatus(list.get(0).getStatus());
             }
             User user=userRepository.findByUsername(busiJbpmFlow.getFlowInitorId());
-            busiJbpmFlow.setFlowInitorId(user.getCompany()+"("+user.getFullname()+")");//待办创建人显示公司+名称
+            busiJbpmFlowDto.setCompanyName(user.getCompany()+"("+user.getFullname()+")");//待办创建人显示公司+名称
             Attachment attachment=new Attachment();
             if(busiJbpmFlow.getAttachment()!=null){
                 Optional<Attachment> optional=attachmentRepository.findById(busiJbpmFlow.getAttachment().getAttachId());
