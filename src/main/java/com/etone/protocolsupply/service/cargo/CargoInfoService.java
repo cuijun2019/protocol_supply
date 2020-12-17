@@ -214,7 +214,6 @@ public class CargoInfoService {
         cargoInfo.setMaintenanceDate(date);
         Set<PartInfo> partInfos =cargoInfo.getPartInfos();
         if (partInfos != null && !partInfos.isEmpty()) {
-
            String partSerial= partInfoService.findLastPartSerial(cargoInfo.getCargoSerial());
             int step = 0;
             for (PartInfo partInfo : partInfos) {
@@ -240,11 +239,7 @@ public class CargoInfoService {
         }else {
             return cargoInfo;
         }
-
-
     }
-
-
     //变更=原数据修改+新数据新增
     public CargoInfo update(CargoInfo cargoInfo, JwtUser jwtUser) throws GlobalServiceException {
         Date date = new Date();
