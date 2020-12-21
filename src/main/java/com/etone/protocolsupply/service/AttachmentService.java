@@ -13,9 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.activation.MimetypesFileTypeMap;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
 
@@ -45,7 +47,7 @@ public class AttachmentService {
         return attachmentRepository.save(attachment);
     }
 
-    public void download(HttpServletResponse response, Long attachId) throws UnsupportedEncodingException {
+    public void download(HttpServletRequest request, HttpServletResponse response, Long attachId) throws UnsupportedEncodingException {
         Optional<Attachment> optional = attachmentRepository.findById(attachId);
         if (optional.isPresent()) {
             Attachment attachment = optional.get();
@@ -53,11 +55,20 @@ public class AttachmentService {
             String fileName = attachment.getAttachName();
             File file = new File(path);
             if (file.exists()) {
+
+                // 进行转码，使其支持中文文件名,解决火狐浏览器文件名乱码问题
+                if (request.getHeader("User-Agent").toLowerCase().indexOf("firefox") > 0){
+                    fileName = new String(fileName.getBytes("UTF-8"), "ISO8859-1");//firefox浏览器
+                }else{
+                    fileName = java.net.URLEncoder.encode(fileName, "UTF-8");//IE浏览器
+                }
+
                 String type = new MimetypesFileTypeMap().getContentType(fileName);
                 // 设置contenttype，即告诉客户端所发送的数据属于什么类型
                 response.setHeader("Content-type", type);
-                response.setHeader("Content-Disposition", "attachment;filename=" + fileName + ";filename*=utf-8''"
-                        + URLEncoder.encode(fileName, "utf-8"));
+                /*response.setHeader("Content-Disposition", "attachment;filename=" + fileName + ";filename*=utf-8''"
+                        + URLEncoder.encode(fileName, "utf-8"));*/
+                response.setHeader("content-disposition", "attachment;fileName=" + fileName );
                 //response.setHeader("Content-Disposition", "attachment;filename=" + new String(fileName.getBytes("utf-8"),"ISO8859-1"));
                 byte[] buffer = new byte[1024];
                 FileInputStream fis = null;
@@ -71,6 +82,8 @@ public class AttachmentService {
                         os.write(buffer, 0, i);
                         i = bis.read(buffer);
                     }
+                    os.flush();
+                    os.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
