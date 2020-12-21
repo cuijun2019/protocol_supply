@@ -208,6 +208,7 @@ public class CargoInfoService {
         Date date = new Date();
 
         String userName = jwtUser.getUsername();
+        CargoInfo cargoInfo1=new CargoInfo();
         partInfoRepository.deleteByCargoId(cargoInfo.getCargoId());
         cargoInfo.setManufactor(userName);
         cargoInfo.setMaintenanceDate(date);
@@ -227,16 +228,18 @@ public class CargoInfoService {
                 step++;
             }
             cargoInfo.setPartInfos(partInfos);
-        }
-        cargoInfo=cargoInfoRepository.save(cargoInfo);
-        List<Long> partIds = new ArrayList<>();
-        if(partInfos.size()>0){
-            for (PartInfo partInfo : cargoInfo.getPartInfos()) {
-                partIds.add(partInfo.getPartId());
+            cargoInfo1=cargoInfoRepository.save(cargoInfo);
+            List<Long> partIds = new ArrayList<>();
+            if(partInfos.size()>0){
+                for (PartInfo partInfo : cargoInfo1.getPartInfos()) {
+                    partIds.add(partInfo.getPartId());
+                }
+                partInfoRepository.setCargoId(cargoInfo1.getCargoId(), partIds);
             }
-            partInfoRepository.setCargoId(cargoInfo.getCargoId(), partIds);
+            return cargoInfo1;
+        }else {
+            return cargoInfo;
         }
-        return cargoInfo;
 
     }
 

@@ -46,19 +46,19 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     @Query(value = "update users set password=?1 where username=?2", nativeQuery = true)
     void updatePassword(String encode, String username);
 
-    @Query(value = "select u.*,r.role_id from roles r inner join user_role ur on ur.role_id=r.role_id inner join users u on ur.user_id=u.id where r.role_id in (:roleIds)", nativeQuery = true)
+    @Query(value = "select u.*,r.role_id from roles r inner join user_role ur on ur.role_id=r.role_id inner join users u on ur.user_id=u.id where r.role_id in (:roleIds) and u.is_delete=2", nativeQuery = true)
     List<Map> getUserByRoleId(@Param("roleIds") List<Long> roleIds);
 
-    @Query(value = "select ur.role_id from users u LEFT join user_role ur on u.id=ur.user_id where u.username=?1", nativeQuery = true)
+    @Query(value = "select ur.role_id from users u LEFT join user_role ur on u.id=ur.user_id where u.username=?1 and u.is_delete=2", nativeQuery = true)
     Long findRoleIdByUsername(String username);
 
-    @Query(value = "select * from users  where username=?1 and email=?2", nativeQuery = true)
+    @Query(value = "select * from users  where username=?1 and email=?2 and is_delete=2", nativeQuery = true)
     User findUserByCondition(String username, String email);
 
-    @Query(value = "select * from users  where partner_id=?1", nativeQuery = true)
+    @Query(value = "select * from users  where partner_id=?1 and is_delete=2", nativeQuery = true)
     User findByPartnerId(long partnerId);
 
-    @Query(value = "select * from users  where username=?1", nativeQuery = true)
+    @Query(value = "select * from users  where username=?1 and is_delete=2", nativeQuery = true)
     User findUserInfoByUserName(String userName);
 
     @Query(value = "select * from users where is_delete=2 and partner_id is null and if((:username is not null), (fullname like %:username%), (1=1)) and enabled =:enabled",nativeQuery = true)

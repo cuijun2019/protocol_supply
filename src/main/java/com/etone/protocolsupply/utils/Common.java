@@ -45,7 +45,7 @@ public class Common {
         Files.write(path, bytes);
 
         Attachment attachment = new Attachment();
-        attachment.setAttachName(fileName);
+        attachment.setAttachName(PinyinUtil.getFullSpell(fileName));
         attachment.setAttachSize(file.getSize());
         attachment.setPath(fileFullPath);
         attachment.setFileType(file.getContentType());

@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
 import java.io.UnsupportedEncodingException;
@@ -43,9 +44,9 @@ public class FileController extends GenericController {
             value = "/download/{attachId}",
             method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseValue download(@PathVariable("attachId") String attachId, @Context HttpServletResponse response) throws UnsupportedEncodingException {
+    public ResponseValue download(@PathVariable("attachId") String attachId, @Context HttpServletResponse response, HttpServletRequest request) throws UnsupportedEncodingException {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        attachmentService.download(response, Long.parseLong(attachId));
+        attachmentService.download(request,response, Long.parseLong(attachId));
         return responseBuilder.build();
     }
 }
