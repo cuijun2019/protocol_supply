@@ -49,7 +49,7 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying
-    @Query(value = "update busi_jbpm_flow set next_actor=:nextActor,action =2 where id=:id", nativeQuery = true)
+    @Query(value = "update busi_jbpm_flow set next_actor=:nextActor,action =2 ,opinion='请审核' where id=:id and action=1", nativeQuery = true)
     void upNextActor(@Param("id") Long id,@Param("nextActor") String nextActor);
 
 //    @Transactional(rollbackFor = Exception.class)
