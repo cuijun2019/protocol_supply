@@ -22,7 +22,7 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying
-    @Query(value = "update busi_jbpm_flow set read_type=1,business_subject=?2 where id=?1  ", nativeQuery = true)
+    @Query(value = "update busi_jbpm_flow set read_type=1,business_subject=?2,flow_start_time = CURTIME() where id=?1  ", nativeQuery = true)
     void updateIsReadType(Long id,String businessSubject);
 
 
@@ -44,12 +44,13 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying
-    @Query(value = "update busi_jbpm_flow set read_type=1 where id=?1", nativeQuery = true)
+    @Query(value = "update busi_jbpm_flow set read_type=1,flow_start_time=CURTIME() where id=?1", nativeQuery = true)
     void updateReadType(Long id);
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying
-    @Query(value = "update busi_jbpm_flow set next_actor=:nextActor,action =2 ,opinion='请审核' where id=:id and action=1", nativeQuery = true)
+    @Query(value = "update busi_jbpm_flow set next_actor=:nextActor,action =2 ,opinion='请审核',flow_start_time=CURTIME() " +
+            "where id=:id and action=1", nativeQuery = true)
     void upNextActor(@Param("id") Long id,@Param("nextActor") String nextActor);
 
 //    @Transactional(rollbackFor = Exception.class)

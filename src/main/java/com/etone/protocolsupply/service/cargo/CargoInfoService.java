@@ -208,11 +208,11 @@ public class CargoInfoService {
         Date date = new Date();
         String userName = jwtUser.getUsername();
         partInfoRepository.deleteByCargoId(cargoInfo.getCargoId());
-        cargoInfo.setManufactor(userName);
+        //cargoInfo.setManufactor(userName)
+        cargoInfo.setMaintenanceMan(userName);
         cargoInfo.setMaintenanceDate(date);
         Set<PartInfo> partInfos =cargoInfo.getPartInfos();
         if (partInfos != null && !partInfos.isEmpty()) {
-
            String partSerial= partInfoService.findLastPartSerial(cargoInfo.getCargoSerial());
             int step = 0;
             for (PartInfo partInfo : partInfos) {
