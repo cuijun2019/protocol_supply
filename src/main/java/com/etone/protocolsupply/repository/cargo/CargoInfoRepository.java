@@ -55,7 +55,7 @@ public interface CargoInfoRepository extends JpaRepository<CargoInfo, Long>, Jpa
             "and if((?3 is not null), (c.cargo_name like %?3%), (1=1))  " +
             "and if((?7 is not null), (c.cargo_name =?7), (1=1))  " +
             " and if((?6 is not null), (c.status =?6), (1=1)) and " +
-            "if((?4 is not null), ( c.cargo_code like %?4%), (1=1)) order by c.create_date desc", nativeQuery = true)
+            "if((?4 is not null), ( c.cargo_code like %?4%), (1=1)) order by c.maintenance_date desc", nativeQuery = true)
     List<CargoInfo> findAllMyCargo(String isDelete,String isUpdate, String cargoName, String cargoCode,String actor ,Integer status,String cName);
 
     @Query(value = "select * from cargo_info where is_delete=2 and cargo_id=(select cargo_id from part_info_exp where project_id=?1 limit 1) ", nativeQuery = true)

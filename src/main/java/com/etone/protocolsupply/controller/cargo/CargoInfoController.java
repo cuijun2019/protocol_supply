@@ -79,7 +79,7 @@ public class CargoInfoController extends GenericController {
                                        @RequestParam(value = "status", required = false) Integer status,
                                        HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        Sort sort = new Sort(Sort.Direction.DESC, "createDate");
+        Sort sort = new Sort(Sort.Direction.DESC, "maintenanceDate");//按照修改时间倒叙
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
         Page<CargoInfo> page = cargoInfoService.findCargoInfos(isDelete,isUpdate, cargoName,cName, cargoCode,actor,status, pageable);
         CargoCollectionDto cargoCollectionDto = cargoInfoService.to(page, request);
