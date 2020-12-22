@@ -72,9 +72,12 @@ public class PartInfoService {
         }
         String cargoSerial = partInfo.getCargoInfo().getCargoSerial();
         String partSerial = partInfoRepository.findLastPartSerial(cargoSerial);
-        partInfo.setPartSerial(Common.convertSerial(partSerial.toString(), 1));
+        if("".equals(partSerial)|| partSerial==null ){
+            partInfo.setPartSerial("0001");
+        }else {
+            partInfo.setPartSerial(Common.convertSerial(partSerial, 1));
+        }
         partInfo.setPartCode(partInfo.getCargoInfo().getCargoCode() + partInfo.getPartSerial());
-        // partInfo.setCargoInfo(cargoInfo);
         partInfo.setIsDelete(Constant.DELETE_NO);
         return partInfoRepository.save(partInfo);
     }

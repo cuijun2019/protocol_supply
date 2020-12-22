@@ -36,15 +36,13 @@ public interface PartInfoRepository extends JpaRepository<PartInfo, Long>, JpaSp
     List<PartInfo> findAllBycon(String isDelete,String partName,String manufactor);
 
 
-    @Query(value = "SELECT\n" +
-            "\tmax( p.part_serial ) \n" +
-            "FROM\n" +
-            "\tpart_info p\n" +
-            "\tLEFT JOIN cargo_info c ON p.cargo_id = c.cargo_id \n" +
-            "WHERE\n" +
-            "\tp.is_delete = 2 \n" +
-            "\tAND c.cargo_serial = ?1\n" +
-            "\tLIMIT 1", nativeQuery = true)
+    @Query(value = "SELECT max( p.part_serial )  " +
+            "FROM part_info p " +
+            "LEFT JOIN cargo_info c ON p.cargo_id = c.cargo_id " +
+            "WHERE " +
+            "p.is_delete = 2 " +
+            "AND c.cargo_serial = ?1 " +
+            "LIMIT 1 ", nativeQuery = true)
     String findLastPartSerial(String categorySerial);
 
     @Query(value = "update part_info set cargo_id=:cargoId where part_id in (:partIds)", nativeQuery = true)
