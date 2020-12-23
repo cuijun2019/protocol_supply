@@ -189,10 +189,16 @@ public class BusiJbpmFlowService {
             User user=userRepository.findByUsername(busiJbpmFlow.getFlowInitorId());//创建人
             User user2=userRepository.findByUsername(busiJbpmFlow.getParentActor());//当前处理人
             User user3=userRepository.findByUsername(busiJbpmFlow.getNextActor());//提交给的人员
+            if(user3==null){
+                busiJbpmFlowDto.setCompanyName_nextActor("");
+            }else {
+                busiJbpmFlowDto.setCompanyName_nextActor(user3.getCompany()+"("+user3.getFullname()+")");
+            }
+
 
             busiJbpmFlowDto.setCompanyName(user.getCompany()+"("+user.getFullname()+")");//待办创建人显示公司+名称
             busiJbpmFlowDto.setCompanyName_parentActor(user2.getCompany()+"("+user2.getFullname()+")");
-            busiJbpmFlowDto.setCompanyName_nextActor(user3.getCompany()+"("+user3.getFullname()+")");
+
             Attachment attachment=new Attachment();
             if(busiJbpmFlow.getAttachment()!=null){
                 Optional<Attachment> optional=attachmentRepository.findById(busiJbpmFlow.getAttachment().getAttachId());
