@@ -102,9 +102,9 @@ public class CargoInfoService {
             for (PartInfo partInfo : partInfos) {
                 total+=partInfo.getTotal();
                 if (step == 0) {
-                    partInfo.setPartSerial(Common.convertSerial(partSerial, 0));
+                    partInfo.setPartSerial(Common.convertSerial(partSerial, step));
                 } else {
-                    partInfo.setPartSerial(Common.convertSerial(partSerial, 1));
+                    partInfo.setPartSerial(Common.convertSerial(partSerial, step));
                 }
                 partInfo.setPartCode(cargoInfo.getCargoCode() + partInfo.getPartSerial());
                 partInfo.setIsDelete(Constant.DELETE_NO);
@@ -217,9 +217,9 @@ public class CargoInfoService {
             int step = 0;
             for (PartInfo partInfo : partInfos) {
                 if (step == 0) {
-                    partInfo.setPartSerial(Common.convertSerial(partSerial, 0));
+                    partInfo.setPartSerial(Common.convertSerial(partSerial, step));
                 } else {
-                    partInfo.setPartSerial(Common.convertSerial(partSerial, 1));
+                    partInfo.setPartSerial(Common.convertSerial(partSerial, step));
                 }
                 partInfo.setPartCode(cargoInfo.getCargoCode() + partInfo.getPartSerial());
                 partInfo.setIsDelete(Constant.DELETE_NO);
@@ -294,9 +294,9 @@ public class CargoInfoService {
                 int step = 0;
                 for (PartInfo partInfo : partInfos) {
                     if (step == 0) {
-                        partInfo.setPartSerial(Common.convertSerial(partSerial, 0));
+                        partInfo.setPartSerial(Common.convertSerial(partSerial, step));
                     } else {
-                        partInfo.setPartSerial(Common.convertSerial(partSerial, 1));
+                        partInfo.setPartSerial(Common.convertSerial(partSerial, step));
                     }
                     partInfo.setPartCode(model.getCargoCode() + partInfo.getPartSerial());
                     partInfo.setIsDelete(Constant.DELETE_NO);
