@@ -60,7 +60,7 @@ public interface PartInfoRepository extends JpaRepository<PartInfo, Long>, JpaSp
             "and if((?3 is not null), (c.cargo_name like %?3%), (1=1)) " +
             "and if((?4 is not null), (c.cargo_name = ?4), (1=1)) ) " +
             "and if((?1 is not null), (p.cargo_id=?1), (1=1)) " +
-            "and p.is_delete=?2 order by p.part_code asc", nativeQuery = true)
+            "and p.is_delete=?2 order by p.part_code desc", nativeQuery = true)
     List<PartInfo> findAll(String cargoId, String isDelete,String cargoName,String cName,String actor);
 
     @Transactional(rollbackFor = Exception.class)

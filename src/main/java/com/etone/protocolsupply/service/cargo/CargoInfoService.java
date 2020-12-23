@@ -94,6 +94,7 @@ public class CargoInfoService {
         cargoInfo.setCargoSerial(this.findLastCargoSerial());
         cargoInfo.setCargoCode(cargoInfo.getItemCode() + cargoInfo.getCargoSerial());
 
+
         Set<PartInfo> partInfos = cargoInfoDto.getPartInfos();
         if (partInfos != null && !partInfos.isEmpty()) {
             String partSerial = partInfoService.findLastPartSerial(cargoInfo.getCargoSerial());
@@ -101,14 +102,16 @@ public class CargoInfoService {
             double total = 0.00;
             for (PartInfo partInfo : partInfos) {
                 total+=partInfo.getTotal();
-                if (step == 0) {
-                    partInfo.setPartSerial(Common.convertSerial(partSerial, step));
-                } else {
-                    partInfo.setPartSerial(Common.convertSerial(partSerial, step));
+                if("".equals(partInfo.getPartCode()) || partInfo.getPartCode()==null ){
+                    if (step == 0) {
+                        partInfo.setPartSerial(Common.convertSerial(partSerial, step));
+                    } else {
+                        partInfo.setPartSerial(Common.convertSerial(partSerial, step));
+                    }
+                    partInfo.setPartCode(cargoInfo.getCargoCode() + partInfo.getPartSerial());
+                    partInfo.setIsDelete(Constant.DELETE_NO);
+                    step++;
                 }
-                partInfo.setPartCode(cargoInfo.getCargoCode() + partInfo.getPartSerial());
-                partInfo.setIsDelete(Constant.DELETE_NO);
-                step++;
             }
             cargoInfo.setReprice(total);//货物的参考价格
         }
@@ -216,14 +219,17 @@ public class CargoInfoService {
            String partSerial= partInfoService.findLastPartSerial(cargoInfo.getCargoSerial());
             int step = 0;
             for (PartInfo partInfo : partInfos) {
-                if (step == 0) {
-                    partInfo.setPartSerial(Common.convertSerial(partSerial, step));
-                } else {
-                    partInfo.setPartSerial(Common.convertSerial(partSerial, step));
+                if("".equals(partInfo.getPartCode()) || partInfo.getPartCode()==null ){
+                    if (step == 0) {
+                        partInfo.setPartSerial(Common.convertSerial(partSerial, step));
+                    } else {
+                        partInfo.setPartSerial(Common.convertSerial(partSerial, step));
+                    }
+                    partInfo.setPartCode(cargoInfo.getCargoCode() + partInfo.getPartSerial());
+                    partInfo.setIsDelete(Constant.DELETE_NO);
+                    step++;
                 }
-                partInfo.setPartCode(cargoInfo.getCargoCode() + partInfo.getPartSerial());
-                partInfo.setIsDelete(Constant.DELETE_NO);
-                step++;
+
             }
             cargoInfo.setPartInfos(partInfos);
 
@@ -293,14 +299,16 @@ public class CargoInfoService {
                         //partInfoService.findLastPartSerial(model.getCargoSerial());
                 int step = 0;
                 for (PartInfo partInfo : partInfos) {
-                    if (step == 0) {
-                        partInfo.setPartSerial(Common.convertSerial(partSerial, step));
-                    } else {
-                        partInfo.setPartSerial(Common.convertSerial(partSerial, step));
+                    if ("".equals(partInfo.getPartCode()) || partInfo.getPartCode() == null) {
+                        if (step == 0) {
+                            partInfo.setPartSerial(Common.convertSerial(partSerial, step));
+                        } else {
+                            partInfo.setPartSerial(Common.convertSerial(partSerial, step));
+                        }
+                        partInfo.setPartCode(model.getCargoCode() + partInfo.getPartSerial());
+                        partInfo.setIsDelete(Constant.DELETE_NO);
+                        step++;
                     }
-                    partInfo.setPartCode(model.getCargoCode() + partInfo.getPartSerial());
-                    partInfo.setIsDelete(Constant.DELETE_NO);
-                    step++;
                 }
                 newCargoInfo.setPartInfos(partInfos);
                  cargoInfo1=cargoInfoRepository.save(newCargoInfo);
