@@ -102,7 +102,7 @@ public class CargoInfoService {
             double total = 0.00;
             for (PartInfo partInfo : partInfos) {
                 total+=partInfo.getTotal();
-                if("".equals(partInfo.getPartCode()) || partInfo.getPartCode()==null ){
+                if("".equals(partInfo.getPartCode())){
                     if (step == 0) {
                         partInfo.setPartSerial(Common.convertSerial(partSerial, step));
                     } else {
@@ -111,7 +111,11 @@ public class CargoInfoService {
                     partInfo.setPartCode(cargoInfo.getCargoCode() + partInfo.getPartSerial());
                     partInfo.setIsDelete(Constant.DELETE_NO);
                     step++;
+                }else {
+                    partInfo.setPartSerial(partInfo.getPartCode().substring(partInfo.getPartCode().length() - 4));
+                    partInfo.setIsDelete(Constant.DELETE_NO);
                 }
+
             }
             cargoInfo.setReprice(total);//货物的参考价格
         }
@@ -219,7 +223,7 @@ public class CargoInfoService {
            String partSerial= partInfoService.findLastPartSerial(cargoInfo.getCargoSerial());
             int step = 0;
             for (PartInfo partInfo : partInfos) {
-                if("".equals(partInfo.getPartCode()) || partInfo.getPartCode()==null ){
+                if("".equals(partInfo.getPartCode())){
                     if (step == 0) {
                         partInfo.setPartSerial(Common.convertSerial(partSerial, step));
                     } else {
@@ -228,6 +232,9 @@ public class CargoInfoService {
                     partInfo.setPartCode(cargoInfo.getCargoCode() + partInfo.getPartSerial());
                     partInfo.setIsDelete(Constant.DELETE_NO);
                     step++;
+                }else {
+                    partInfo.setPartSerial(partInfo.getPartCode().substring(partInfo.getPartCode().length() - 4));
+                    partInfo.setIsDelete(Constant.DELETE_NO);
                 }
 
             }
@@ -299,7 +306,7 @@ public class CargoInfoService {
                         //partInfoService.findLastPartSerial(model.getCargoSerial());
                 int step = 0;
                 for (PartInfo partInfo : partInfos) {
-                    if ("".equals(partInfo.getPartCode()) || partInfo.getPartCode() == null) {
+                    if ("".equals(partInfo.getPartCode())) {
                         if (step == 0) {
                             partInfo.setPartSerial(Common.convertSerial(partSerial, step));
                         } else {
@@ -308,6 +315,9 @@ public class CargoInfoService {
                         partInfo.setPartCode(model.getCargoCode() + partInfo.getPartSerial());
                         partInfo.setIsDelete(Constant.DELETE_NO);
                         step++;
+                    }else {
+                        partInfo.setPartSerial(partInfo.getPartCode().substring(partInfo.getPartCode().length() - 4));
+                        partInfo.setIsDelete(Constant.DELETE_NO);
                     }
                 }
                 newCargoInfo.setPartInfos(partInfos);
