@@ -293,7 +293,7 @@ public class BidNoticeService {
                 }
                 row.createCell(8).setCellValue(new HSSFRichTextString(signDate));
             }
-            response.setHeader("Content-disposition", "attachment;filename=bidNotice.xls");
+            response.setHeader("Content-disposition", "attachment;fileName=bidNotice.xls");
             response.setContentType("application/vnd.ms-excel;charset=utf-8");
             response.flushBuffer();
             workbook.write(response.getOutputStream());

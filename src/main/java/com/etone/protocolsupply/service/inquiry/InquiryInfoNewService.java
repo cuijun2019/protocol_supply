@@ -258,7 +258,7 @@ public class InquiryInfoNewService {
                 row.createCell(4).setCellValue(new HSSFRichTextString(inquiryInfoNew.getProjectBudget()+""));
             }
             response.setContentType("application/octet-stream");
-            response.setHeader("Content-disposition", "attachment;filename=inquiryInfo.xls");
+            response.setHeader("Content-disposition", "attachment;fileName=inquiryInfo.xls");
             response.flushBuffer();
             workbook.write(response.getOutputStream());
         } catch (Exception e) {

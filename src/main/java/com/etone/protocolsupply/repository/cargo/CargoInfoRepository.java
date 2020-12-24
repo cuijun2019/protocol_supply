@@ -25,7 +25,7 @@ public interface CargoInfoRepository extends JpaRepository<CargoInfo, Long>, Jpa
     void updateIsDeleteBath(List<Long> cargoIds);
 
     @Query(value = "select * from cargo_info where is_delete=2 and cargo_id=?1", nativeQuery = true)
-    CargoInfo findAllByCargoId(Long cargoId);
+    CargoInfo findAllByCargoId(String cargoId);
 
     @Query(value = "select * from cargo_info c where c.is_delete=2 " +
             "and exists (select 1 from part_info_exp e where e.cargo_id=c.cargo_id  and e.project_id=?1) " +

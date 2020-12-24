@@ -175,7 +175,7 @@ public class ContractNoticeService {
                 }
                 row.createCell(8).setCellValue(new HSSFRichTextString(signDate));
             }
-            response.setHeader("Content-disposition", "attachment;filename=contractNotice.xls");
+            response.setHeader("Content-disposition", "attachment;fileName=contractNotice.xls");
             response.setContentType("application/vnd.ms-excel;charset=utf-8");
             response.flushBuffer();
             workbook.write(response.getOutputStream());

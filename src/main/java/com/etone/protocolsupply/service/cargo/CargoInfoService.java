@@ -102,7 +102,7 @@ public class CargoInfoService {
             double total = 0.00;
             for (PartInfo partInfo : partInfos) {
                 total+=partInfo.getTotal();
-                if("".equals(partInfo.getPartCode())){
+                if("".equals(partInfo.getPartCode()) ){
                     if (step == 0) {
                         partInfo.setPartSerial(Common.convertSerial(partSerial, step));
                     } else {
@@ -258,7 +258,7 @@ public class CargoInfoService {
         Date date = new Date();
         String userName = jwtUser.getUsername();
         CargoInfo model=new CargoInfo();
-        model = cargoInfoRepository.findAllByCargoId(cargoInfo.getCargoId());
+        model = cargoInfoRepository.findAllByCargoId(cargoInfo.getCargoId()+"");
 
         model.setMaintenanceMan(userName);
         model.setMaintenanceDate(date);
@@ -421,7 +421,7 @@ public class CargoInfoService {
             }
             //response.setContentType("application/octet-stream");
             response.setContentType("application/vnd.ms-excel");
-            response.setHeader("Content-disposition", "attachment;filename=cargoInfo.xls");
+            response.setHeader("Content-disposition", "attachment;fileName=cargoInfo.xls");
             response.flushBuffer();
             workbook.write(response.getOutputStream());
         } catch (Exception e) {
@@ -465,7 +465,7 @@ public class CargoInfoService {
             row.createCell(10).setCellValue(new HSSFRichTextString());
             //response.setContentType("application/octet-stream");
             response.setContentType("application/vnd.ms-excel");
-            response.setHeader("Content-disposition", "attachment;filename=cargoInfoTemplate.xls");
+            response.setHeader("Content-disposition", "attachment;fileName=cargoInfoTemplate.xls");
             response.flushBuffer();
             workbook.write(response.getOutputStream());
         } catch (Exception e) {

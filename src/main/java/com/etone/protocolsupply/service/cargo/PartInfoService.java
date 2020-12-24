@@ -19,6 +19,7 @@ import com.etone.protocolsupply.repository.cargo.PartInfoRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
+import com.google.gwt.thirdparty.guava.common.collect.Lists;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
@@ -36,10 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -206,9 +204,9 @@ public class PartInfoService {
     }
 
     //配件导出
-    public void export(HttpServletResponse response, Long cargoId, List<Long> partIds) {
+    public void export(HttpServletResponse response, String cargoId, List<Long> partIds) {
         try {
-            String[] header = {"配件编号", "设备或配件名称", "型号/规格", "产地/厂家", "主要技术参数", "单位", "数量",
+            String[] header = {"配件编号", "设备或配件名称", "型号/规格", "产地/制造商", "主要技术参数", "单位", "数量",
                     "单价", "备注"};
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet("配件列表");
@@ -251,9 +249,8 @@ public class PartInfoService {
                 row.createCell(8).setCellValue(new HSSFRichTextString(partInfo.getRemark()));
             }
 
-            //response.setContentType("application/octet-stream");
-            response.setContentType("application/vnd.ms-excel");
-            response.setHeader("Content-disposition", "attachment;filename=partInfo.xls");
+            response.setContentType("application/vnd.ms-excel;l;charset=utf-8");
+            response.setHeader("Content-Disposition", "attachment;fileName=partInfo.xls");
             response.flushBuffer();
             workbook.write(response.getOutputStream());
         } catch (Exception e) {
@@ -265,7 +262,7 @@ public class PartInfoService {
     //下载配件导入模板
     public void downloadByName(HttpServletResponse response) {
         try {
-            String[] header = { "设备或配件名称", "型号/规格", "产地/厂家", "主要技术参数",
+            String[] header = { "设备或配件名称", "型号/规格", "产地/制造商", "主要技术参数",
                     "单价", "数量", "总价", "单位","备注"};
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet("配件导入模板表");
@@ -294,8 +291,8 @@ public class PartInfoService {
                 row.createCell(8).setCellValue(new HSSFRichTextString());
 
             //response.setContentType("application/octet-stream");//mime通用类型
-            response.setContentType("application/vnd.ms-excel");
-            response.setHeader("Content-disposition", "attachment;filename=partInfoTemplate.xls");
+            response.setContentType("application/vnd.ms-excel;l;charset=utf-8");
+            response.setHeader("Content-disposition", "attachment;fileName=partInfoTemplate.xls");
             response.flushBuffer();
             workbook.write(response.getOutputStream());
         } catch (Exception e) {
@@ -347,7 +344,7 @@ public class PartInfoService {
 
             //response.setContentType("application/octet-stream");
             response.setContentType("application/vnd.ms-excel");
-            response.setHeader("Content-disposition", "attachment;filename=partInfoExp.xls");
+            response.setHeader("Content-disposition", "attachment;fileName=partInfoExp.xls");
             response.flushBuffer();
             workbook.write(response.getOutputStream());
         } catch (Exception e) {
@@ -495,7 +492,7 @@ public class PartInfoService {
     }
 
     public void batchInsertPartInfo(List<Object> maps, String cargoId) {
-        Long lcargoId = Long.parseLong(cargoId);
+
         List<PartInfo> partInfos = partInfoRepository.findAll();
         List<String> listDel = new ArrayList<>();
         List<PartInfo> listSave = new ArrayList<>();
@@ -505,7 +502,7 @@ public class PartInfoService {
             JSONObject jsonObject = new JSONObject(jsonStr);
             PartInfo partInfo = new PartInfo();
             if (partInfos.size() > 0) {
-                List<PartInfo> list = partInfoRepository.findAllBys(lcargoId);
+                List<PartInfo> list = partInfoRepository.findAllBys(cargoId);
                 if (list.size() > 0) {
                     for (PartInfo item : list) {
                         if (item.getPartName().equals(jsonObject.get("设备或配件名称").toString())) {
@@ -522,7 +519,7 @@ public class PartInfoService {
             String jsonStr = maps.get(i).toString();
             JSONObject jsonObject = new JSONObject(jsonStr);
             PartInfo partInfo = new PartInfo();
-            CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(lcargoId);
+            CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(cargoId);
             if (Strings.isBlank(partInfoRepository.findLastPartSerial(cargoInfo.getCargoSerial()))) {
                 partInfo.setPartSerial("0001");
                 num = 1;

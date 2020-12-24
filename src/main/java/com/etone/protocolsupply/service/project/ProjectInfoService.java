@@ -250,7 +250,7 @@ public class ProjectInfoService {
     public ProjectInfo update(ProjectInfoDto projectInfoDto, JwtUser jwtUser) throws GlobalServiceException {
         String username = jwtUser.getUsername();
         ProjectInfo projectInfo = this.findOne(projectInfoDto.getProjectId());
-        CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(Long.parseLong(projectInfoDto.getCargoId()));//货物
+        CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(projectInfoDto.getCargoId());//货物
         ProjectInfo model=new ProjectInfo();
         model.setProjectId(projectInfo.getProjectId());
         model.setCreator(projectInfo.getCreator());
@@ -432,7 +432,7 @@ public class ProjectInfoService {
                 row.createCell(6).setCellValue(new HSSFRichTextString(projectInfo.getAmountRmb()+""));//项目总金额RMB
                 row.createCell(7).setCellValue(new HSSFRichTextString(Constant.REVIEW_STATUS_MAP.get(projectInfo.getStatus())));//状态
             }
-            response.setHeader("Content-disposition", "attachment;filename=projectInfo.xls");
+            response.setHeader("Content-disposition", "attachment;fileName=projectInfo.xls");
             response.setContentType("application/vnd.ms-excel;charset=utf-8");
             response.flushBuffer();
             workbook.write(response.getOutputStream());

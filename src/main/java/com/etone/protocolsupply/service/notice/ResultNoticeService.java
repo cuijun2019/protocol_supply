@@ -163,7 +163,7 @@ public class ResultNoticeService {
                 }
                 row.createCell(8).setCellValue(new HSSFRichTextString(signDate));
             }
-            response.setHeader("Content-disposition", "attachment;filename=resultNotice.xls");
+            response.setHeader("Content-disposition", "attachment;fileName=resultNotice.xls");
             response.setContentType("application/vnd.ms-excel;charset=utf-8");
             response.flushBuffer();
             workbook.write(response.getOutputStream());

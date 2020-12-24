@@ -195,7 +195,6 @@ public class BusiJbpmFlowService {
                 busiJbpmFlowDto.setCompanyName_nextActor(user3.getCompany()+"("+user3.getFullname()+")");
             }
 
-
             busiJbpmFlowDto.setCompanyName(user.getCompany()+"("+user.getFullname()+")");//待办创建人显示公司+名称
             busiJbpmFlowDto.setCompanyName_parentActor(user2.getCompany()+"("+user2.getFullname()+")");
 
@@ -277,9 +276,9 @@ public class BusiJbpmFlowService {
             }
             if(readType!=null){
                 if(readType==0) {
-                    response.setHeader("Content-disposition", "attachment;filename=toBeRead.xls");
+                    response.setHeader("Content-disposition", "attachment;fileName=toBeRead.xls");
                 }else if(readType==1) {
-                    response.setHeader("Content-disposition", "attachment;filename=alreadyRead.xls");
+                    response.setHeader("Content-disposition", "attachment;fileName=alreadyRead.xls");
                 }
             }
             response.setContentType("application/vnd.ms-excel;charset=utf-8");

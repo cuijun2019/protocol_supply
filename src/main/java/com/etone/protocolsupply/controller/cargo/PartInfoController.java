@@ -163,68 +163,23 @@ public class PartInfoController extends GenericController {
     /**
      * 配件导出
      *
-     * @param partInfoDto
+     * @param cargoId
      * @param response
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/export",
+    @RequestMapping(value = "/export/{cargoId}",
             method = RequestMethod.POST,
             consumes = {"application/json"},
             produces = {"application/json"})
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseValue exportPart(
-                                    @RequestBody PartInfoDto partInfoDto,
+    public void exportPart(@PathVariable("cargoId") String cargoId,
+                                    @RequestBody(required = false) List<Long> partIds,
                                     @Context HttpServletResponse response) {
-        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        partInfoService.export(response, Long.parseLong(partInfoDto.getCargoId()),partInfoDto.getPartIds());
-        return responseBuilder.build();
+        partInfoService.export(response, cargoId,partIds);
+
     }
 
-    /**
-     * 下载配件导入模板
-     *
-     */
-//    @ResponseBody
-//    @RequestMapping(value = "/downloadTemplate")
-//    public void downloadExcel(HttpServletResponse res) {
-//        FileInputStream inputStream = null;
-//        ServletOutputStream out = null;
-//        String fileName = "partInfoTemplate.xls";
-//        try {
-//            res.setContentType("multipart/form-data");
-//            res.setCharacterEncoding("UTF-8");
-//            String filePath = getClass().getResource("/template/" + fileName).getPath();//文件在项目中的存放路径
-//            res.setHeader("Content-Disposition", "attachment;filename=" + fileName + ";filename*=utf-8''"
-//                    + URLEncoder.encode(fileName, "utf-8"));
-//            inputStream = new FileInputStream(filePath);
-//            out = res.getOutputStream();
-//            int b;
-//            byte[] buffer = new byte[1024];
-//            while ((b = inputStream.read(buffer)) != -1) {
-//                // 4.写到输出流(out)中
-//                out.write(buffer, 0, b);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (inputStream != null) {
-//                try {
-//                    inputStream.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            if (out != null) {
-//                try {
-//                    out.flush();
-//                    out.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//    }
+
     @ResponseBody
     @RequestMapping(
             value = "/downloadTemplate",

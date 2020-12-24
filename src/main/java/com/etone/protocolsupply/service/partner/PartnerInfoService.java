@@ -242,7 +242,7 @@ public class PartnerInfoService {
                 }
                 row.createCell(20).setCellValue(new HSSFRichTextString(authDate));
             }
-            response.setHeader("Content-disposition", "attachment;filename=supplierInfo.xls");
+            response.setHeader("Content-disposition", "attachment;fileName=supplierInfo.xls");
             response.setContentType("application/vnd.ms-excel;charset=utf-8");
             response.flushBuffer();
             workbook.write(response.getOutputStream());

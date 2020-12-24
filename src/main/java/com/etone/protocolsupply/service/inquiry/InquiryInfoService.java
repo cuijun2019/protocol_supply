@@ -233,7 +233,7 @@ public class InquiryInfoService {
                 row.createCell(8).setCellValue(new HSSFRichTextString(inquiryInfo.getRemark()));
             }
             response.setContentType("application/octet-stream");
-            response.setHeader("Content-disposition", "attachment;filename=inquiryInfo.xls");
+            response.setHeader("Content-disposition", "attachment;fileName=inquiryInfo.xls");
             response.flushBuffer();
             workbook.write(response.getOutputStream());
         } catch (Exception e) {
