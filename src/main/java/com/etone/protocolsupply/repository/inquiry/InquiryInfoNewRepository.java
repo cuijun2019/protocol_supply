@@ -36,9 +36,13 @@ public interface InquiryInfoNewRepository extends JpaRepository<InquiryInfoNew, 
             "order by create_date desc ", nativeQuery = true)
     List<InquiryInfoNew> findAllListWithCreator(String isDelete,String inquiryCode,String cargoName,Integer status,String actor);
 
+//    @Transactional(rollbackFor = Exception.class)
+//    @Query(value = "select max(i.inquiry_code)from inquiry_info_new i where i.is_delete=2 and i.cargo_id=?1  limit 1", nativeQuery = true)
+//    String findMaxOne(String cargoId);
+
     @Transactional(rollbackFor = Exception.class)
-    @Query(value = "select max(i.inquiry_code)from inquiry_info_new i where i.is_delete=2 and i.cargo_id=?1  limit 1", nativeQuery = true)
-    String findMaxOne(String cargoId);
+    @Query(value = "select max(i.inquiry_code)from inquiry_info_new i where i.is_delete=2  limit 1", nativeQuery = true)
+    String findMaxOne();
 
     @Transactional(rollbackFor = Exception.class)
     @Query(value = "select * from inquiry_info_new where is_delete=2 and inquiry_id=?1", nativeQuery = true)

@@ -66,7 +66,8 @@ public class InquiryInfoNewService {
         String userName = jwtUser.getUsername();
         InquiryInfoNew inquiryInfoNew = new InquiryInfoNew();
         BeanUtils.copyProperties(inquiryInfoNewDto, inquiryInfoNew);
-        String maxOneCode = inquiryInfoNewRepository.findMaxOne(inquiryInfoNew.getCargoInfo().getCargoId().toString());
+//        String maxOneCode = inquiryInfoNewRepository.findMaxOne(inquiryInfoNew.getCargoInfo().getCargoId().toString());
+        String maxOneCode = inquiryInfoNewRepository.findMaxOne();
         if (maxOneCode == null) {
             inquiryInfoNew.setInquiryCode("XJD-" + Common.getYYYYMMDDDate(date) + "-001");
         } else {
