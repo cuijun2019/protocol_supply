@@ -5,6 +5,7 @@ import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.part.PartCollectionDto;
 import com.etone.protocolsupply.model.dto.part.PartInfoDto;
 import com.etone.protocolsupply.model.entity.Attachment;
+import com.etone.protocolsupply.model.entity.cargo.BrandItem;
 import com.etone.protocolsupply.model.entity.cargo.PartInfo;
 import com.etone.protocolsupply.service.AttachmentService;
 import com.etone.protocolsupply.service.cargo.CargoInfoService;
@@ -76,6 +77,28 @@ public class PartInfoController extends GenericController {
     @RequestMapping(method = RequestMethod.GET,
             consumes = {"application/json"},
             produces = {"application/json"})
+//    public ResponseValue getPartInfos(@Validated
+//                                      @RequestParam(value = "isDelete", required = false) String isDelete,
+//                                      @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
+//                                      @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+//                                      @RequestParam(value = "cargoId", required = false) String cargoId,
+//                                      @RequestParam(value = "cargoName", required = false) String cargoName,
+//                                      @RequestParam(value = "cName", required = false) String cName,
+//                                      @RequestParam(value = "actor", required = false) String actor,
+//                                      HttpServletRequest request) {
+//        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+//        Sort sort = new Sort(Sort.Direction.DESC, "partId");
+////        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
+//        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
+//        Page<PartInfo> page = partInfoService.findPartInfos(cargoId, isDelete,cargoName,cName,actor, pageable);
+//        PartCollectionDto partCollectionDto = partInfoService.to(page, request);
+//        for (PartInfoDto partInfoDto : partCollectionDto.getPartInfoDtos()) {
+//            partInfoDto.getCargoInfo().setPartInfos(null);
+//            partInfoDto.setCargoInfo(null);
+//        }
+//        responseBuilder.data(partCollectionDto);
+//        return responseBuilder.build();
+//    }
     public ResponseValue getPartInfos(@Validated
                                       @RequestParam(value = "isDelete", required = false) String isDelete,
                                       @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
@@ -87,10 +110,8 @@ public class PartInfoController extends GenericController {
                                       HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort = new Sort(Sort.Direction.DESC, "partId");
-//        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Pageable pageable = PageRequest.of(currentPage - 1, 10000, sort);
-        Page<PartInfo> page = partInfoService.findPartInfos(cargoId, isDelete,cargoName,cName,actor, pageable);
-        PartCollectionDto partCollectionDto = partInfoService.to(page, request);
+        List<PartInfo> list = partInfoService.findPartInfosList(cargoId, isDelete,cargoName,cName,actor);
+        PartCollectionDto partCollectionDto = partInfoService.toList(list, request);
         for (PartInfoDto partInfoDto : partCollectionDto.getPartInfoDtos()) {
             partInfoDto.getCargoInfo().setPartInfos(null);
             partInfoDto.setCargoInfo(null);
@@ -98,6 +119,8 @@ public class PartInfoController extends GenericController {
         responseBuilder.data(partCollectionDto);
         return responseBuilder.build();
     }
+
+
 
     /**
      * 修改配件

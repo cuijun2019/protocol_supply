@@ -116,6 +116,10 @@ public class PartInfoService {
         return Common.listConvertToPage(partInfoRepository.findAll(cargoId, isDelete,cargoName,cName,actor), pageable);
     }
 
+    public List<PartInfo> findPartInfosList(String cargoId, String isDelete,String cargoName, String cName,String actor ) {
+        return partInfoRepository.findAll(cargoId, isDelete,cargoName,cName,actor);
+    }
+
     //货物项目-配件列表
     public Page<PartInfoExp> findPartInfoExps(String projectId, String isDelete, Pageable pageable) {
         return Common.listConvertToPage(partInfoExpRepository.findAll(projectId, isDelete), pageable);
@@ -126,6 +130,22 @@ public class PartInfoService {
         pagingMapper.storeMappedInstanceBefore(source, partCollectionDto, request);
         PartInfoDto partInfoDto;
         for (PartInfo partInfo : source) {
+            partInfoDto = new PartInfoDto();
+            BeanUtils.copyProperties(partInfo, partInfoDto);
+            partInfoDto.setCargoId(partInfo.getCargoInfo().getCargoId().toString());//货物id
+            partInfoDto.setCargoName(partInfo.getCargoInfo().getCargoName());//货物名称
+            partInfoDto.setCurrency(partInfo.getCargoInfo().getCurrency());//币种
+            partInfoDto.setGuaranteeRate(partInfo.getCargoInfo().getGuaranteeRate());//维保率
+            partCollectionDto.add(partInfoDto);
+        }
+
+        return partCollectionDto;
+    }
+
+    public PartCollectionDto toList(List<PartInfo> list, HttpServletRequest request) {
+        PartCollectionDto partCollectionDto = new PartCollectionDto();
+        PartInfoDto partInfoDto;
+        for (PartInfo partInfo : list) {
             partInfoDto = new PartInfoDto();
             BeanUtils.copyProperties(partInfo, partInfoDto);
             partInfoDto.setCargoId(partInfo.getCargoInfo().getCargoId().toString());//货物id
