@@ -41,7 +41,7 @@ public interface InquiryInfoNewRepository extends JpaRepository<InquiryInfoNew, 
 //    String findMaxOne(String cargoId);
 
     @Transactional(rollbackFor = Exception.class)
-    @Query(value = "select max(i.inquiry_code)from inquiry_info_new i where i.is_delete=2  limit 1", nativeQuery = true)
+    @Query(value = "select max(i.inquiry_code)from inquiry_info_new i where i.is_delete=2 and create_date>=CURRENT_DATE limit 1", nativeQuery = true)
     String findMaxOne();
 
     @Transactional(rollbackFor = Exception.class)
