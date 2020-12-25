@@ -186,6 +186,7 @@ public class PartInfoService {
         try {
             //文件读取并插入数据库
             List list = readPartInfoExcelData(attachment.getPath());
+            System.out.println("wenjian list ====="+list);
             if (null == list || list.size() == 0) {
                 //return StringUtil.getJsonString(true, 1, "导入数据为空!");
             }
@@ -207,7 +208,7 @@ public class PartInfoService {
     public void export(HttpServletResponse response, String cargoId, List<Long> partIds) {
         try {
             String[] header = {"配件编号", "设备或配件名称", "型号/规格", "产地/制造商", "主要技术参数", "单位", "数量",
-                    "单价", "备注"};
+                    "单价","总价", "备注"};
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet("配件列表");
             sheet.setDefaultColumnWidth(10);
@@ -245,8 +246,8 @@ public class PartInfoService {
                 row.createCell(5).setCellValue(new HSSFRichTextString(partInfo.getUnit()));
                 row.createCell(6).setCellValue(new HSSFRichTextString(partInfo.getQuantity()));
                 row.createCell(7).setCellValue(new HSSFRichTextString(partInfo.getPrice()+""));
-                //row.createCell(8).setCellValue(new HSSFRichTextString(partInfo.getTotal()+""));
-                row.createCell(8).setCellValue(new HSSFRichTextString(partInfo.getRemark()));
+                row.createCell(8).setCellValue(new HSSFRichTextString(partInfo.getTotal()+""));
+                row.createCell(9).setCellValue(new HSSFRichTextString(partInfo.getRemark()));
             }
 
             response.setContentType("application/vnd.ms-excel;l;charset=utf-8");
@@ -262,11 +263,11 @@ public class PartInfoService {
     //下载配件导入模板
     public void downloadByName(HttpServletResponse response) {
         try {
-            String[] header = { "设备或配件名称", "型号/规格", "产地/制造商", "主要技术参数",
-                    "单价", "数量", "总价", "单位","备注"};
+            String[] header = { "设备或配件名称", "型号/规格", "产地/制造商", "主要技术参数", "单位",
+                    "单价", "数量", "总价","备注"};
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet("配件导入模板表");
-            sheet.setDefaultColumnWidth(10);
+            sheet.setDefaultColumnWidth(11);
             //        创建标题的显示样式
             HSSFCellStyle headerStyle = workbook.createCellStyle();
             headerStyle.setFillForegroundColor(IndexedColors.YELLOW.index);
@@ -291,7 +292,7 @@ public class PartInfoService {
                 row.createCell(8).setCellValue(new HSSFRichTextString());
 
             //response.setContentType("application/octet-stream");//mime通用类型
-            response.setContentType("application/vnd.ms-excel;l;charset=utf-8");
+            response.setContentType("application/vnd.ms-excel");
             response.setHeader("Content-disposition", "attachment;fileName=partInfoTemplate.xls");
             response.flushBuffer();
             workbook.write(response.getOutputStream());
@@ -305,7 +306,7 @@ public class PartInfoService {
     public void exportExp(HttpServletResponse response, List<Long> partIds) {
         try {
             String[] header = {"货物名称", "配件序号", "配件编号", "配件/设备名称", "型号/规格", "产地", "主要技术参数",
-                    "单位", "数量", "备注"};
+                    "单位", "数量","总价", "备注"};
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet("项目货物列表");
             sheet.setDefaultColumnWidth(10);
@@ -339,7 +340,8 @@ public class PartInfoService {
                 row.createCell(6).setCellValue(new HSSFRichTextString(partInfoExp.getTechParams()));
                 row.createCell(7).setCellValue(new HSSFRichTextString(partInfoExp.getUnit()));
                 row.createCell(8).setCellValue(new HSSFRichTextString(partInfoExp.getQuantity()));
-                row.createCell(9).setCellValue(new HSSFRichTextString(partInfoExp.getRemark()));
+                row.createCell(9).setCellValue(new HSSFRichTextString(partInfoExp.getTotal()+""));
+                row.createCell(10).setCellValue(new HSSFRichTextString(partInfoExp.getRemark()));
             }
 
             //response.setContentType("application/octet-stream");
@@ -450,7 +452,7 @@ public class PartInfoService {
             // 判断cell类型
             switch (cell.getCellType()) {
                 case Cell.CELL_TYPE_NUMERIC: {
-                    cellValue = String.valueOf((long) cell.getNumericCellValue());
+                    cellValue = cell.getNumericCellValue()+"";
                     break;
                 }
                 case Cell.CELL_TYPE_FORMULA: {
@@ -515,6 +517,7 @@ public class PartInfoService {
         if (listDel.size() > 0) {
             partInfoRepository.deleteAll(listDel);
         }
+        System.out.println("zhixingdao-----读取字段名称-------------");
         for (int i = 0; i < maps.size(); i++) {
             String jsonStr = maps.get(i).toString();
             JSONObject jsonObject = new JSONObject(jsonStr);
@@ -531,12 +534,13 @@ public class PartInfoService {
             partInfo.setPartCode(cargoInfo.getCargoCode() + partInfo.getPartSerial());
             partInfo.setPartName(jsonObject.get("设备或配件名称").toString());
             partInfo.setStandards(jsonObject.get("型号/规格").toString());
-            partInfo.setManufactor(jsonObject.get("产地/厂家").toString());
+            partInfo.setManufactor(jsonObject.get("产地/制造商").toString());
             partInfo.setTechParams(jsonObject.get("主要技术参数").toString());
             partInfo.setUnit(jsonObject.get("单位").toString());
             partInfo.setQuantity(jsonObject.get("数量").toString());
             partInfo.setPrice(Double.valueOf("".equals(jsonObject.get("单价").toString())?"0.00":jsonObject.get("单价").toString()));
-            partInfo.setTotal(Double.valueOf("".equals(jsonObject.get("总价").toString())?"0.00":jsonObject.get("总价").toString()));
+            Double Dtotal=Double.parseDouble(jsonObject.get("单价").toString())*Double.parseDouble(jsonObject.get("数量").toString());
+            partInfo.setTotal(Dtotal);
             partInfo.setRemark(jsonObject.get("备注").toString());
             partInfo.setIsDelete(2);
             partInfo.setCargoInfo(cargoInfo);

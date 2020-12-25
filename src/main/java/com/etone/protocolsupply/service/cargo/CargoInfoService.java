@@ -112,10 +112,12 @@ public class CargoInfoService {
                     partInfo.setIsDelete(Constant.DELETE_NO);
                     step++;
                 }else {
+
                     partInfo.setPartSerial(partInfo.getPartCode().substring(partInfo.getPartCode().length() - 4));
                     partInfo.setIsDelete(Constant.DELETE_NO);
                 }
-
+                Double Dprice= partInfo.getPrice()*Double.parseDouble(partInfo.getQuantity());//货物总价=单价*数量
+                partInfo.setTotal(Dprice);
             }
             cargoInfo.setReprice(total);//货物的参考价格
         }
@@ -214,32 +216,32 @@ public class CargoInfoService {
     public CargoInfo edit(CargoInfo cargoInfo, JwtUser jwtUser) throws GlobalServiceException {
         Date date = new Date();
         String userName = jwtUser.getUsername();
-        partInfoRepository.deleteByCargoId(cargoInfo.getCargoId());
         //cargoInfo.setManufactor(userName)
         cargoInfo.setMaintenanceMan(userName);
         cargoInfo.setMaintenanceDate(date);
         Set<PartInfo> partInfos =cargoInfo.getPartInfos();
-        if (partInfos != null && !partInfos.isEmpty()) {
-           String partSerial= partInfoService.findLastPartSerial(cargoInfo.getCargoSerial());
-            int step = 0;
-            for (PartInfo partInfo : partInfos) {
-                if("".equals(partInfo.getPartCode())){
-                    if (step == 0) {
-                        partInfo.setPartSerial(Common.convertSerial(partSerial, step));
-                    } else {
-                        partInfo.setPartSerial(Common.convertSerial(partSerial, step));
+        partInfoRepository.deleteByCargoId(cargoInfo.getCargoId());
+            if (partInfos != null && !partInfos.isEmpty() ) {
+                String partSerial= partInfoService.findLastPartSerial(cargoInfo.getCargoSerial());
+                int step = 0;
+                for (PartInfo partInfo : partInfos) {
+                    if("".equals(partInfo.getPartCode())){
+                        if (step == 0) {
+                            partInfo.setPartSerial(Common.convertSerial(partSerial, step));
+                        } else {
+                            partInfo.setPartSerial(Common.convertSerial(partSerial, step));
+                        }
+                        partInfo.setPartCode(cargoInfo.getCargoCode() + partInfo.getPartSerial());
+                        partInfo.setIsDelete(Constant.DELETE_NO);
+                        step++;
+                    }else {
+                        partInfo.setPartSerial(partInfo.getPartCode().substring(partInfo.getPartCode().length() - 4));
+                        partInfo.setIsDelete(Constant.DELETE_NO);
                     }
-                    partInfo.setPartCode(cargoInfo.getCargoCode() + partInfo.getPartSerial());
-                    partInfo.setIsDelete(Constant.DELETE_NO);
-                    step++;
-                }else {
-                    partInfo.setPartSerial(partInfo.getPartCode().substring(partInfo.getPartCode().length() - 4));
-                    partInfo.setIsDelete(Constant.DELETE_NO);
+                    Double Dprice= partInfo.getPrice()*Double.parseDouble(partInfo.getQuantity());//货物总价=单价*数量
+                    partInfo.setTotal(Dprice);
                 }
-
-            }
-            cargoInfo.setPartInfos(partInfos);
-
+                cargoInfo.setPartInfos(partInfos);
         }
         cargoInfo=cargoInfoRepository.save(cargoInfo);
         List<Long> partIds = new ArrayList<>();
