@@ -314,7 +314,7 @@ public class AgentInfoService {
         //是否有搜索条件
         List<PartnerInfoDtoUsername> partnerInfoList = new ArrayList<>();
         List<Map<String,Object>> partnerInfoListObj = new ArrayList<>();
-        if (Strings.isNotBlank(agentName)){
+        if (agentName != null && !"".equals(agentName)){
              partnerInfoListObj = partnerInfoRepository.findVerifiedSuppliersByagentName(agentName);
         }else {
              partnerInfoListObj = partnerInfoRepository.findVerifiedSuppliers();

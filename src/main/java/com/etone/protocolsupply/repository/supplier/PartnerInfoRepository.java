@@ -28,14 +28,14 @@ public interface PartnerInfoRepository extends JpaRepository<PartnerInfo, Long>,
     @Query(value = "select p.*,u.username from  partner_info p \n" +
             "inner join users u on p.partner_id=u.partner_id\n" +
             "inner join user_role ur on u.id=ur.user_id\n" +
-            "and p.auth_status=1 and ur.role_id=2 and p.company_no like %?1%",
+            "and p.auth_status=1 and ur.role_id=2 and p.sup_type=2 and p.company_no like %?1%",
             nativeQuery = true)
     List<Map<String,Object>> findVerifiedSuppliersByagentName(String agentName);
 
     @Query(value = "select p.*,u.username from  partner_info p \n" +
             "inner join users u on p.partner_id=u.partner_id\n" +
             "inner join user_role ur on u.id=ur.user_id\n" +
-            "and p.auth_status=1 and ur.role_id=2",
+            "and p.auth_status=1 and ur.role_id=2 and p.sup_type=2",
             nativeQuery = true)
     List<Map<String,Object>> findVerifiedSuppliers();
 

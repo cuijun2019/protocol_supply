@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -48,6 +49,9 @@ import java.util.*;
 
 @Transactional(rollbackFor = Exception.class)
 @Service
+@PropertySource(value = {
+        "classpath:myApplication.properties",
+}, encoding = "utf-8")
 public class ContractNoticeService {
 
     private static final Logger logger = LoggerFactory.getLogger(ContractNoticeService.class);
@@ -84,6 +88,9 @@ public class ContractNoticeService {
 
     @Value("${spring.mail.username}")
     private String host;
+
+    @Value("${email.address}")
+    private String email;
 
     public Specification<ContractNotice> getWhereClause(String projectCode, String projectSubject) {
         return (Specification<ContractNotice>) (root, criteriaQuery, criteriaBuilder) -> {
@@ -368,9 +375,7 @@ public class ContractNoticeService {
 
         message.setFrom(host);
 
-        //测试账号
-        //message.setTo("377860567@qq.com");
-        message.setTo("444714660@qq.com");
+        message.setTo(email);
 
         message.setSubject("成交通知书密码");
 
