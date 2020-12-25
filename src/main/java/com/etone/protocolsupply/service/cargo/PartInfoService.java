@@ -483,11 +483,11 @@ public class PartInfoService {
         List<String> list = new ArrayList<>();
         list.add("设备或配件名称");
         list.add("型号/规格");
-        list.add("产地/厂家");
+        list.add("产地/制造商");
         list.add("主要技术参数");
         list.add("单位");
-        list.add("数量");
         list.add("单价");
+        list.add("数量");
         list.add("总价");
         list.add("备注");
         return list;
