@@ -9,6 +9,7 @@ import com.etone.protocolsupply.model.dto.project.ProjectCollectionDto;
 import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
+import com.etone.protocolsupply.model.entity.cargo.PartInfo;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfo;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew;
 import com.etone.protocolsupply.model.entity.project.AgentInfoExp;
@@ -228,9 +229,11 @@ public class ProjectInfoService {
         ProjectInfoDto projectInfoDto;
         for (ProjectInfo projectInfo : source) {
             CargoInfo cargoInfo = cargoInfoRepository.findAllByProjectId(projectInfo.getProjectId());
+            Set<PartInfo> partInfos = new HashSet<>();
 
             InquiryInfoNew inquiryInfoNew = inquiryInfoNewRepository.findAllByInquiryId(projectInfo.getInquiryId());
-            cargoInfo.setPartInfos(null);
+
+            cargoInfo.setPartInfos(partInfos);//项目列表用不到配件列表
             projectInfoDto = new ProjectInfoDto();
             if(null!=inquiryInfoNew){
                 inquiryInfoNew.getCargoInfo().setPartInfos(null);

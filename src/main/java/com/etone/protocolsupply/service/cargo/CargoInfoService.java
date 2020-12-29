@@ -86,7 +86,7 @@ public class CargoInfoService {
         cargoInfo.setMaintenanceMan(userName);
 
         if ( cargoInfoDto.getPartnerId()!=null && !cargoInfoDto.getPartnerId().equals("")) {
-            Optional<PartnerInfo> optional = partnerInfoRepository.findById(cargoInfoDto.getPartnerId());
+//            Optional<PartnerInfo> optional = partnerInfoRepository.findById(cargoInfoDto.getPartnerId());
                 cargoInfo.setPartnerId(cargoInfoDto.getPartnerId());
         }else {
             cargoInfo.setPartnerId(null);
@@ -215,6 +215,7 @@ public class CargoInfoService {
     //货物修改edit
     public CargoInfo edit(CargoInfo cargoInfo, JwtUser jwtUser) throws GlobalServiceException {
         Date date = new Date();
+
         String userName = jwtUser.getUsername();
         //cargoInfo.setManufactor(userName)
         cargoInfo.setMaintenanceMan(userName);
@@ -224,6 +225,7 @@ public class CargoInfoService {
             if (partInfos != null && !partInfos.isEmpty() ) {
                 String partSerial= partInfoService.findLastPartSerial(cargoInfo.getCargoSerial());
                 int step = 0;
+                double total = 0.00;
                 for (PartInfo partInfo : partInfos) {
                     if("".equals(partInfo.getPartCode())){
                         if (step == 0) {
@@ -240,7 +242,9 @@ public class CargoInfoService {
                     }
                     Double Dprice= partInfo.getPrice()*Double.parseDouble(partInfo.getQuantity());//货物总价=单价*数量
                     partInfo.setTotal(Dprice);
+                    total+=partInfo.getTotal();
                 }
+                cargoInfo.setReprice(total);//货物的参考价格
                 cargoInfo.setPartInfos(partInfos);
         }
         cargoInfo=cargoInfoRepository.save(cargoInfo);
