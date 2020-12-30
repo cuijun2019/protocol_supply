@@ -45,4 +45,14 @@ public interface PartInfoExpRepository extends JpaRepository<PartInfoExp, Long>,
     @Modifying
     @Query(value = "select * from part_info_exp  where  is_delete=2 and  cargo_id=?1  ", nativeQuery = true)
     List<PartInfoExp> selectCountByCargoId(Long cargoId);
+
+    @Transactional(rollbackFor = Exception.class)
+    @Modifying
+    @Query(value = "insert into  " +
+            "part_info_exp " +
+            "(is_delete, manufactor, part_code,part_name,part_serial,price,quantity,remark,standards,tech_params,total,unit,project_id,cargo_id)" +
+            " values (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14)", nativeQuery = true)
+    void savePartInfoExp(Integer Isdelete,String manufactor,String partCode,String partName,String partSerial,Double price
+            ,String quantity,String remark,String standards,String techParams,Double total,String unit
+            ,Long project_id,Long cargo_id);
 }

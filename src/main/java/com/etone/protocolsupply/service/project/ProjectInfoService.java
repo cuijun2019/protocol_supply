@@ -77,10 +77,12 @@ public class ProjectInfoService {
         ProjectInfo projectInfo = new ProjectInfo();
         BeanUtils.copyProperties(projectInfoDto, projectInfo);
         String maxOne = projectInfoRepository.findMaxOne();
-        if (maxOne == null) {
+        ProjectInfo projectInfo1 = projectInfoRepository.findAllByProjectId(Long.parseLong(maxOne));
+        String sqlDate=projectInfo1.getProjectCode().substring(5,13);
+        if (Integer.parseInt(sqlDate)<Integer.parseInt(Common.getYYYYMMDDDate(date))) {
             projectInfo.setProjectCode("SCUT-" + Common.getYYYYMMDDDate(date) + "-XY001");
         } else {
-            ProjectInfo projectInfo1 = projectInfoRepository.findAllByProjectId(Long.parseLong(maxOne));
+//            ProjectInfo projectInfo1 = projectInfoRepository.findAllByProjectId(Long.parseLong(maxOne));
             projectInfo.setProjectCode("SCUT-" + Common.getYYYYMMDDDate(date) + "-XY" + Common.convertSerialProject(projectInfo1.getProjectCode().substring(16), 1));
         }
         projectInfo.setIsDelete(Constant.DELETE_NO);
@@ -125,22 +127,37 @@ public class ProjectInfoService {
         if (optional.isPresent()) {
             projectInfoDto.setCargoInfo(optional.get());
         }
+
+        projectInfoRepository.save(projectInfo);
+//        List<Long> partIds = new ArrayList<>();
+//        if (partInfoExps.size() > 0) {
+//            for (PartInfoExp partInfoExp : projectInfoDto.getPartInfoExps()) {
+//                partIds.add(partInfoExp.getPartId());
+//            }
+//            partInfoExpRepository.setProjectId(projectInfo.getProjectId(), partIds);
+//        }
         //配件
         Set<PartInfoExp> partInfoExps = projectInfoDto.getPartInfoExps();
         if (partInfoExps != null && !partInfoExps.isEmpty()) {
             for (PartInfoExp partInfoExp : partInfoExps) {
                 partInfoExp.setIsDelete(Constant.DELETE_NO);
                 partInfoExp.setCargoInfo(projectInfoDto.getCargoInfo());
-                partInfoExpRepository.save(partInfoExp);
+//                partInfoExpRepository.save(partInfoExp);
+                partInfoExpRepository.savePartInfoExp(partInfoExp.getIsDelete()
+                        ,partInfoExp.getManufactor()
+                        ,partInfoExp.getPartCode()
+                        ,partInfoExp.getPartName()
+                        ,partInfoExp.getPartSerial()
+                        ,partInfoExp.getPrice()
+                        ,partInfoExp.getQuantity()
+                        ,partInfoExp.getRemark()==null?"":partInfoExp.getRemark()
+                        ,partInfoExp.getStandards()
+                        ,partInfoExp.getTechParams()
+                        ,partInfoExp.getTotal()
+                        ,partInfoExp.getUnit()
+                        ,projectInfo.getProjectId()
+                        ,partInfoExp.getCargoInfo().getCargoId());
             }
-        }
-        projectInfoRepository.save(projectInfo);
-        List<Long> partIds = new ArrayList<>();
-        if (partInfoExps.size() > 0) {
-            for (PartInfoExp partInfoExp : projectInfoDto.getPartInfoExps()) {
-                partIds.add(partInfoExp.getPartId());
-            }
-            partInfoExpRepository.setProjectId(projectInfo.getProjectId(), partIds);
         }
         //代理商list
         AgentInfoExp agentInfoExp = projectInfoDto.getAgentInfoExp();
@@ -229,11 +246,8 @@ public class ProjectInfoService {
         ProjectInfoDto projectInfoDto;
         for (ProjectInfo projectInfo : source) {
             CargoInfo cargoInfo = cargoInfoRepository.findAllByProjectId(projectInfo.getProjectId());
-            Set<PartInfo> partInfos = new HashSet<>();
-
             InquiryInfoNew inquiryInfoNew = inquiryInfoNewRepository.findAllByInquiryId(projectInfo.getInquiryId());
-
-            cargoInfo.setPartInfos(partInfos);//项目列表用不到配件列表
+            cargoInfo.setPartInfos(null);//项目列表用不到配件列表
             projectInfoDto = new ProjectInfoDto();
             if(null!=inquiryInfoNew){
                 inquiryInfoNew.getCargoInfo().setPartInfos(null);
@@ -325,7 +339,21 @@ public class ProjectInfoService {
                 partInfoExp.setIsDelete(Constant.DELETE_NO);
                 partInfoExp.setProjectInfo(model);
                 partInfoExp.setCargoInfo(cargoInfo);
-                partInfoExpRepository.save(partInfoExp);
+//                partInfoExpRepository.save(partInfoExp);
+                partInfoExpRepository.savePartInfoExp(partInfoExp.getIsDelete()
+                        ,partInfoExp.getManufactor()
+                        ,partInfoExp.getPartCode()
+                        ,partInfoExp.getPartName()
+                        ,partInfoExp.getPartSerial()
+                        ,partInfoExp.getPrice()
+                        ,partInfoExp.getQuantity()
+                        ,partInfoExp.getRemark()==null?"":partInfoExp.getRemark()
+                        ,partInfoExp.getStandards()
+                        ,partInfoExp.getTechParams()
+                        ,partInfoExp.getTotal()
+                        ,partInfoExp.getUnit()
+                        ,model.getProjectId()
+                        ,cargoInfo.getCargoId());
             }
         }
         return model;

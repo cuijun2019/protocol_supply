@@ -130,7 +130,7 @@ public class ProjectInfoController extends GenericController {
                                       HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort = new Sort(Sort.Direction.DESC, "partId");
-        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
+        Pageable pageable = PageRequest.of(currentPage - 1, 9999, sort);
         Page<PartInfoExp> page = partInfoService.findPartInfoExps(projectId, isDelete, pageable);
         PartExpCollectionDto partInfoExpDtos = partInfoService.toExp(page, request);
         responseBuilder.data(partInfoExpDtos);
