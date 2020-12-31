@@ -78,8 +78,8 @@ public class BidNoticeController extends GenericController {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort = new Sort(Sort.Direction.DESC, "bidId");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Specification<BidNotice> specification = bidNoticeService.getWhereClause(projectCode, projectSubject,status);
-        Page<BidNotice> page = bidNoticeService.findBidNotices(specification, pageable);
+        //Specification<BidNotice> specification = bidNoticeService.getWhereClause(projectCode, projectSubject,status);
+        Page<BidNotice> page = bidNoticeService.findMyBidNotices(projectCode, projectSubject,status,this.getUser(), pageable);
         BidNoticeCollectionDto bidNoticeCollectionDto = bidNoticeService.to(page, request);
         responseBuilder.data(bidNoticeCollectionDto);
 

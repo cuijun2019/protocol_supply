@@ -5,15 +5,18 @@ import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.notice.BidNoticeCollectionDto;
 import com.etone.protocolsupply.model.dto.notice.BidNoticeDto;
 import com.etone.protocolsupply.model.entity.Attachment;
+import com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew;
 import com.etone.protocolsupply.model.entity.notice.BidNotice;
 import com.etone.protocolsupply.model.entity.project.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.model.entity.user.User;
 import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.notice.BidNoticeRepository;
+import com.etone.protocolsupply.repository.notice.ContractNoticeRepository;
 import com.etone.protocolsupply.repository.project.AgentInfoExpRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.repository.user.UserRepository;
+import com.etone.protocolsupply.service.inquiry.InquiryInfoNewService;
 import com.etone.protocolsupply.utils.*;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
@@ -69,6 +72,9 @@ public class BidNoticeService {
     @Autowired
     private AgentInfoExpRepository agentInfoExpRepository;
 
+    @Autowired
+    private InquiryInfoNewService inquiryInfoNewService;
+
     @Value("${file.upload.path.filePath}")
     protected String uploadFilePath;
 
@@ -96,8 +102,14 @@ public class BidNoticeService {
 
         try{
 
-            //查询创建人所在公司
+            //查询项目创建人(制造商)所在公司
             User creator = userRepository.findByUsername(projectInfo.getCreator());
+
+            //查询采购人所在的学院单位
+            InquiryInfoNew inquiryInfoNew = inquiryInfoNewService.findOne(projectInfo.getInquiryId());
+            String finalUser = inquiryInfoNew.getFinalUser();
+
+
             //无水印uuid图片
             String uuid = UUID.randomUUID().toString().substring(0,8);
             //加水印uuid图片
@@ -110,7 +122,7 @@ public class BidNoticeService {
             String path = uploadFilePath + Common.getYYYYMMDate(new Date());
 
             //生成成交通知书图片
-            ImageUtil.getImage(projectInfo,creator,imageType,path,path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".png",agentInfoExp.get(0).getAgentName());
+            ImageUtil.getImage(projectInfo,creator,imageType,path,path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".png",creator.getCompany(),finalUser);
 
             //图片盖章
             ImageUtil.markImageByIcon(uploadFilePath+"timg1.png",path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".png",path+"/"+imageType+"_"+sdf.format(new Date())+uuid_icon+".jpg",null,imageType);
@@ -124,6 +136,7 @@ public class BidNoticeService {
             attachment.setPath(path+"/"+imageType+"_"+sdf.format(new Date())+uuid_icon+".pdf");
             attachment.setUploadTime(new Date());
             attachment.setUploader(jwtUser.getUsername());
+            attachment.setProjectCode(projectInfo.getProjectCode());
             attachment = attachmentRepository.save(attachment);
 
             //成交通知书图片压缩并加密上传
@@ -140,13 +153,15 @@ public class BidNoticeService {
             attachmentEncrypt.setUploadTime(new Date());
             attachmentEncrypt.setUploader(jwtUser.getUsername());
             attachmentEncrypt.setPassword(password);
+            attachmentEncrypt.setIsSendEmail(0);
+            attachmentEncrypt.setProjectCode(projectInfo.getProjectCode());
             attachmentEncrypt = attachmentRepository.save(attachmentEncrypt);
 
-            //发送加密文件密码给密码负责人
+            /*//发送加密文件密码给密码负责人
             boolean sendEmail = sendEmail(imageType + "_" + sdf.format(new Date()) + uuid_icon + ".zip", password, projectInfo.getProjectCode());
             if(!sendEmail){
                 throw new RuntimeException("成交通知书的通知邮件发送失败");
-            }
+            }*/
 
         }catch (Exception e){
             logger.error("生成成交通知书图片发生异常",e);
@@ -185,7 +200,10 @@ public class BidNoticeService {
 
         message.setTo(email);
 
-        message.setSubject("成交通知书密码");
+        if(zipFileName.contains("采购合同")){
+            message.setSubject("采购合同密码");
+        }
+        message.setSubject("成交通知书");
 
         message.setText("项目编号:"+projectCode+"的"+zipFileName+"的密码为"+password+",请查收");
 
@@ -230,6 +248,19 @@ public class BidNoticeService {
             return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
         };
     }
+
+    public Page<BidNotice> findMyBidNotices(String projectCode, String projectSubject,String status, JwtUser user, Pageable pageable) {
+        String username = user.getUsername();
+        //判断当前用户是什么角色，如果是招标中心经办人或者招标科长或者admin则查询全部采购通知书
+        Long roleId = userRepository.findRoleIdByUsername(username);
+        if( "5".equals(roleId+"") || "6".equals(roleId+"")|| "7".equals(roleId+"")){
+            List<BidNotice> list=bidNoticeRepository.findMyBidNoticesAll(projectCode, projectSubject, status);
+            return Common.listConvertToPage(list, pageable);
+        }else {
+            return Common.listConvertToPage(bidNoticeRepository.findMyBidNotices(projectCode, projectSubject, status,username), pageable);
+        }
+    }
+
 
     public Page<BidNotice> findBidNotices(Specification<BidNotice> specification, Pageable pageable) {
         return bidNoticeRepository.findAll(specification, pageable);

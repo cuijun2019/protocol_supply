@@ -40,4 +40,17 @@ public interface BidNoticeRepository extends JpaRepository<BidNotice, Long>, Jpa
     @Query(value = "select * from bid_notice where project_id =:projectId ",
             nativeQuery = true)
     BidNotice findInfoByProjectId(@Param("projectId") String projectId);
+
+    @Query(value = "select * from bid_notice b  " +
+            " left join project_info p on p.project_id=b.project_id where p.creator=:username " +
+            " and if((:projectSubject is not null), (b.project_subject like %:projectSubject%), (1=1) " +
+            " and if((:status is not null), (b.status=:status), (1=1)) and if((:projectCode is not null), (b.project_code=:projectCode), (1=1)))",  nativeQuery = true)
+    List<BidNotice> findMyBidNotices( @Param("projectCode") String projectCode, @Param("projectSubject") String projectSubject
+            , @Param("status") String status, @Param("username") String username );
+
+    @Query(value = "select * from bid_notice where 1=1 and  if((:projectSubject is not null), (project_subject like %:projectSubject%), (1=1)) " +
+            "and if((:status is not null), (status=:status), (1=1)) and if((:projectCode is not null), (project_code=:projectCode), (1=1)) " +
+            " ",  nativeQuery = true)
+    List<BidNotice> findMyBidNoticesAll( @Param("projectCode") String projectCode, @Param("projectSubject") String projectSubject
+            , @Param("status") String status );
 }

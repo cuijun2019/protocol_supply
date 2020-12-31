@@ -80,8 +80,8 @@ public class ResultNoticeController extends GenericController {
 
         Sort sort = new Sort(Sort.Direction.DESC, "resultId");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Specification<ResultNotice> specification = resultNoticeService.getWhereClause(projectCode, projectSubject);
-        Page<ResultNotice> page = resultNoticeService.findContractNotice(specification, pageable);
+        //Specification<ResultNotice> specification = resultNoticeService.getWhereClause(projectCode, projectSubject);
+        Page<ResultNotice> page = resultNoticeService.findMyResultNotices(projectCode, projectSubject,this.getUser(), pageable);
         ResultNoticeCollectionDto resultNoticeCollectionDto = resultNoticeService.to(page, request);
         responseBuilder.data(resultNoticeCollectionDto);
 

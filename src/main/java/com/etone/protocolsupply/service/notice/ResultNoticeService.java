@@ -6,6 +6,8 @@ import com.etone.protocolsupply.model.dto.notice.ResultNoticeCollectionDto;
 import com.etone.protocolsupply.model.dto.notice.ResultNoticeDto;
 import com.etone.protocolsupply.model.dto.project.ProjectInfoDto;
 import com.etone.protocolsupply.model.entity.Attachment;
+import com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew;
+import com.etone.protocolsupply.model.entity.notice.BidNotice;
 import com.etone.protocolsupply.model.entity.notice.ResultNotice;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.model.entity.user.User;
@@ -13,6 +15,7 @@ import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.notice.ResultNoticeRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.repository.user.UserRepository;
+import com.etone.protocolsupply.service.inquiry.InquiryInfoNewService;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.ImageUtil;
 import com.etone.protocolsupply.utils.PagingMapper;
@@ -20,7 +23,6 @@ import com.etone.protocolsupply.utils.WordToPDFUtil;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -35,9 +37,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -68,6 +67,9 @@ public class ResultNoticeService {
     @Autowired
     private WordToPDFUtil wordToPDFUtil;
 
+    @Autowired
+    private InquiryInfoNewService inquiryInfoNewService;
+
 
     public Specification<ResultNotice> getWhereClause(String projectCode, String projectSubject) {
         return (Specification<ResultNotice>) (root, criteriaQuery, criteriaBuilder) -> {
@@ -83,6 +85,21 @@ public class ResultNoticeService {
             return criteriaQuery.where(predicates.toArray(pre)).getRestriction();
         };
     }
+
+    public Page<ResultNotice> findMyResultNotices(String projectCode, String projectSubject, JwtUser user, Pageable pageable) {
+
+        String username = user.getUsername();
+        //判断当前用户是什么角色，如果是招标中心经办人或者招标科长或者admin则查询全部结果通知书
+        Long roleId = userRepository.findRoleIdByUsername(username);
+        if( "5".equals(roleId+"") || "6".equals(roleId+"")|| "7".equals(roleId+"")){
+            List<ResultNotice> list=resultNoticeRepository.findMyResultNoticesAll(projectCode, projectSubject);
+            return Common.listConvertToPage(list, pageable);
+        }else {
+            return Common.listConvertToPage(resultNoticeRepository.findMyResultNotices(projectCode, projectSubject,username), pageable);
+        }
+
+    }
+
 
     public Page<ResultNotice> findContractNotice(Specification<ResultNotice> specification, Pageable pageable) {
         return resultNoticeRepository.findAll(specification, pageable);
@@ -191,6 +208,11 @@ public class ResultNoticeService {
             //查询创建人所在公司
             User creator = userRepository.findByUsername(projectInfo.getCreator());
 
+            //查询采购人所在的学院单位
+            InquiryInfoNew inquiryInfoNew = inquiryInfoNewService.findOne(projectInfo.getInquiryId());
+            String finalUser = inquiryInfoNew.getFinalUser();
+
+
             //无水印uuid图片
             String uuid = UUID.randomUUID().toString().substring(0,8);
 
@@ -204,7 +226,7 @@ public class ResultNoticeService {
             String path = uploadFilePath + Common.getYYYYMMDate(new Date());
 
             //生成采购结果通知书
-            ImageUtil.getImage(projectInfo,creator,imageType,path,path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".png","");
+            ImageUtil.getImage(projectInfo,creator,imageType,path,path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".png","", finalUser);
 
             //图片盖章
             ImageUtil.markImageByIcon(uploadFilePath+"timg1.png",path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".png",path+"/"+imageType+"_"+sdf.format(new Date())+uuid_icon+".jpg",null,imageType);
@@ -218,6 +240,7 @@ public class ResultNoticeService {
             attachment.setPath(path+"/"+imageType+"_"+sdf.format(new Date())+uuid_icon+".pdf");
             attachment.setUploadTime(new Date());
             attachment.setUploader(user.getUsername());
+            attachment.setProjectCode(projectInfo.getProjectCode());
             attachment = attachmentRepository.save(attachment);
 
         }catch (Exception e){
