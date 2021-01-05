@@ -302,9 +302,7 @@ public class ProjectInfoService {
                  projectInfoDto.getInquiryInfo().getInquiryId(),model.getCreator(),model.getProjectCode(),model.getIsDelete(),model.getQuantity(),model.getAmountRmb());
 
         //供应商
-        AgentInfoExpDto agentInfoExpDto=projectInfoDto.getAgentInfoExpDto();
-        AgentInfoExp agentInfoExp=new AgentInfoExp();
-        BeanUtils.copyProperties(agentInfoExpDto,agentInfoExp);
+        AgentInfoExp agentInfoExp=projectInfoDto.getAgentInfoExp();
         List<AgentInfoExp> list=agentInfoExpRepository.findByProjectId(projectInfoDto.getProjectId());
         if(list.get(0).getAgentId().equals(agentInfoExp.getAgentId())){
             //修改推荐代理商的id和数据库存在的推荐代理商id相等（修改推荐代理商信息）
