@@ -1,5 +1,6 @@
 package com.etone.protocolsupply.model.dto.project;
 
+import com.etone.protocolsupply.model.dto.AgentInfoExpDto;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoNewDto;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfo;
@@ -59,5 +60,7 @@ public class ProjectInfoDto extends ProjectInfo {
     private Set<BusiJbpmFlow> ProjectBusiJbpmFlows;
 
     private Set<InquiryInfoNewDto> inquiryInfoNewDto;
+
+    private AgentInfoExpDto agentInfoExpDto;
 
 }

@@ -122,7 +122,7 @@ public class BidNoticeService {
             String path = uploadFilePath + Common.getYYYYMMDate(new Date());
 
             //生成成交通知书图片
-            ImageUtil.getImage(projectInfo,creator,imageType,path,path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".png",creator.getCompany(),finalUser);
+            ImageUtil.getImage(projectInfo,creator,imageType,path,path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".png",agentInfoExp.get(0).getAgentName());
 
             //图片盖章
             ImageUtil.markImageByIcon(uploadFilePath+"timg1.png",path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".png",path+"/"+imageType+"_"+sdf.format(new Date())+uuid_icon+".jpg",null,imageType);
@@ -136,7 +136,6 @@ public class BidNoticeService {
             attachment.setPath(path+"/"+imageType+"_"+sdf.format(new Date())+uuid_icon+".pdf");
             attachment.setUploadTime(new Date());
             attachment.setUploader(jwtUser.getUsername());
-            attachment.setProjectCode(projectInfo.getProjectCode());
             attachment = attachmentRepository.save(attachment);
 
             //成交通知书图片压缩并加密上传
@@ -153,8 +152,6 @@ public class BidNoticeService {
             attachmentEncrypt.setUploadTime(new Date());
             attachmentEncrypt.setUploader(jwtUser.getUsername());
             attachmentEncrypt.setPassword(password);
-            attachmentEncrypt.setIsSendEmail(0);
-            attachmentEncrypt.setProjectCode(projectInfo.getProjectCode());
             attachmentEncrypt = attachmentRepository.save(attachmentEncrypt);
 
             /*//发送加密文件密码给密码负责人
@@ -256,8 +253,11 @@ public class BidNoticeService {
         if( "5".equals(roleId+"") || "6".equals(roleId+"")|| "7".equals(roleId+"")){
             List<BidNotice> list=bidNoticeRepository.findMyBidNoticesAll(projectCode, projectSubject, status);
             return Common.listConvertToPage(list, pageable);
-        }else {
-            return Common.listConvertToPage(bidNoticeRepository.findMyBidNotices(projectCode, projectSubject, status,username), pageable);
+        }else if("2".equals(roleId+"")){
+            //代理商登录
+            return Common.listConvertToPage(bidNoticeRepository.findMyBidNoticesWithA(projectCode, projectSubject, status,username), pageable);
+        } else {
+            return Common.listConvertToPage(bidNoticeRepository.findMyBidNoticesWithP(projectCode, projectSubject, status,username), pageable);
         }
     }
 

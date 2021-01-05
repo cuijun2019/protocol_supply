@@ -189,6 +189,8 @@ public class AgentInfoService {
         for (AgentInfo agentInfo : source) {
             agentInfoDto = new AgentInfoDto();
             BeanUtils.copyProperties(agentInfo, agentInfoDto);
+            User user= userRepository.findByPartnerId(agentInfo.getPartnerId());
+            agentInfoDto.setAgentName(user.getCompany()==null?"":user.getCompany()+"("+user.getUsername()+")");
             agentCollectionDto.add(agentInfoDto);
         }
         return agentCollectionDto;
@@ -201,6 +203,8 @@ public class AgentInfoService {
         agentInfoMs.setAgentId(user.getId());
         agentInfoMs.setAgentName(user.getUsername());
         agentInfoMs.setAgentPoint("0%");
+        agentInfoMs.setCompanyNo(user.getCompany()+"("+user.getUsername()+")");//默认第一个供应商是自己
+
         agentCollectionDto.add(agentInfoMs);
         pagingMapper.storeMappedInstanceBefore(source, agentCollectionDto, request);
         AgentInfoDto agentInfoDto;
@@ -208,6 +212,13 @@ public class AgentInfoService {
             List<AgentInfoExp> agentInfoExp=agentInfoExpRepository.findByProjectId(Long.parseLong(projectId));
             for (AgentInfo agentInfo : source) {
                 agentInfoDto = new AgentInfoDto();
+                User user1= userRepository.findByPartnerId(agentInfo.getPartnerId());
+                if(actor.equals(agentInfo.getAgentName())){
+                    agentInfoDto.setCompanyNo(user.getCompany()+"("+user.getUsername()+")");
+                }else {
+                    agentInfoDto.setCompanyNo(user1.getCompany()==null?"":user1.getCompany()+"("+user1.getUsername()+")");
+                }
+
                 if(agentInfoExp.get(0).getOldAgentId().equals(agentInfo.getAgentId())){
                     //如果代理商拓展表存在该代理商信息，替换原来的代理商信息，显示新建项目所推荐的代理商信息（备注字段）
                     BeanUtils.copyProperties(agentInfoExp.get(0), agentInfoDto);
@@ -221,6 +232,12 @@ public class AgentInfoService {
         }else {//新建项目
             for (AgentInfo agentInfo : source) {
                 agentInfoDto = new AgentInfoDto();
+                User user1= userRepository.findByPartnerId(agentInfo.getPartnerId());
+                if(actor.equals(agentInfo.getAgentName())){
+                    agentInfoDto.setCompanyNo(user.getCompany()+"("+user.getUsername()+")");
+                }else {
+                    agentInfoDto.setCompanyNo(user1.getCompany()==null?"":user1.getCompany()+"("+user1.getUsername()+")");
+                }
                     BeanUtils.copyProperties(agentInfo, agentInfoDto);
                     agentCollectionDto.add(agentInfoDto);
             }
@@ -324,8 +341,8 @@ public class AgentInfoService {
                 PartnerInfoDtoUsername partnerInfoDto = new PartnerInfoDtoUsername();
                 String code = partnerInfoListObj.get(i).get("username") == null ? null : partnerInfoListObj.get(i).get("username").toString();
                 String companyName = partnerInfoListObj.get(i).get("company_no") == null ? null : partnerInfoListObj.get(i).get("company_no").toString();
-                partnerInfoDto.setUsername(companyName+"("+code+")");
-                partnerInfoDto.setCompanyNo(companyName);
+                partnerInfoDto.setUsername(code);
+                partnerInfoDto.setCompanyNo(companyName+"("+code+")");
                 partnerInfoDto.setPartnerId(Long.parseLong(partnerInfoListObj.get(i).get("partner_id")+""));
                 partnerInfoList.add(partnerInfoDto);
             }

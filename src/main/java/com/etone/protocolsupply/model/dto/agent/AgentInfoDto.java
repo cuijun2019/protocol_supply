@@ -8,4 +8,5 @@ import lombok.Data;
 public class AgentInfoDto extends AgentInfo {
     private PartnerInfo partnerInfo;
     private String remark;//代理商拓展表-备注字段
+    private String companyNo;//显示公司名称
 }

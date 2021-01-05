@@ -5,4 +5,5 @@ import lombok.Data;
 
 @Data
 public class AgentInfoExpDto extends AgentInfoExp {
+    private String companyNo;//公司名称
 }

@@ -44,8 +44,19 @@ public interface BidNoticeRepository extends JpaRepository<BidNotice, Long>, Jpa
     @Query(value = "select * from bid_notice b  " +
             " left join project_info p on p.project_id=b.project_id where p.creator=:username " +
             " and if((:projectSubject is not null), (b.project_subject like %:projectSubject%), (1=1) " +
-            " and if((:status is not null), (b.status=:status), (1=1)) and if((:projectCode is not null), (b.project_code=:projectCode), (1=1)))",  nativeQuery = true)
-    List<BidNotice> findMyBidNotices( @Param("projectCode") String projectCode, @Param("projectSubject") String projectSubject
+            " and if((:status =7), (b.status in (7,8)), (1=1)) " +
+            " and if((:status !=7 and :status is not null), (b.status =:status ), (1=1)) " +
+            " and if((:projectCode is not null), (b.project_code=:projectCode), (1=1)))",  nativeQuery = true)
+    List<BidNotice> findMyBidNoticesWithP( @Param("projectCode") String projectCode, @Param("projectSubject") String projectSubject
+            , @Param("status") String status, @Param("username") String username );
+
+    @Query(value = "select * from bid_notice b  " +
+            " left join agent_info_exp a on a.project_id=b.project_id where a.agent_name=:username " +
+            " and if((:projectSubject is not null), (b.project_subject like %:projectSubject%), (1=1) " +
+            " and if((:status =7), (b.status in (7,8)), (1=1)) " +
+            " and if((:status !=7 and :status is not null), (b.status =:status ), (1=1)) " +
+            " and if((:projectCode is not null), (b.project_code=:projectCode), (1=1)))",  nativeQuery = true)
+    List<BidNotice> findMyBidNoticesWithA( @Param("projectCode") String projectCode, @Param("projectSubject") String projectSubject
             , @Param("status") String status, @Param("username") String username );
 
     @Query(value = "select * from bid_notice where 1=1 and  if((:projectSubject is not null), (project_subject like %:projectSubject%), (1=1)) " +

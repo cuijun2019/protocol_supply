@@ -2,6 +2,7 @@ package com.etone.protocolsupply.service.project;
 
 import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.exception.GlobalServiceException;
+import com.etone.protocolsupply.model.dto.AgentInfoExpDto;
 import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.cargo.CargoInfoDto;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoNewDto;
@@ -29,6 +30,7 @@ import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.formula.functions.BaseNumberUtils;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.slf4j.Logger;
@@ -78,12 +80,13 @@ public class ProjectInfoService {
         BeanUtils.copyProperties(projectInfoDto, projectInfo);
         String maxOne = projectInfoRepository.findMaxOne();
         ProjectInfo projectInfo1 = projectInfoRepository.findAllByProjectId(Long.parseLong(maxOne));
-        String sqlDate=projectInfo1.getProjectCode().substring(5,13);
-        if (Integer.parseInt(sqlDate)<Integer.parseInt(Common.getYYYYMMDDDate(date))) {
-            projectInfo.setProjectCode("SCUT-" + Common.getYYYYMMDDDate(date) + "-XY001");
+        //String sqlDate=projectInfo1.getProjectCode().substring(5,13);//取年月
+        String sqlDate=projectInfo1.getProjectCode().substring(5,9);//只取年份
+        if (Integer.parseInt(sqlDate)<Integer.parseInt(Common.getYYYYDate(date))) {
+            projectInfo.setProjectCode("SCUT-" + Common.getYYYYDate(date) + "-XY001");
         } else {
 //            ProjectInfo projectInfo1 = projectInfoRepository.findAllByProjectId(Long.parseLong(maxOne));
-            projectInfo.setProjectCode("SCUT-" + Common.getYYYYMMDDDate(date) + "-XY" + Common.convertSerialProject(projectInfo1.getProjectCode().substring(16), 1));
+            projectInfo.setProjectCode("SCUT-" + Common.getYYYYDate(date) + "-XY" + Common.convertSerialProject(projectInfo1.getProjectCode().substring(12), 1));
         }
         projectInfo.setIsDelete(Constant.DELETE_NO);
 //        User user = userRepository.findByUsername(userName);//需要修改-----
@@ -299,7 +302,9 @@ public class ProjectInfoService {
                  projectInfoDto.getInquiryInfo().getInquiryId(),model.getCreator(),model.getProjectCode(),model.getIsDelete(),model.getQuantity(),model.getAmountRmb());
 
         //供应商
-        AgentInfoExp agentInfoExp=projectInfoDto.getAgentInfoExp();
+        AgentInfoExpDto agentInfoExpDto=projectInfoDto.getAgentInfoExpDto();
+        AgentInfoExp agentInfoExp=new AgentInfoExp();
+        BeanUtils.copyProperties(agentInfoExpDto,agentInfoExp);
         List<AgentInfoExp> list=agentInfoExpRepository.findByProjectId(projectInfoDto.getProjectId());
         if(list.get(0).getAgentId().equals(agentInfoExp.getAgentId())){
             //修改推荐代理商的id和数据库存在的推荐代理商id相等（修改推荐代理商信息）
@@ -372,9 +377,16 @@ public class ProjectInfoService {
         ProjectInfo projectInfo1=projectInfoRepository.getOne(projectId);
         InquiryInfoNew inquiryInfoNew=inquiryInfoNewRepository.findAllByInquiryId(projectInfo1.getInquiryId());
         if(agentInfoExp.get(0).getAgentId() !=null){
-            projectInfoDto.setAgentInfoExp(agentInfoExp.get(0));
+            AgentInfoExp model=agentInfoExp.get(0);
+            AgentInfoExpDto agentInfoExpDto =new AgentInfoExpDto();
+            BeanUtils.copyProperties(model,agentInfoExpDto);
+            User user=userRepository.findUserInfoByUserName(agentInfoExp.get(0).getAgentName());
+            agentInfoExpDto.setCompanyNo(user.getCompany()+"("+user.getUsername()+")");//公司名称+账号
+           // projectInfoDto.setAgentInfoExp(model);
+            projectInfoDto.setAgentInfoExpDto(agentInfoExpDto);
         }else {
-            projectInfoDto.setAgentInfoExp(null);
+           // projectInfoDto.setAgentInfoExp(null);
+            projectInfoDto.setAgentInfoExpDto(null);
         }
         if(null!=inquiryInfoNew){
             inquiryInfoNew.getCargoInfo().setPartInfos(null);

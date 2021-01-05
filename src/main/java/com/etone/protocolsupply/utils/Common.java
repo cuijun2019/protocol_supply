@@ -54,7 +54,10 @@ public class Common {
 
         return attachment;
     }
-
+    public static String getYYYYDate(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy");
+        return format.format(date);
+    }
     public static String getYYYYMMDate(Date date) {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMM");
         return format.format(date);
