@@ -3,7 +3,9 @@ package com.etone.protocolsupply.utils;
 import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
 import com.etone.protocolsupply.repository.supplier.PartnerInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -12,10 +14,19 @@ import java.util.List;
 
 @Configuration      //1.主要用于标记配置类，兼备Component的效果。
 @EnableScheduling   // 2.开启定时任务
+@PropertySource(value = {
+        "classpath:myApplication.properties",
+}, encoding = "utf-8")
 public class VerifyUtil {
 
     @Autowired
     private PartnerInfoRepository partnerInfoRepository;
+
+    @Value("${email.address}")
+    private String email;
+
+    @Value("${file.upload.path.filePath}")
+    protected String uploadFilePath;
 
     //@Scheduled(cron = "0 0 * * * ?")//每小时审核
     //@Scheduled(cron = "0 */1 * * * ?")//每分钟--测试
@@ -38,5 +49,12 @@ public class VerifyUtil {
                 }
             }
         }
+    }
+
+    //@Scheduled(cron = "0 */1 * * * ?")//每分钟--测试
+    public void test(){
+
+        System.out.println(email+"********");
+        System.out.println(uploadFilePath+"*****");
     }
 }

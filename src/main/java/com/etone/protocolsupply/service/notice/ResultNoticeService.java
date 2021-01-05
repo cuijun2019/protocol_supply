@@ -13,6 +13,7 @@ import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.model.entity.user.User;
 import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.notice.ResultNoticeRepository;
+import com.etone.protocolsupply.repository.project.AgentInfoExpRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.repository.user.UserRepository;
 import com.etone.protocolsupply.service.inquiry.InquiryInfoNewService;
@@ -69,6 +70,9 @@ public class ResultNoticeService {
 
     @Autowired
     private InquiryInfoNewService inquiryInfoNewService;
+
+    @Autowired
+    private AgentInfoExpRepository agentInfoExpRepository;
 
 
     public Specification<ResultNotice> getWhereClause(String projectCode, String projectSubject) {
@@ -203,6 +207,9 @@ public class ResultNoticeService {
             projectInfo=optional.get();
             BeanUtils.copyProperties(projectInfo, projectInfoDto);
         }
+
+        //根据项目id查询代理商所在公司名称
+        String agentCompanyName = agentInfoExpRepository.findAgentCompanyName(Long.valueOf(projectId));
         try{
 
             //查询创建人所在公司
@@ -226,7 +233,7 @@ public class ResultNoticeService {
             String path = uploadFilePath + Common.getYYYYMMDate(new Date());
 
             //生成采购结果通知书
-            ImageUtil.getImage(projectInfo,creator,imageType,path,path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".png","", finalUser);
+            ImageUtil.getImage(projectInfo,agentCompanyName,imageType,path,path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".png", finalUser);
 
             //图片盖章
             ImageUtil.markImageByIcon(uploadFilePath+"timg1.png",path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".png",path+"/"+imageType+"_"+sdf.format(new Date())+uuid_icon+".jpg",null,imageType);

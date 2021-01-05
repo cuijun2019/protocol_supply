@@ -25,12 +25,12 @@ public class DevelopFilter implements Filter {
         HttpServletRequest httpServletRequest= (HttpServletRequest) request;
         System.out.println(httpServletRequest.getRequestURI()+"----");
         String ticket = httpServletRequest.getParameter("ticket");
-        System.out.println("ticket是--"+ticket);
+        //System.out.println("ticket是--"+ticket);
 
         //对比一次会话内的ticket值，防止每次都进行校验
         HttpSession session = httpServletRequest.getSession();
         String ticketSession = (String) session.getAttribute("ticket");
-        System.out.println("ticketSession是--");
+        //System.out.println("ticketSession是--");
                                                                                               //一次会话内不进行多次ticket校验
         if(ticket != null && "/api/redirectCas".equals(httpServletRequest.getRequestURI())
                 && ticket!=ticketSession){

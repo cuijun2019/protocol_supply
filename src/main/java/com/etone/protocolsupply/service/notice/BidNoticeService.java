@@ -97,8 +97,8 @@ public class BidNoticeService {
         //查询项目详情
         ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(Long.valueOf(projectId));
 
-        //根据项目id查询代理商名称
-        List<AgentInfoExp> agentInfoExp = agentInfoExpRepository.findByProjectId(Long.valueOf(projectId));
+        //根据项目id查询代理商所在公司名称
+        String agentCompanyName = agentInfoExpRepository.findAgentCompanyName(Long.valueOf(projectId));
 
         try{
 
@@ -122,7 +122,7 @@ public class BidNoticeService {
             String path = uploadFilePath + Common.getYYYYMMDate(new Date());
 
             //生成成交通知书图片
-            ImageUtil.getImage(projectInfo,creator,imageType,path,path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".png",agentInfoExp.get(0).getAgentName());
+            ImageUtil.getImage(projectInfo,agentCompanyName,imageType,path,path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".png",finalUser);
 
             //图片盖章
             ImageUtil.markImageByIcon(uploadFilePath+"timg1.png",path+"/"+imageType+"_"+sdf.format(new Date())+uuid+".png",path+"/"+imageType+"_"+sdf.format(new Date())+uuid_icon+".jpg",null,imageType);
@@ -136,6 +136,7 @@ public class BidNoticeService {
             attachment.setPath(path+"/"+imageType+"_"+sdf.format(new Date())+uuid_icon+".pdf");
             attachment.setUploadTime(new Date());
             attachment.setUploader(jwtUser.getUsername());
+            attachment.setProjectCode(projectInfo.getProjectCode());
             attachment = attachmentRepository.save(attachment);
 
             //成交通知书图片压缩并加密上传
@@ -152,6 +153,8 @@ public class BidNoticeService {
             attachmentEncrypt.setUploadTime(new Date());
             attachmentEncrypt.setUploader(jwtUser.getUsername());
             attachmentEncrypt.setPassword(password);
+            attachmentEncrypt.setIsSendEmail(0);
+            attachmentEncrypt.setProjectCode(projectInfo.getProjectCode());
             attachmentEncrypt = attachmentRepository.save(attachmentEncrypt);
 
             /*//发送加密文件密码给密码负责人

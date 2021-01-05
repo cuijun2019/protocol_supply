@@ -92,4 +92,23 @@ public class MailController extends GenericController {
         }
         return responseBuilder.build();
     }
+
+
+    /**
+     * 发送加密文件的密码
+     * @param attachmentId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/sendAttachmentPassword/{attachmentId}",
+            method = RequestMethod.GET,
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    public ResponseValue sendAttachmentPassword(@PathVariable("attachmentId") String attachmentId) {
+        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
+        mailService.sendAttachmentPassword(attachmentId);
+        responseBuilder.message("邮件发送成功");
+        return responseBuilder.build();
+    }
+
 }

@@ -38,17 +38,17 @@ public class ImageUtil {
 
 
 
-    public static void getImage(ProjectInfo projectInfo, User creator, String imageType,String path,String FileName,String agentName){
+    public static void getImage(ProjectInfo projectInfo, String agentCompanyName, String imageType, String path, String FileName, String finalUser){
 
         Map<String, String> map1 = new HashMap<String, String>();
         map1.put("项目编号", projectInfo.getProjectCode());
         map1.put("项目名称", projectInfo.getProjectSubject());
         if("采购结果通知书".equals(imageType)){
-            map1.put("成交供应商", projectInfo.getCreator());
-            map1.put("成交金额", "人民币"+projectInfo.getAmountRmb());
+            map1.put("成交供应商", agentCompanyName);
+            map1.put("成交金额", projectInfo.getCurrency()+projectInfo.getAmount());
         }else{
-            map1.put("用户单位",creator.getCompany());
-            map1.put("中标金额","人民币"+projectInfo.getAmountRmb());
+            map1.put("用户单位",finalUser);
+            map1.put("成交金额",projectInfo.getCurrency()+projectInfo.getAmount());
 
         }
 
@@ -84,28 +84,31 @@ public class ImageUtil {
         high += 320;
         graphics.setFont(new Font("宋体", Font.PLAIN, 60));
         if("采购结果通知书".equals(imageType)){
-            graphics.drawString(creator.getCompany()+"：", 250, high);   //TODO
+            graphics.drawString(finalUser+"：", 250, high);   //TODO
         }else {
-            graphics.drawString(agentName+"：", 250, high);
+            graphics.drawString(agentCompanyName+"：", 250, high);
         }
 
         //通知
         high += 150;
         graphics.setFont(new Font("宋体", Font.PLAIN, 60));
         if("采购结果通知书".equals(imageType)){
-            graphics.drawString("经项目评审委员会决定，采购结果如下：", 440, high);   //TODO
-        }else {
-            graphics.drawString("评审工作已经圆满结束，现确定贵单位为本项目", 440, high);
+            graphics.drawString("贵单位通过科研设备协议供货平台申请采购的", 420, high);   //TODO
             high += 150;
             graphics.setFont(new Font("宋体", Font.PLAIN, 60));
-            graphics.drawString("的中标供应商，中标内容如下：", 250, high);
+            graphics.drawString("项目已通过审核，采购结果如下：", 250, high);
+        }else {
+            graphics.drawString("经审核，现确定贵单位为本项目成交供应商，", 420, high);
+            high += 150;
+            graphics.setFont(new Font("宋体", Font.PLAIN, 60));
+            graphics.drawString("成交内容如下：", 250, high);
         }
 
 
         for(Map.Entry<String, String> entry : map1.entrySet()){
-            String name = entry.getKey() + "：   " + entry.getValue();
+            String name = entry.getKey() + "：" + entry.getValue();
             high += 150;
-            wigth = 440;
+            wigth = 420;
             graphics.setFont(new Font("宋体", Font.PLAIN, 60));
             graphics.drawString(name, wigth, high);
         }
@@ -132,10 +135,10 @@ public class ImageUtil {
         graphics.drawString("备注：", 200, high);
         high += 70;
         graphics.setFont(new Font("宋体", Font.PLAIN, 40));
-        graphics.drawString("1)本通知书为采购单位报账凭证;", 200, high);
-        high += 70;
-        graphics.setFont(new Font("宋体", Font.PLAIN, 40));
-        graphics.drawString("2)请尽快与成交供应商联系，商定合同事宜。", 200, high);
+        graphics.drawString("依照有关法规规定，应自本通知书发出之日起30日内签订书面合同。", 200, high);
+        //high += 70;
+        //graphics.setFont(new Font("宋体", Font.PLAIN, 40));
+        //graphics.drawString("2)请尽快与成交供应商联系，商定合同事宜。", 200, high);
 
         createImage(path,FileName, image);
 
@@ -187,7 +190,8 @@ public class ImageUtil {
                     alpha));
 
             // 表示水印图片的位置
-            int hight =(imageType=="成交通知书"?2195:1920);
+            //int hight =(imageType=="成交通知书"?2065:1920);
+            int hight =2065;
 
             g.drawImage(img, 1290, hight, null);
 

@@ -27,4 +27,8 @@ public interface AttachmentRepository extends JpaRepository<Attachment, Long>, J
     @Query(value = "SELECT * FROM attachment where attach_name=?1 order by upload_time desc limit 1 ",
             nativeQuery = true)
     Attachment findAttachmentByName(String attachName);
+
+    @Query(value = "SELECT * FROM attachment where attach_id=?1 and password is not null and is_sendemail=0 ",
+            nativeQuery = true)
+    Attachment sendAttachmentPassword(int parseInt);
 }

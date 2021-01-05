@@ -72,6 +72,7 @@ public class ContractNoticeController extends GenericController {
                                        @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
                                        @RequestParam(value = "projectCode", required = false) String projectCode,
                                        @RequestParam(value = "projectSubject", required = false) String projectSubject,
+                                         @RequestParam(value = "username", required = false) String username,
                                        HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort = new Sort(Sort.Direction.DESC, "contractId");

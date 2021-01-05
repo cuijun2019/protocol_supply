@@ -58,8 +58,21 @@ public class Attachment implements Serializable {
     private String path;
 
     /**
-     * 文件路径
+     * 加密文件密码
      */
     @Column(name = "PASSWORD", length = 255)
     private String password;
+
+
+    /**
+     * 是否发送加密文件的密码邮件  0未发送 ，1已发送
+     */
+    @Column(name = "IS_SENDEMAIL", length = 4)
+    private Integer isSendEmail;
+
+    /**
+     * 项目编号
+     */
+    @Column(name = "PROJECTCODE", length = 255)
+    private String projectCode;
 }

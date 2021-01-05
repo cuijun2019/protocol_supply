@@ -13,6 +13,7 @@ import com.etone.protocolsupply.model.entity.user.User;
 import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.repository.notice.ContractNoticeRepository;
+import com.etone.protocolsupply.repository.project.AgentInfoExpRepository;
 import com.etone.protocolsupply.repository.project.PartInfoExpRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.repository.user.UserRepository;
@@ -76,6 +77,9 @@ public class ContractNoticeService {
 
     @Autowired
     private CargoInfoRepository cargoInfoRepository;
+
+    @Autowired
+    private AgentInfoExpRepository agentInfoExpRepository;
 
     @Autowired
     private WordToPDFUtil wordToPDFUtil;
@@ -204,15 +208,15 @@ public class ContractNoticeService {
         //查询项目详情
         ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(Long.valueOf(projectId));
 
-        //查询创建人所在公司
-        User creator = userRepository.findByUsername(projectInfo.getCreator());
+        //根据项目id查询代理商所在公司名称
+        String agentCompanyName = agentInfoExpRepository.findAgentCompanyName(Long.valueOf(projectId));
 
         //根据项目id查询配件表得到货物
         List<CargoInfo> cargoInfoList = cargoInfoRepository.findByProjectId(Long.parseLong(projectId));
 
 
         HashMap<String, String> contentMap = new HashMap<>();
-        contentMap.put("${NAME}",creator.getCompany());
+        contentMap.put("${NAME}",agentCompanyName);
         contentMap.put("${GOODS}",projectInfo.getProjectSubject());
         contentMap.put("${EQUIPMENT}",cargoInfoList.get(0).getCargoName());
         contentMap.put("${AMOUNT}",projectInfo.getQuantity());
@@ -329,13 +333,15 @@ public class ContractNoticeService {
             attachmentEncrypt.setUploadTime(new Date());
             attachmentEncrypt.setUploader(user.getUsername());
             attachmentEncrypt.setPassword(password);
+            attachmentEncrypt.setIsSendEmail(0);
+            attachmentEncrypt.setProjectCode(projectInfo.getProjectCode());
             attachmentEncrypt = attachmentRepository.save(attachmentEncrypt);
 
-            //发送加密文件密码给密码负责人
+            /*//发送加密文件密码给密码负责人
             boolean sendEmail = sendEmail("采购合同_" + sdf.format(new Date()) + uuid + ".zip", password, projectInfo.getProjectCode());
             if(!sendEmail){
                 throw new RuntimeException("采购合同的通知邮件发送失败");
-            }
+            }*/
 
         }catch (Exception e){
             logger.error("生成合同时异常",e);
@@ -377,7 +383,7 @@ public class ContractNoticeService {
 
         message.setTo(email);
 
-        message.setSubject("成交通知书密码");
+        message.setSubject("采购合同密码");
 
         message.setText("项目编号:"+projectCode+"的"+zipFileName+"的密码为"+password+",请查收");
 
