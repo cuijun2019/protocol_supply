@@ -7,12 +7,10 @@ import com.etone.protocolsupply.model.dto.notice.BidNoticeDto;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew;
 import com.etone.protocolsupply.model.entity.notice.BidNotice;
-import com.etone.protocolsupply.model.entity.project.AgentInfoExp;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
 import com.etone.protocolsupply.model.entity.user.User;
 import com.etone.protocolsupply.repository.AttachmentRepository;
 import com.etone.protocolsupply.repository.notice.BidNoticeRepository;
-import com.etone.protocolsupply.repository.notice.ContractNoticeRepository;
 import com.etone.protocolsupply.repository.project.AgentInfoExpRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.repository.user.UserRepository;
@@ -223,10 +221,17 @@ public class BidNoticeService {
         BidNoticeCollectionDto bidNoticeCollectionDto = new BidNoticeCollectionDto();
         pagingMapper.storeMappedInstanceBefore(source, bidNoticeCollectionDto, request);
         BidNoticeDto bidNoticeDto;
-        for (BidNotice bidNotice : source) {
-            bidNoticeDto = new BidNoticeDto();
-            BeanUtils.copyProperties(bidNotice, bidNoticeDto);
-            bidNoticeCollectionDto.add(bidNoticeDto);
+            for (BidNotice bidNotice : source) {
+                bidNoticeDto = new BidNoticeDto();
+                BeanUtils.copyProperties(bidNotice, bidNoticeDto);
+                User user1=userRepository.findUserInfoWithAgent(bidNotice.getProjectInfo().getProjectId());
+                if(user1==null){
+                    bidNoticeDto.setSupplier("");
+                }else {
+                    bidNoticeDto.setSupplier(user1.getCompany()+"("+user1.getUsername()+")");
+                }
+
+                bidNoticeCollectionDto.add(bidNoticeDto);
         }
         return bidNoticeCollectionDto;
     }

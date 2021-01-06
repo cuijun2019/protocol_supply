@@ -1,5 +1,6 @@
 package com.etone.protocolsupply.repository.notice;
 
+import com.etone.protocolsupply.model.dto.notice.BidNoticeDto;
 import com.etone.protocolsupply.model.entity.notice.BidNotice;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,26 +43,36 @@ public interface BidNoticeRepository extends JpaRepository<BidNotice, Long>, Jpa
     BidNotice findInfoByProjectId(@Param("projectId") String projectId);
 
     @Query(value = "select * from bid_notice b  " +
-            " left join project_info p on p.project_id=b.project_id where p.creator=:username " +
+            " left join project_info p on p.project_id=b.project_id " +
+            " left join users u on  u.username= p.creator  where p.creator=:username " +
             " and if((:projectSubject is not null), (b.project_subject like %:projectSubject%), (1=1) " +
             " and if((:status =7), (b.status in (7,8)), (1=1)) " +
             " and if((:status !=7 and :status is not null), (b.status =:status ), (1=1)) " +
-            " and if((:projectCode is not null), (b.project_code=:projectCode), (1=1)))",  nativeQuery = true)
+            " and if((:projectCode is not null), (b.project_code=:projectCode), (1=1)))" +
+            "  ORDER BY b.create_date desc",  nativeQuery = true)
     List<BidNotice> findMyBidNoticesWithP( @Param("projectCode") String projectCode, @Param("projectSubject") String projectSubject
             , @Param("status") String status, @Param("username") String username );
 
     @Query(value = "select * from bid_notice b  " +
-            " left join agent_info_exp a on a.project_id=b.project_id where a.agent_name=:username " +
+            " left join agent_info_exp a on a.project_id=b.project_id " +
+            " left join users u on u.username = a.agent_name where a.agent_name=:username " +
             " and if((:projectSubject is not null), (b.project_subject like %:projectSubject%), (1=1) " +
             " and if((:status =7), (b.status in (7,8)), (1=1)) " +
             " and if((:status !=7 and :status is not null), (b.status =:status ), (1=1)) " +
-            " and if((:projectCode is not null), (b.project_code=:projectCode), (1=1)))",  nativeQuery = true)
+            " and if((:projectCode is not null), (b.project_code=:projectCode), (1=1))) " +
+            " ORDER BY b.create_date desc",  nativeQuery = true)
     List<BidNotice> findMyBidNoticesWithA( @Param("projectCode") String projectCode, @Param("projectSubject") String projectSubject
             , @Param("status") String status, @Param("username") String username );
 
-    @Query(value = "select * from bid_notice where 1=1 and  if((:projectSubject is not null), (project_subject like %:projectSubject%), (1=1)) " +
-            "and if((:status is not null), (status=:status), (1=1)) and if((:projectCode is not null), (project_code=:projectCode), (1=1)) " +
-            " ",  nativeQuery = true)
-    List<BidNotice> findMyBidNoticesAll( @Param("projectCode") String projectCode, @Param("projectSubject") String projectSubject
+    @Query(value = "select * from bid_notice b " +
+            "left join agent_info_exp a on a.project_id=b.project_id "+
+            "left join users u on u.username = a.agent_name"+
+            " where 1=1" +
+            " and if((:projectSubject is not null), (b.project_subject like %:projectSubject%), (1=1)) " +
+            " and if((:status =7), (b.status in (7,8)), (1=1)) " +
+            " and if((:status !=7 and :status is not null), (b.status =:status ), (1=1)) " +
+            "and if((:projectCode is not null), (b.project_code=:projectCode), (1=1)) " +
+            "  ORDER BY b.create_date desc ",  nativeQuery = true)
+    List<BidNotice> findMyBidNoticesAll(@Param("projectCode") String projectCode, @Param("projectSubject") String projectSubject
             , @Param("status") String status );
 }

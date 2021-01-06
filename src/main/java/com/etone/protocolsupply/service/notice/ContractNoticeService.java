@@ -2,10 +2,12 @@ package com.etone.protocolsupply.service.notice;
 
 import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.model.dto.JwtUser;
+import com.etone.protocolsupply.model.dto.notice.BidNoticeDto;
 import com.etone.protocolsupply.model.dto.notice.ContractNoticceDto;
 import com.etone.protocolsupply.model.dto.notice.ContractNoticeCollectionDto;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.cargo.CargoInfo;
+import com.etone.protocolsupply.model.entity.notice.BidNotice;
 import com.etone.protocolsupply.model.entity.notice.ContractNotice;
 import com.etone.protocolsupply.model.entity.project.PartInfoExp;
 import com.etone.protocolsupply.model.entity.project.ProjectInfo;
@@ -122,8 +124,15 @@ public class ContractNoticeService {
         for (ContractNotice contractNotice : page) {
             contractNoticceDto = new ContractNoticceDto();
             BeanUtils.copyProperties(contractNotice, contractNoticceDto);
+            User user1=userRepository.findUserInfoWithAgent(contractNotice.getProjectInfo().getProjectId());
+            if(user1==null){
+                contractNoticceDto.setSupplier("");
+            }else {
+                contractNoticceDto.setSupplier(user1.getCompany()+"("+user1.getUsername()+")");
+            }
             contractNoticeCollectionDto.add(contractNoticceDto);
         }
+
         return contractNoticeCollectionDto;
     }
 

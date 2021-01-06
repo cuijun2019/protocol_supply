@@ -20,15 +20,25 @@ public interface ContractNoticeRepository extends JpaRepository<ContractNotice, 
     List<ContractNotice> findAll(@Param("contractNoticeIds") List<Long> contractNoticeIds);
 
 
-    @Query(value = "select * from contract_notice c where if((?1 is not null), (c.project_code like %?1%), (1=1)) and if((?2 is not null), (c.project_subject like %?2%), (1=1))",
+    @Query(value = "select * from contract_notice c " +
+            "where if((?1 is not null), (c.project_code like %?1%), (1=1)) " +
+            "and if((?2 is not null), (c.project_subject like %?2%), (1=1)) order by c.create_date desc",
             nativeQuery = true)
     List<ContractNotice> findByCondition(String projectCode, String projectSubject);
 
-    @Query(value = "SELECT c.* FROM project_info p  inner join contract_notice c on p.project_code=c.project_code where p.creator=?3 and if((?1 is not null), (c.project_code like %?1%), (1=1)) and if((?2 is not null), (c.project_subject like %?2%), (1=1)) and p.is_delete=2",
+    @Query(value = "SELECT c.* FROM project_info p  " +
+            "inner join contract_notice c on p.project_code=c.project_code " +
+            "where p.creator=?3 and if((?1 is not null), (c.project_code like %?1%), (1=1)) " +
+            "and if((?2 is not null), (c.project_subject like %?2%), (1=1)) and p.is_delete=2 order by c.create_date desc",
             nativeQuery = true)
     List<ContractNotice> findBySupplierCondition(String projectCode, String projectSubject, String username);
 
-    @Query(value = "select c.* from agent_info_exp a inner join project_info p on a.project_id=p.project_id inner join contract_notice c on p.project_code=c.project_code  where agent_name=?3 and if((?1 is not null), (c.project_code like %?1%), (1=1)) and if((?2 is not null), (c.project_subject like %?2%), (1=1)) and p.is_delete=2 and a.is_delete=2",
+    @Query(value = "select c.* from agent_info_exp a " +
+            "inner join project_info p on a.project_id=p.project_id " +
+            "inner join contract_notice c on p.project_code=c.project_code  " +
+            "where agent_name=?3 and if((?1 is not null), (c.project_code like %?1%), (1=1)) " +
+            "and if((?2 is not null), (c.project_subject like %?2%), (1=1))" +
+            " and p.is_delete=2 and a.is_delete=2 order by c.create_date desc",
             nativeQuery = true)
     List<ContractNotice> findByAgentCondition(String projectCode, String projectSubject, String username);
 
