@@ -55,7 +55,8 @@ public interface PartInfoRepository extends JpaRepository<PartInfo, Long>, JpaSp
 
     @Query(value = "select * from part_info p where exists (select 1 from cargo_info c where 1=1 " +
             "and if((?5 is not null),( EXISTS ( SELECT 1 FROM busi_jbpm_flow b WHERE c.cargo_id = b.business_id " +
-            "AND b.business_type = 'cargoAudit' and if((?5 is not null),(b.parent_actor=?5),(1=1)))),(1=1)) " +
+            "AND b.business_type = 'cargoAudit' " +
+            "and if((?5 is not null ),(b.parent_actor=?5),(1=1)))),(1=1)) " +
             "and c.cargo_id=p.cargo_id " +
             "and if((?3 is not null), (c.cargo_name like %?3%), (1=1)) " +
             "and if((?4 is not null), (c.cargo_name = ?4), (1=1)) ) " +

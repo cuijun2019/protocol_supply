@@ -231,16 +231,26 @@ public class ProjectInfoService {
 
     }
 
-    public Page<ProjectInfo> findMyProjectInfos(String isDelete, String projectSubject, String projectCode,String status,String inquiryId,String actor, Pageable pageable) {
-           if(null==actor || actor.equals("admin")){
+    public Page<ProjectInfo> findMyProjectInfos(String isDelete, String projectSubject, String projectCode,String status,
+                                                String inquiryId,JwtUser actor, Pageable pageable) {
+        //判断当前用户是什么角色，如果是招标中心经办人或者招标科长或者admin则查询全部项目
+        Long roleId = userRepository.findRoleIdByUsername(actor.getUsername());
+        if( "5".equals(roleId+"") || "6".equals(roleId+"")|| "7".equals(roleId+"")){
                return Common.listConvertToPage(projectInfoRepository.findAll(isDelete, projectSubject, projectCode,status,inquiryId), pageable);
            }else {
-               return Common.listConvertToPage(projectInfoRepository.findAlltoMyProject(isDelete, projectSubject, projectCode,status,inquiryId,actor), pageable);
+               return Common.listConvertToPage(projectInfoRepository.findAll(isDelete, projectSubject, projectCode,status,inquiryId,actor.getUsername()), pageable);
            }
     }
 
-    public Page<ProjectInfo> findAllByBusiJbpmFlow(String isDelete, String businessType, String parentActor, String status, Pageable pageable) {
-        return Common.listConvertToPage(projectInfoRepository.findAllByBusiJbpmFlow(isDelete, businessType, parentActor,status), pageable);
+    public Page<ProjectInfo> findAllByBusiJbpmFlow(String isDelete, String businessType, String parentActor, String status,JwtUser user, Pageable pageable) {
+        //判断当前用户是什么角色，如果是admin则查询全部待办
+        Long roleId = userRepository.findRoleIdByUsername(user.getUsername());
+        if( "7".equals(roleId+"")){
+            return Common.listConvertToPage(projectInfoRepository.findAll(isDelete, null, null,status,null), pageable);
+        }else {
+            return Common.listConvertToPage(projectInfoRepository.findAllByBusiJbpmFlow(isDelete, businessType, parentActor,status), pageable);
+        }
+
     }
 
     public ProjectCollectionDto to(Page<ProjectInfo> source, HttpServletRequest request) {

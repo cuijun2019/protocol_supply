@@ -121,7 +121,7 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
             " and if((:readType is not null), (read_type=:readType), (1=1))  " +
             " and if((:businessId is not null), (business_id=:businessId), (1=1))  " +
             " and if((:parentActor is not null), (parent_actor=:parentActor), (1=1))  " +
-            " and if((:nextActor is not null), (next_actor=:nextActor), (1=1))  " +
+            " and if((:nextActor is not null and :nextActor!='admin' ), (next_actor=:nextActor), (1=1))  " +
             " and if((:action is not null), (action !=:action), (1=1)) order by flow_start_time desc " +
             " ", nativeQuery = true)
     List<BusiJbpmFlow> findAllList(@Param("businessType") String businessType,@Param("businessSubject") String businessSubject
@@ -141,10 +141,6 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
     List<BusiJbpmFlow> findAllListAsc(@Param("businessType") String businessType,@Param("businessSubject") String businessSubject
             ,@Param("type") Integer type,@Param("readType") Integer readType,@Param("businessId") String businessId,@Param("parentActor") String parentActor
             ,@Param("nextActor") String nextActor,@Param("action") Integer action);
-
-
-    @Query(value = "select * from busi_jbpm_flow where business_id=?1 and business_type=?2 and type=?3 and next_actor=?4 order by flow_start_time desc", nativeQuery = true)
-    BusiJbpmFlow  findsffsxjjl( String businessId,String businessType,String type,String actor);
 
     @Query(value = "select * from busi_jbpm_flow where business_id=?1 and business_type=?2 and read_type is null order by flow_start_time asc", nativeQuery = true)
     Set<BusiJbpmFlow> getSetBusiJbpmFlowList(Long businessId,String businessType);

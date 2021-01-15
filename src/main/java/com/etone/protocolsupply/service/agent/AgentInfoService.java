@@ -161,17 +161,19 @@ public class AgentInfoService {
         };
     }
 
-    public Page<AgentInfo> findAgentInfos(String agentName, String status, String isDelete, String actor, Pageable pageable, String reviewStatus) {
-            if(null==actor || actor.equals("admin")){
+    public Page<AgentInfo> findAgentInfos(String agentName, String status, String isDelete, JwtUser actor, Pageable pageable, String reviewStatus) {
+        //判断当前用户是什么角色，如果是招标中心经办人或者招标科长或者admin则查询全部代理商
+        Long roleId = userRepository.findRoleIdByUsername(actor.getUsername());
+        if( "5".equals(roleId+"") || "6".equals(roleId+"")|| "7".equals(roleId+"")){
                 return Common.listConvertToPage(agentInfoRepository.findAll(agentName, status, isDelete,reviewStatus), pageable);
             }else {
-                return Common.listConvertToPage(agentInfoRepository.findMyAgent(agentName, status, isDelete,actor,reviewStatus), pageable);
+                return Common.listConvertToPage(agentInfoRepository.findMyAgent(agentName, status, isDelete,actor.getUsername(),reviewStatus), pageable);
             }
     }
 
     public Page<AgentInfo> getAgentList( String status, String isDelete, String actor, Pageable pageable, String reviewStatus) {
-        List<AgentInfo> list=agentInfoRepository.getAgentList(status,actor, isDelete,reviewStatus);
-        return Common.listConvertToPage(list, pageable);
+        return Common.listConvertToPage(agentInfoRepository.getAgentList(status,actor, isDelete,reviewStatus), pageable);
+
     }
     public Page<AgentInfo> findAgents(Specification<AgentInfo> specification, Pageable pageable) {
         return agentInfoRepository.findAll(specification, pageable);
@@ -204,13 +206,14 @@ public class AgentInfoService {
         agentInfoMs.setAgentName(user.getUsername());
         agentInfoMs.setAgentPoint("0%");
         agentInfoMs.setCompanyNo(user.getCompany()+"("+user.getUsername()+")");//默认第一个供应商是自己
-
         agentCollectionDto.add(agentInfoMs);
         pagingMapper.storeMappedInstanceBefore(source, agentCollectionDto, request);
         AgentInfoDto agentInfoDto;
+        String type="0";
         if(null!=projectId && !"".equals(projectId)){//修改编辑项目
             List<AgentInfoExp> agentInfoExp=agentInfoExpRepository.findByProjectId(Long.parseLong(projectId));
             for (AgentInfo agentInfo : source) {
+                type="1";
                 agentInfoDto = new AgentInfoDto();
                 User user1= userRepository.findByPartnerId(agentInfo.getPartnerId());
                 if(actor.equals(agentInfo.getAgentName())){
@@ -219,16 +222,24 @@ public class AgentInfoService {
                     agentInfoDto.setCompanyNo(user1.getCompany()==null?"":user1.getCompany()+"("+user1.getUsername()+")");
                 }
 
-                if(agentInfoExp.get(0).getOldAgentId().equals(agentInfo.getAgentId())){
+                if(null==agentInfoExp.get(0).getOldAgentId() || !agentInfoExp.get(0).getOldAgentId().equals(agentInfo.getAgentId())){
+                    BeanUtils.copyProperties(agentInfo, agentInfoDto);
+                }else if(agentInfoExp.get(0).getOldAgentId().equals(agentInfo.getAgentId())){
                     //如果代理商拓展表存在该代理商信息，替换原来的代理商信息，显示新建项目所推荐的代理商信息（备注字段）
                     BeanUtils.copyProperties(agentInfoExp.get(0), agentInfoDto);
                     agentInfoDto.setRemark(agentInfoExp.get(0).getRemark());
-                    agentCollectionDto.add(agentInfoDto);
-                }else {
-                    BeanUtils.copyProperties(agentInfo, agentInfoDto);
-                    agentCollectionDto.add(agentInfoDto);
                 }
+                agentCollectionDto.add(agentInfoDto);
             }
+            if(type.equals("0")){
+                AgentInfoDto agentInfoDto1 =new AgentInfoDto();
+                User user2= userRepository.findByUsername(agentInfoExp.get(0).getAgentName());
+                BeanUtils.copyProperties(agentInfoExp.get(0), agentInfoDto1);
+                agentInfoDto1.setCompanyNo(user2.getCompany()+"("+user2.getUsername()+")");
+                agentCollectionDto.add(agentInfoDto1);
+            }
+            type="0";
+
         }else {//新建项目
             for (AgentInfo agentInfo : source) {
                 agentInfoDto = new AgentInfoDto();
@@ -277,7 +288,7 @@ public class AgentInfoService {
         agentInfoRepository.updateIsDelete(agentIds);
     }
 
-    public void export(HttpServletResponse response, String agentName, String status, String isDelete, List<Long> agentIds,String actor) {
+    public void export(HttpServletResponse response, String agentName, String status, String isDelete, List<Long> agentIds,JwtUser actor) {
         try {
             String[] header = {"代理商名称", "代理费用扣点（百分比）", "状态", "厂家授权函", "审核状态", "创建人", "创建时间"};
             HSSFWorkbook workbook = new HSSFWorkbook();
@@ -300,8 +311,8 @@ public class AgentInfoService {
             List<AgentInfo> list;
             if (agentIds != null && !agentIds.isEmpty()) {
                 list = agentInfoRepository.findAll(agentName, status, agentIds);
-            } else if(null!=actor && agentIds.isEmpty()) {
-                list = agentInfoRepository.findExpert(Constant.DELETE_NO,actor );
+            } else if(null!=actor.getUsername() && agentIds.isEmpty()) {
+                list = agentInfoRepository.findExpert(Constant.DELETE_NO,actor.getUsername() );
             }else {
                 list = agentInfoRepository.findAll();
             }

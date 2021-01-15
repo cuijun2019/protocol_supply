@@ -105,7 +105,7 @@ public class InquiryInfoNewController extends GenericController {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort = new Sort(Sort.Direction.DESC, "createDate");//按照创建时间倒序
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Page<InquiryInfoNew> page = inquiryInfoNewService.findInquiryInfoNewList(isDelete, inquiryCode,cargoName, actor,status,pageable);
+        Page<InquiryInfoNew> page = inquiryInfoNewService.findInquiryInfoNewList(isDelete, inquiryCode,cargoName, this.getUser(),status,pageable);
         InquiryInfoNewCollectionDto inquiryInfoNewCollectionDto = inquiryInfoNewService.to(page, request);
         responseBuilder.data(inquiryInfoNewCollectionDto);
         return responseBuilder.build();

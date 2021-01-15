@@ -88,7 +88,7 @@ public class BusiJbpmFlowController extends GenericController {
         sort = new Sort(Sort.Direction.ASC, "flowStartTime");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
         Page<BusiJbpmFlow> page = busiJbpmFlowService.findBusiJF(businessType, businessSubject,
-                type,readType,businessId,parentActor,nextActor,timeOrder, pageable);
+                type,readType,businessId,parentActor,nextActor,timeOrder,this.getUser(), pageable);
         BusiJbpmFlowCollectionDto busiJbpmFlowDto = busiJbpmFlowService.to(page, request,this.getUser());
         responseBuilder.data(busiJbpmFlowDto);
         return responseBuilder.build();
@@ -121,7 +121,7 @@ public class BusiJbpmFlowController extends GenericController {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort = new Sort(Sort.Direction.DESC, "projectId");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Page<ProjectInfo> page = projectInfoService.findAllByBusiJbpmFlow(isDelete, businessType, parentActor,status, pageable);
+        Page<ProjectInfo> page = projectInfoService.findAllByBusiJbpmFlow(isDelete, businessType, parentActor,status,this.getUser(), pageable);
         ProjectCollectionDto projectCollectionDto = projectInfoService.to(page, request);
         responseBuilder.data(projectCollectionDto);
         return responseBuilder.build();

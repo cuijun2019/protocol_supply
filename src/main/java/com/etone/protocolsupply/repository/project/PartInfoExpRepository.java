@@ -22,7 +22,9 @@ public interface PartInfoExpRepository extends JpaRepository<PartInfoExp, Long>,
     @Modifying
     void setProjectId(@Param("projectId") Long projectId, @Param("partIds") List<Long> partIds);
 
-    @Query(value = "select * from part_info_exp where 1=1 and if((?1 is not null), (project_id=?1), (1=1)) and is_delete=?2", nativeQuery = true)
+    @Query(value = "select * from part_info_exp where 1=1 " +
+            "and if((?1 is not null), (project_id=?1), (1=1)) " +
+            "and is_delete=?2", nativeQuery = true)
     List<PartInfoExp> findAll(String projectId, String isDelete);
 
     @Query(value = "select * from part_info_exp where 1=1 and cargo_id=?1 and is_delete=2", nativeQuery = true)

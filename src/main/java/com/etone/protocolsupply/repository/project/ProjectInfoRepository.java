@@ -56,12 +56,22 @@ public interface ProjectInfoRepository extends JpaRepository<ProjectInfo, Long>,
     @Query(value = "update project_info set notice_id=?1,encryptnotice_id=?2 where project_id=?3", nativeQuery = true)
     void updateNoticeId(Long attachId,Long encryptAttachId, long parseLong);
 
-    @Query(value = "select * from project_info where is_delete=:isDelete and  if((:projectSubject is not null), (project_subject like %:projectSubject%), (1=1)) " +
-            "and if((:status is not null), (status=:status), (1=1)) and if((:projectCode is not null), (project_code=:projectCode), (1=1)) " +
-            "and if((:inquiryId is not null), (inquiry_id=:inquiryId), (1=1))",  nativeQuery = true)
+    @Query(value = "select * from project_info where is_delete=:isDelete " +
+            "and if((:projectSubject is not null), (project_subject like %:projectSubject%), (1=1)) " +
+            "and if((:status is not null), (status=:status), (1=1)) " +
+            "and if((:projectCode is not null), (project_code=:projectCode), (1=1)) " +
+            "and if((:inquiryId is not null), (inquiry_id=:inquiryId), (1=1))  order by project_id desc",  nativeQuery = true)
     List<ProjectInfo> findAll(@Param("isDelete") String isDelete,@Param("projectSubject") String projectSubject,@Param("projectCode") String projectCode
             ,@Param("status") String status,@Param("inquiryId") String inquiryId );
 
+    @Query(value = "select * from project_info where is_delete=:isDelete " +
+            "and if((:projectSubject is not null), (project_subject like %:projectSubject%), (1=1)) " +
+            "and if((:actor is not null), (creator=:actor), (1=1)) " +
+            "and if((:status is not null), (status=:status), (1=1)) " +
+            "and if((:projectCode is not null), (project_code=:projectCode), (1=1)) " +
+            "and if((:inquiryId is not null), (inquiry_id=:inquiryId), (1=1))  order by project_id desc",  nativeQuery = true)
+    List<ProjectInfo> findAll(@Param("isDelete") String isDelete,@Param("projectSubject") String projectSubject,@Param("projectCode") String projectCode
+            ,@Param("status") String status,@Param("inquiryId") String inquiryId ,@Param("actor") String actor);
 
     @Query(value = "select * from project_info WHERE exists(select 1 from busi_jbpm_flow b where project_id = b.business_id and b.business_type='projectAudit' and read_type is null " +
             "and if((:actor is not null), (b.parent_actor=:actor or b.next_actor=:actor), (1=1)))" +

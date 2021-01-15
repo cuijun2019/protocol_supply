@@ -418,7 +418,7 @@ public class ContractNoticeService {
         //判断当前用户是什么角色，如果是招标中心经办人或者招标科长则查询全部合同
         Long roleId = userRepository.findRoleIdByUsername(username);
 
-        if("5".equals(roleId+"") || "6".equals(roleId+"")){
+        if("5".equals(roleId+"") || "6".equals(roleId+"")|| "7".equals(roleId+"")){
             contractNoticeList = ContractNoticeRepository.findByCondition(projectCode,projectSubject);
         }
 

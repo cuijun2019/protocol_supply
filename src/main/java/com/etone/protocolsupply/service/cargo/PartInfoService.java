@@ -4,6 +4,7 @@ import com.etone.protocolsupply.constant.Constant;
 import com.etone.protocolsupply.exception.GlobalExceptionCode;
 import com.etone.protocolsupply.exception.GlobalServiceException;
 import com.etone.protocolsupply.model.dto.ExcelHeaderColumnPojo;
+import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.PartExpCollectionDto;
 import com.etone.protocolsupply.model.dto.PartInfoExpDto;
 import com.etone.protocolsupply.model.dto.part.PartCollectionDto;
@@ -17,6 +18,7 @@ import com.etone.protocolsupply.repository.project.PartInfoExpRepository;
 import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.repository.cargo.PartInfoRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
+import com.etone.protocolsupply.repository.user.UserRepository;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import com.google.gwt.thirdparty.guava.common.collect.Lists;
@@ -56,6 +58,8 @@ public class PartInfoService {
     private ProjectInfoRepository projectInfoRepository;
     @Autowired
     private PagingMapper          pagingMapper;
+    @Autowired
+    private UserRepository userRepository;
 
     public PartInfo save(PartInfoDto partInfoDto) throws GlobalServiceException {
         if (Strings.isBlank(partInfoDto.getCargoId())) {
@@ -116,13 +120,17 @@ public class PartInfoService {
         return Common.listConvertToPage(partInfoRepository.findAll(cargoId, isDelete,cargoName,cName,actor), pageable);
     }
 
-    public List<PartInfo> findPartInfosList(String cargoId, String isDelete,String cargoName, String cName,String actor ) {
+    public List<PartInfo> findPartInfosList(String cargoId, String isDelete, String cargoName, String cName, String actor ) {
         return partInfoRepository.findAll(cargoId, isDelete,cargoName,cName,actor);
+
+
     }
 
     //货物项目-配件列表
-    public Page<PartInfoExp> findPartInfoExps(String projectId, String isDelete, Pageable pageable) {
-        return Common.listConvertToPage(partInfoExpRepository.findAll(projectId, isDelete), pageable);
+    public Page<PartInfoExp> findPartInfoExps(String projectId, String isDelete,JwtUser user, Pageable pageable) {
+
+            return Common.listConvertToPage(partInfoExpRepository.findAll(projectId, isDelete), pageable);
+
     }
 
     public PartCollectionDto to(Page<PartInfo> source, HttpServletRequest request) {

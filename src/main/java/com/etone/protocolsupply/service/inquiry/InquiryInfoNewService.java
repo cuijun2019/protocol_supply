@@ -16,6 +16,7 @@ import com.etone.protocolsupply.repository.cargo.CargoInfoRepository;
 import com.etone.protocolsupply.repository.inquiry.InquiryInfoNewRepository;
 import com.etone.protocolsupply.repository.procedure.BusiJbpmFlowRepository;
 import com.etone.protocolsupply.repository.user.LeadersRepository;
+import com.etone.protocolsupply.repository.user.UserRepository;
 import com.etone.protocolsupply.utils.Common;
 import com.etone.protocolsupply.utils.PagingMapper;
 import org.apache.poi.hssf.usermodel.*;
@@ -57,6 +58,8 @@ public class InquiryInfoNewService {
 
     @Autowired
     private PagingMapper         pagingMapper;
+    @Autowired
+    private UserRepository userRepository;
 
 
     //新建保存
@@ -128,13 +131,14 @@ public class InquiryInfoNewService {
 
 
     //查询list
-    public Page<InquiryInfoNew> findInquiryInfoNewList(String isDelete, String inquiryCode,String cargoName,String actor,Integer status, Pageable pageable) {
-        //查询全部询价
-        if(null == actor || actor.equals("admin")){
+    public Page<InquiryInfoNew> findInquiryInfoNewList(String isDelete, String inquiryCode,String cargoName,JwtUser actor,Integer status, Pageable pageable) {
+        //判断当前用户是什么角色，如果是招标中心经办人或者招标科长或者admin则查询全部采购通知书
+        Long roleId = userRepository.findRoleIdByUsername(actor.getUsername());
+        if( "5".equals(roleId+"") || "6".equals(roleId+"")|| "7".equals(roleId+"")){
             return Common.listConvertToPage(inquiryInfoNewRepository.findAllList(isDelete,inquiryCode,cargoName,status), pageable);
         }else {
             //根据不同的创建人查询询价
-            return Common.listConvertToPage(inquiryInfoNewRepository.findAllListWithCreator(isDelete, inquiryCode,cargoName,status,actor), pageable);
+            return Common.listConvertToPage(inquiryInfoNewRepository.findAllListWithCreator(isDelete, inquiryCode,cargoName,status,actor.getUsername()), pageable);
         }
     }
 
@@ -161,12 +165,6 @@ public class InquiryInfoNewService {
         } else {
             return null;
         }
-    }
-
-    //查询是否发送过询价记录
-    public BusiJbpmFlow sffsxjjl(String businessId,String businessType,String type,String actor){
-        return busiJbpmFlowRepository.findsffsxjjl(businessId,businessType,type,actor);
-
     }
 
     //询价修改

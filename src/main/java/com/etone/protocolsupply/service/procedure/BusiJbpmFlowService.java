@@ -155,21 +155,27 @@ public class BusiJbpmFlowService {
     }
 
     public Page<BusiJbpmFlow> findBusiJF(String businessType, String businessSubject,Integer type,Integer readType,
-                                         String businessId,String parentActor,String nextActor,String timeOrder, Pageable pageable) {
+                                         String businessId,String parentActor,String nextActor,String timeOrder,JwtUser user, Pageable pageable) {
         Integer action =null;
         if( null!=type && type==0 ){
             //待办节点没有草稿状态
             action=1;
         }
-        if(timeOrder.equals("ASC")){
-            return Common.listConvertToPage(busiJbpmFlowRepository.findAllListAsc(businessType, businessSubject, type,readType,
-                    businessId,parentActor,nextActor,action), pageable);
-
-        }else {
-            return Common.listConvertToPage(busiJbpmFlowRepository.findAllList(businessType, businessSubject, type,readType,
-                    businessId,parentActor,nextActor,action), pageable);
-        }
-
+        //判断当前用户是什么角色，如果是招标中心经办人或者招标科长或者admin则查询全部待办
+//        Long roleId = userRepository.findRoleIdByUsername(user.getUsername());
+//        if( "5".equals(roleId+"") || "6".equals(roleId+"")|| "7".equals(roleId+"")){
+//            return Common.listConvertToPage(busiJbpmFlowRepository.findAllList(null, null, type,null,
+//                    null,null,null,action), pageable);
+//        }else {
+            if(timeOrder.equals("ASC")){
+                //项目详情的审批历史列表
+                return Common.listConvertToPage(busiJbpmFlowRepository.findAllListAsc(businessType, businessSubject, type,readType,
+                        businessId,parentActor,nextActor,action), pageable);
+            }else {
+                return Common.listConvertToPage(busiJbpmFlowRepository.findAllList(businessType, businessSubject, type,readType,
+                        businessId,parentActor,nextActor,action), pageable);
+            }
+//        }
     }
 
     public BusiJbpmFlowCollectionDto to(Page<BusiJbpmFlow> source, HttpServletRequest request,JwtUser jwtUser) {

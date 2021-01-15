@@ -91,7 +91,6 @@ public class ResultNoticeService {
     }
 
     public Page<ResultNotice> findMyResultNotices(String projectCode, String projectSubject, JwtUser user, Pageable pageable) {
-
         String username = user.getUsername();
         //判断当前用户是什么角色，如果是招标中心经办人或者招标科长或者admin则查询全部结果通知书
         Long roleId = userRepository.findRoleIdByUsername(username);

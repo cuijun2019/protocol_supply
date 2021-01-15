@@ -143,19 +143,19 @@ public class CargoInfoService {
         };
     }
 
-    public Page<CargoInfo> findCargoInfos(String isDelete,String isUpdate, String cargoName,String cName, String cargoCode,String actor,Integer status, Pageable pageable) {
-        if(null == actor ||actor.equals("admin")){
+    public Page<CargoInfo> findCargoInfos(String isDelete,String isUpdate, String cargoName,String cName, String cargoCode,JwtUser actor,Integer status, Pageable pageable) {
+        //判断当前用户是什么角色，如果是招标中心经办人或者招标科长或者admin或者采购人则查询全部产品
+        Long roleId = userRepository.findRoleIdByUsername(actor.getUsername());
+        if( "3".equals(roleId+"") ||"5".equals(roleId+"") || "6".equals(roleId+"")|| "7".equals(roleId+"")){
             return Common.listConvertToPage(cargoInfoRepository.findAll(isDelete,isUpdate, cargoName, cargoCode,status), pageable);
         }else {
-            return Common.listConvertToPage(cargoInfoRepository.findAllMyCargo(isDelete,isUpdate, cargoName,cargoCode,actor,status,cName), pageable);
+            return Common.listConvertToPage(cargoInfoRepository.findAllMyCargo(isDelete,isUpdate, cargoName,cargoCode,actor.getUsername(),status,cName), pageable);
         }
 
     }
 
     public Page<CargoInfo> findCargoInfoUpdateList(String isUpdate, String cargoName,String cargoCode,String oldCargoId, Pageable pageable) {
-
-            return Common.listConvertToPage(cargoInfoRepository.findCargoInfoUpdateList(isUpdate, cargoName,cargoCode,oldCargoId), pageable);
-
+        return Common.listConvertToPage(cargoInfoRepository.findCargoInfoUpdateList(isUpdate, cargoName,cargoCode,oldCargoId), pageable);
     }
 
     public CargoCollectionDto to(Page<CargoInfo> source, HttpServletRequest request) {

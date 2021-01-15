@@ -100,7 +100,7 @@ public class ProjectInfoController extends GenericController {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort = new Sort(Sort.Direction.DESC, "projectId");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Page<ProjectInfo> page = projectInfoService.findMyProjectInfos(isDelete, projectSubject, projectCode, status,inquiryId,actor,pageable);
+        Page<ProjectInfo> page = projectInfoService.findMyProjectInfos(isDelete, projectSubject, projectCode, status,inquiryId,this.getUser(),pageable);
         ProjectCollectionDto projectCollectionDto = projectInfoService.to(page, request);
         responseBuilder.data(projectCollectionDto);
         return responseBuilder.build();
@@ -131,7 +131,7 @@ public class ProjectInfoController extends GenericController {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort = new Sort(Sort.Direction.DESC, "partId");
         Pageable pageable = PageRequest.of(currentPage - 1, 9999, sort);
-        Page<PartInfoExp> page = partInfoService.findPartInfoExps(projectId, isDelete, pageable);
+        Page<PartInfoExp> page = partInfoService.findPartInfoExps(projectId, isDelete,this.getUser(), pageable);
         PartExpCollectionDto partInfoExpDtos = partInfoService.toExp(page, request);
         responseBuilder.data(partInfoExpDtos);
         return responseBuilder.build();
@@ -157,7 +157,7 @@ public class ProjectInfoController extends GenericController {
     }
 
     /**
-     * 新增项目配件列表
+     * 新增保存项目配件列表
      *
      * @param projectInfoDto
      * @return

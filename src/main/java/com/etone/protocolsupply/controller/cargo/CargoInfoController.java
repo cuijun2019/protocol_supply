@@ -81,7 +81,7 @@ public class CargoInfoController extends GenericController {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort = new Sort(Sort.Direction.DESC, "maintenanceDate");//按照修改时间倒叙
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Page<CargoInfo> page = cargoInfoService.findCargoInfos(isDelete,isUpdate, cargoName,cName, cargoCode,actor,status, pageable);
+        Page<CargoInfo> page = cargoInfoService.findCargoInfos(isDelete,isUpdate, cargoName,cName, cargoCode,this.getUser(),status, pageable);
         CargoCollectionDto cargoCollectionDto = cargoInfoService.to(page, request);
         for (CargoInfoDto cargoInfoDto : cargoCollectionDto.getCargoInfoDtos()) {
             cargoInfoDto.setPartInfos(null);

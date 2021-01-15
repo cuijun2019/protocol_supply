@@ -99,14 +99,14 @@ public class AgentInfoController extends GenericController {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         Sort sort = new Sort(Sort.Direction.DESC, "createDate");
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-        Page<AgentInfo> page = agentInfoService.findAgentInfos(agentName, status, isDelete, actor,pageable,reviewStatus);
+        Page<AgentInfo> page = agentInfoService.findAgentInfos(agentName, status, isDelete, this.getUser(),pageable,reviewStatus);
         AgentCollectionDto agentCollectionDto = agentInfoService.to(page, request);
         responseBuilder.data(agentCollectionDto);
         return responseBuilder.build();
     }
 
     /**
-     * 新建项目-推荐代理商列表
+     * 新建/编辑项目-推荐代理商列表
      * @param status
      * @param isDelete
      * @param currentPage
@@ -231,6 +231,6 @@ public class AgentInfoController extends GenericController {
                             @RequestBody(required = false) List<Long> agentIds,
                             @RequestParam(value = "actor", required = false) String actor,
                             @Context HttpServletResponse response) {
-        agentInfoService.export(response, agentName, status, isDelete, agentIds,actor);
+        agentInfoService.export(response, agentName, status, isDelete, agentIds,this.getUser());
     }
 }
