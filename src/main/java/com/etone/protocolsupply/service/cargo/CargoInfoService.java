@@ -75,34 +75,33 @@ public class CargoInfoService {
 
     public CargoInfo save(CargoInfoDto cargoInfoDto, JwtUser jwtUser) throws GlobalServiceException {
         Date date = new Date();
-        String userName = jwtUser.getUsername();
+        String userName = jwtUser.getUsername();//获取登录人的名称
         CargoInfo cargoInfo = new CargoInfo();
         BeanUtils.copyProperties(cargoInfoDto, cargoInfo);
-        cargoInfo.setIsDelete(Constant.DELETE_NO);
+
+        cargoInfo.setIsDelete(Constant.DELETE_NO);//是否删除 ：1 是；2 否
         cargoInfo.setIsUpdate(Constant.UPDATW_NO);//是否变更：1 是；2：否
         cargoInfo.setCreator(userName);
         cargoInfo.setCreateDate(date);
         cargoInfo.setMaintenanceDate(date);
         cargoInfo.setMaintenanceMan(userName);
-
-        if ( cargoInfoDto.getPartnerId()!=null && !cargoInfoDto.getPartnerId().equals("")) {
-//            Optional<PartnerInfo> optional = partnerInfoRepository.findById(cargoInfoDto.getPartnerId());
-                cargoInfo.setPartnerId(cargoInfoDto.getPartnerId());
-        }else {
-            cargoInfo.setPartnerId(null);
-        }
-        cargoInfo.setCargoSerial(this.findLastCargoSerial());
-        cargoInfo.setCargoCode(cargoInfo.getItemCode() + cargoInfo.getCargoSerial());
-
-
+        cargoInfo.setPartnerId(cargoInfoDto.getPartnerId());//制造商id
+        cargoInfo.setCargoSerial(this.findLastCargoSerial());//产品序号
+        cargoInfo.setCargoCode(cargoInfo.getItemCode() + cargoInfo.getCargoSerial());//产品编号
+        cargoInfo.setPartner_name(cargoInfoDto.getPartner_name());//制造商名称
+        cargoInfo.setPartner_contact(cargoInfoDto.getPartner_contact());//制造商联系人
+        cargoInfo.setPartner_contact_number(cargoInfoDto.getPartner_contact_number());//制造商联系人电话
+        cargoInfo.setProduct_contact(cargoInfoDto.getProduct_contact());//产品联系人
+        cargoInfo.setProduct_contact_number(cargoInfoDto.getProduct_contact_number());//产品联系人电话
+        cargoInfo.setDefault_guarantee(cargoInfoDto.getDefault_guarantee());//原厂默认质保期
+        cargoInfo.setReprice(cargoInfoDto.getReprice());//货物的参考价格
+        //产品配件列表
         Set<PartInfo> partInfos = cargoInfoDto.getPartInfos();
         if (partInfos != null && !partInfos.isEmpty()) {
             String partSerial = partInfoService.findLastPartSerial(cargoInfo.getCargoSerial());
             int step = 0;
-            double total = 0.00;
             for (PartInfo partInfo : partInfos) {
-                total+=partInfo.getTotal();
-                if("".equals(partInfo.getPartCode()) ){
+                if("".equals(partInfo.getPartCode())){
                     if (step == 0) {
                         partInfo.setPartSerial(Common.convertSerial(partSerial, step));
                     } else {
@@ -112,14 +111,13 @@ public class CargoInfoService {
                     partInfo.setIsDelete(Constant.DELETE_NO);
                     step++;
                 }else {
-
                     partInfo.setPartSerial(partInfo.getPartCode().substring(partInfo.getPartCode().length() - 4));
                     partInfo.setIsDelete(Constant.DELETE_NO);
                 }
-                Double Dprice= partInfo.getPrice()*Double.parseDouble(partInfo.getQuantity());//货物总价=单价*数量
-                partInfo.setTotal(Dprice);
+                partInfo.setQuantity("1");
+                partInfo.setTotal(partInfo.getPrice());
             }
-            cargoInfo.setReprice(total);//货物的参考价格
+
         }
 
         cargoInfo = cargoInfoRepository.save(cargoInfo);
@@ -215,17 +213,14 @@ public class CargoInfoService {
     //货物修改edit
     public CargoInfo edit(CargoInfo cargoInfo, JwtUser jwtUser) throws GlobalServiceException {
         Date date = new Date();
-
         String userName = jwtUser.getUsername();
-        //cargoInfo.setManufactor(userName)
-        cargoInfo.setMaintenanceMan(userName);
-        cargoInfo.setMaintenanceDate(date);
+        cargoInfo.setMaintenanceMan(userName);//修改人
+        cargoInfo.setMaintenanceDate(date);//修改时间
         Set<PartInfo> partInfos =cargoInfo.getPartInfos();
         partInfoRepository.deleteByCargoId(cargoInfo.getCargoId());
             if (partInfos != null && !partInfos.isEmpty() ) {
                 String partSerial= partInfoService.findLastPartSerial(cargoInfo.getCargoSerial());
                 int step = 0;
-                double total = 0.00;
                 for (PartInfo partInfo : partInfos) {
                     if("".equals(partInfo.getPartCode())){
                         if (step == 0) {
@@ -240,11 +235,10 @@ public class CargoInfoService {
                         partInfo.setPartSerial(partInfo.getPartCode().substring(partInfo.getPartCode().length() - 4));
                         partInfo.setIsDelete(Constant.DELETE_NO);
                     }
-                    Double Dprice= partInfo.getPrice()*Double.parseDouble(partInfo.getQuantity());//货物总价=单价*数量
-                    partInfo.setTotal(Dprice);
-                    total+=partInfo.getTotal();
+                    partInfo.setTotal(partInfo.getPrice());
+
                 }
-                cargoInfo.setReprice(total);//货物的参考价格
+
                 cargoInfo.setPartInfos(partInfos);
         }
         cargoInfo=cargoInfoRepository.save(cargoInfo);
@@ -266,43 +260,55 @@ public class CargoInfoService {
         CargoInfo model=new CargoInfo();
         model = cargoInfoRepository.findAllByCargoId(cargoInfo.getCargoId()+"");
 
-        model.setMaintenanceMan(userName);
-        model.setMaintenanceDate(date);
+        model.setMaintenanceMan(userName);//修改人
+        model.setMaintenanceDate(date);//修改时间
         if(model.getOldCargoId()==null){
             model.setOldCargoId(model.getCargoId());
         }
-
         model.setIsUpdate(Constant.UPDATW_YES);//已变更
         cargoInfoRepository.save(model);//修改旧数据
 
         CargoInfo newCargoInfo=new CargoInfo();
-        newCargoInfo.setBrand(model.getBrand());
-        newCargoInfo.setCargoCode(model.getCargoCode());
-        newCargoInfo.setCargoName(model.getCargoName());
-        newCargoInfo.setCargoSerial(model.getCargoSerial());
-        newCargoInfo.setCreator(userName);
-        newCargoInfo.setCreateDate(date);
-        newCargoInfo.setCurrency(model.getCurrency());
-        newCargoInfo.setGuaranteeRate(model.getGuaranteeRate());
-        newCargoInfo.setIsDelete(model.getIsDelete());
-        newCargoInfo.setIsUpdate(Constant.UPDATW_NO);
-        newCargoInfo.setItemCode(model.getItemCode());
-        newCargoInfo.setItemName(model.getItemName());
+        newCargoInfo.setBrand(model.getBrand());//产品品牌
+        newCargoInfo.setCargoCode(model.getCargoCode());//产品编号
+        newCargoInfo.setCargoName(model.getCargoName());//产品名称
+        newCargoInfo.setCargoSerial(model.getCargoSerial());//产品序号
+        newCargoInfo.setCreator(userName);//创建者
+        newCargoInfo.setCreateDate(date);//创建时间
+        newCargoInfo.setCurrency(model.getCurrency());//币种
+        newCargoInfo.setGuaranteeRate(model.getGuaranteeRate());//延长质保的费率 %/年
+        newCargoInfo.setIsDelete(model.getIsDelete());//是否删除
+        newCargoInfo.setIsUpdate(Constant.UPDATW_NO);//是否变更
+        newCargoInfo.setItemCode(model.getItemCode());//品目编号
+        newCargoInfo.setItemName(model.getItemName());//品目名称
         newCargoInfo.setMainParams(cargoInfo.getMainParams());//主要参数
-        newCargoInfo.setMaintenanceMan(userName);
-        newCargoInfo.setMaintenanceDate(date);
-        newCargoInfo.setManufactor(model.getManufactor());
-        newCargoInfo.setModel(model.getModel());
-        newCargoInfo.setRemark(model.getRemark());
+        newCargoInfo.setMaintenanceMan(userName);//修改人
+        newCargoInfo.setMaintenanceDate(date);//修改时间
+        newCargoInfo.setManufactor(model.getManufactor());//产地
+        newCargoInfo.setModel(model.getModel());//型号
+        newCargoInfo.setRemark(model.getRemark());//备注
         newCargoInfo.setStatus(8);//货物状态：1：草稿，2：审核中，3：同意，4退回，5完成，6结束，7建立项目，8已变更
-        newCargoInfo.setType(model.getType());
-        newCargoInfo.setPartnerId(model.getPartnerId());
-        newCargoInfo.setReprice(model.getReprice());
-
+        newCargoInfo.setType(model.getType());//进口/国产
+        newCargoInfo.setPartnerId(model.getPartnerId());//制造商id
+        newCargoInfo.setPartner_name(model.getPartner_name());//制造商名称
+        newCargoInfo.setPartner_contact(model.getPartner_contact());//制造商联系人
+        newCargoInfo.setProduct_contact_number(model.getProduct_contact_number());//制造商联系人电话
+        newCargoInfo.setProduct_contact(model.getProduct_contact());//产品联系人
+        newCargoInfo.setProduct_contact_number(model.getProduct_contact_number());//产品联系人电话
+        newCargoInfo.setDefault_guarantee(model.getDefault_guarantee());//原厂默认质保期
+        newCargoInfo.setReprice(model.getReprice());//参考价格
         newCargoInfo.setOldCargoId(model.getOldCargoId());
-
+        //证明文件
         if(cargoInfo.getAttachment()!=null){
             newCargoInfo.setAttachment(cargoInfo.getAttachment());
+        }
+        //产品彩页文件
+        if(cargoInfo.getAttachment_probrochure()!=null){
+            newCargoInfo.setAttachment_probrochure(cargoInfo.getAttachment_probrochure());
+        }
+        //产品图片文件
+        if(cargoInfo.getAttachment_propicture()!=null){
+            newCargoInfo.setAttachment_propicture(cargoInfo.getAttachment_propicture());
         }
         CargoInfo cargoInfo1=new CargoInfo();
 
@@ -364,7 +370,7 @@ public class CargoInfoService {
     }
 
 
-    //货物导出
+    //产品导出
     public void export(HttpServletResponse response, List<Long> cargoIds,String actor) {
         try {
             String[] header = {"货物序号", "货物品目", "货物名称", "货物编号","状态", "品牌", "型号", "主要参数",

@@ -77,28 +77,6 @@ public class PartInfoController extends GenericController {
     @RequestMapping(method = RequestMethod.GET,
             consumes = {"application/json"},
             produces = {"application/json"})
-//    public ResponseValue getPartInfos(@Validated
-//                                      @RequestParam(value = "isDelete", required = false) String isDelete,
-//                                      @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
-//                                      @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
-//                                      @RequestParam(value = "cargoId", required = false) String cargoId,
-//                                      @RequestParam(value = "cargoName", required = false) String cargoName,
-//                                      @RequestParam(value = "cName", required = false) String cName,
-//                                      @RequestParam(value = "actor", required = false) String actor,
-//                                      HttpServletRequest request) {
-//        ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-//        Sort sort = new Sort(Sort.Direction.DESC, "partId");
-////        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-//        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
-//        Page<PartInfo> page = partInfoService.findPartInfos(cargoId, isDelete,cargoName,cName,actor, pageable);
-//        PartCollectionDto partCollectionDto = partInfoService.to(page, request);
-//        for (PartInfoDto partInfoDto : partCollectionDto.getPartInfoDtos()) {
-//            partInfoDto.getCargoInfo().setPartInfos(null);
-//            partInfoDto.setCargoInfo(null);
-//        }
-//        responseBuilder.data(partCollectionDto);
-//        return responseBuilder.build();
-//    }
     public ResponseValue getPartInfos(@Validated
                                       @RequestParam(value = "isDelete", required = false) String isDelete,
                                       @RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
@@ -109,7 +87,6 @@ public class PartInfoController extends GenericController {
                                       @RequestParam(value = "actor", required = false) String actor,
                                       HttpServletRequest request) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        Sort sort = new Sort(Sort.Direction.DESC, "partId");
         List<PartInfo> list = partInfoService.findPartInfosList(cargoId, isDelete,cargoName,cName,actor);
         PartCollectionDto partCollectionDto = partInfoService.toList(list, request);
         for (PartInfoDto partInfoDto : partCollectionDto.getPartInfoDtos()) {
@@ -148,18 +125,18 @@ public class PartInfoController extends GenericController {
     /**
      * 删除配件
      *
-     * @param partId
+     * @param partIds
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{partId}",
-            method = RequestMethod.DELETE,
+    @RequestMapping(
+            method = RequestMethod.PUT,
             consumes = {"application/json"},
             produces = {"application/json"})
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseValue deletePartInfo(@PathVariable("partId") String partId) {
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseValue deletePartInfo( @RequestBody(required = false) List<Long> partIds) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        partInfoService.delete(partId);
+        partInfoService.delete(partIds);
         return responseBuilder.build();
     }
 

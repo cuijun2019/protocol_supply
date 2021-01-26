@@ -73,7 +73,7 @@ public class CargoInfo implements Serializable {
     private String model;
 
     /**
-     * 主要参数
+     * 总体描述及产品性能
      */
     @Column(name = "MAIN_PARAMS", length = 2000)
     private String mainParams;
@@ -97,7 +97,7 @@ public class CargoInfo implements Serializable {
     private String currency;
 
     /**
-     * 维保率/月
+     * 延长质保费率 %/年
      */
     @Column(name = "GUARANTEE_RATE", length = 20)
     private String guaranteeRate;
@@ -168,10 +168,68 @@ public class CargoInfo implements Serializable {
             fetch = FetchType.LAZY)
     private Set<PartInfo> partInfos = new HashSet<>();
 
-//    /**
-//     * 供应商
-//     */
+    /**
+     * 制造商
+     */
     @Column(name = "PARTNER_ID", length = 20)
     private Long partnerId;
+
+
+
+
+    /**
+     *  20210126新增字段
+     */
+    /**
+     * 产品彩页文件
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
+    @JoinColumn(name = "PROBROCHURE_ID", referencedColumnName = "ATTACH_ID")
+    private Attachment attachment_probrochure;
+
+    /**
+     * 产品图片文件
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
+    @JoinColumn(name = "PROPICTURE_ID", referencedColumnName = "ATTACH_ID")
+    private Attachment attachment_propicture;
+
+    /**
+     * 制造商名称
+     */
+    @Column(name = "PARTNER_NAME", length = 200)
+    private String partner_name;
+
+    /**
+     * 制造商联系人
+     */
+    @Column(name = "PARTNER_CONTACT", length = 32)
+    private String partner_contact;
+
+    /**
+     * 制造商联系人电话
+     */
+    @Column(name = "PARTNER_CONTACT_NUMBER", length = 50)
+    private String partner_contact_number;
+
+    /**
+     * 产品联系人
+     */
+    @Column(name = "PRODUCT_CONTACT", length = 32)
+    private String product_contact;
+
+    /**
+     * 产品联系人电话
+     */
+    @Column(name = "PRODUCT_CONTACT_NUMBER", length = 50)
+    private String product_contact_number;
+
+    /**
+     * 原厂默认质保期
+     */
+    @Column(name = "DEFAULT_GUARANTEE", length = 20)
+    private String default_guarantee;
 
 }

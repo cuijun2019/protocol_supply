@@ -113,7 +113,7 @@ public class CargoInfoController extends GenericController {
     }
 
     /**
-     * 删除货物
+     * 删除货物 (只能删除草稿状态)
      *
      * @param cargoIds
      * @return
@@ -210,7 +210,7 @@ public class CargoInfoController extends GenericController {
 
 
     /**
-     * 货物导出
+     * 货物导出--不使用这个功能
      *
      * @param cargoInfoDto
      * @param response
@@ -223,8 +223,6 @@ public class CargoInfoController extends GenericController {
             produces = {"application/json"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseValue exportPart(@RequestBody CargoInfoDto cargoInfoDto,
-//            @RequestBody(required = false) List<Long> cargoIds,
-//                                    @RequestParam(value = "actor", required = false) String actor,
                                     @Context HttpServletResponse response) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         cargoInfoService.export(response, cargoInfoDto.getCargoIds(),cargoInfoDto.getActor());
@@ -232,7 +230,7 @@ public class CargoInfoController extends GenericController {
     }
 
     /**
-     * 下载货物导入模板
+     * 下载货物导入模板--不使用这个功能
      *
      */
     @ResponseBody
@@ -248,7 +246,7 @@ public class CargoInfoController extends GenericController {
     }
 
     /**
-     * 货物导入
+     * 货物导入--不使用这个功能
      *
      * @param uploadFile
      * @return

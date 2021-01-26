@@ -67,20 +67,25 @@ public class PartInfoService {
         }
         PartInfo partInfo = new PartInfo();
         BeanUtils.copyProperties(partInfoDto, partInfo);
-        //CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(Long.parseLong(partInfoDto.getCargoId()));
         Optional<CargoInfo> optional = cargoInfoRepository.findById(Long.parseLong(partInfoDto.getCargoId()));
         if (optional.isPresent()) {
             partInfo.setCargoInfo(optional.get());
+        }else {
+            throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("cargoId"));
         }
-        String cargoSerial = partInfo.getCargoInfo().getCargoSerial();
-        String partSerial = partInfoRepository.findLastPartSerial(cargoSerial);
+        String cargoSerial = partInfo.getCargoInfo().getCargoSerial();//获取到产品的序号
+        String partSerial = partInfoRepository.findLastPartSerial(cargoSerial);//查找该产品下的配件最大序号，在此基础上+1
         if("".equals(partSerial)|| partSerial==null ){
+            //如果最大产品配件序号为null或者”“，默认第一个
             partInfo.setPartSerial("0001");
         }else {
+            //否则进行+1
             partInfo.setPartSerial(Common.convertSerial(partSerial, 1));
         }
-        partInfo.setPartCode(partInfo.getCargoInfo().getCargoCode() + partInfo.getPartSerial());
-        partInfo.setIsDelete(Constant.DELETE_NO);
+        partInfo.setPartCode(partInfo.getCargoInfo().getCargoCode() + partInfo.getPartSerial());//产品编号+配件序号=配件编号
+        partInfo.setIsDelete(Constant.DELETE_NO);//是否删除：1是；2否
+        partInfo.setQuantity("1");//默认数量为1
+        partInfo.setTotal(partInfoDto.getPrice());//默认总价为单价--废弃字段，用不到
         return partInfoRepository.save(partInfo);
     }
 
@@ -156,8 +161,8 @@ public class PartInfoService {
         for (PartInfo partInfo : list) {
             partInfoDto = new PartInfoDto();
             BeanUtils.copyProperties(partInfo, partInfoDto);
-            partInfoDto.setCargoId(partInfo.getCargoInfo().getCargoId().toString());//货物id
-            partInfoDto.setCargoName(partInfo.getCargoInfo().getCargoName());//货物名称
+            partInfoDto.setCargoId(partInfo.getCargoInfo().getCargoId().toString());//产品id
+            partInfoDto.setCargoName(partInfo.getCargoInfo().getCargoName());//产品名称
             partInfoDto.setCurrency(partInfo.getCargoInfo().getCurrency());//币种
             partInfoDto.setGuaranteeRate(partInfo.getCargoInfo().getGuaranteeRate());//维保率
             partCollectionDto.add(partInfoDto);
@@ -186,21 +191,28 @@ public class PartInfoService {
     }
     public PartInfo update(PartInfoDto partInfoDto) throws GlobalServiceException {
         PartInfo partInfo = partInfoRepository.findOneModel(partInfoDto.getPartId());
-        partInfo.setPartName(partInfoDto.getPartName());
-        partInfo.setStandards(partInfoDto.getStandards());
-        partInfo.setTechParams(partInfoDto.getTechParams());
-        partInfo.setManufactor(partInfoDto.getManufactor());
-        partInfo.setUnit(partInfoDto.getUnit());
-        partInfo.setQuantity(partInfoDto.getQuantity());
-        partInfo.setPrice(partInfoDto.getPrice());
-        partInfo.setRemark(partInfoDto.getRemark());
+        partInfo.setPartName(partInfoDto.getPartName());//配件名称
+        partInfo.setStandards(partInfoDto.getStandards());//配件型号/规格
+        partInfo.setTechParams(partInfoDto.getTechParams());//配件主要参数
+        partInfo.setManufactor(partInfoDto.getManufactor());//配件产地/厂家
+        partInfo.setUnit(partInfoDto.getUnit());//配件单位
+        partInfo.setPrice(partInfoDto.getPrice());//配件单价
+        partInfo.setRemark(partInfoDto.getRemark());//备注
+        partInfo.setStandard_config(partInfoDto.getStandard_config());//标配/选配
+        partInfo.setGuarantee_date(partInfoDto.getGuarantee_date());//质保期
+        partInfo.setWarranty_date(partInfoDto.getWarranty_date());//保修相应时间
+        partInfo.setAfter_sales_service_outlets_and_number(partInfoDto.getAfter_sales_service_outlets_and_number());//售后服务网点及电话
+        partInfo.setQuantity("1");//配件数量默认为1
+        partInfo.setTotal(partInfoDto.getPrice());//默认总价=单价
         return partInfoRepository.save(partInfo);
     }
 
 
-    public void delete(String partId) {
-        partInfoRepository.updateIsDelete(partId);
+    //批量删除产品配件
+    public void delete(List<Long> cargoIds) {
+        partInfoRepository.updateIsDelete(cargoIds);
     }
+
     //删除货物项目-配件列表
     public void deleteExp(String partId) {
         partInfoExpRepository.updateIsDelete(partId);
@@ -218,12 +230,12 @@ public class PartInfoService {
             if (null == list || list.size() == 0) {
                 //return StringUtil.getJsonString(true, 1, "导入数据为空!");
             }
-            int num = list.size() / 200;
-            if (list.size() % 200 != 0) {
+            int num = list.size() / 20;
+            if (list.size() % 20 != 0) {
                 num++;
             }
             for (int i = 0; i < num; i++) {
-                List tempList = list.subList(i * 200, (i + 1) * 200 > list.size() ? list.size() : (i + 1) * 200);
+                List tempList = list.subList(i * 20, (i + 1) * 20 > list.size() ? list.size() : (i + 1) * 20);
                 batchInsertPartInfo(tempList, cargoId);
             }
         } catch (Exception e) {
@@ -235,10 +247,10 @@ public class PartInfoService {
     //配件导出
     public void export(HttpServletResponse response, String cargoId, List<Long> partIds) {
         try {
-            String[] header = {"配件编号", "设备或配件名称", "型号/规格", "产地/制造商", "主要技术参数", "单位", "数量",
-                    "单价","总价", "备注"};
+            String[] header = {"配件编号", "设备及配件名称", "品牌/型号/规格", "产地/厂家", "主要技术参数", "单位", "单价",
+                    "标配/选配","质保期", "保修响应时间", "售后服务网点及电话","备注"};
             HSSFWorkbook workbook = new HSSFWorkbook();
-            HSSFSheet sheet = workbook.createSheet("配件列表");
+            HSSFSheet sheet = workbook.createSheet("产品配件列表");
             sheet.setDefaultColumnWidth(10);
             //        创建标题的显示样式
             HSSFCellStyle headerStyle = workbook.createCellStyle();
@@ -272,10 +284,13 @@ public class PartInfoService {
                 row.createCell(3).setCellValue(new HSSFRichTextString(partInfo.getManufactor()));
                 row.createCell(4).setCellValue(new HSSFRichTextString(partInfo.getTechParams()));
                 row.createCell(5).setCellValue(new HSSFRichTextString(partInfo.getUnit()));
-                row.createCell(6).setCellValue(new HSSFRichTextString(partInfo.getQuantity()));
+                row.createCell(6).setCellValue(new HSSFRichTextString(partInfo.getPrice()+""));
                 row.createCell(7).setCellValue(new HSSFRichTextString(partInfo.getPrice()+""));
-                row.createCell(8).setCellValue(new HSSFRichTextString(partInfo.getTotal()+""));
-                row.createCell(9).setCellValue(new HSSFRichTextString(partInfo.getRemark()));
+                row.createCell(8).setCellValue(new HSSFRichTextString(partInfo.getStandard_config()));
+                row.createCell(9).setCellValue(new HSSFRichTextString(partInfo.getGuarantee_date()));
+                row.createCell(10).setCellValue(new HSSFRichTextString(partInfo.getWarranty_date()));
+                row.createCell(11).setCellValue(new HSSFRichTextString(partInfo.getAfter_sales_service_outlets_and_number()));
+                row.createCell(12).setCellValue(new HSSFRichTextString(partInfo.getRemark()));
             }
 
             response.setContentType("application/vnd.ms-excel;l;charset=utf-8");
@@ -291,8 +306,8 @@ public class PartInfoService {
     //下载配件导入模板
     public void downloadByName(HttpServletResponse response) {
         try {
-            String[] header = { "设备或配件名称", "型号/规格", "产地/制造商", "主要技术参数", "单位",
-                    "单价", "数量", "总价","备注"};
+            String[] header = { "设备及配件名称", "品牌/型号/规格", "产地/厂家", "主要技术参数", "单位",
+                    "单价", "标配/选配", "质保期","保修响应时间","售后服务网点及电话","备注"};
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet("配件导入模板表");
             sheet.setDefaultColumnWidth(11);
@@ -318,6 +333,9 @@ public class PartInfoService {
                 row.createCell(6).setCellValue(new HSSFRichTextString());
                 row.createCell(7).setCellValue(new HSSFRichTextString());
                 row.createCell(8).setCellValue(new HSSFRichTextString());
+                row.createCell(9).setCellValue(new HSSFRichTextString());
+                row.createCell(10).setCellValue(new HSSFRichTextString());
+                row.createCell(11).setCellValue(new HSSFRichTextString());
 
             //response.setContentType("application/octet-stream");//mime通用类型
             response.setContentType("application/vnd.ms-excel");
@@ -509,20 +527,21 @@ public class PartInfoService {
 
     public static List<String> readPartInfoKey() {
         List<String> list = new ArrayList<>();
-        list.add("设备或配件名称");
-        list.add("型号/规格");
-        list.add("产地/制造商");
+        list.add("设备及配件名称");
+        list.add("品牌/型号/规格");
+        list.add("产地/厂家");
         list.add("主要技术参数");
         list.add("单位");
         list.add("单价");
-        list.add("数量");
-        list.add("总价");
+        list.add("标配/选配");
+        list.add("质保期");
+        list.add("保修响应时间");
+        list.add("售后服务网点及电话");
         list.add("备注");
         return list;
     }
 
     public void batchInsertPartInfo(List<Object> maps, String cargoId) {
-
         List<PartInfo> partInfos = partInfoRepository.findAll();
         List<String> listDel = new ArrayList<>();
         List<PartInfo> listSave = new ArrayList<>();
@@ -535,7 +554,7 @@ public class PartInfoService {
                 List<PartInfo> list = partInfoRepository.findAllBys(cargoId);
                 if (list.size() > 0) {
                     for (PartInfo item : list) {
-                        if (item.getPartName().equals(jsonObject.get("设备或配件名称").toString())) {
+                        if (item.getPartName().equals(jsonObject.get("设备及配件名称").toString())) {
                             listDel.add(item.getPartId().toString());
                         }
                     }
@@ -560,17 +579,21 @@ public class PartInfoService {
                 partInfo.setPartSerial(Common.convertSerial(partInfoRepository.findLastPartSerial(cargoInfo.getCargoSerial()), i + 1));
             }
             partInfo.setPartCode(cargoInfo.getCargoCode() + partInfo.getPartSerial());
-            partInfo.setPartName(jsonObject.get("设备或配件名称").toString());
-            partInfo.setStandards(jsonObject.get("型号/规格").toString());
-            partInfo.setManufactor(jsonObject.get("产地/制造商").toString());
+            partInfo.setPartName(jsonObject.get("设备及配件名称").toString());
+            partInfo.setStandards(jsonObject.get("品牌/型号/规格").toString());
+            partInfo.setManufactor(jsonObject.get("产地/厂家").toString());
             partInfo.setTechParams(jsonObject.get("主要技术参数").toString());
             partInfo.setUnit(jsonObject.get("单位").toString());
-            partInfo.setQuantity(jsonObject.get("数量").toString());
+            partInfo.setQuantity("1");//数量默认1
             partInfo.setPrice(Double.valueOf("".equals(jsonObject.get("单价").toString())?"0.00":jsonObject.get("单价").toString()));
-            Double Dtotal=Double.parseDouble(jsonObject.get("单价").toString())*Double.parseDouble(jsonObject.get("数量").toString());
-            partInfo.setTotal(Dtotal);
+            //Double Dtotal=Double.parseDouble(jsonObject.get("单价").toString())*Double.parseDouble(jsonObject.get("数量").toString());
+            partInfo.setTotal(partInfo.getPrice());//总价默认为单价
+            partInfo.setStandards(jsonObject.get("标配/选配").toString());
+            partInfo.setGuarantee_date(jsonObject.get("质保期").toString());
+            partInfo.setWarranty_date(jsonObject.get("保修响应时间").toString());
+            partInfo.setAfter_sales_service_outlets_and_number(jsonObject.get("售后服务网点及电话").toString());
             partInfo.setRemark(jsonObject.get("备注").toString());
-            partInfo.setIsDelete(2);
+            partInfo.setIsDelete(2);//是否删除：1：是；2否
             partInfo.setCargoInfo(cargoInfo);
             if (partInfo.getPartSerial().equals("0001")) {
                 partInfoRepository.save(partInfo);

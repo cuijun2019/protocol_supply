@@ -13,8 +13,8 @@ public interface PartInfoRepository extends JpaRepository<PartInfo, Long>, JpaSp
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying
-    @Query(value = "update part_info set is_delete=1 where part_id = ?1", nativeQuery = true)
-    void updateIsDelete(String partId);
+    @Query(value = "update part_info set is_delete=1 where part_id in ?1", nativeQuery = true)
+    void updateIsDelete(List<Long> cargoIds);
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying
