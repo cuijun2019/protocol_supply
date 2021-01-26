@@ -113,7 +113,7 @@ public class CargoInfoController extends GenericController {
     }
 
     /**
-     * 删除货物 (只能删除草稿状态)
+     * 删除产品 (只能删除草稿状态)
      *
      * @param cargoIds
      * @return

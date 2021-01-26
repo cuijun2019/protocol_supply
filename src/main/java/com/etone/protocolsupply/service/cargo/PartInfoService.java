@@ -202,8 +202,8 @@ public class PartInfoService {
         partInfo.setGuarantee_date(partInfoDto.getGuarantee_date());//质保期
         partInfo.setWarranty_date(partInfoDto.getWarranty_date());//保修相应时间
         partInfo.setAfter_sales_service_outlets_and_number(partInfoDto.getAfter_sales_service_outlets_and_number());//售后服务网点及电话
-        partInfo.setQuantity("1");//配件数量默认为1
-        partInfo.setTotal(partInfoDto.getPrice());//默认总价=单价
+//        partInfo.setQuantity("1");//配件数量默认为1
+//        partInfo.setTotal(partInfoDto.getPrice());//默认总价=单价
         return partInfoRepository.save(partInfo);
     }
 
@@ -285,12 +285,11 @@ public class PartInfoService {
                 row.createCell(4).setCellValue(new HSSFRichTextString(partInfo.getTechParams()));
                 row.createCell(5).setCellValue(new HSSFRichTextString(partInfo.getUnit()));
                 row.createCell(6).setCellValue(new HSSFRichTextString(partInfo.getPrice()+""));
-                row.createCell(7).setCellValue(new HSSFRichTextString(partInfo.getPrice()+""));
-                row.createCell(8).setCellValue(new HSSFRichTextString(partInfo.getStandard_config()));
-                row.createCell(9).setCellValue(new HSSFRichTextString(partInfo.getGuarantee_date()));
-                row.createCell(10).setCellValue(new HSSFRichTextString(partInfo.getWarranty_date()));
-                row.createCell(11).setCellValue(new HSSFRichTextString(partInfo.getAfter_sales_service_outlets_and_number()));
-                row.createCell(12).setCellValue(new HSSFRichTextString(partInfo.getRemark()));
+                row.createCell(7).setCellValue(new HSSFRichTextString(partInfo.getStandard_config()));
+                row.createCell(8).setCellValue(new HSSFRichTextString(partInfo.getGuarantee_date()));
+                row.createCell(9).setCellValue(new HSSFRichTextString(partInfo.getWarranty_date()));
+                row.createCell(10).setCellValue(new HSSFRichTextString(partInfo.getAfter_sales_service_outlets_and_number()));
+                row.createCell(11).setCellValue(new HSSFRichTextString(partInfo.getRemark()));
             }
 
             response.setContentType("application/vnd.ms-excel;l;charset=utf-8");

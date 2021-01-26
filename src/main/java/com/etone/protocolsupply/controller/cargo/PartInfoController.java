@@ -170,7 +170,7 @@ public class PartInfoController extends GenericController {
      */
     @ResponseBody
     @RequestMapping(value = "/export/{cargoId}",
-            method = RequestMethod.POST,
+            method = RequestMethod.GET,
             consumes = {"application/json"},
             produces = {"application/json"})
     public void exportPart(@PathVariable("cargoId") String cargoId,
@@ -180,7 +180,11 @@ public class PartInfoController extends GenericController {
 
     }
 
-
+    /**
+     * 下载配件导入模板
+     * @param response
+     * @return
+     */
     @ResponseBody
     @RequestMapping(
             value = "/downloadTemplate",
