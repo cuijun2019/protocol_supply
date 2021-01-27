@@ -43,7 +43,7 @@ public class InquiryInfo implements Serializable {
     private String unit;
 
     /**
-     * 货物基本信息
+     * 产品基本信息
      */
     @Column(name = "CARGOBASEINFO", length = 2000)
     private String cargoBaseInfo;
@@ -101,7 +101,7 @@ public class InquiryInfo implements Serializable {
     private PartnerInfo partnerInfo;
 
     /**
-     * 货物
+     * 产品
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})

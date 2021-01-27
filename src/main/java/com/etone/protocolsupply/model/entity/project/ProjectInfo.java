@@ -7,6 +7,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 @Entity
@@ -18,25 +19,33 @@ public class ProjectInfo implements Serializable {
     @Column(name = "PROJECT_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long projectId;
+    /**
+     * 审核状态
+     */
+    @Column(name = "STATUS", length = 4)
+    private Integer status;
+    /**
+     * 询价id
+     */
+    @Column(name = "INQUIRY_ID", length = 20)
+    private Long inquiryId;
 
     /**
-     * 创建人
+     * 询价编号
      */
-    @Column(name = "CREATOR", length = 100)
-    private String creator;
-
-    /**
-     * 采购人
-     */
-    @Column(name = "PURCHASER", length = 100)
-    private String purchaser;
+    @Column(name = "INQUIRY_CODE", length = 100)
+    private String inquiryCode;
 
     /**
      * 项目编号
      */
     @Column(name = "PROJECT_CODE", length = 100)
     private String projectCode;
-
+    /**
+     * 采购人
+     */
+    @Column(name = "PURCHASER", length = 100)
+    private String purchaser;
     /**
      * 项目主题
      */
@@ -62,31 +71,37 @@ public class ProjectInfo implements Serializable {
     private String paymentMethod;
 
     /**
+     * 价格成交方式
+     */
+    @Column(name = "PRICE_TRANSACTION_WAY", length = 2000)
+    private String price_transaction_way;
+
+    /**
      * 价格条款
      */
     @Column(name = "PRICE_TERM", length = 2000)
     private String priceTerm;
 
     /**
-     * 保修期
+     * 免费质量保证期
      */
-    @Column(name = "GUARANTEE_DATE")
-    private String guaranteeDate;
+    @Column(name = "FREE_WARRANTY_DATE", length = 50)
+    private String free_warranty_date;
+    /**
+     * 有偿延保
+     */
+    @Column(name = "PAID_EXTEND_WARRANTY", length = 50)
+    private String paid_extend_warranty;
 
     /**
-     * 维保费率/月
+     * 外贸公司境外公司签订方
      */
-    @Column(name = "GUARANTEE_FEE")
-    private String guaranteeFee;
+    @Column(name = "FOREIGN_TRADE_COMPANY", length =200)
+    private String foreign_trade_company;
+
 
     /**
-     * 审核状态
-     */
-    @Column(name = "STATUS", length = 4)
-    private Integer status;
-
-    /**
-     * 货物金额
+     * 产品金额
      */
     @Column(name = "CARGOTOTAL")
     private Double cargoTotal;
@@ -117,6 +132,12 @@ public class ProjectInfo implements Serializable {
      */
     @Column(name = "QUANTITY", length = 100)
     private String quantity;
+
+    /**
+     * 包装要求
+     */
+    @Column(name = "PACKING_INSTRUCTION", length = 2000)
+    private String packing_instruction;
 
     /**
      * 成交通知书
@@ -164,26 +185,8 @@ public class ProjectInfo implements Serializable {
     @JoinColumn(name = "PURCHASE_ID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment_p;
 
-//    /**
-//     * 询价记录
-//     */
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
-//    //@JsonInclude(JsonInclude.Include.NON_NULL)
-//    @JoinColumn(name = "INQUIRY_ID", referencedColumnName = "INQUIRY_ID")
-//    private InquiryInfo inquiryInfo;
 
-    /**
-     * 询价id
-     */
-    @Column(name = "INQUIRY_ID", length = 20)
-    private Long inquiryId;
 
-    /**
-     * 询价编号
-     */
-    @Column(name = "INQUIRY_CODE", length = 100)
-    private String inquiryCode;
 
 
     /**
@@ -194,8 +197,28 @@ public class ProjectInfo implements Serializable {
     @JoinColumn(name = "FEASIBILITY_FILEID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment_feasibility;
 
+    /**
+     * 保修期
+     */
+    @Column(name = "GUARANTEE_DATE")
+    private String guaranteeDate;
+
+    /**
+     * 维保费率/月
+     */
+    @Column(name = "GUARANTEE_FEE")
+    private String guaranteeFee;
 
 
+    /**
+     * 创建人
+     */
+    @Column(name = "CREATOR", length = 100)
+    private String creator;
+
+    @Column(name = "CREATE_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createDate;
 //    /**
 //     * 配件拓展表
 //     */

@@ -14,7 +14,7 @@ public interface ProjectInfoRepository extends JpaRepository<ProjectInfo, Long>,
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying
-    @Query(value = "update project_info set is_delete=1 where project_id in ?1", nativeQuery = true)
+    @Query(value = "update project_info set is_delete=1 where project_id in ?1 and status=1", nativeQuery = true)
     void updateIsDelete(List<Long> projectIds);
 
     @Transactional(rollbackFor = Exception.class)
@@ -85,10 +85,12 @@ public interface ProjectInfoRepository extends JpaRepository<ProjectInfo, Long>,
     @Modifying
     @Query(value = "update project_info set project_subject=?2,purchaser=?3,currency=?4,delivery_date=?5,delivery_date_status=?6," +
             "guarantee_date=?7,guarantee_fee=?8,payment_method=?9,price_term=?10,cargoTotal=?11,amount=?12,status=?13,inquiry_id=?14," +
-            "creator=?15,project_code=?16,is_delete=?17,quantity=?18 ,amountRmb=?19 where project_id=?1", nativeQuery = true)
+            "creator=?15,project_code=?16,is_delete=?17,quantity=?18 ,amountRmb=?19,foreign_trade_company=?20,free_warranty_date=?21," +
+            "paid_extend_warranty=?22,packing_instruction=?23 where project_id=?1", nativeQuery = true)
     void update(Long projectId,String projectSubject,String purchaser,String currency,Integer deliveryDate,Long deliveryDateStatus,
                        String guaranteeDate,String guaranteeFee,String paymentMethod,String priceTerm,Double cargoTotal,String amount,Integer status
-                        ,Long inquiryId,String creator,String projectCode,Integer isDelete,String quantity,String amountRmb);
+                        ,Long inquiryId,String creator,String projectCode,Integer isDelete,String quantity,String amountRmb,
+                String foreign_trade_company,String free_warranty_date,String paid_extend_warranty,String packing_instruction);
 
     @Query(value = "select p.* from project_info p " +
             "where exists (SELECT 1 FROM busi_jbpm_flow b WHERE p.project_id = b.business_id and b.business_type=:businessType and b.parent_actor=:parentActor) " +

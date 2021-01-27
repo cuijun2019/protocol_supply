@@ -34,7 +34,7 @@ public class CargoInfoController extends GenericController {
     private AttachmentService attachmentService;
 
     /**
-     * 新增货物
+     * 新增产品
      *
      * @param cargoInfoDto
      * @return
@@ -54,7 +54,7 @@ public class CargoInfoController extends GenericController {
     }
 
     /**
-     * 货物列表
+     * 产品列表
      *
      * @param isDelete
      * @param currentPage
@@ -92,7 +92,7 @@ public class CargoInfoController extends GenericController {
     }
 
     /**
-     * 货物详情
+     * 产品详情
      *
      * @param cargoId
      * @return
@@ -131,7 +131,7 @@ public class CargoInfoController extends GenericController {
     }
 
     /**
-     * 货物编辑修改
+     * 产品编辑修改
      * @param cargoInfo
      * @return
      */
@@ -152,7 +152,7 @@ public class CargoInfoController extends GenericController {
 
 
     /**
-     * 货物变更
+     * 产品变更
      * @param cargoInfo
      * @return
      */
@@ -210,7 +210,7 @@ public class CargoInfoController extends GenericController {
 
 
     /**
-     * 货物导出--不使用这个功能
+     * 产品导出--不使用这个功能
      *
      * @param cargoInfoDto
      * @param response
@@ -230,7 +230,7 @@ public class CargoInfoController extends GenericController {
     }
 
     /**
-     * 下载货物导入模板--不使用这个功能
+     * 下载产品导入模板--不使用这个功能
      *
      */
     @ResponseBody
@@ -246,7 +246,7 @@ public class CargoInfoController extends GenericController {
     }
 
     /**
-     * 货物导入--不使用这个功能
+     * 产品导入--不使用这个功能
      *
      * @param uploadFile
      * @return

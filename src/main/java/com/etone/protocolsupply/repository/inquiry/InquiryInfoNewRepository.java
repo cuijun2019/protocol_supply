@@ -14,7 +14,7 @@ public interface InquiryInfoNewRepository extends JpaRepository<InquiryInfoNew, 
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying
-    @Query(value = "update inquiry_info_new set is_delete=1 where inquiry_id in ?1", nativeQuery = true)
+    @Query(value = "update inquiry_info_new set is_delete=1 where inquiry_id in ?1 and status=1", nativeQuery = true)
     void updateIsDelete(List<Long> inquiryIds);
 
 

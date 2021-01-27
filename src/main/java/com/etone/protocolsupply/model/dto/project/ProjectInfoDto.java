@@ -18,8 +18,8 @@ import java.util.Set;
 public class ProjectInfoDto extends ProjectInfo {
     private String partnerId;//供应商id
     private String cargoId;
-    private String cargoName;//货物名称
-    private Double cargoTotal;//货物金额=配件*数量
+    private String cargoName;//产品名称
+    private Double cargoTotal;//产品金额=配件*数量
     private String currency;//币种
     private String guaranteeRate;//维保率/月
 
@@ -34,7 +34,9 @@ public class ProjectInfoDto extends ProjectInfo {
     private String contact;//联系人
     private String contactPhone;//联系人电话
     private String fundsCardNumber;//经费卡号
-
+    private String budget_coding;//预算编码
+    private String operator;//经办人
+    private String operator_number;//经办人联系方式
 
     private String sfcgybw;//同一卡号，同一品目，同一项目的项目预算总数是否超过一百万
 

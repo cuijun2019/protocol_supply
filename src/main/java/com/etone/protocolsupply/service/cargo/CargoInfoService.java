@@ -94,7 +94,7 @@ public class CargoInfoService {
         cargoInfo.setProduct_contact(cargoInfoDto.getProduct_contact());//产品联系人
         cargoInfo.setProduct_contact_number(cargoInfoDto.getProduct_contact_number());//产品联系人电话
         cargoInfo.setDefault_guarantee(cargoInfoDto.getDefault_guarantee());//原厂默认质保期
-        cargoInfo.setReprice(cargoInfoDto.getReprice());//货物的参考价格
+        cargoInfo.setReprice(cargoInfoDto.getReprice());//产品的参考价格
         //产品配件列表
         Set<PartInfo> partInfos = cargoInfoDto.getPartInfos();
         if (partInfos != null && !partInfos.isEmpty()) {
@@ -163,7 +163,7 @@ public class CargoInfoService {
         for (CargoInfo cargoInfo : source) {
             cargoInfoDto = new CargoInfoDto();
             BeanUtils.copyProperties(cargoInfo, cargoInfoDto);
-            //根据货物id查询审核流程被使用的配件表，查询是否货物被应用
+            //根据产品id查询审核流程被使用的配件表，查询是否产品被应用
             List<PartInfoExp> count= partInfoExpRepository.selectCountByCargoId(cargoInfo.getCargoId());
             if(count.size()>0){
                 cargoInfoDto.setSfbyy(Constant.BEUSE_YES);//是否被引用
@@ -206,11 +206,11 @@ public class CargoInfoService {
             }
             return cargoInfoDto;
         } else {
-            throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("通过货物id"));
+            throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("通过产品id"));
         }
     }
 
-    //货物修改edit
+    //产品修改edit
     public CargoInfo edit(CargoInfo cargoInfo, JwtUser jwtUser) throws GlobalServiceException {
         Date date = new Date();
         String userName = jwtUser.getUsername();
@@ -287,7 +287,7 @@ public class CargoInfoService {
         newCargoInfo.setManufactor(model.getManufactor());//产地
         newCargoInfo.setModel(model.getModel());//型号
         newCargoInfo.setRemark(model.getRemark());//备注
-        newCargoInfo.setStatus(8);//货物状态：1：草稿，2：审核中，3：同意，4退回，5完成，6结束，7建立项目，8已变更
+        newCargoInfo.setStatus(8);//产品状态：1：草稿，2：审核中，3：同意，4退回，5完成，6结束，7建立项目，8已变更
         newCargoInfo.setType(model.getType());//进口/国产
         newCargoInfo.setPartnerId(model.getPartnerId());//制造商id
         newCargoInfo.setPartner_name(model.getPartner_name());//制造商名称
@@ -373,10 +373,10 @@ public class CargoInfoService {
     //产品导出
     public void export(HttpServletResponse response, List<Long> cargoIds,String actor) {
         try {
-            String[] header = {"货物序号", "货物品目", "货物名称", "货物编号","状态", "品牌", "型号", "主要参数",
+            String[] header = {"产品序号", "产品品目", "产品名称", "产品编号","状态", "品牌", "型号", "主要参数",
                     "产地", "进口/国产类别","参考价格", "币种", "维保率/月", "证明文件", "备注"};
             HSSFWorkbook workbook = new HSSFWorkbook();
-            HSSFSheet sheet = workbook.createSheet("货物列表");
+            HSSFSheet sheet = workbook.createSheet("产品列表");
             sheet.setDefaultColumnWidth(14);
             //        创建标题的显示样式
             HSSFCellStyle headerStyle = workbook.createCellStyle();
@@ -438,18 +438,18 @@ public class CargoInfoService {
             workbook.write(response.getOutputStream());
         } catch (Exception e) {
            // e.printStackTrace();
-            logger.error("货物导出出现异常",e);
+            logger.error("产品导出出现异常",e);
 
         }
     }
 
-    //下载货物导入模板
+    //下载产品导入模板
     public void downloadByName(HttpServletResponse response) {
         try {
-            String[] header = { "货物品目", "货物名称",  "品牌", "型号", "主要参数",
+            String[] header = { "产品品目", "产品名称",  "品牌", "型号", "主要参数",
                     "产地", "进口/国产类别", "参考价格", "币种", "维保率/月", "备注"};
             HSSFWorkbook workbook = new HSSFWorkbook();
-            HSSFSheet sheet = workbook.createSheet("货物导入模板表");
+            HSSFSheet sheet = workbook.createSheet("产品导入模板表");
             sheet.setDefaultColumnWidth(14);
             //        创建标题的显示样式
             HSSFCellStyle headerStyle = workbook.createCellStyle();
@@ -482,7 +482,7 @@ public class CargoInfoService {
             workbook.write(response.getOutputStream());
         } catch (Exception e) {
             //e.printStackTrace();
-            logger.error("货物模板下载出现异常",e);
+            logger.error("产品模板下载出现异常",e);
         }
     }
 
@@ -515,7 +515,7 @@ public class CargoInfoService {
             }
         } catch (Exception e) {
             //e.printStackTrace();
-            logger.error("货物导入出现异常",e);
+            logger.error("产品导入出现异常",e);
         }
     }
     public void batchInsertCargoInfo(List<Object> maps,JwtUser jwtUser,Long partnerId) {
@@ -526,7 +526,7 @@ public class CargoInfoService {
             String jsonStr = maps.get(i).toString();
             JSONObject jsonObject = new JSONObject(jsonStr);
             CargoInfo cargoInfo = new CargoInfo();
-            BrandItem brandItem=brandItemRepository.findByItemName(jsonObject.get("货物品目").toString());
+            BrandItem brandItem=brandItemRepository.findByItemName(jsonObject.get("产品品目").toString());
             if(brandItem==null){
                 cargoInfo.setItemCode(null);//品目code
                 cargoInfo.setItemName(null);//品目name
@@ -534,9 +534,9 @@ public class CargoInfoService {
                 cargoInfo.setItemCode(brandItem.getItemCode());//品目code
                 cargoInfo.setItemName(brandItem.getItemName());//品目name
             }
-            cargoInfo.setCargoSerial(this.findLastCargoSerial2(i));//货物序号
-            cargoInfo.setCargoName(jsonObject.get("货物名称").toString());
-            cargoInfo.setCargoCode(cargoInfo.getItemCode() + cargoInfo.getCargoSerial());//货物编号
+            cargoInfo.setCargoSerial(this.findLastCargoSerial2(i));//产品序号
+            cargoInfo.setCargoName(jsonObject.get("产品名称").toString());
+            cargoInfo.setCargoCode(cargoInfo.getItemCode() + cargoInfo.getCargoSerial());//产品编号
             cargoInfo.setBrand(jsonObject.get("品牌").toString());
             cargoInfo.setModel(jsonObject.get("型号").toString());
             cargoInfo.setMainParams(jsonObject.get("主要参数").toString());
@@ -682,8 +682,8 @@ public class CargoInfoService {
 
     public static List<String> readCargoInfoKey() {
         List<String> list = new ArrayList<>();
-        list.add("货物品目");
-        list.add("货物名称");
+        list.add("产品品目");
+        list.add("产品名称");
         list.add("品牌");
         list.add("型号");
         list.add("主要参数");

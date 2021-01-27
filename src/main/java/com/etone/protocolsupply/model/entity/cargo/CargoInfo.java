@@ -25,37 +25,37 @@ public class CargoInfo implements Serializable {
     private Long cargoId;
 
     /**
-     * 最初货物id
+     * 最初产品id
      */
     @Column(name = "OLD_CARGOID", length = 20)
     private Long oldCargoId;
 
     /**
-     * 货物序号
+     * 产品序号
      */
     @Column(name = "CARGO_SERIAL", length = 100)
     private String cargoSerial;
 
     /**
-     * 货物编号
+     * 产品编号
      */
     @Column(name = "CARGO_Code", length = 100)
     private String cargoCode;
 
     /**
-     * 货物品目Code
+     * 产品品目Code
      */
     @Column(name = "ITEM_CODE", length = 100)
     private String itemCode;
 
     /**
-     * 货物品目
+     * 产品品目
      */
     @Column(name = "ITEM_NAME", length = 100)
     private String itemName;
 
     /**
-     * 货物名称
+     * 产品名称
      */
     @Column(name = "CARGO_NAME", length = 200)
     private String cargoName;

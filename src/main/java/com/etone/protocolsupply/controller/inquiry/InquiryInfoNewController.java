@@ -83,7 +83,7 @@ public class InquiryInfoNewController extends GenericController {
      * @param pageSize
      * @param isDelete
      * @param inquiryCode 询价单号
-     * @param cargoName 货物名称
+     * @param cargoName 产品名称
      * @param actor 登录人
      * @param status 状态
      * @param request

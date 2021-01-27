@@ -123,7 +123,7 @@ public class Constant {
     public static final String BUSINESS_TYPE_E_STRING  = "询价管理审核";
 
     public static final String    BUSINESS_TYPE_C        = "cargoAudit";
-    public static final String BUSINESS_TYPE_C_STRING  = "货物管理审核";
+    public static final String BUSINESS_TYPE_C_STRING  = "产品管理审核";
 
     public static final String    BUSINESS_TYPE_A        = "agentAudit";
     public static final String BUSINESS_TYPE_A_STRING  = "代理商管理审核";

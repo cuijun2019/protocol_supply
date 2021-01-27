@@ -52,9 +52,10 @@ public interface PartInfoExpRepository extends JpaRepository<PartInfoExp, Long>,
     @Modifying
     @Query(value = "insert into  " +
             "part_info_exp " +
-            "(is_delete, manufactor, part_code,part_name,part_serial,price,quantity,remark,standards,tech_params,total,unit,project_id,cargo_id)" +
-            " values (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14)", nativeQuery = true)
+            "(is_delete, manufactor, part_code,part_name,part_serial,price,quantity,remark,standards,tech_params,standard_config," +
+            " guarantee_date,warranty_date,after_sales_service_outlets_and_number,total,unit,project_id,cargo_id)" +
+            " values (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17,?18)", nativeQuery = true)
     void savePartInfoExp(Integer Isdelete,String manufactor,String partCode,String partName,String partSerial,Double price
-            ,String quantity,String remark,String standards,String techParams,Double total,String unit
-            ,Long project_id,Long cargo_id);
+            ,String quantity,String remark,String standards,String techParams,String standard_config,String guarantee_date,
+                         String warranty_date,String after_sales_service_outlets_and_number,Double total,String unit,Long project_id,Long cargo_id);
 }

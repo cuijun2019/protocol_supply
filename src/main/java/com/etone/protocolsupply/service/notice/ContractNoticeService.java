@@ -220,7 +220,7 @@ public class ContractNoticeService {
         //根据项目id查询代理商所在公司名称
         String agentCompanyName = agentInfoExpRepository.findAgentCompanyName(Long.valueOf(projectId));
 
-        //根据项目id查询配件表得到货物
+        //根据项目id查询配件表得到产品
         List<CargoInfo> cargoInfoList = cargoInfoRepository.findByProjectId(Long.parseLong(projectId));
 
 

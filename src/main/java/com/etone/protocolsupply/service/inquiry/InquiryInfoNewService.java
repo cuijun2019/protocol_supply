@@ -1,6 +1,7 @@
 package com.etone.protocolsupply.service.inquiry;
 
 import com.etone.protocolsupply.constant.Constant;
+import com.etone.protocolsupply.exception.GlobalExceptionCode;
 import com.etone.protocolsupply.exception.GlobalServiceException;
 import com.etone.protocolsupply.model.dto.JwtUser;
 import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoNewCollectionDto;
@@ -69,7 +70,6 @@ public class InquiryInfoNewService {
         String userName = jwtUser.getUsername();
         InquiryInfoNew inquiryInfoNew = new InquiryInfoNew();
         BeanUtils.copyProperties(inquiryInfoNewDto, inquiryInfoNew);
-//        String maxOneCode = inquiryInfoNewRepository.findMaxOne(inquiryInfoNew.getCargoInfo().getCargoId().toString());
         String maxOneCode = inquiryInfoNewRepository.findMaxOne();
         if (maxOneCode == null) {
             inquiryInfoNew.setInquiryCode("XJD-" + Common.getYYYYMMDDDate(date) + "-001");
@@ -80,18 +80,20 @@ public class InquiryInfoNewService {
         inquiryInfoNew.setCreator(userName);//创建人
         inquiryInfoNew.setCreateDate(date);//创建时间
         inquiryInfoNew.setIsDelete(Constant.DELETE_NO);
-        //以下货物信息关联询价表有待思考
-        CargoInfo cargoInfo = inquiryInfoNewDto.getCargoInfo();
-        if (cargoInfo != null && cargoInfo.getCargoId()!=null) {
-            Optional<CargoInfo> optional = cargoInfoRepository.findById(cargoInfo.getCargoId());
+        //以下产品信息关联询价表有待思考
+        //CargoInfo cargoInfo = inquiryInfoNewDto.getCargoInfo();
+        if (inquiryInfoNewDto.getCargoInfo().getCargoId()!=null) {
+            Optional<CargoInfo> optional = cargoInfoRepository.findById(inquiryInfoNewDto.getCargoInfo().getCargoId());
             if (optional.isPresent()) {
                 inquiryInfoNew.setCargoInfo(optional.get());
+            }else {
+                throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("询价带入的产品id"));
             }
         }else {
             inquiryInfoNew.setCargoInfo(null);
         }
         inquiryInfoNewRepository.save(inquiryInfoNew);
-        inquiryInfoNew.getCargoInfo().setPartInfos(null);//如果暂时setnull就会error："Could not write JSON: Infinite recursion (StackOverflowError); nested exception is com.fasterxml.jackson.databind.JsonMappingException: Infinite recursion (StackOverflowError) (through reference chain: com.etone.protocolsupply.model.dto.ResponseValue[\"data\"]->com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew[\"cargoInfo\"]->com.etone.protocolsupply.model.entity.cargo.CargoInfo[\"partInfos\"])"
+        inquiryInfoNew.getCargoInfo().setPartInfos(null);//暂时setnull,否则就会error："Could not write JSON: Infinite recursion (StackOverflowError); nested exception is com.fasterxml.jackson.databind.JsonMappingException: Infinite recursion (StackOverflowError) (through reference chain: com.etone.protocolsupply.model.dto.ResponseValue[\"data\"]->com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew[\"cargoInfo\"]->com.etone.protocolsupply.model.entity.cargo.CargoInfo[\"partInfos\"])"
         return inquiryInfoNew;
     }
     public Page<InquiryInfoNew> getProjectInfoBudget(String fundsCardNumber, String itemName, Pageable pageable) {
@@ -163,7 +165,7 @@ public class InquiryInfoNewService {
         if (optional.isPresent()) {
             return optional.get();
         } else {
-            return null;
+            throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("inquiryId"));
         }
     }
 
@@ -171,30 +173,43 @@ public class InquiryInfoNewService {
     public InquiryInfoNew update(InquiryInfoNewDto inquiryInfoNewDto) throws GlobalServiceException{
         InquiryInfoNew inquiryInfoNew = new InquiryInfoNew();
         BeanUtils.copyProperties(inquiryInfoNewDto, inquiryInfoNew);
-        if(null!=inquiryInfoNewDto.getInquiryId() && !"".equals(inquiryInfoNewDto.getInquiryId())){
-            //inquiryInfoNew.setInquiryId(inquiryInfoNewDto.getInquiryId());
+        if(null!=inquiryInfoNewDto.getInquiryId() && 0!=inquiryInfoNewDto.getInquiryId()){
             inquiryInfoNew=inquiryInfoNewRepository.findAllByInquiryId(inquiryInfoNewDto.getInquiryId());
+            //项目预算
             inquiryInfoNew.setProjectBudget(inquiryInfoNewDto.getProjectBudget()==null?inquiryInfoNew.getProjectBudget():inquiryInfoNewDto.getProjectBudget());
+            //项目背景
             inquiryInfoNew.setProjectBackground(inquiryInfoNewDto.getProjectBackground()==null?inquiryInfoNew.getProjectBackground():inquiryInfoNewDto.getProjectBackground());
+            //采购人
             inquiryInfoNew.setPurchaser(inquiryInfoNewDto.getPurchaser()==null?inquiryInfoNew.getPurchaser():inquiryInfoNewDto.getPurchaser());
+            //厂家
             inquiryInfoNew.setManufactor(inquiryInfoNewDto.getManufactor()==null?inquiryInfoNew.getManufactor():inquiryInfoNewDto.getManufactor());
+            //预算编码
+            inquiryInfoNew.setBudget_coding(inquiryInfoNewDto.getBudget_coding()==null?inquiryInfoNew.getBudget_coding():inquiryInfoNewDto.getBudget_coding());
+            //经办人
+            inquiryInfoNew.setOperator(inquiryInfoNewDto.getOperator()==null?inquiryInfoNew.getOperator():inquiryInfoNewDto.getOperator());
+            //经办人联系电话
+            inquiryInfoNew.setOperator_number(inquiryInfoNewDto.getOperator_number()==null?inquiryInfoNew.getOperator_number():inquiryInfoNewDto.getOperator_number());
+            //审核状态
             inquiryInfoNew.setStatus(inquiryInfoNewDto.getStatus()==null?inquiryInfoNew.getStatus():inquiryInfoNewDto.getStatus());
-            //
             inquiryInfoNew.setProjectId(inquiryInfoNewDto.getProjectId()==null?inquiryInfoNew.getProjectId():inquiryInfoNewDto.getProjectId());
         }
-        CargoInfo cargoInfo = inquiryInfoNewDto.getCargoInfo();
+        //询价修改-附件
         Attachment attachment = inquiryInfoNewDto.getAttachment();
-        if (attachment != null && attachment.getAttachId()!=null && !attachment.getAttachId().equals("")) {
+        if (attachment != null && attachment.getAttachId()!=null && 0!=attachment.getAttachId()) {
             Optional<Attachment> optional = attachmentRepository.findById(attachment.getAttachId());
             if (optional.isPresent()) {
                 inquiryInfoNew.setAttachment(optional.get());
+            }else {
+                throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("修改询价带入的附件id不存在"));
             }
         }
-        if (cargoInfo != null && cargoInfo.getCargoId()!=null && !cargoInfo.getCargoId().equals("")) {
-            Optional<CargoInfo> optional = cargoInfoRepository.findById(cargoInfo.getCargoId());
+        //询价修改-产品
+        if (inquiryInfoNewDto.getCargoInfo().getCargoId()!=null && 0!=inquiryInfoNewDto.getCargoInfo().getCargoId()) {
+            Optional<CargoInfo> optional = cargoInfoRepository.findById(inquiryInfoNewDto.getCargoInfo().getCargoId());
             if (optional.isPresent()) {
                 inquiryInfoNew.setCargoInfo(optional.get());
-
+            }else {
+                throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("修改询价带入的产品id不存在"));
             }
         }
 
@@ -212,7 +227,7 @@ public class InquiryInfoNewService {
     //询价导出
     public void export(HttpServletResponse response, List<Long> inquiryIds, String actor) {
         try {
-            String[] header = {"询价单号", "采购人", "制造商名称", "货物名称", "项目预算"};
+            String[] header = {"询价单号", "采购人", "制造商名称", "产品名称", "项目预算"};
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet("询价列表");
             sheet.setDefaultColumnWidth(10);
@@ -244,10 +259,10 @@ public class InquiryInfoNewService {
                 inquiryInfoNew = list.get(i);
                 HSSFRow row = sheet.createRow(i + 1);
 
-                CargoInfo cargoInfo=inquiryInfoNew.getCargoInfo();//货物
+                CargoInfo cargoInfo=inquiryInfoNew.getCargoInfo();//产品
                 if(cargoInfo!=null){
                     cargoInfo = cargoInfoRepository.getOne(inquiryInfoNew.getCargoInfo().getCargoId());
-                    row.createCell(3).setCellValue(new HSSFRichTextString(cargoInfo.getCargoName()));//货物名称
+                    row.createCell(3).setCellValue(new HSSFRichTextString(cargoInfo.getCargoName()));//产品名称
                 }else {
                     row.createCell(3).setCellValue(new HSSFRichTextString(""));
                 }

@@ -76,10 +76,37 @@ public class PartInfoExp implements Serializable {
     private Double price;
 
     /**
-     * 总价
+     * 小计
      */
     @Column(name = "TOTAL")
     private Double total;
+    /**
+     * 20210126新增字段
+     */
+
+    /**
+     * 选配/标配
+     */
+    @Column(name = "STANDARD_CONFIG", length = 200)
+    private String standard_config;
+
+    /**
+     * 质保期
+     */
+    @Column(name = "GUARANTEE_DATE", length = 20)
+    private String guarantee_date;
+
+    /**
+     * 保修相应时间
+     */
+    @Column(name = "WARRANTY_DATE", length = 20)
+    private String warranty_date;
+
+    /**
+     * 售后服务网点及电话
+     */
+    @Column(name = "AFTER_SALES_SERVICE_OUTLETS_AND_NUMBER", length = 200)
+    private String after_sales_service_outlets_and_number;
 
     /**
      * 备注

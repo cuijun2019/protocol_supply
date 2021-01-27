@@ -1,6 +1,7 @@
 package com.etone.protocolsupply.service.project;
 
 import com.etone.protocolsupply.constant.Constant;
+import com.etone.protocolsupply.exception.GlobalExceptionCode;
 import com.etone.protocolsupply.exception.GlobalServiceException;
 import com.etone.protocolsupply.model.dto.AgentInfoExpDto;
 import com.etone.protocolsupply.model.dto.JwtUser;
@@ -85,37 +86,41 @@ public class ProjectInfoService {
         if (Integer.parseInt(sqlDate)<Integer.parseInt(Common.getYYYYDate(date))) {
             projectInfo.setProjectCode("SCUT-" + Common.getYYYYDate(date) + "-XY001");
         } else {
-//            ProjectInfo projectInfo1 = projectInfoRepository.findAllByProjectId(Long.parseLong(maxOne));
             projectInfo.setProjectCode("SCUT-" + Common.getYYYYDate(date) + "-XY" + Common.convertSerialProject(projectInfo1.getProjectCode().substring(12), 1));
         }
         projectInfo.setIsDelete(Constant.DELETE_NO);
-//        User user = userRepository.findByUsername(userName);//需要修改-----
-//        projectInfo.setCreator(user.getCompany());
-        projectInfo.setCreator(userName);
+        projectInfo.setCreator(userName);//创建人
+        projectInfo.setCreateDate(date);//创建时间
         // projectInfo.setStatus(1);//审核状态：草稿、审核中、已完成、退回
         Attachment attachment = projectInfoDto.getAttachment_n();//中标通知书
-        if (attachment != null && attachment.getAttachId() != null && !attachment.getAttachId().equals("")) {
+        if (attachment != null && attachment.getAttachId() != null && 0!=attachment.getAttachId()) {
             Optional<Attachment> optional = attachmentRepository.findById(attachment.getAttachId());
             if (optional.isPresent()) {
                 projectInfo.setAttachment_n(optional.get());
+            }else {
+                throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("新建项目时，中标通知书id不存在"));
             }
         } else {
             projectInfo.setAttachment_n(null);
         }
         Attachment attachment_c = projectInfoDto.getAttachment_c();//合同
-        if (attachment_c != null && attachment_c.getAttachId() != null && !attachment_c.getAttachId().equals("")) {
+        if (attachment_c != null && attachment_c.getAttachId() != null && 0!=attachment_c.getAttachId()) {
             Optional<Attachment> optional = attachmentRepository.findById(attachment_c.getAttachId());
             if (optional.isPresent()) {
                 projectInfo.setAttachment_c(optional.get());
+            }else {
+                throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("新建项目时，合同id不存在"));
             }
         } else {
             projectInfo.setAttachment_c(null);
         }
         Attachment attachment_p = projectInfoDto.getAttachment_p();//采购结果通知书
-        if (attachment_p != null && attachment_p.getAttachId() != null && !attachment_p.getAttachId().equals("")) {
+        if (attachment_p != null && attachment_p.getAttachId() != null && 0!=attachment_p.getAttachId()) {
             Optional<Attachment> optional = attachmentRepository.findById(attachment_p.getAttachId());
             if (optional.isPresent()) {
                 projectInfo.setAttachment_p(optional.get());
+            }else {
+                throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("新建项目时，采购结果通知书id不存在"));
             }
         } else {
             projectInfo.setAttachment_p(null);
@@ -125,13 +130,15 @@ public class ProjectInfoService {
                 projectInfo.setInquiryId(projectInfoDto.getInquiryInfo().getInquiryId());
                 projectInfo.setInquiryCode(projectInfoDto.getInquiryInfo().getInquiryCode());
             }
-        projectInfo.setProjectSubject(projectInfoDto.getCargoName() + "的采购");
+        projectInfo.setProjectSubject(projectInfoDto.getCargoName() + "的采购方案");//项目主题=产品名称+的采购方案
         Optional<CargoInfo> optional = cargoInfoRepository.findById(Long.parseLong(projectInfoDto.getCargoId()));
         if (optional.isPresent()) {
             projectInfoDto.setCargoInfo(optional.get());
+        }else {
+            throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("新建项目时，产品id不存在"));
         }
 
-        projectInfoRepository.save(projectInfo);
+        projectInfoRepository.save(projectInfo);//保存项目信息
 //        List<Long> partIds = new ArrayList<>();
 //        if (partInfoExps.size() > 0) {
 //            for (PartInfoExp partInfoExp : projectInfoDto.getPartInfoExps()) {
@@ -147,19 +154,23 @@ public class ProjectInfoService {
                 partInfoExp.setCargoInfo(projectInfoDto.getCargoInfo());
 //                partInfoExpRepository.save(partInfoExp);
                 partInfoExpRepository.savePartInfoExp(partInfoExp.getIsDelete()
-                        ,partInfoExp.getManufactor()
-                        ,partInfoExp.getPartCode()
-                        ,partInfoExp.getPartName()
-                        ,partInfoExp.getPartSerial()
-                        ,partInfoExp.getPrice()
-                        ,partInfoExp.getQuantity()
-                        ,partInfoExp.getRemark()==null?"":partInfoExp.getRemark()
-                        ,partInfoExp.getStandards()
-                        ,partInfoExp.getTechParams()
-                        ,partInfoExp.getTotal()
-                        ,partInfoExp.getUnit()
-                        ,projectInfo.getProjectId()
-                        ,partInfoExp.getCargoInfo().getCargoId());
+                        ,partInfoExp.getManufactor()//产地
+                        ,partInfoExp.getPartCode()//配件编号
+                        ,partInfoExp.getPartName()//配件名称
+                        ,partInfoExp.getPartSerial()//配件序号
+                        ,partInfoExp.getPrice()//单价
+                        ,partInfoExp.getQuantity()//数量
+                        ,partInfoExp.getRemark()==null?"":partInfoExp.getRemark()//备注
+                        ,partInfoExp.getStandards()//品牌/型号/规格
+                        ,partInfoExp.getTechParams()//主要技术参数
+                        ,partInfoExp.getStandard_config()//标配/选配
+                        ,partInfoExp.getGuarantee_date()//质保期
+                        ,partInfoExp.getWarranty_date()//保修响应时间
+                        ,partInfoExp.getAfter_sales_service_outlets_and_number()//售后服务网点及电话
+                        ,partInfoExp.getTotal()//小计
+                        ,partInfoExp.getUnit()//单位
+                        ,projectInfo.getProjectId()//关联项目的id
+                        ,partInfoExp.getCargoInfo().getCargoId());//关联产品id
             }
         }
         //代理商list
@@ -267,11 +278,11 @@ public class ProjectInfoService {
                 projectInfoDto.setInquiryInfo(inquiryInfoNew);
             }
             BeanUtils.copyProperties(projectInfo, projectInfoDto);
-            projectInfoDto.setCargoId(cargoInfo.getCargoId().toString());//货物id
-            projectInfoDto.setCargoName(cargoInfo.getCargoName());//货物名称
+            projectInfoDto.setCargoId(cargoInfo.getCargoId().toString());//产品id
+            projectInfoDto.setCargoName(cargoInfo.getCargoName());//产品名称
             projectInfoDto.setCurrency(cargoInfo.getCurrency());//币种
             projectInfoDto.setGuaranteeRate(cargoInfo.getGuaranteeRate());//维保率
-            projectInfoDto.setCargoTotal(projectInfo.getCargoTotal());//货物总金额
+            projectInfoDto.setCargoTotal(projectInfo.getCargoTotal());//产品总金额
             projectCollectionDto.add(projectInfoDto);
         }
         return projectCollectionDto;
@@ -279,37 +290,44 @@ public class ProjectInfoService {
 
     public ProjectInfo update(ProjectInfoDto projectInfoDto, JwtUser jwtUser) throws GlobalServiceException {
         String username = jwtUser.getUsername();
+        Date date=new Date();
         ProjectInfo projectInfo = this.findOne(projectInfoDto.getProjectId());
-        CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(projectInfoDto.getCargoId());//货物
+        CargoInfo cargoInfo = cargoInfoRepository.findAllByCargoId(projectInfoDto.getCargoId());//产品
         ProjectInfo model=new ProjectInfo();
         model.setProjectId(projectInfo.getProjectId());
-        model.setCreator(projectInfo.getCreator());
-        model.setPurchaser(projectInfoDto.getPurchaser());
-        model.setProjectCode(projectInfo.getProjectCode());
-        model.setProjectSubject(projectInfoDto.getCargoName()+"的采购");
-        model.setDeliveryDate(projectInfoDto.getDeliveryDate());
-        model.setDeliveryDateStatus(projectInfoDto.getDeliveryDateStatus());
-        model.setPaymentMethod(projectInfoDto.getPaymentMethod());
-        model.setPriceTerm(projectInfoDto.getPriceTerm());
-        model.setGuaranteeDate(projectInfoDto.getGuaranteeDate());
-        model.setGuaranteeFee(projectInfoDto.getGuaranteeFee());
-        model.setStatus(projectInfoDto.getStatus());
-        model.setCargoTotal(projectInfoDto.getCargoTotal());
+        model.setCreator(projectInfo.getCreator());//创建人
+        model.setCreateDate(date);//创建时间
+        model.setPurchaser(projectInfoDto.getPurchaser());//采购人
+        model.setProjectCode(projectInfo.getProjectCode());//项目编号
+        model.setProjectSubject(projectInfoDto.getCargoName()+"的采购方案");//项目主题
+        model.setForeign_trade_company(projectInfoDto.getForeign_trade_company()!=null?projectInfoDto.getForeign_trade_company():"");//外贸公司境外公司签订方
+        model.setFree_warranty_date(projectInfoDto.getFree_warranty_date());//免费质量保证期
+        model.setPaid_extend_warranty(projectInfoDto.getPaid_extend_warranty());//有偿延保
+        model.setPacking_instruction(projectInfoDto.getPacking_instruction()!=null?projectInfoDto.getPacking_instruction():"");//包装要求
+        model.setPrice_transaction_way(projectInfoDto.getPrice_transaction_way());//价格成交方式
+        model.setDeliveryDate(projectInfoDto.getDeliveryDate());//交货时间
+        model.setDeliveryDateStatus(projectInfoDto.getDeliveryDateStatus());//交货时间状态
+        model.setPaymentMethod(projectInfoDto.getPaymentMethod());//付款方式
+        model.setPriceTerm(projectInfoDto.getPriceTerm());//价格条款
+        model.setGuaranteeDate(projectInfoDto.getGuaranteeDate());//保修期
+        model.setGuaranteeFee(projectInfoDto.getGuaranteeFee());//维保期
+        model.setCargoTotal(projectInfoDto.getCargoTotal());//小计
         model.setAmount(projectInfoDto.getAmount().replaceAll(",",""));//项目总金额（原来的币种）
         model.setAmountRmb(projectInfoDto.getAmountRmb().replaceAll(",",""));//项目总金额（人民币）
-        model.setCurrency(projectInfoDto.getCurrency());
-        model.setIsDelete(projectInfo.getIsDelete());
+        model.setCurrency(projectInfoDto.getCurrency());//币种
+        model.setIsDelete(projectInfo.getIsDelete());//是否删除
         model.setQuantity(projectInfoDto.getQuantity());//数量
         if(null!=projectInfoDto.getInquiryId()){
             model.setInquiryId(projectInfoDto.getInquiryId());//询价
         }
-        model.setAttachment_p(projectInfo.getAttachment_p());
-        model.setAttachment_c(projectInfo.getAttachment_c());
-        model.setAttachment_n(projectInfo.getAttachment_n());
+        model.setAttachment_p(projectInfo.getAttachment_p());//采购结果通知书
+        model.setAttachment_c(projectInfo.getAttachment_c());//合同
+        model.setAttachment_n(projectInfo.getAttachment_n());//成交通知书
         projectInfoRepository.update(model.getProjectId(),model.getProjectSubject(),model.getPurchaser(),
                 model.getCurrency(),model.getDeliveryDate(),model.getDeliveryDateStatus(),model.getGuaranteeDate(),model.getGuaranteeFee(),
                 model.getPaymentMethod(),model.getPriceTerm(),model.getCargoTotal(),model.getAmount(),model.getStatus(),
-                 projectInfoDto.getInquiryInfo().getInquiryId(),model.getCreator(),model.getProjectCode(),model.getIsDelete(),model.getQuantity(),model.getAmountRmb());
+                 projectInfoDto.getInquiryInfo().getInquiryId(),model.getCreator(),model.getProjectCode(),model.getIsDelete(),
+                model.getQuantity(),model.getAmountRmb(),model.getForeign_trade_company(),model.getFree_warranty_date(),model.getPaid_extend_warranty(),model.getPacking_instruction());
 
         //供应商
         AgentInfoExp agentInfoExp=projectInfoDto.getAgentInfoExp();
@@ -345,28 +363,31 @@ public class ProjectInfoService {
         }
 
         partInfoExpRepository.deleteByProjectId(projectInfoDto.getProjectId());
-        //货物配件
+        //产品配件
         Set<PartInfoExp>partInfoExps=projectInfoDto.getPartInfoExps();
         if (partInfoExps != null && !partInfoExps.isEmpty()) {
             for (PartInfoExp partInfoExp : partInfoExps) {
                 partInfoExp.setIsDelete(Constant.DELETE_NO);
                 partInfoExp.setProjectInfo(model);
                 partInfoExp.setCargoInfo(cargoInfo);
-//                partInfoExpRepository.save(partInfoExp);
                 partInfoExpRepository.savePartInfoExp(partInfoExp.getIsDelete()
-                        ,partInfoExp.getManufactor()
-                        ,partInfoExp.getPartCode()
-                        ,partInfoExp.getPartName()
-                        ,partInfoExp.getPartSerial()
-                        ,partInfoExp.getPrice()
-                        ,partInfoExp.getQuantity()
-                        ,partInfoExp.getRemark()==null?"":partInfoExp.getRemark()
-                        ,partInfoExp.getStandards()
-                        ,partInfoExp.getTechParams()
-                        ,partInfoExp.getTotal()
-                        ,partInfoExp.getUnit()
-                        ,model.getProjectId()
-                        ,cargoInfo.getCargoId());
+                        ,partInfoExp.getManufactor()//产地
+                        ,partInfoExp.getPartCode()//配件编号
+                        ,partInfoExp.getPartName()//配件名称
+                        ,partInfoExp.getPartSerial()//配件序号
+                        ,partInfoExp.getPrice()//单价
+                        ,partInfoExp.getQuantity()//数量
+                        ,partInfoExp.getRemark()==null?"":partInfoExp.getRemark()//备注
+                        ,partInfoExp.getStandards()//品牌/型号/规格
+                        ,partInfoExp.getTechParams()//主要技术参数
+                        ,partInfoExp.getStandard_config()//标配/选配
+                        ,partInfoExp.getGuarantee_date()//质保期
+                        ,partInfoExp.getWarranty_date()//保修响应时间
+                        ,partInfoExp.getAfter_sales_service_outlets_and_number()//售后服务网点及电话
+                        ,partInfoExp.getTotal()//小计
+                        ,partInfoExp.getUnit()//单位
+                        ,projectInfo.getProjectId()//关联项目的id
+                        ,partInfoExp.getCargoInfo().getCargoId());//关联产品id
             }
         }
         return model;
@@ -381,9 +402,6 @@ public class ProjectInfoService {
             BeanUtils.copyProperties(projectInfo, projectInfoDto);
         }
         List<AgentInfoExp> agentInfoExp=agentInfoExpRepository.findByProjectId(projectId);
-        CargoInfo cargoInfo=cargoInfoRepository.findAllByProjectId(projectId);
-        ProjectInfo projectInfo1=projectInfoRepository.getOne(projectId);
-        InquiryInfoNew inquiryInfoNew=inquiryInfoNewRepository.findAllByInquiryId(projectInfo1.getInquiryId());
         if(agentInfoExp.get(0).getAgentId() !=null){
             AgentInfoExp model=agentInfoExp.get(0);
             AgentInfoExpDto agentInfoExpDto =new AgentInfoExpDto();
@@ -396,6 +414,8 @@ public class ProjectInfoService {
            // projectInfoDto.setAgentInfoExp(null);
             projectInfoDto.setAgentInfoExpDto(null);
         }
+        ProjectInfo projectInfo1=projectInfoRepository.getOne(projectId);
+        InquiryInfoNew inquiryInfoNew=inquiryInfoNewRepository.findAllByInquiryId(projectInfo1.getInquiryId());
         if(null!=inquiryInfoNew){
             inquiryInfoNew.getCargoInfo().setPartInfos(null);
             projectInfoDto.setInquiryInfo(inquiryInfoNew);
@@ -405,9 +425,13 @@ public class ProjectInfoService {
             projectInfoDto.setContact(inquiryInfoNew.getContact());//联系人
             projectInfoDto.setContactPhone(inquiryInfoNew.getContactPhone());//联系人电话
             projectInfoDto.setFundsCardNumber(inquiryInfoNew.getFundsCardNumber());//经费卡号
+            projectInfoDto.setBudget_coding(inquiryInfoNew.getBudget_coding());//预算编码
+            projectInfoDto.setOperator(inquiryInfoNew.getOperator());//经办人
+            projectInfoDto.setOperator_number(inquiryInfoNew.getOperator_number());//经办人联系方式
         }else {
             projectInfoDto.setInquiryInfo(null);
         }
+        CargoInfo cargoInfo=cargoInfoRepository.findAllByProjectId(projectId);
         projectInfoDto.setCargoId(cargoInfo.getCargoId().toString());
         projectInfoDto.setCargoName(cargoInfo.getCargoName());
         return projectInfoDto;
@@ -419,7 +443,7 @@ public class ProjectInfoService {
 
     public void export(HttpServletResponse response, List<Long> projectIds,String actor) {
         try {
-            String[] header = {"项目主题", "项目编号", "货物名称", "货物金额", "项目总金额", "币种","项目总金额RMB", "状态",
+            String[] header = {"项目主题", "项目编号", "产品名称", "产品金额", "项目总金额", "币种","项目总金额RMB", "状态",
                     "采购结果通知书", "中标通知书", "合同"};
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet("项目信息表");
@@ -477,7 +501,7 @@ public class ProjectInfoService {
                 row.createCell(0).setCellValue(new HSSFRichTextString(projectInfo.getProjectSubject()));
                 row.createCell(1).setCellValue(new HSSFRichTextString(projectInfo.getProjectCode()));
                 row.createCell(2).setCellValue(new HSSFRichTextString(cargoInfo.getCargoName()));
-                row.createCell(3).setCellValue(new HSSFRichTextString(projectInfo.getCargoTotal()+""));//货物金额
+                row.createCell(3).setCellValue(new HSSFRichTextString(projectInfo.getCargoTotal()+""));//产品金额
                 row.createCell(4).setCellValue(new HSSFRichTextString(projectInfo.getAmount()+""));//项目总金额
                 row.createCell(5).setCellValue(new HSSFRichTextString(cargoInfo.getCurrency()));//币种
                 row.createCell(6).setCellValue(new HSSFRichTextString(projectInfo.getAmountRmb()+""));//项目总金额RMB

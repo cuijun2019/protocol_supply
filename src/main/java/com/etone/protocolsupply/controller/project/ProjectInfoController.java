@@ -66,9 +66,6 @@ public class ProjectInfoController extends GenericController {
         return responseBuilder.build();
     }
 
-
-
-
     /**
      * 项目列表
      * @param pageSize
@@ -106,8 +103,6 @@ public class ProjectInfoController extends GenericController {
         return responseBuilder.build();
     }
 
-
-
     /**
      * 项目-配件列表
      *
@@ -138,7 +133,7 @@ public class ProjectInfoController extends GenericController {
     }
 
     /**
-     * 新增项目-查询供应商下所有审核通过的货物信息
+     * 新增项目-查询供应商下所有审核通过的产品信息
      *
      * @param actor
      * @return

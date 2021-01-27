@@ -50,7 +50,7 @@ public class PermissionService {
         HashMap<String, Object> projectMapMyProject = new HashMap<>();
         ArrayList<Object> projectListMyProject = new ArrayList<>();
 
-        //货物管理
+        //产品管理
         HashMap<String, Object> goodsMap = new HashMap<>();
         ArrayList<Object> goodsList = new ArrayList<>();
         HashMap<String, Object> goodsMapMyGoods = new HashMap<>();

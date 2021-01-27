@@ -35,17 +35,18 @@ public class InquiryInfoNew implements Serializable {
     @Column(name = "INQUIRY_CODE", length = 100)
     private String inquiryCode;
 
-//    /**
-//     * 询价主题
-//     */
-//    @Column(name = "INQUIRY_THEME", length = 100)
-//    private String inquiryTheme;
 
     /**
      * 项目预算
      */
     @Column(name = "PROJECT_BUDGET", length = 20)
     private Double projectBudget;
+
+    /**
+     * 项目预算
+     */
+    @Column(name = "BUDGET_CODING", length = 20)
+    private String budget_coding;
 
     /**
      * 项目背景
@@ -101,7 +102,7 @@ public class InquiryInfoNew implements Serializable {
 
 
     /**
-     * 货物
+     * 产品
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
@@ -124,7 +125,7 @@ public class InquiryInfoNew implements Serializable {
     /**
      * 联系人
      */
-    @Column(name = "CONTACT", length = 200)
+    @Column(name = "CONTACT", length = 32)
     private String contact;
 
     /**
@@ -132,6 +133,18 @@ public class InquiryInfoNew implements Serializable {
      */
     @Column(name = "CONTACT_PHONE", length = 200)
     private String contactPhone;
+
+    /**
+     * 经办人
+     */
+    @Column(name = "OPERATOR", length = 32)
+    private String operator;
+
+    /**
+     * 经办人联系电话
+     */
+    @Column(name = "OPERATOR_NUMBER", length = 200)
+    private String operator_number;
 
     /**
      * 经费卡号

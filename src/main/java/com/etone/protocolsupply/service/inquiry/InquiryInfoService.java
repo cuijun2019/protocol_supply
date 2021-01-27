@@ -65,13 +65,13 @@ public class InquiryInfoService {
         }
         inquiryInfo.setInquiryDate(date);//询价时间
         inquiryInfo.setIsDelete(Constant.DELETE_NO);
-        inquiryInfo.setRemark("配件列表");//配件导出接口连接，传参：货物id
+        inquiryInfo.setRemark("配件列表");//配件导出接口连接，传参：产品id
         CargoInfo cargoInfo = inquiryInfoDto.getCargoInfo();
         if (cargoInfo != null && cargoInfo.getCargoId()!=null && !cargoInfo.getCargoId().equals("")) {
             Optional<CargoInfo> optional = cargoInfoRepository.findById(cargoInfo.getCargoId());
             if (optional.isPresent()) {
                 inquiryInfo.setCargoInfo(optional.get());
-                inquiryInfo.setRePrice(optional.get().getReprice());//询价的参考价格=货物从参考价格
+                inquiryInfo.setRePrice(optional.get().getReprice());//询价的参考价格=产品从参考价格
             }
         }else {
             inquiryInfo.setCargoInfo(null);
@@ -175,10 +175,10 @@ public class InquiryInfoService {
        // inquiryInfoRepository.updateStatus(inquiryId,status);
     }
 
-    //货物导出
+    //产品导出
     public void export(HttpServletResponse response, List<Long> inquiryIds,String actor) {
         try {
-            String[] header = {"询价单号", "采购人", "采购单位", "供应商名称","货物基本参数", "货物名称", "参考价格", "询价时间",
+            String[] header = {"询价单号", "采购人", "采购单位", "供应商名称","产品基本参数", "产品名称", "参考价格", "询价时间",
                     "备注"};
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet("询价列表");
@@ -217,10 +217,10 @@ public class InquiryInfoService {
                 }else {
                     row.createCell(3).setCellValue(new HSSFRichTextString(""));
                 }
-                CargoInfo cargoInfo=inquiryInfo.getCargoInfo();//货物
+                CargoInfo cargoInfo=inquiryInfo.getCargoInfo();//产品
                 if(cargoInfo!=null){
                     cargoInfo = cargoInfoRepository.getOne(inquiryInfo.getCargoInfo().getCargoId());
-                    row.createCell(5).setCellValue(new HSSFRichTextString(cargoInfo.getCargoName()));//货物名称
+                    row.createCell(5).setCellValue(new HSSFRichTextString(cargoInfo.getCargoName()));//产品名称
                 }else {
                     row.createCell(5).setCellValue(new HSSFRichTextString(""));
                 }
