@@ -42,6 +42,20 @@ public class AgentInfo implements Serializable {
     @Column(name = "REVIEW_STATUS", length = 4)
     private Integer reviewStatus;
 
+    /**
+     * 有效日期开始
+     */
+    @Column(name = "VALIDDATESTART")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date validDateStart;
+
+    /**
+     * 有效日期结束
+     */
+    @Column(name = "VALIDDATEEND")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date validDateEnd;
+
     @Column(name = "CREATOR", length = 32)
     private String creator;
 
@@ -61,6 +75,9 @@ public class AgentInfo implements Serializable {
     @JoinColumn(name = "ATTACH_ID", referencedColumnName = "ATTACH_ID")
     private Attachment attachment;
 
+    /**
+     * 关联的供应商id
+     */
     @Column(name = "PARTNER_ID")
     private Long partnerId;
 }

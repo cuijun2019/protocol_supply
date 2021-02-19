@@ -89,7 +89,12 @@ public class AgentInfoService {
 
         //新增代理商记录
         PartnerInfo partnerInfo = new PartnerInfo();
-        partnerInfo.setSupType(Integer.parseInt(registerData.get("supType")));
+        partnerInfo.setSupType(Integer.parseInt(registerData.get("supType")));//交易主题一级
+        try {
+            partnerInfo.setSupTypeChild(Integer.parseInt(registerData.get("supTypeChild")));//交易主体二级
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         partnerInfo.setCompanyNo(registerData.get("company"));
         partnerInfo.setAuthStatus(1);//认证状态 1已认证   2未认证
         partnerInfo.setAuthMethod("普通认证");
@@ -107,7 +112,7 @@ public class AgentInfoService {
         //新增关联三证信息
         CertificateInfo certificateInfo = new CertificateInfo();
         certificateInfo.setCreditCode(registerData.get("creditCode"));
-        certificateInfo.setIsCertificate(2);
+        certificateInfo.setIsCertificate(1);//是否三证合一
         certificateInfo.setModifyStatus(2);
         certificateInfo.setPartnerId(partnerInfo.getPartnerId());
         certificateInfoRepository.save(certificateInfo);
@@ -191,8 +196,9 @@ public class AgentInfoService {
         for (AgentInfo agentInfo : source) {
             agentInfoDto = new AgentInfoDto();
             BeanUtils.copyProperties(agentInfo, agentInfoDto);
-            User user= userRepository.findByPartnerId(agentInfo.getPartnerId());
-            agentInfoDto.setAgentName(user.getCompany()==null?"":user.getCompany()+"("+user.getUsername()+")");
+            //User user= userRepository.findByPartnerId(agentInfo.getPartnerId());
+            PartnerInfo partnerInfo=partnerInfoRepository.getOne(agentInfo.getPartnerId());
+            agentInfoDto.setAgentName(partnerInfo.getCompanyNo()==null?"":partnerInfo.getCompanyNo());
             agentCollectionDto.add(agentInfoDto);
         }
         return agentCollectionDto;
@@ -201,12 +207,15 @@ public class AgentInfoService {
     public AgentCollectionDto getAgentListTo(Page<AgentInfo> source, HttpServletRequest request,String projectId,String actor) {
         User user=userRepository.findByUsername(actor);
         AgentCollectionDto agentCollectionDto = new AgentCollectionDto();
-        AgentInfoDto agentInfoMs = new AgentInfoDto();
-        agentInfoMs.setAgentId(user.getId());
-        agentInfoMs.setAgentName(user.getUsername());
-        agentInfoMs.setAgentPoint("0%");
-        agentInfoMs.setCompanyNo(user.getCompany()+"("+user.getUsername()+")");//默认第一个供应商是自己
-        agentCollectionDto.add(agentInfoMs);
+        Long roleId = userRepository.findRoleIdByUsername(actor);
+        if("2".equals(roleId+"") || "1".equals(roleId+"")){
+            AgentInfoDto agentInfoMs = new AgentInfoDto();
+            agentInfoMs.setAgentId(user.getId());
+            agentInfoMs.setAgentName(user.getUsername());
+            agentInfoMs.setAgentPoint("0%");
+            agentInfoMs.setCompanyNo(user.getCompany()+"("+user.getUsername()+")");//默认第一个供应商是自己
+            agentCollectionDto.add(agentInfoMs);
+        }
         pagingMapper.storeMappedInstanceBefore(source, agentCollectionDto, request);
         AgentInfoDto agentInfoDto;
         String type="0";
@@ -353,7 +362,8 @@ public class AgentInfoService {
                 String code = partnerInfoListObj.get(i).get("username") == null ? null : partnerInfoListObj.get(i).get("username").toString();
                 String companyName = partnerInfoListObj.get(i).get("company_no") == null ? null : partnerInfoListObj.get(i).get("company_no").toString();
                 partnerInfoDto.setUsername(code);
-                partnerInfoDto.setCompanyNo(companyName+"("+code+")");
+//                partnerInfoDto.setCompanyNo(companyName+"("+code+")");
+                partnerInfoDto.setCompanyNo(companyName);
                 partnerInfoDto.setPartnerId(Long.parseLong(partnerInfoListObj.get(i).get("partner_id")+""));
                 partnerInfoList.add(partnerInfoDto);
             }
@@ -363,15 +373,17 @@ public class AgentInfoService {
 
     public AgentInfo saveAgent(AgentInfoDto agentInfo, JwtUser user) {
         AgentInfo info = new AgentInfo();
-        info.setAgentName(agentInfo.getAgentName());
-        info.setAgentPoint(agentInfo.getAgentPoint());
-        info.setStatus(agentInfo.getStatus());
-        info.setReviewStatus(agentInfo.getReviewStatus());
-        info.setCreator(user.getUsername());
-        info.setCreateDate(new Date());
-        info.setIsDelete(2);
-        info.setAttachment(agentInfo.getAttachment());
-        info.setPartnerId(agentInfo.getPartnerId());
+        info.setAgentName(agentInfo.getAgentName());//代理商名称
+        info.setAgentPoint(agentInfo.getAgentPoint());//代理费扣点（百分比）
+        info.setStatus(agentInfo.getStatus());//激活状态
+        info.setReviewStatus(agentInfo.getReviewStatus());//审核状态
+        info.setCreator(user.getUsername());//创建者
+        info.setCreateDate(new Date());//创建时间
+        info.setIsDelete(2);//是否删除
+        info.setValidDateStart(agentInfo.getValidDateStart());//有效日期开始
+        info.setValidDateEnd(agentInfo.getValidDateEnd());//有效日期结束
+        info.setAttachment(agentInfo.getAttachment());//附件
+        info.setPartnerId(agentInfo.getPartnerId());//供应商id
         return agentInfoRepository.save(info);
     }
 }

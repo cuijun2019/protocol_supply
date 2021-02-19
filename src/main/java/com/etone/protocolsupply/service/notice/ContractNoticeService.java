@@ -19,15 +19,14 @@ import com.etone.protocolsupply.repository.project.AgentInfoExpRepository;
 import com.etone.protocolsupply.repository.project.PartInfoExpRepository;
 import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.repository.user.UserRepository;
+import com.etone.protocolsupply.service.AttachmentService;
 import com.etone.protocolsupply.utils.*;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFRun;
-import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.*;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -66,6 +65,9 @@ public class ContractNoticeService {
     private ProjectInfoRepository projectInfoRepository;
 
     @Autowired
+    private CargoInfoRepository cargoInfoRepository;
+
+    @Autowired
     private PagingMapper pagingMapper;
 
     @Autowired
@@ -78,7 +80,7 @@ public class ContractNoticeService {
     private UserRepository userRepository;
 
     @Autowired
-    private CargoInfoRepository cargoInfoRepository;
+    private AttachmentService attachmentService;
 
     @Autowired
     private AgentInfoExpRepository agentInfoExpRepository;
@@ -208,46 +210,70 @@ public class ContractNoticeService {
         return ContractNoticeRepository.findById(Long.parseLong(contractNoticeId)).get();
     }
 
-    public ContractNotice save(String projectId, JwtUser user, String path) {
+    public ContractNotice save(String projectId, JwtUser user) {
+        CargoInfo cargoInfo=cargoInfoRepository.findAllByProjectId(Long.parseLong(projectId));
+        String typeMsg=cargoInfo.getType();//1：国产 2：进口
+        String type="";
+        if(typeMsg.equals("国产")){
+            type="1";
+        }else {
+            type="2";
+        }
+
+        //查询合同模板所在路径
+        Attachment attachmentmob = attachmentService.findContractTemplate(type);
+        String path =attachmentmob.getPath();
+
         //未加密附件
         Attachment attachment = new Attachment();
         //加密附件
         Attachment attachmentEncrypt = new Attachment();
-
         //查询项目详情
         ProjectInfo projectInfo = projectInfoRepository.findAllByProjectId(Long.valueOf(projectId));
 
+        String Currency=projectInfo.getCurrency();//货币单位
         //根据项目id查询代理商所在公司名称
         String agentCompanyName = agentInfoExpRepository.findAgentCompanyName(Long.valueOf(projectId));
-
-        //根据项目id查询配件表得到产品
-        List<CargoInfo> cargoInfoList = cargoInfoRepository.findByProjectId(Long.parseLong(projectId));
-
-
         HashMap<String, String> contentMap = new HashMap<>();
-        contentMap.put("${NAME}",agentCompanyName);
-        contentMap.put("${GOODS}",projectInfo.getProjectSubject());
-        contentMap.put("${EQUIPMENT}",cargoInfoList.get(0).getCargoName());
-        contentMap.put("${AMOUNT}",projectInfo.getQuantity());
-        contentMap.put("${DONETIME}",projectInfo.getDeliveryDate()+"");
-        contentMap.put("${CHMONEY}", ConvertUpMoney.toChinese(projectInfo.getAmountRmb()+""));
-        contentMap.put("${MONEY}",projectInfo.getAmountRmb()+"");
-        contentMap.put("${MONEYTYPE}",projectInfo.getPaymentMethod());
-        contentMap.put("${CHDAY}",ConvertUpMoney.toChinese(projectInfo.getGuaranteeDate()).substring(0,ConvertUpMoney.toChinese(projectInfo.getGuaranteeDate()).length()-1));
+        if(type.equals("1")){
+            //国产
+            contentMap.put("${NAME}",agentCompanyName+"");//乙方名称
+            contentMap.put("${CARGONAME}",projectInfo.getCargoName()+"");//设备名称
+            contentMap.put("${DONETIME}",projectInfo.getDeliveryDate()+"");//交货时间
+            contentMap.put("${PAYADDRESS}",projectInfo.getPriceTerm()+"");//交货地点
+            contentMap.put("${INSTRUCTION}",projectInfo.getPacking_instruction()+"");//包装要求
+            contentMap.put("${CHMONEY}", ConvertUpMoney.toChinese(projectInfo.getAmount()+""));//项目总金额（计算汇率之前）
+            contentMap.put("${MONEY}",projectInfo.getAmount()+"");//项目总金额rmb（计算汇率之后）
+            String str=projectInfo.getPaymentMethod();
+            contentMap.put("${MONEYTYPE}",str.substring(0,1));//付款方式
+            contentMap.put("${ALLTOTAL}",projectInfo.getAmount()+" "+Currency);
+        }else {
+            //进口
+            contentMap.put("${NAME}",agentCompanyName+"");//乙方名称
+            contentMap.put("${CARGONAME}",projectInfo.getCargoName()+"");//设备名称
+            contentMap.put("${DONETIME}",projectInfo.getDeliveryDate()+"");//交货时间
+            contentMap.put("${PAYADDRESS}",projectInfo.getPriceTerm()+"");//交货地点
+            contentMap.put("${MONEY}",projectInfo.getAmount()+"");//项目总金额rmb（计算汇率之后）
+            String priceTransactionWay=projectInfo.getPrice_transaction_way();//价格成交方式
+            contentMap.put("${PAYWAY}",priceTransactionWay.substring(0,1));//价格成交方式
+            String str=projectInfo.getPaymentMethod();
+            contentMap.put("${MONEYTYPE}",str.substring(0,1));//支付方法
+            contentMap.put("${ALLTOTAL}",projectInfo.getAmount()+" "+Currency);
+            contentMap.put("${FOREIGNCO}",projectInfo.getForeign_trade_company()+"");//外贸合同境外公司签订方
+
+        }
         XWPFDocument document;
-
-
         try{
             //本地测试
-            //path ="D:\\合同模板.docx";
+            //path ="D:\\contractTemplate1.docx";//国产模板
+            //path ="D:\\contractTemplate2.docx";//进口模板
             document = new XWPFDocument(new FileInputStream(new File(path)));
 
             //获取文件中的所有表格
             List<XWPFTable> tables = document.getTables();
-            XWPFTable table = tables.get(0);
-
+            XWPFTable table1 = tables.get(0);//附件一：设备清单及相关约定
+            XWPFTable table2 = tables.get(1);//附件二：保修服务表
             ArrayList<PartInfoExp> expList = new ArrayList<>();
-
             //查询配件列表
             List<PartInfoExp> partInfoExpList = partInfoExpRepository.findByProjectId(Long.parseLong(projectId));
 
@@ -257,30 +283,89 @@ public class ContractNoticeService {
                 }
             }
 
-
             if(expList!=null){
                 //根据配件表集合大小增加空白单元格
                 if(expList.size()>1){
-                    for (int i = 0; i < expList.size() - 1; i++) {
-                        table.createRow();
+                    for (int i = 0; i < expList.size() + 3; i++) {
+                        table1.createRow();
+                    }
+                    for (int i = 0; i < expList.size() - 1; i++){
+                        table2.createRow();
                     }
                 }
 
-                //填充数据
+                //填充数据-附件一
                 for (int i = 0; i < expList.size(); i++) {
-                    table.getRow(i+1).getCell(0).setText(expList.get(i).getPartName());
-                    table.getRow(i+1).getCell(1).setText(expList.get(i).getStandards());
-                    table.getRow(i+1).getCell(2).setText(expList.get(i).getManufactor());
-                    table.getRow(i+1).getCell(3).setText(expList.get(i).getTechParams());
-                    table.getRow(i+1).getCell(4).setText(expList.get(i).getUnit());
-                    table.getRow(i+1).getCell(5).setText(expList.get(i).getQuantity());
-                    table.getRow(i+1).getCell(6).setText(expList.get(i).getPrice()+"");
-                    BigDecimal quantity = new BigDecimal(expList.get(i).getQuantity());
-                    BigDecimal price = new BigDecimal(Double.toString(expList.get(i).getPrice()));
-                    table.getRow(i+1).getCell(7).setText(quantity.multiply(price)+"");
+                    table1.getRow(i+1).getCell(0).setText(i+1+"");//序号
+                    table1.getRow(i+1).getCell(1).setText(expList.get(i).getPartName());//配件名称
+                    table1.getRow(i+1).getCell(2).setText(expList.get(i).getStandards());//型号/品牌/规格
+                    table1.getRow(i+1).getCell(3).setText(expList.get(i).getManufactor());//产地
+                    table1.getRow(i+1).getCell(4).setText(expList.get(i).getTechParams());//主要技术参数
+                    table1.getRow(i+1).getCell(5).setText(expList.get(i).getUnit());//单位
+                    table1.getRow(i+1).getCell(6).setText(expList.get(i).getQuantity());//数量
+                    table1.getRow(i+1).getCell(7).setText(expList.get(i).getPrice()+"");//单价
+                    table1.getRow(i+1).getCell(8).setText(expList.get(i).getTotal()+"");//合计
+                    table1.getRow(i+1).getCell(9).setText(expList.get(i).getRemark());//备注
+                }
+
+                //使用第expList.size()+1行--合计行
+                List<XWPFTableCell> tableName = table1.getRow(expList.size()+1).getTableCells();
+                //将第一列到第四列合并
+                for (int i = 1; i <= 8; i++) {
+                    //对单元格进行合并的时候,要标志单元格是否为起点,或者是否为继续合并
+                    if (i == 1)
+                        tableName.get(i).getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.RESTART);//这是起点
+                    else
+                        tableName.get(i).getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.CONTINUE);//继续合并
+                }
+                if(type.equals("1")){
+                    tableName.get(1).setText(projectInfo.getAmount()+"(元)");//合计
+                }else {
+                    tableName.get(1).setText(projectInfo.getAmount()+" "+Currency);//合计
+                }
+                tableName.get(2).setText(projectInfo.getRemark());//项目备注
+
+
+                //使用第expList.size()+2行--外贸合同境外公司签订方
+                List<XWPFTableCell> tableName2 = table1.getRow(expList.size()+2).getTableCells();
+                //使用第expList.size()+3行--交货时间：
+                List<XWPFTableCell> tableName3 = table1.getRow(expList.size()+3).getTableCells();
+                //使用第expList.size()+3行--交货地点：
+                List<XWPFTableCell> tableName4 = table1.getRow(expList.size()+4).getTableCells();
+                //将第零列到第屎列合并
+                for (int i = 0; i <= 9; i++) {
+                    //对单元格进行合并的时候,要标志单元格是否为起点,或者是否为继续合并
+                    if (i == 0){
+                        tableName2.get(i).getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.RESTART);//这是起点
+                        tableName3.get(i).getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.RESTART);//这是起点
+                        tableName4.get(i).getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.RESTART);//这是起点
+                    }else {
+                        tableName2.get(i).getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.CONTINUE);//继续合并
+                        tableName3.get(i).getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.CONTINUE);//继续合并
+                        tableName4.get(i).getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.CONTINUE);//继续合并
+                    }
+                }
+                table1.getRow(expList.size()+1).getCell(0).setText("合计");
+                if(type.equals("1")){
+                    //国产模板--包装要求
+                    table1.getRow(expList.size()+2).getCell(0).setText("包装要求："+projectInfo.getPacking_instruction()+"");
+                }else {
+                    //进口模板--外贸合同境外公司签订方
+                    table1.getRow(expList.size()+2).getCell(0).setText("外贸合同境外公司签订方："+projectInfo.getForeign_trade_company()+"");
+                }
+                table1.getRow(expList.size()+3).getCell(0).setText("交货时间："+projectInfo.getDeliveryDate()+"");
+                table1.getRow(expList.size()+4).getCell(0).setText("交货地点："+projectInfo.getPriceTerm()+"");
+
+                //填充数据-附件二
+                for (int i = 0; i < expList.size(); i++) {
+                    table2.getRow(i+1).getCell(0).setText(i+1+"");//序号
+                    table2.getRow(i+1).getCell(1).setText(expList.get(i).getPartName());//配件名称
+                    table2.getRow(i+1).getCell(2).setText(expList.get(i).getGuarantee_date());//质保期
+                    table2.getRow(i+1).getCell(3).setText(expList.get(i).getWarranty_date());//保修响应时间
+                    table2.getRow(i+1).getCell(4).setText(expList.get(i).getAfter_sales_service_outlets_and_number());//售后服务网点
+                    table2.getRow(i+1).getCell(5).setText(expList.get(i).getRemark());//备注
                 }
             }
-
 
             // 获取word中的所有段落，替换目标文字
             Iterator<XWPFParagraph> itPara = document.getParagraphsIterator();
@@ -297,9 +382,7 @@ public class ContractNoticeService {
                     runs.get(i).setText(oneparaString, 0);
                 }
             }
-
             String wordPath = uploadFilePath + Common.getYYYYMMDate(new Date());
-
             File uploadPath = new File(wordPath);
             if (!uploadPath.exists()) {
                 uploadPath.mkdirs();
@@ -312,20 +395,14 @@ public class ContractNoticeService {
             outputStream.write(byteArrayOutputStream.toByteArray());
             outputStream.close();
 
-
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
             //word转PDF保存
             wordToPDFUtil.convert(wordPath+uuid+".docx",wordPath+"/"+"采购合同_"+sdf.format(new Date())+uuid+".pdf");
-
             //合同文件压缩并加密上传
             String password = EncryptZipUtil.zipFile(wordPath+"/"+"采购合同_"+sdf.format(new Date())+uuid+".zip",wordPath+"/"+"采购合同_"+sdf.format(new Date())+uuid+".pdf");
             if("添加压缩文件出错".equals(password)){
                 throw new RuntimeException("添加合同的压缩文件出错*****");
             }
-
-
-
             //附件表增加记录
             attachment.setAttachName("采购合同_"+sdf.format(new Date())+uuid+".pdf");
             attachment.setFileType("application/pdf");

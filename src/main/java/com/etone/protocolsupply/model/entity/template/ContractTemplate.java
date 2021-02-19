@@ -28,6 +28,12 @@ public class ContractTemplate implements Serializable {
     @Column(name = "STATUS", length = 4)
     private Integer status;
 
+    /**
+     * 1:国产  2：进口
+     */
+    @Column(name = "TYPE", length = 4)
+    private Integer type;
+
     @Column(name = "CREATOR", length = 32)
     private String  creator;
 

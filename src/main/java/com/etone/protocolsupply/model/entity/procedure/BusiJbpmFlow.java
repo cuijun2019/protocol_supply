@@ -114,6 +114,18 @@ public class BusiJbpmFlow implements Serializable {
     private Integer isBack;
 
     /**
+     * 前一个节点
+     */
+    @Column(name = "PREVIOUSNODE", length = 100)
+    private String previousNode;
+
+    /**
+     * 后一个节点
+     */
+    @Column(name = "AFTERNODE", length = 100)
+    private String afterNode;
+
+    /**
      * 附件
      */
     @OneToOne(fetch = FetchType.LAZY)

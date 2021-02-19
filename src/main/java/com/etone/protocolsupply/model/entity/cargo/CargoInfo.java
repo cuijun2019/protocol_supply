@@ -152,8 +152,8 @@ public class CargoInfo implements Serializable {
     /**
      * 参考价格
      */
-    @Column(name = "REPRICE")
-    private Double reprice;
+    @Column(name = "REPRICE", length = 50)
+    private String reprice;
 
     /**
      * 证明文件

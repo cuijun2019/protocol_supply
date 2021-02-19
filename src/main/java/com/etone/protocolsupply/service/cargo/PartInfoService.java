@@ -587,7 +587,7 @@ public class PartInfoService {
             partInfo.setPrice(Double.valueOf("".equals(jsonObject.get("单价").toString())?"0.00":jsonObject.get("单价").toString()));
             //Double Dtotal=Double.parseDouble(jsonObject.get("单价").toString())*Double.parseDouble(jsonObject.get("数量").toString());
             partInfo.setTotal(partInfo.getPrice());//总价默认为单价
-            partInfo.setStandards(jsonObject.get("标配/选配").toString());
+            partInfo.setStandard_config(jsonObject.get("标配/选配").toString());
             partInfo.setGuarantee_date(jsonObject.get("质保期").toString());
             partInfo.setWarranty_date(jsonObject.get("保修响应时间").toString());
             partInfo.setAfter_sales_service_outlets_and_number(jsonObject.get("售后服务网点及电话").toString());

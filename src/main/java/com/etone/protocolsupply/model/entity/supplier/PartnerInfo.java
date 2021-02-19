@@ -34,6 +34,12 @@ public class PartnerInfo implements Serializable {
     private Integer supType;
 
     /**
+     * 交易主体二级类型（3：厂家；4：全国总代理）
+     */
+    @Column(name = "SUP_TYPE_CHILD", length = 4)
+    private Integer supTypeChild;
+
+    /**
      * 单位名称
      */
     @Column(name = "COMPANY_NO", length = 200)

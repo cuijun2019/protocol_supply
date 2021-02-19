@@ -7,8 +7,10 @@ import com.etone.protocolsupply.model.dto.inquiry.InquiryInfoNewDto;
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew;
 import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
 
+import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
 import com.etone.protocolsupply.model.entity.user.Leaders;
 import com.etone.protocolsupply.service.inquiry.InquiryInfoNewService;
+import com.etone.protocolsupply.service.partner.PartnerInfoService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,6 +34,8 @@ public class InquiryInfoNewController extends GenericController {
     @Autowired
     private InquiryInfoNewService inquiryInfoNewService;
 
+    @Autowired
+    private PartnerInfoService partnerInfoService;
 
 
     /**
@@ -50,7 +54,12 @@ public class InquiryInfoNewController extends GenericController {
                                        @RequestBody InquiryInfoNewDto inquiryInfoNewDto) {
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
         InquiryInfoNew inquiryInfoNew = inquiryInfoNewService.save(inquiryInfoNewDto, this.getUser());
-        responseBuilder.data(inquiryInfoNew);
+        if("".equals(inquiryInfoNew.getCreator()) || inquiryInfoNew.getCreator()==null){
+            responseBuilder.message("当前登录人对该产品存在未结束的询价");
+            responseBuilder.code(233);
+        }else {
+            responseBuilder.data(inquiryInfoNew);
+        }
         return responseBuilder.build();
     }
 
@@ -134,6 +143,8 @@ public class InquiryInfoNewController extends GenericController {
             Set<BusiJbpmFlow> projectBusiJbpmFlows = inquiryInfoNewService.getSetBusiJbpmFlowList(inquiryInfoNew.getProjectId(),"projectAudit");
             inquiryInfoNewDto.setProjectBusiJbpmFlows(projectBusiJbpmFlows);
         }
+        PartnerInfo partnerInfo=partnerInfoService.findByPartnerId(inquiryInfoNew.getCargoInfo().getPartnerId());
+        inquiryInfoNewDto.setPartnerInfo(partnerInfo);//项目制造商
         inquiryInfoNewDto.setInquiryBusiJbpmFlows(inquiryBusiJbpmFlows);//询价节点
         BeanUtils.copyProperties(inquiryInfoNew, inquiryInfoNewDto);
         responseBuilder.data(inquiryInfoNewDto);

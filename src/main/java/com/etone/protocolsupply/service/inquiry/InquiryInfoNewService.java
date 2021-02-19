@@ -69,36 +69,44 @@ public class InquiryInfoNewService {
         Date date = new Date();
         String userName = jwtUser.getUsername();
         InquiryInfoNew inquiryInfoNew = new InquiryInfoNew();
-        BeanUtils.copyProperties(inquiryInfoNewDto, inquiryInfoNew);
-        String maxOneCode = inquiryInfoNewRepository.findMaxOne();
-        if (maxOneCode == null) {
-            inquiryInfoNew.setInquiryCode("XJD-" + Common.getYYYYMMDDDate(date) + "-001");
-        } else {
-            inquiryInfoNew.setInquiryCode("XJD-" + Common.getYYYYMMDDDate(date) + "-" + Common.convertSerialProject(maxOneCode.substring(13), 1));
-
-        }
-        inquiryInfoNew.setCreator(userName);//创建人
-        inquiryInfoNew.setCreateDate(date);//创建时间
-        inquiryInfoNew.setIsDelete(Constant.DELETE_NO);
-        //以下产品信息关联询价表有待思考
-        //CargoInfo cargoInfo = inquiryInfoNewDto.getCargoInfo();
-        if (inquiryInfoNewDto.getCargoInfo().getCargoId()!=null) {
-            Optional<CargoInfo> optional = cargoInfoRepository.findById(inquiryInfoNewDto.getCargoInfo().getCargoId());
-            if (optional.isPresent()) {
-                inquiryInfoNew.setCargoInfo(optional.get());
-            }else {
-                throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("询价带入的产品id"));
-            }
+        Integer count=inquiryInfoNewRepository.isExist(inquiryInfoNewDto.getCargoInfo().getCargoId(),userName);
+        if(count!=0){
+            return  inquiryInfoNew;
         }else {
-            inquiryInfoNew.setCargoInfo(null);
+            BeanUtils.copyProperties(inquiryInfoNewDto, inquiryInfoNew);
+            String maxOneCode = inquiryInfoNewRepository.findMaxOne();
+            if (maxOneCode == null) {
+                inquiryInfoNew.setInquiryCode("XJD-" + Common.getYYYYMMDDDate(date) + "-001");
+            } else {
+                inquiryInfoNew.setInquiryCode("XJD-" + Common.getYYYYMMDDDate(date) + "-" + Common.convertSerialProject(maxOneCode.substring(13), 1));
+
+            }
+            inquiryInfoNew.setCreator(userName);//创建人
+            inquiryInfoNew.setCreateDate(date);//创建时间
+            inquiryInfoNew.setIsDelete(Constant.DELETE_NO);
+            //以下产品信息关联询价表有待思考
+            //CargoInfo cargoInfo = inquiryInfoNewDto.getCargoInfo();
+            if (inquiryInfoNewDto.getCargoInfo().getCargoId()!=null) {
+                Optional<CargoInfo> optional = cargoInfoRepository.findById(inquiryInfoNewDto.getCargoInfo().getCargoId());
+                if (optional.isPresent()) {
+                    inquiryInfoNew.setCargoInfo(optional.get());
+                }else {
+                    throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("询价带入的产品id"));
+                }
+            }else {
+                inquiryInfoNew.setCargoInfo(null);
+            }
+            inquiryInfoNewRepository.save(inquiryInfoNew);
+            inquiryInfoNew.getCargoInfo().setPartInfos(null);//暂时setnull,否则就会error："Could not write JSON: Infinite recursion (StackOverflowError); nested exception is com.fasterxml.jackson.databind.JsonMappingException: Infinite recursion (StackOverflowError) (through reference chain: com.etone.protocolsupply.model.dto.ResponseValue[\"data\"]->com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew[\"cargoInfo\"]->com.etone.protocolsupply.model.entity.cargo.CargoInfo[\"partInfos\"])"
+            return inquiryInfoNew;
         }
-        inquiryInfoNewRepository.save(inquiryInfoNew);
-        inquiryInfoNew.getCargoInfo().setPartInfos(null);//暂时setnull,否则就会error："Could not write JSON: Infinite recursion (StackOverflowError); nested exception is com.fasterxml.jackson.databind.JsonMappingException: Infinite recursion (StackOverflowError) (through reference chain: com.etone.protocolsupply.model.dto.ResponseValue[\"data\"]->com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew[\"cargoInfo\"]->com.etone.protocolsupply.model.entity.cargo.CargoInfo[\"partInfos\"])"
-        return inquiryInfoNew;
+
     }
+
     public Page<InquiryInfoNew> getProjectInfoBudget(String fundsCardNumber, String itemName, Pageable pageable) {
         return Common.listConvertToPage(inquiryInfoNewRepository.getProjectInfoBudget(fundsCardNumber,itemName), pageable);
     }
+
     public InquiryInfoNewCollectionDto getProjectInfoBudgetto(Page<InquiryInfoNew> source,String itemName, HttpServletRequest request) {
         InquiryInfoNewCollectionDto inquiryInfoNewCollectionDto = new InquiryInfoNewCollectionDto();
         pagingMapper.storeMappedInstanceBefore(source, inquiryInfoNewCollectionDto, request);
@@ -191,6 +199,7 @@ public class InquiryInfoNewService {
             inquiryInfoNew.setOperator_number(inquiryInfoNewDto.getOperator_number()==null?inquiryInfoNew.getOperator_number():inquiryInfoNewDto.getOperator_number());
             //审核状态
             inquiryInfoNew.setStatus(inquiryInfoNewDto.getStatus()==null?inquiryInfoNew.getStatus():inquiryInfoNewDto.getStatus());
+            inquiryInfoNew.setProgressBar(inquiryInfoNewDto.getProgressBar()==null?inquiryInfoNew.getProgressBar():inquiryInfoNewDto.getProgressBar());
             inquiryInfoNew.setProjectId(inquiryInfoNewDto.getProjectId()==null?inquiryInfoNew.getProjectId():inquiryInfoNewDto.getProjectId());
         }
         //询价修改-附件
@@ -204,7 +213,7 @@ public class InquiryInfoNewService {
             }
         }
         //询价修改-产品
-        if (inquiryInfoNewDto.getCargoInfo().getCargoId()!=null && 0!=inquiryInfoNewDto.getCargoInfo().getCargoId()) {
+        if (inquiryInfoNewDto.getCargoInfo()!=null && inquiryInfoNewDto.getCargoInfo().getCargoId()!=null && 0!=inquiryInfoNewDto.getCargoInfo().getCargoId()  ) {
             Optional<CargoInfo> optional = cargoInfoRepository.findById(inquiryInfoNewDto.getCargoInfo().getCargoId());
             if (optional.isPresent()) {
                 inquiryInfoNew.setCargoInfo(optional.get());

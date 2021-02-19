@@ -194,15 +194,35 @@ public class BusiJbpmFlowService {
             }
             User user=userRepository.findByUsername(busiJbpmFlow.getFlowInitorId());//创建人
             User user2=userRepository.findByUsername(busiJbpmFlow.getParentActor());//当前处理人
+
             User user3=userRepository.findByUsername(busiJbpmFlow.getNextActor());//提交给的人员
-            if(user3==null){
-                busiJbpmFlowDto.setCompanyName_nextActor("");
-            }else {
-                busiJbpmFlowDto.setCompanyName_nextActor(user3.getCompany()+"("+user3.getFullname()+")");
-            }
+
 
             busiJbpmFlowDto.setCompanyName(user.getCompany()+"("+user.getFullname()+")");//待办创建人显示公司+名称
             busiJbpmFlowDto.setCompanyName_parentActor(user2.getCompany()+"("+user2.getFullname()+")");
+//            if(user3==null){
+//                busiJbpmFlowDto.setCompanyName_nextActor("");
+//            }else {
+//                busiJbpmFlowDto.setCompanyName_nextActor(user3.getCompany()+"("+user3.getFullname()+")");
+//            }
+            if(busiJbpmFlow.getType()==0){
+                //待办的当前处理人取值
+                if(user3==null){
+                    busiJbpmFlowDto.setCompanyName_nextActor("");
+                }else {
+                    busiJbpmFlowDto.setCompanyName_nextActor(user3.getCompany()+"("+user3.getFullname()+")");
+                }
+            }else if(busiJbpmFlow.getType()==1){
+                //已办的当前处理人取值
+                BusiJbpmFlow busiJbpmFlow1=busiJbpmFlowRepository.getNewByBusinessId(busiJbpmFlow.getBusinessId(),busiJbpmFlow.getBusinessType(),0);
+                if(busiJbpmFlow1.getNextActor()!=null && !"".equals(busiJbpmFlow1.getNextActor())){
+                    User user4=userRepository.findByUsername(busiJbpmFlow1.getNextActor());//提交给的人员
+                    busiJbpmFlowDto.setCompanyName_nextActor(user4.getCompany()+"("+user4.getFullname()+")");
+                }else {
+                    busiJbpmFlowDto.setCompanyName_nextActor("");
+                }
+
+            }
 
             Attachment attachment=new Attachment();
             if(busiJbpmFlow.getAttachment()!=null){

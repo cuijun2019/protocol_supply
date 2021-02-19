@@ -17,7 +17,6 @@ public interface InquiryInfoNewRepository extends JpaRepository<InquiryInfoNew, 
     @Query(value = "update inquiry_info_new set is_delete=1 where inquiry_id in ?1 and status=1", nativeQuery = true)
     void updateIsDelete(List<Long> inquiryIds);
 
-
     @Query(value = "select * from inquiry_info_new " +
             "where is_delete=?1 " +
             "and if((?2 is not null), (inquiry_code like %?2%), (1=1))  " +
@@ -68,4 +67,9 @@ public interface InquiryInfoNewRepository extends JpaRepository<InquiryInfoNew, 
             " where i.funds_card_number=?1 and c.item_name=?2 )a " +
             " GROUP BY a.inquiry_id,a.inquiry_code,a.funds_card_number,a.project_budget,a.project_background order by a.create_date desc", nativeQuery = true)
     List<InquiryInfoNew> getProjectInfoBudget(String  inquiryCode, String itemName);
+
+
+    @Transactional(rollbackFor = Exception.class)
+    @Query(value = "select count(*) from inquiry_info_new where  cargo_id=?1 and creator=?2 and status !=5 and status !=10", nativeQuery = true)
+    Integer isExist(Long cargoId,String creator);
 }

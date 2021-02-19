@@ -43,7 +43,7 @@ public class InquiryInfoNew implements Serializable {
     private Double projectBudget;
 
     /**
-     * 项目预算
+     * 预算编码
      */
     @Column(name = "BUDGET_CODING", length = 20)
     private String budget_coding;
@@ -67,10 +67,16 @@ public class InquiryInfoNew implements Serializable {
     private String manufactor;
 
     /**
-     * 状态
+     * 状态 1:草稿 2:审核中 5:完成询价  6：终止询价  7：建立项目
      */
     @Column(name = "STATUS", length = 4)
     private Integer status;
+
+    /**
+     * 询价进度条
+     */
+    @Column(name = "PROGRESSBAR", length = 4)
+    private Integer progressBar;
 
     /**
      * 是否删除

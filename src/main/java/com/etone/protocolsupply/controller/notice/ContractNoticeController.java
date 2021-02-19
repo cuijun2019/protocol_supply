@@ -5,6 +5,8 @@ import com.etone.protocolsupply.model.dto.ResponseValue;
 import com.etone.protocolsupply.model.dto.notice.ContractNoticeCollectionDto;
 import com.etone.protocolsupply.model.entity.Attachment;
 import com.etone.protocolsupply.model.entity.notice.ContractNotice;
+import com.etone.protocolsupply.model.entity.project.ProjectInfo;
+import com.etone.protocolsupply.repository.project.ProjectInfoRepository;
 import com.etone.protocolsupply.service.AttachmentService;
 import com.etone.protocolsupply.service.notice.ContractNoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +31,8 @@ public class ContractNoticeController extends GenericController {
     @Autowired
     private ContractNoticeService ContractNoticeService;
 
-    @Autowired
-    private AttachmentService attachmentService;
+
+
 
     /**
      * 生成合同通知书
@@ -46,14 +48,15 @@ public class ContractNoticeController extends GenericController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseValue getContractNotice(@Validated
                                           @PathVariable("projectId") String projectId) {
-        //查询合同模板所在路径
-        Attachment attachment = attachmentService.findContractTemplate();
 
         ResponseValue.ResponseBuilder responseBuilder = ResponseValue.createBuilder();
-        ContractNotice contractNotice = ContractNoticeService.save(projectId, this.getUser(),attachment.getPath());
+        ContractNotice contractNotice = ContractNoticeService.save(projectId, this.getUser());
         responseBuilder.data(contractNotice);
         return responseBuilder.build();
     }
+
+
+
 
     /**
      * 合同列表

@@ -20,9 +20,9 @@ public interface AttachmentRepository extends JpaRepository<Attachment, Long>, J
             nativeQuery = true)
     Attachment findBidTemplate();
 
-    @Query(value = "select * from attachment where attach_id=(select attach_id from contract_template c where c.status=1 and c.is_delete=2)",
+    @Query(value = "select * from attachment where attach_id=(select attach_id from contract_template c where c.status=1 and c.is_delete=2 and c.type=?1)",
             nativeQuery = true)
-    Attachment findContractTemplate();
+    Attachment findContractTemplate(String type);
 
     @Query(value = "SELECT * FROM attachment where attach_name=?1 order by upload_time desc limit 1 ",
             nativeQuery = true)

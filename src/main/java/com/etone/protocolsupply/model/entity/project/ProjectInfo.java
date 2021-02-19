@@ -41,11 +41,55 @@ public class ProjectInfo implements Serializable {
      */
     @Column(name = "PROJECT_CODE", length = 100)
     private String projectCode;
+
+    /**
+     * 项目预算
+     */
+    @Column(name = "PROJECT_BUDGET", length = 20)
+    private Double projectBudget;
     /**
      * 采购人
      */
     @Column(name = "PURCHASER", length = 100)
     private String purchaser;
+
+    /**
+     * 经办人
+     */
+    @Column(name = "OPERATOR", length = 32)
+    private String operator;
+
+    /**
+     * 经办人联系电话
+     */
+    @Column(name = "OPERATOR_NUMBER", length = 200)
+    private String operator_number;
+
+    /**
+     * 制造商联系人
+     */
+    @Column(name = "PARTNER_CONTACT", length = 32)
+    private String partner_contact;
+
+    /**
+     * 制造商联系人电话
+     */
+    @Column(name = "PARTNER_CONTACT_NUMBER", length = 50)
+    private String partner_contact_number;
+
+    /**
+     * 产品联系人
+     */
+    @Column(name = "PRODUCT_CONTACT", length = 32)
+    private String product_contact;
+
+    /**
+     * 产品联系人电话
+     */
+    @Column(name = "PRODUCT_CONTACT_NUMBER", length = 50)
+    private String product_contact_number;
+
+
     /**
      * 项目主题
      */
@@ -53,10 +97,28 @@ public class ProjectInfo implements Serializable {
     private String projectSubject;
 
     /**
+     * 产品信息
+     */
+    @Column(name = "CARGONAME", length = 200)
+    private String cargoName;
+
+    /**
+     * 项目委托单位
+     */
+    @Column(name = "projectentrustingunit", length = 200)
+    private String projectEntrustingUnit;
+
+    /**
+     * 最终使用单位
+     */
+    @Column(name = "finaluser", length = 200)
+    private String finalUser;
+
+    /**
      * 交货时间
      */
     @Column(name = "DELIVERY_DATE", length = 50)
-    private Integer deliveryDate;
+    private String deliveryDate;
 
     /**
      * 交货时间
@@ -77,7 +139,7 @@ public class ProjectInfo implements Serializable {
     private String price_transaction_way;
 
     /**
-     * 价格条款
+     * 交货地点
      */
     @Column(name = "PRICE_TERM", length = 2000)
     private String priceTerm;
@@ -85,13 +147,14 @@ public class ProjectInfo implements Serializable {
     /**
      * 免费质量保证期
      */
-    @Column(name = "FREE_WARRANTY_DATE", length = 50)
-    private String free_warranty_date;
+    @Column(name = "DEFAULT_GUARANTEE", length = 50)
+    private String default_guarantee;
     /**
      * 有偿延保
      */
     @Column(name = "PAID_EXTEND_WARRANTY", length = 50)
     private String paid_extend_warranty;
+
 
     /**
      * 外贸公司境外公司签订方
@@ -123,6 +186,12 @@ public class ProjectInfo implements Serializable {
      */
     @Column(name = "CURRENCY", length = 20)
     private String currency;
+
+    /**
+     * 人民币汇率
+     */
+    @Column(name = "EXCHANGERATE", length = 32)
+    private String exchangerate;
 
     @Column(name = "IS_DELETE", length = 4)
     private Integer isDelete;
@@ -186,9 +255,6 @@ public class ProjectInfo implements Serializable {
     private Attachment attachment_p;
 
 
-
-
-
     /**
      * 可行性文件
      */
@@ -219,6 +285,13 @@ public class ProjectInfo implements Serializable {
     @Column(name = "CREATE_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
+
+    /**
+     * 备注
+     */
+    @Column(name = "REMARK", length = 2000)
+    private String remark;
+
 //    /**
 //     * 配件拓展表
 //     */

@@ -422,7 +422,7 @@ public class CargoInfoService {
                 row.createCell(7).setCellValue(new HSSFRichTextString(cargoInfo.getMainParams()));
                 row.createCell(8).setCellValue(new HSSFRichTextString(cargoInfo.getManufactor()));
                 row.createCell(9).setCellValue(new HSSFRichTextString(cargoInfo.getType()));
-                row.createCell(10).setCellValue(new HSSFRichTextString(cargoInfo.getReprice()+""));
+                row.createCell(10).setCellValue(new HSSFRichTextString(cargoInfo.getReprice()));
                 row.createCell(11).setCellValue(new HSSFRichTextString(cargoInfo.getCurrency()));
                 row.createCell(12).setCellValue(new HSSFRichTextString(cargoInfo.getGuaranteeRate()));
                 if(cargoInfo.getRemark()!=null && !"".equals(cargoInfo.getRemark())){
@@ -542,7 +542,7 @@ public class CargoInfoService {
             cargoInfo.setMainParams(jsonObject.get("主要参数").toString());
             cargoInfo.setManufactor(jsonObject.get("产地").toString());
             cargoInfo.setType(jsonObject.get("进口/国产类别").toString());
-            cargoInfo.setReprice(Double.valueOf("".equals(jsonObject.get("参考价格").toString())?"0.00":jsonObject.get("参考价格").toString()));
+            cargoInfo.setReprice(jsonObject.get("参考价格").toString());
             cargoInfo.setCurrency(jsonObject.get("币种").toString());
             cargoInfo.setGuaranteeRate(jsonObject.get("维保率/月").toString());
             cargoInfo.setRemark(jsonObject.get("备注").toString()!=null?jsonObject.get("备注").toString():"");

@@ -2,6 +2,7 @@ package com.etone.protocolsupply.model.dto.inquiry;
 
 import com.etone.protocolsupply.model.entity.inquiry.InquiryInfoNew;
 import com.etone.protocolsupply.model.entity.procedure.BusiJbpmFlow;
+import com.etone.protocolsupply.model.entity.supplier.PartnerInfo;
 import lombok.Data;
 
 import java.util.List;
@@ -20,6 +21,8 @@ public class InquiryInfoNewDto extends InquiryInfoNew {
     private String itemName;//产品品目名称
     private double sum;//总预算
     private String sfcgybw;//同一卡号，同一品目，同一项目的项目预算总数是否超过一百万
+
+    private PartnerInfo partnerInfo;//产品信息所关联制造商/代理商信息
 
 
 }

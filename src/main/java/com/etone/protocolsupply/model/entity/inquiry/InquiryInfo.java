@@ -58,8 +58,8 @@ public class InquiryInfo implements Serializable {
     /**
      * 参考价格
      */
-    @Column(name = "REPRICE", length = 20)
-    private Double rePrice;
+    @Column(name = "REPRICE", length = 50)
+    private String rePrice;
     /**
      * 状态
      */

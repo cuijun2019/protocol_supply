@@ -248,7 +248,10 @@ public class ProjectInfoService {
         Long roleId = userRepository.findRoleIdByUsername(actor.getUsername());
         if( "5".equals(roleId+"") || "6".equals(roleId+"")|| "7".equals(roleId+"")){
                return Common.listConvertToPage(projectInfoRepository.findAll(isDelete, projectSubject, projectCode,status,inquiryId), pageable);
-           }else {
+           }else if("3".equals(roleId+"")) {
+            return Common.listConvertToPage(projectInfoRepository.findAlltoMyProject(isDelete, projectSubject, projectCode,status,inquiryId,actor.getUsername()), pageable);
+        }
+        else {
                return Common.listConvertToPage(projectInfoRepository.findAll(isDelete, projectSubject, projectCode,status,inquiryId,actor.getUsername()), pageable);
            }
     }
@@ -297,12 +300,24 @@ public class ProjectInfoService {
         model.setProjectId(projectInfo.getProjectId());
         model.setCreator(projectInfo.getCreator());//创建人
         model.setCreateDate(date);//创建时间
+        model.setStatus(projectInfoDto.getStatus());//状态
         model.setPurchaser(projectInfoDto.getPurchaser());//采购人
+        model.setOperator(projectInfoDto.getOperator());//经办人
+        model.setOperator_number(projectInfoDto.getOperator_number());//经办人电话
+        model.setPartner_contact(projectInfoDto.getPartner_contact());//制造商联系人
+        model.setPartner_contact_number(projectInfoDto.getPartner_contact_number());//制造商联系人电话
+        model.setProduct_contact(projectInfoDto.getProduct_contact());//产品联系人
+        model.setProduct_contact_number(projectInfoDto.getProduct_contact_number());//产品联系人电话
         model.setProjectCode(projectInfo.getProjectCode());//项目编号
+        model.setProjectBudget(projectInfoDto.getProjectBudget());//项目预算
         model.setProjectSubject(projectInfoDto.getCargoName()+"的采购方案");//项目主题
+        model.setCargoName(projectInfoDto.getCargoName());//产品信息
+        model.setProjectEntrustingUnit(projectInfoDto.getProjectEntrustingUnit());//项目委托单位
+        model.setFinalUser(projectInfoDto.getFinalUser());//最终使用单位
         model.setForeign_trade_company(projectInfoDto.getForeign_trade_company()!=null?projectInfoDto.getForeign_trade_company():"");//外贸公司境外公司签订方
-        model.setFree_warranty_date(projectInfoDto.getFree_warranty_date());//免费质量保证期
+        model.setDefault_guarantee(projectInfoDto.getDefault_guarantee());//免费质量保证期
         model.setPaid_extend_warranty(projectInfoDto.getPaid_extend_warranty());//有偿延保
+        model.setExchangerate(projectInfoDto.getExchangerate());//人民币汇率
         model.setPacking_instruction(projectInfoDto.getPacking_instruction()!=null?projectInfoDto.getPacking_instruction():"");//包装要求
         model.setPrice_transaction_way(projectInfoDto.getPrice_transaction_way());//价格成交方式
         model.setDeliveryDate(projectInfoDto.getDeliveryDate());//交货时间
@@ -317,6 +332,7 @@ public class ProjectInfoService {
         model.setCurrency(projectInfoDto.getCurrency());//币种
         model.setIsDelete(projectInfo.getIsDelete());//是否删除
         model.setQuantity(projectInfoDto.getQuantity());//数量
+        model.setRemark(projectInfoDto.getRemark());//项目备注
         if(null!=projectInfoDto.getInquiryId()){
             model.setInquiryId(projectInfoDto.getInquiryId());//询价
         }
@@ -327,7 +343,11 @@ public class ProjectInfoService {
                 model.getCurrency(),model.getDeliveryDate(),model.getDeliveryDateStatus(),model.getGuaranteeDate(),model.getGuaranteeFee(),
                 model.getPaymentMethod(),model.getPriceTerm(),model.getCargoTotal(),model.getAmount(),model.getStatus(),
                  projectInfoDto.getInquiryInfo().getInquiryId(),model.getCreator(),model.getProjectCode(),model.getIsDelete(),
-                model.getQuantity(),model.getAmountRmb(),model.getForeign_trade_company(),model.getFree_warranty_date(),model.getPaid_extend_warranty(),model.getPacking_instruction());
+                model.getQuantity(),model.getAmountRmb(),model.getForeign_trade_company(),model.getDefault_guarantee(),
+                model.getPaid_extend_warranty(),model.getPacking_instruction(),model.getOperator(),model.getOperator_number()
+                ,model.getProjectEntrustingUnit(),model.getFinalUser(),model.getRemark(),model.getExchangerate()
+                ,model.getPartner_contact(),model.getPartner_contact_number(),model.getProduct_contact(),
+                model.getProduct_contact_number(),model.getProjectBudget());
 
         //供应商
         AgentInfoExp agentInfoExp=projectInfoDto.getAgentInfoExp();

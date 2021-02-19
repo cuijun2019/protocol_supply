@@ -30,7 +30,7 @@ public class AgentInfoController extends GenericController {
     private AgentInfoService agentInfoService;
 
     /**
-     * 供应商代理商注册
+     * 供应商\代理商注册
      * @param registerData
      * @return
      */

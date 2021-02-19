@@ -67,20 +67,24 @@ public class InquiryInfoService {
         inquiryInfo.setIsDelete(Constant.DELETE_NO);
         inquiryInfo.setRemark("配件列表");//配件导出接口连接，传参：产品id
         CargoInfo cargoInfo = inquiryInfoDto.getCargoInfo();
-        if (cargoInfo != null && cargoInfo.getCargoId()!=null && !cargoInfo.getCargoId().equals("")) {
+        if (cargoInfo != null && cargoInfo.getCargoId()!=null && 0!=cargoInfo.getCargoId()) {
             Optional<CargoInfo> optional = cargoInfoRepository.findById(cargoInfo.getCargoId());
             if (optional.isPresent()) {
                 inquiryInfo.setCargoInfo(optional.get());
                 inquiryInfo.setRePrice(optional.get().getReprice());//询价的参考价格=产品从参考价格
+            }else {
+                throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("产品id"));
             }
         }else {
             inquiryInfo.setCargoInfo(null);
         }
         PartnerInfo partnerInfo = inquiryInfoDto.getPartnerInfo();
-        if (partnerInfo != null && partnerInfo.getPartnerId()!=null && !partnerInfo.getPartnerId().equals("")) {
+        if (partnerInfo != null && partnerInfo.getPartnerId()!=null && 0!=partnerInfo.getPartnerId()) {
             Optional<PartnerInfo> optional = partnerInfoRepository.findById(partnerInfo.getPartnerId());
             if (optional.isPresent()) {
                 inquiryInfo.setPartnerInfo(optional.get());
+            }else {
+                throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("制造商/代理商id"));
             }
         }else {
             inquiryInfo.setPartnerInfo(null);
@@ -103,15 +107,17 @@ public class InquiryInfoService {
         }
         CargoInfo cargoInfo = inquiryInfoDto.getCargoInfo();
         Attachment attachment = inquiryInfoDto.getAttachment();
-        if (attachment != null && attachment.getAttachId()!=null && !attachment.getAttachId().equals("")) {
+        if (attachment != null && attachment.getAttachId()!=null && 0!=attachment.getAttachId()) {
             Optional<Attachment> optional = attachmentRepository.findById(attachment.getAttachId());
             if (optional.isPresent()) {
                 inquiryInfo.setAttachment(optional.get());
+            }else {
+                throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("询价附件id"));
             }
         }else {
             inquiryInfo.setAttachment(null);
         }
-        if (cargoInfo != null && cargoInfo.getCargoId()!=null && !cargoInfo.getCargoId().equals("")) {
+        if (cargoInfo != null && cargoInfo.getCargoId()!=null && 0!=cargoInfo.getCargoId()) {
             Optional<CargoInfo> optional = cargoInfoRepository.findById(cargoInfo.getCargoId());
             if (optional.isPresent()) {
                 inquiryInfo.setCargoInfo(optional.get());
@@ -121,10 +127,12 @@ public class InquiryInfoService {
             inquiryInfo.setCargoInfo(null);
         }
         PartnerInfo partnerInfo = inquiryInfoDto.getPartnerInfo();
-        if (partnerInfo != null && partnerInfo.getPartnerId()!=null && !partnerInfo.getPartnerId().equals("")) {
+        if (partnerInfo != null && partnerInfo.getPartnerId()!=null && 0!=partnerInfo.getPartnerId()) {
             Optional<PartnerInfo> optional = partnerInfoRepository.findById(partnerInfo.getPartnerId());
             if (optional.isPresent()) {
                 inquiryInfo.setPartnerInfo(optional.get());
+            }else {
+                throw new GlobalServiceException(GlobalExceptionCode.NOT_FOUND_ERROR.getCode(), GlobalExceptionCode.NOT_FOUND_ERROR.getCause("制造商/代理商id"));
             }
         }else {
             inquiryInfo.setPartnerInfo(null);

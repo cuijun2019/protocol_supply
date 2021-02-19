@@ -160,7 +160,7 @@ public class AttachmentService {
         return attachmentRepository.findBidTemplate();
     }
 
-    public Attachment findContractTemplate() {
-        return attachmentRepository.findContractTemplate();
+    public Attachment findContractTemplate(String type) {
+        return attachmentRepository.findContractTemplate(type);
     }
 }

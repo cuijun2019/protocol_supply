@@ -149,4 +149,8 @@ public interface BusiJbpmFlowRepository extends JpaRepository<BusiJbpmFlow, Long
             "select company from users where username=?1))" , nativeQuery = true)
     String getLeaderByuserName(@Param("username") String username);
 
+
+    @Query(value = "select * from busi_jbpm_flow where id=(" +
+            "select max(id) from busi_jbpm_flow where business_id=?1 and business_type=?2 and type =?3) ", nativeQuery = true)
+    BusiJbpmFlow getNewByBusinessId(String businessId,String businessType,Integer type);
 }
